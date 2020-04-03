@@ -1,14 +1,38 @@
 import React, { Component } from "react";
 import ALF from "alf-client";
 import Moment from 'react-moment';
+import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
 
 const moment = require("moment");
 
+const useStyles = theme => ({
+  root: {
+    padding: 24,
+  },
+  card: {
+    minWidth: 375,
+  },
+  title: {
+    fontSize: 22,
+  },
+  props: {
+    marginBottom: 12,
+  },
+  time: {
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+});
+
 class Blocks extends Component {
+
   constructor() {
     super();
+
     this.state = {
       blocks: [],
       loading: false,
@@ -19,6 +43,7 @@ class Blocks extends Component {
   }
 
   render() {
+    const { classes } = this.props;
 
     // Additional css
     const loadingCSS = {
@@ -30,27 +55,24 @@ class Blocks extends Component {
     const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
 
     return (
-
-
-      <div className="container">
-        <h1>Blocks History</h1>
+      <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid key={block.hash} container xs={12}>
-              <Paper style={{ minWidth: "600px", minHeight: "120px" }}>
-                <Grid item>
-                  block: # {block.hash}
-                </Grid>
-                <Grid item>
-                  height: ⇪ {block.height}
-                </Grid>
-                <Grid item>
-                  chain index: {block.chainFrom} ➡ {block.chainTo}
-                </Grid>
-                <Grid item>
-                  <Moment fromNow>{block.timestamp}</Moment>
-                </Grid>
-              </Paper>
+            <Grid className={classes.root} key={block.hash} container xs={6} spacing={2} justify="center">
+              <Card className={classes.card}>
+                <CardContent>
+                  <Typography className={classes.title}>
+                    # {block.hash}
+                  </Typography>
+                  <Typography className={classes.props} color="textSecondary">
+                    height: ⇪ {block.height}<br/>
+                    chain index: {block.chainFrom} ➡ {block.chainTo}
+                  </Typography>
+                  <Typography className={classes.time}>
+                    <Moment fromNow>{block.timestamp}</Moment> (<Moment format="YYYY/MM/DD HH:mm:ss">{block.timestamp}</Moment>)
+                  </Typography>
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>
@@ -119,7 +141,8 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
+    // const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
+    const response = await this.client.blockflowFetch(0, 0);
     const blocks = response.result.blocks;
 
     blocks.sort(function (a, b) {
@@ -144,4 +167,4 @@ class Blocks extends Component {
   }
 }
 
-export default Blocks;
+export default withStyles(useStyles)(Blocks);
