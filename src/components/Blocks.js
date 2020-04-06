@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import ALF from "alf-client";
 import Moment from 'react-moment';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import { createClient } from "../utils/util";
 
 const moment = require("moment");
 
@@ -87,20 +87,7 @@ class Blocks extends Component {
   }
 
   async componentDidMount() {
-    const client = new ALF.NodeClient({
-      host: 'localhost',
-      port: 10973
-    });
-
-    const response = await client.selfClique();
-
-    if (!response) {
-      this.log('Self clique not found.');
-      return;
-    }
-
-    this.client = new ALF.CliqueClient(response.result);
-
+    this.client = await createClient();
 
     this.getBlocks(this.state.timestamp);
 
@@ -141,8 +128,7 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    // const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
-    const response = await this.client.blockflowFetch(0, 0);
+    const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
     const blocks = response.result.blocks;
 
     blocks.sort(function (a, b) {

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import ALF from "alf-client";
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import { createClient } from "../utils/util";
 
 const useStyles = theme => ({
   root: {
@@ -66,19 +66,7 @@ class Wallet extends Component {
   }
 
   async componentDidMount() {
-    const client = new ALF.NodeClient({
-      host: 'localhost',
-      port: 10973
-    });
-
-    const response = await client.selfClique();
-
-    if (!response) {
-      this.log('Self clique not found.');
-      return;
-    }
-
-    this.client = new ALF.CliqueClient(response.result);
+    this.client = await createClient();
   }
 
   async getBalance(e) {
