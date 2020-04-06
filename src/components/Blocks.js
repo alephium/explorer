@@ -58,7 +58,7 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className={classes.root} key={block.hash} container xs={6} spacing={2} justify="center">
+            <Grid className={classes.root} key={block.hash} container xs={6} justify="center">
               <Card className={classes.card}>
                 <CardContent>
                   <Typography className={classes.title}>

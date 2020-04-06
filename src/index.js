@@ -26,7 +26,7 @@ class App extends React.Component {
     return (
       <Router>
         <div>
-          <img src={logo} className="logo"/>
+          <img alt="alephium" src={logo} className="logo"/>
           <AppBar position="static" color="default">
             <Tabs
               value={this.state.value}
