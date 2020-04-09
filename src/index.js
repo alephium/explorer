@@ -33,7 +33,6 @@ class App extends React.Component {
               onChange={this.handleChange}
               indicatorColor="primary"
               textColor="primary"
-              fullWidth
             >
               <Tab label="Blocks" component={Link} to="/blocks" />
               <Tab label="Wallet" component={Link} to="/wallet" />

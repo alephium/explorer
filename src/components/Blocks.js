@@ -91,13 +91,13 @@ class Blocks extends Component {
 
     this.getBlocks(this.state.timestamp);
 
-    const websocket = this.client.getWebSocket(0);
+    this.websocket = this.client.getWebSocket(0);
 
-    websocket.onopen = () => {
+    this.websocket.onopen = () => {
       console.log('WebSocket Client Connected');
     };
 
-    websocket.onmessage = (message) => {
+    this.websocket.onmessage = (message) => {
       const notification = JSON.parse(message.data);
       if (notification.method === 'block_notify') {
         const block = notification.params;
@@ -118,6 +118,11 @@ class Blocks extends Component {
     );
 
     this.observer.observe(this.loadingRef);
+  }
+
+  async componentWillUnmount() {
+    this.websocket.close();
+    if (this.observer) this.observer.disconnect();
   }
 
   async getBlocks(timestamp) {
