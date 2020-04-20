@@ -28,6 +28,11 @@ const useStyles = theme => ({
   },
 });
 
+const loadingCSS = {
+  height: "100px",
+  margin: "30px"
+};
+
 class Blocks extends Component {
 
   constructor() {
@@ -39,17 +44,10 @@ class Blocks extends Component {
       timestamp: moment().valueOf(),
       prevY: 0
     };
-
   }
 
   render() {
     const { classes } = this.props;
-
-    // Additional css
-    const loadingCSS = {
-      height: "100px",
-      margin: "30px"
-    };
 
     // To change the loading icon behavior
     const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
