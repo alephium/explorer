@@ -127,7 +127,7 @@ class Blocks extends Component {
     this.setState({ loading: true });
 
     const to = moment(timestamp);
-    const from = to.clone().subtract(2, 'minutes');
+    const from = to.clone().subtract(10, 'minutes');
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
