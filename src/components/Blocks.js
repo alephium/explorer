@@ -138,8 +138,10 @@ class Blocks extends Component {
       return b.timestamp - a.timestamp;
     });
 
-    this.setState({ blocks: this.state.blocks.concat(response.result.blocks) });
-    this.setState({ loading: false });
+    this.setState({ 
+      blocks: this.state.blocks.concat(response.result.blocks),
+      loading: false
+    });
   }
 
   handleObserver(entities, observer) {
