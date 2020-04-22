@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { createClient } from "../utils/util";
+import { Wallet } from "alf-client";
 
 const useStyles = theme => ({
   root: {
@@ -20,16 +21,18 @@ const useStyles = theme => ({
   }
 });
 
-class Wallet extends Component {
+class WalletPanel extends Component {
   constructor() {
     super();
     this.state = {
       address: '',
+      privateKey: '',
       balance: 'unknown',
       transferTo: '',
-      transferValue: ''
+      transferValue: '',
+      newPublicKey: '',
+      newPrivateKey: '',
     };
-
   }
 
   render() {
@@ -53,12 +56,24 @@ class Wallet extends Component {
           <div className={classes.section}>
             <h2>Transfer</h2>
             <form noValidate autoComplete="off">
+              <TextField id="privateKey" className={classes.field} label="Private key" value={this.state.privateKey} onChange={e => this.updatePrivateKey(e) }/>
+              <br/>
               <TextField id="to" className={classes.field} label="Recipient address" value={this.state.transferTo} onChange={e => this.updateTransferTo(e) }/>
               <br/>
               <TextField id="value" label="ALF" className={classes.field} value={this.state.transferValue} onChange={e => this.updateTransferValue(e) }/>
             </form>
             <br/>
             <Button variant="contained" onClick={e => this.transfer(e)}>Transfer</Button>
+          </div>
+          <div className={classes.section}>
+            <h2>Key Pair</h2>
+            <form noValidate autoComplete="off">
+              <TextField className={classes.field} id="filled-basic" label="PublicKey" variant="filled" value={this.state.newPublicKey} />
+              <br/>
+              <TextField className={classes.field} id="filled-basic" label="PrivateKey" variant="filled" value={this.state.newPrivateKey} />
+            </form>
+            <br/>
+            <Button variant="contained" onClick={e => this.generateKeyPair()}>Generate</Button>
           </div>
         </div>
       </div>
@@ -77,16 +92,21 @@ class Wallet extends Component {
   }
 
   async transfer(e) {
-    const response = await this.client.transfer(this.state.address, 'pkh', 'b0e218ff0d40482d37bb787dccc7a4c9a6d56c26885f66c6b5ce23c87c891f5e',
+    const response = await this.client.transfer(this.state.address, 'pkh', this.state.privateKey,
                                                 this.state.transferTo, 'pkh', this.state.transferValue);
     alert('Transaction submitted (txId: ' + response.result.txId + ')');
   }
-
 
   updateAddress(e) {
     this.setState({
       address: e.target.value
     });
+  }
+
+  updatePrivateKey(e) {
+    this.setState({
+      privateKey: e.target.value
+    })
   }
 
   updateTransferTo(e) {
@@ -100,6 +120,15 @@ class Wallet extends Component {
       transferValue: e.target.value
     });
   }
+
+  generateKeyPair() {
+    const wallet = new Wallet();
+    wallet.random();
+    this.setState({
+      newPublicKey: wallet.pubKey,
+      newPrivateKey: wallet.priKey
+    })
+  }
 }
 
-export default withStyles(useStyles)(Wallet);
+export default withStyles(useStyles)(WalletPanel);
