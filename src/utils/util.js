@@ -2,7 +2,7 @@ import ALF from "alf-client";
 
 export async function createClient() {
   const client = new ALF.NodeClient({
-    host: 'localhost',
+    host: '18.156.73.65',
     port: 10973
   });
 

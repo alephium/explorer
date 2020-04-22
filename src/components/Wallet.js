@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { createClient } from "../utils/util";
-import { Wallet } from "alf-client";
+import ALF from "alf-client";
 
 const useStyles = theme => ({
   root: {
@@ -21,7 +21,7 @@ const useStyles = theme => ({
   }
 });
 
-class WalletPanel extends Component {
+class Wallet extends Component {
   constructor() {
     super();
     this.state = {
@@ -94,7 +94,9 @@ class WalletPanel extends Component {
   async transfer(e) {
     const response = await this.client.transfer(this.state.address, 'pkh', this.state.privateKey,
                                                 this.state.transferTo, 'pkh', this.state.transferValue);
-    alert('Transaction submitted (txId: ' + response.result.txId + ')');
+    alert('Transaction submitted\n' + 
+      '\tid: ' + response.result.txId + '\n' +
+      '\tchain index: ' + response.result.fromGroup + ' ➡ ' + response.result.toGroup);
   }
 
   updateAddress(e) {
@@ -122,13 +124,12 @@ class WalletPanel extends Component {
   }
 
   generateKeyPair() {
-    const wallet = new Wallet();
-    wallet.random();
+    const wallet = ALF.wallet.generate();
     this.setState({
-      newPublicKey: wallet.pubKey,
-      newPrivateKey: wallet.priKey
+      newPublicKey: wallet.address,
+      newPrivateKey: wallet.privateKey
     })
   }
 }
 
-export default withStyles(useStyles)(WalletPanel);
+export default withStyles(useStyles)(Wallet);

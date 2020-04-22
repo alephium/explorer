@@ -11,7 +11,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import Blocks from './components/Blocks'
-import WalletPanel from './components/WalletPanel'
+import Wallet from './components/Wallet'
 
 class App extends React.Component {
   state = {
@@ -41,7 +41,7 @@ class App extends React.Component {
 
           <main>
             <Route path="/blocks" component={Blocks} />
-            <Route path="/wallet" component={WalletPanel} />
+            <Route path="/wallet" component={Wallet} />
           </main>
         </div>
       </Router>
