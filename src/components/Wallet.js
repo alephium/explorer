@@ -45,6 +45,15 @@ class Wallet extends Component {
 
   render() {
     const { classes } = this.props;
+
+    if (!this.client) {
+      return (
+        <div>
+          Unable to initialize network client, please check the console for more details.
+        </div>
+      );
+    }
+
     return (
       <div className={classes.root}>
         <div className={classes.form}>
