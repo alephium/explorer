@@ -46,14 +46,6 @@ class Wallet extends Component {
   render() {
     const { classes } = this.props;
 
-    if (!this.client) {
-      return (
-        <div>
-          Unable to initialize network client, please check the console for more details.
-        </div>
-      );
-    }
-
     return (
       <div className={classes.root}>
         <div className={classes.form}>
@@ -117,7 +109,17 @@ class Wallet extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClient();
+    try {
+      this.client = await createClient();
+    } finally {
+      if (!this.client) {
+        this.setState({
+          dialogOpen: true,
+          dialogTitle: 'Error',
+          dialogMessage: 'Unable to initialize network client, please check the console for more details.'
+        });
+      }
+    }
   }
 
   async getBalance(e) {
