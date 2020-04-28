@@ -113,31 +113,46 @@ class Wallet extends Component {
       this.client = await createClient();
     } finally {
       if (!this.client) {
-        this.setState({
-          dialogOpen: true,
-          dialogTitle: 'Error',
-          dialogMessage: 'Unable to initialize network client, please check the console for more details.'
-        });
+        this.dialogError('Unable to initialize network client, please check the console for more details.');
       }
     }
   }
 
+
   async getBalance(e) {
-    const response = await this.client.getBalance(this.state.address);
-    this.setState({
-      balance: response.result.balance
-    });
+    try {
+      const response = await this.client.getBalance(this.state.address);
+      this.setState({
+        balance: response.result.balance
+      });
+    } catch (e) {
+      this.dialogError(e.message);
+      throw e;
+    }
   }
 
   async transfer(e) {
-    const response = await this.client.transfer(this.state.address, 'pkh', this.state.privateKey,
-                                                this.state.transferTo, 'pkh', this.state.transferValue);
+    try {
+      const response = await this.client.transfer(this.state.address, 'pkh', this.state.privateKey,
+                                                  this.state.transferTo, 'pkh', this.state.transferValue);
 
+      this.setState({
+        dialogOpen: true,
+        dialogTitle: 'Transaction submitted',
+        dialogMessage: response.result.txId + '\n' +
+          'chain index: ' + response.result.fromGroup + ' ➡ ' + response.result.toGroup
+      });
+    } catch (e) {
+      this.dialogError(e.message);
+      throw e;
+    }
+  }
+
+  dialogError(message) {
     this.setState({
       dialogOpen: true,
-      dialogTitle: 'Transaction submitted',
-      dialogMessage: response.result.txId + '\n' +
-        'chain index: ' + response.result.fromGroup + ' ➡ ' + response.result.toGroup
+      dialogTitle: 'Error',
+      dialogMessage: message
     });
   }
 
