@@ -119,7 +119,7 @@ class Blocks extends Component {
   }
 
   async componentWillUnmount() {
-    this.websocket.close();
+    if (this.websocket) this.websocket.close();
     if (this.observer) this.observer.disconnect();
   }
 

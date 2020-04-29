@@ -4,7 +4,7 @@ with import <nixpkgs> {}; {
     shellHook = ''
     '';
     buildInputs = [
-      yarn nodejs
+      yarn nodejs python
     ];
   };
 }

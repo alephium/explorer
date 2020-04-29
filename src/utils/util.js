@@ -1,15 +1,20 @@
 import ALF from "alf-client";
 
 export async function createClient() {
+  let address = process.env.ALEPHIUM_HOST;
+  if (!address) { address = 'localhost'; }
+
+  let port = process.env.ALEPHIUM_PORT;
+  if (!port) { port = 10973; }
+
   const client = new ALF.NodeClient({
-    host: 'localhost',
-    port: 10973
+    host: address,
+    port: port
   });
 
   const response = await client.selfClique();
-
   if (!response) {
-    this.log('Self clique not found.');
+    console.log('Self clique not found.');
     return;
   }
 
