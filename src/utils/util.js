@@ -12,6 +12,8 @@ export async function createClient() {
     port: port
   });
 
+  console.log('Connecting to: ' + client.host + ':' + client.port);
+
   const response = await client.selfClique();
   if (!response) {
     console.log('Self clique not found.');
