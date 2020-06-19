@@ -12,8 +12,43 @@ code {
     monospace;
 }
 
+.card {
+  minWidth: 375px;
+}
+
+.content {
+  padding: 24px;
+}
+
+.field {
+  width: 99%;
+}
+
+.form {
+  width: 600px;
+  margin: 'auto';
+}
+
 .logo {
   width: 130px;
   height: 40px;
   padding: 10px;
 }
+
+.props {
+  marginBottom: 12px;
+}
+
+.section {
+  paddingBottom: 42px;
+}
+
+.time {
+  fontSize: 14px;
+  fontStyle: 'italic';
+}
+
+.title {
+  fontSize: 22px;
+}
+

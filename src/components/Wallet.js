@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,22 +8,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import { createClient } from "../utils/util";
 import ALF from "alf-client";
-
-const useStyles = theme => ({
-  root: {
-    padding: 24,
-  },
-  section: {
-    paddingBottom: 42,
-  },
-  form: {
-    width: 600,
-    margin: 'auto',
-  },
-  field: {
-    width: 600,
-  }
-});
 
 class Wallet extends Component {
   constructor() {
@@ -47,38 +30,38 @@ class Wallet extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <div className={classes.form}>
-          <div className={classes.section}>
+      <div className="content">
+        <div className="form">
+          <div className="section">
             <form noValidate autoComplete="off">
-              <TextField className={classes.field} id="address" label="Address" value={this.state.address} onChange={e => this.updateAddress(e) }/>
+              <TextField className="field" id="address" label="Address" value={this.state.address} onChange={e => this.updateAddress(e) }/>
             </form>
           </div>
-          <div className={classes.section}>
+          <div className="section">
             <h2>Balance</h2>
-            <TextField className={classes.field} id="filled-basic" label="ALF" variant="filled" value={this.state.balance} />
+            <TextField className="field" id="filled-basic" label="ALF" variant="filled" value={this.state.balance} />
             <br/>
             <br/>
             <Button variant="contained" onClick={e => this.getBalance(e)}>Get balance</Button>
           </div>
-          <div className={classes.section}>
+          <div className="section">
             <h2>Transfer</h2>
             <form noValidate autoComplete="off">
-              <TextField id="privateKey" className={classes.field} label="Private key" value={this.state.privateKey} onChange={e => this.updatePrivateKey(e) }/>
+              <TextField id="privateKey" className="field" label="Private key" value={this.state.privateKey} onChange={e => this.updatePrivateKey(e) }/>
               <br/>
-              <TextField id="to" className={classes.field} label="Recipient address" value={this.state.transferTo} onChange={e => this.updateTransferTo(e) }/>
+              <TextField id="to" className="field" label="Recipient address" value={this.state.transferTo} onChange={e => this.updateTransferTo(e) }/>
               <br/>
-              <TextField id="value" label="ALF" className={classes.field} value={this.state.transferValue} onChange={e => this.updateTransferValue(e) }/>
+              <TextField id="value" label="ALF" className="field" value={this.state.transferValue} onChange={e => this.updateTransferValue(e) }/>
             </form>
             <br/>
             <Button variant="contained" onClick={e => this.transfer(e)}>Transfer</Button>
           </div>
-          <div className={classes.section}>
+          <div className="section">
             <h2>Key Pair</h2>
             <form noValidate autoComplete="off">
-              <TextField className={classes.field} id="filled-basic" label="PublicKey" variant="filled" value={this.state.newPublicKey} />
+              <TextField className="field" id="filled-basic" label="PublicKey" variant="filled" value={this.state.newPublicKey} />
               <br/>
-              <TextField className={classes.field} id="filled-basic" label="PrivateKey" variant="filled" value={this.state.newPrivateKey} />
+              <TextField className="field" id="filled-basic" label="PrivateKey" variant="filled" value={this.state.newPrivateKey} />
             </form>
             <br/>
             <Button variant="contained" onClick={e => this.generateKeyPair()}>Generate</Button>
@@ -195,4 +178,4 @@ class Wallet extends Component {
   }
 }
 
-export default withStyles(useStyles)(Wallet);
+export default Wallet;

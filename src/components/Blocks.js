@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Moment from 'react-moment';
-import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
@@ -8,25 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import { createClient } from "../utils/util";
 
 const moment = require("moment");
-
-const useStyles = theme => ({
-  root: {
-    padding: 24,
-  },
-  card: {
-    minWidth: 375,
-  },
-  title: {
-    fontSize: 22,
-  },
-  props: {
-    marginBottom: 12,
-  },
-  time: {
-    fontSize: 14,
-    fontStyle: 'italic',
-  },
-});
 
 const loadingCSS = {
   height: "100px",
@@ -56,17 +36,17 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className={classes.root} key={block.hash} container xs={6} justify="center">
-              <Card className={classes.card}>
+            <Grid className="root" key={block.hash} container xs={6} justify="center">
+              <Card className="card">
                 <CardContent>
-                  <Typography className={classes.title}>
+                  <Typography className="title">
                     # {block.hash}
                   </Typography>
-                  <Typography className={classes.props} color="textSecondary">
+                  <Typography className="props" color="textSecondary">
                     height: ⇪ {block.height}<br/>
                     chain index: {block.chainFrom} ➡ {block.chainTo}
                   </Typography>
-                  <Typography className={classes.time}>
+                  <Typography className="time">
                     <Moment fromNow>{block.timestamp}</Moment> (<Moment format="YYYY/MM/DD HH:mm:ss">{block.timestamp}</Moment>)
                   </Typography>
                 </CardContent>
@@ -158,4 +138,4 @@ class Blocks extends Component {
   }
 }
 
-export default withStyles(useStyles)(Blocks);
+export default Blocks;
