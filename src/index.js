@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DefaultRoute } from 'react-router'
 import { BrowserRouter as Router, Route} from 'react-router-dom'
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -18,11 +17,13 @@ class App extends React.Component {
         <div>
           <img alt="alephium" src={logo} className="logo"/>
           <Navigator/>
-          <main>
-            <Route exact path="/" component={Blocks}/>
-            <Route path="/blocks" component={Blocks} />
-            <Route path="/wallet" component={Wallet} />
-          </main>
+          <div className="content">
+            <main>
+              <Route exact path="/" component={Blocks}/>
+              <Route path="/blocks" component={Blocks} />
+              <Route path="/wallet" component={Wallet} />
+            </main>
+          </div>
         </div>
       </Router>
     )

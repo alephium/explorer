@@ -27,8 +27,6 @@ class Blocks extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     // To change the loading icon behavior
     const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
 
@@ -36,7 +34,7 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className="root" key={block.hash} container xs={6} justify="center">
+            <Grid className="content" key={block.hash} container xs={6} justify="center">
               <Card className="card">
                 <CardContent>
                   <Typography className="title">
