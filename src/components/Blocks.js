@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { createClient } from "../utils/util";
+import { createClientLight, createClientFull } from "../utils/util";
 
 const moment = require("moment");
 
@@ -34,7 +34,7 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className="content" key={block.hash} container xs={6} justify="center">
+            <Grid className="content" key={block.hash} container justify="center">
               <Card className="card">
                 <CardContent>
                   <Typography className="title">
@@ -63,11 +63,12 @@ class Blocks extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClient();
+    this.client = await createClientLight();
 
     this.getBlocks(this.state.timestamp);
 
-    this.websocket = this.client.getWebSocket(0);
+    const clientFull = await createClientFull();
+    this.websocket = clientFull.getWebSocket(0);
 
     this.websocket.onopen = () => {
       console.log('WebSocket Client Connected');
@@ -109,15 +110,15 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
-    const blocks = response.result.blocks;
+    const blocks = await this.client.blocks(from.valueOf(), timestamp);
+    console.log(blocks);
 
     blocks.sort(function (a, b) {
       return b.timestamp - a.timestamp;
     });
 
     this.setState({ 
-      blocks: this.state.blocks.concat(response.result.blocks),
+      blocks: this.state.blocks.concat(blocks),
       loading: false
     });
   }

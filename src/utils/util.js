@@ -1,6 +1,24 @@
 import ALF from "alf-client";
 
-export async function createClient() {
+export async function createClientLight() {
+  let address = process.env.REACT_APP_ALEPHIUM_HOST;
+  if (!address) { address = 'localhost'; }
+
+  let port = process.env.REACT_APP_ALEPHIUM_PORT;
+  if (!port) { port = 9090; }
+
+  const client = new ALF.ExplorerClient({
+    host: address,
+    port: port
+  });
+
+  console.log('Connecting to: ' + client.host + ':' + client.port);
+
+  return client;
+}
+
+
+export async function createClientFull() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
   if (!address) { address = 'localhost'; }
 

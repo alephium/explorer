@@ -6,7 +6,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import { createClient } from "../utils/util";
+import { createClientFull } from "../utils/util";
 import ALF from "alf-client";
 
 class Wallet extends Component {
@@ -88,7 +88,7 @@ class Wallet extends Component {
 
   async componentDidMount() {
     try {
-      this.client = await createClient();
+      this.client = await createClientFull();
     } finally {
       if (!this.client) {
         this.dialogError('Unable to initialize network client, please check the console for more details.');
