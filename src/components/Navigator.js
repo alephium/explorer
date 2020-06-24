@@ -22,8 +22,11 @@ class Navigator extends React.Component {
     const { location } = this.props;
 
     let value = this.state.value;
+    // TODO Find nice way to deal with this
     if (location.pathname === '/wallet') {
       value = 1;
+    } else if (location.pathname.startsWith('/transactions')) {
+      value = 2;
     }
 
     return (
@@ -36,6 +39,7 @@ class Navigator extends React.Component {
         >
           <Tab label="Blocks" component={Link} to="/blocks" />
           <Tab label="Wallet" component={Link} to="/wallet" />
+          <Tab label="Transactions" disabled />
         </Tabs>
       </AppBar>
     );

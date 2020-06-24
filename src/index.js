@@ -8,6 +8,7 @@ import logo from './images/logo-h.svg';
 
 import Blocks from './components/Blocks'
 import Navigator from './components/Navigator'
+import TransactionInfo from './components/TransactionInfo'
 import Wallet from './components/Wallet'
 
 class App extends React.Component {
@@ -21,6 +22,7 @@ class App extends React.Component {
             <main>
               <Route exact path="/" component={Blocks}/>
               <Route path="/blocks" component={Blocks} />
+              <Route path="/transactions/:id" component={TransactionInfo} />
               <Route path="/wallet" component={Wallet} />
             </main>
           </div>
