@@ -34,11 +34,11 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className="content" key={block.hash} container justify="center">
+            <Grid item xs={6} className="content" key={block.hash} container justify="center">
               <Card className="card">
                 <CardContent>
                   <Typography className="title">
-                    # {block.hash}
+                    <a href={"./blocks/" + block.hash}># {block.hash}</a>
                   </Typography>
                   <Typography className="props" color="textSecondary">
                     height: ⇪ {block.height}<br/>
@@ -110,7 +110,8 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    const blocks = await this.client.blocks(from.valueOf(), timestamp);
+    // const blocks = await this.client.blocks(from.valueOf(), timestamp);
+    const blocks = await this.client.blocks(0, timestamp);
     console.log(blocks);
 
     blocks.sort(function (a, b) {

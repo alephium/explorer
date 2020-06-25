@@ -8,6 +8,10 @@ const {Client} = require('bcurl');
 
 export class ExplorerClient extends Client {
 
+  block(id) {
+    return this.get('/blocks/' + id);
+  }
+
   blocks(fromTs, toTs) {
     assert(typeof fromTs === 'number');
     assert(typeof toTs === 'number');
