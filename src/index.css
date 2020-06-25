@@ -18,10 +18,17 @@ code {
 
 .content {
   padding: 24px;
+  flexGrow: 1;
+  margin: 0 auto;
 }
 
 .field {
   width: 99%;
+}
+
+.foo {
+  float: right;
+  text-align: right;
 }
 
 .form {
@@ -51,4 +58,3 @@ code {
 .title {
   fontSize: 22px;
 }
-

@@ -1,5 +1,7 @@
 import ALF from "alf-client";
 
+import { ExplorerClient } from "./explorer";
+
 export async function createClientLight() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
   if (!address) { address = 'localhost'; }
@@ -7,7 +9,7 @@ export async function createClientLight() {
   let port = process.env.REACT_APP_ALEPHIUM_PORT;
   if (!port) { port = 9090; }
 
-  const client = new ALF.ExplorerClient({
+  const client = new ExplorerClient({
     host: address,
     port: port
   });
