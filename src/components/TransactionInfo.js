@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Grid from '@material-ui/core/Grid';
 import { withRouter } from "react-router-dom";
-import { createClientLight } from "../utils/util";
+import { createClient } from "../utils/util";
 
 class TransactionInfo extends Component {
   constructor() {
@@ -49,7 +49,7 @@ class TransactionInfo extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClientLight();
+    this.client = await createClient();
     const transaction = await this.client.transaction(this.props.match.params.id);
     this.setState({ transaction: transaction });
   }

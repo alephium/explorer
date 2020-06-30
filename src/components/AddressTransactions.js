@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import { createClientLight } from "../utils/util";
+import { createClient } from "../utils/util";
 
 class AddressTransactions extends Component {
   constructor() {
@@ -26,7 +26,7 @@ class AddressTransactions extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClientLight();
+    this.client = await createClient();
     const address = this.props.match.params.id;
     const transactions = await this.client.addressTransactions(address);
 

@@ -11,7 +11,6 @@ import Blocks from './components/Blocks'
 import BlockInfo from './components/BlockInfo'
 import Navigator from './components/Navigator'
 import TransactionInfo from './components/TransactionInfo'
-import Wallet from './components/Wallet'
 
 class App extends React.Component {
   render() {
@@ -27,7 +26,6 @@ class App extends React.Component {
               <Route path="/blocks/:id" component={BlockInfo} />
               <Route path="/addresses/:id/transactions" component={AddressTransactions} />
               <Route path="/transactions/:id" component={TransactionInfo} />
-              <Route path="/wallet" component={Wallet} />
             </main>
           </div>
         </div>

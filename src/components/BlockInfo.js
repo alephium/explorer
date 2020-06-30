@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Grid from '@material-ui/core/Grid';
 import { withRouter } from "react-router-dom";
-import { createClientLight } from "../utils/util";
+import { createClient } from "../utils/util";
 
 class BlockInfo extends Component {
   constructor() {
@@ -33,7 +33,7 @@ class BlockInfo extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClientLight();
+    this.client = await createClient();
     const block = await this.client.block(this.props.match.params.id);
     this.setState({ block: block });
   }

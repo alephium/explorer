@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { createClientLight, createClientFull } from "../utils/util";
+import { createClient } from "../utils/util";
 
 const moment = require("moment");
 
@@ -63,25 +63,9 @@ class Blocks extends Component {
   }
 
   async componentDidMount() {
-    this.client = await createClientLight();
+    this.client = await createClient();
 
     this.getBlocks(this.state.timestamp);
-
-    const clientFull = await createClientFull();
-    this.websocket = clientFull.getWebSocket(0);
-
-    this.websocket.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
-
-    this.websocket.onmessage = (message) => {
-      const notification = JSON.parse(message.data);
-      if (notification.method === 'block_notify') {
-        const block = notification.params;
-        console.log('Prepending new block: ' + block.hash);
-        this.setState({ blocks: [block].concat(this.state.blocks) });
-      } 
-    };
 
     var options = {
       root: null,
