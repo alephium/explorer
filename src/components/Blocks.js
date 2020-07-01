@@ -67,7 +67,7 @@ class Blocks extends Component {
 
     this.getBlocks(this.state.timestamp);
 
-    var options = {
+    const options = {
       root: null,
       rootMargin: "0px",
       threshold: 1.0
