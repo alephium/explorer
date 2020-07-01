@@ -24,6 +24,8 @@ class Blocks extends Component {
       timestamp: moment().valueOf(),
       prevY: 0
     };
+
+    this.update = this.update.bind(this)
   }
 
   render() {
@@ -67,6 +69,9 @@ class Blocks extends Component {
 
     this.getBlocks(this.state.timestamp);
 
+    let intervalId = setInterval(this.update, 5 * 60 * 1000);
+    this.setState({intervalId: intervalId});
+
     const options = {
       root: null,
       rootMargin: "0px",
@@ -82,6 +87,7 @@ class Blocks extends Component {
   }
 
   async componentWillUnmount() {
+    if (this.state.intervalId) clearInterval(this.state.intervalId);
     if (this.websocket) this.websocket.close();
     if (this.observer) this.observer.disconnect();
   }
@@ -94,9 +100,7 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    // const blocks = await this.client.blocks(from.valueOf(), timestamp);
-    const blocks = await this.client.blocks(0, timestamp);
-    console.log(blocks);
+    const blocks = await this.client.blocks(from.valueOf(), timestamp);
 
     blocks.sort(function (a, b) {
       return b.timestamp - a.timestamp;
@@ -119,6 +123,11 @@ class Blocks extends Component {
       }
     }
     this.setState({ prevY: y });
+  }
+
+  update() {
+    this.setState({timestamp: moment().valueOf()});
+    this.getBlocks(this.state.timestamp);
   }
 }
 
