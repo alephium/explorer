@@ -27,14 +27,22 @@ class TransactionInfo extends Component {
           <Grid item xs={6}>
             <h4>Inputs</h4>
             {this.state.transaction.inputs.map(input => (
-              <a href={"../transactions/" + input.txHash}><pre>{input.txHash}</pre></a>
+              <div>
+                <div className="fieldRight">
+                  {input.amount} א
+                </div>
+                <div>
+                  <a href={"../transactions/" + input.txHashRef}><pre>{input.txHashRef}</pre></a>
+                  <a href={"../addresses/" + input.address + "/transactions"}><pre>{input.address}</pre></a>
+                </div>
+              </div>
             ))}
           </Grid>
           <Grid item xs={6}>
             <h4>Outputs</h4>
             {this.state.transaction.outputs.map(output => (
               <div key={output.address}>
-                <div className="foo">
+                <div className="fieldRight">
                   {output.amount} א
                 </div>
                 <div>
