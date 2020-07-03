@@ -19,12 +19,12 @@ class BlockInfo extends Component {
       <div>
         <Grid container>
           <Grid item xs={12}>
-            # {this.state.block.hash}
+            <pre># {this.state.block.hash}</pre>
           </Grid>
           <Grid item xs={12}>
             <h4>Transactions</h4>
             {this.state.block.transactions.map(tx => (
-              <a key={tx.hash} href={"../transactions/" + tx.hash}>{tx.hash}</a>
+              <a key={tx.hash} href={"../transactions/" + tx.hash}><pre>{tx.hash}</pre></a>
             ))}
           </Grid>
         </Grid>

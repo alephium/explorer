@@ -40,7 +40,7 @@ class Blocks extends Component {
               <Card className="card">
                 <CardContent>
                   <Typography className="title">
-                    <a href={"./blocks/" + block.hash}># {block.hash}</a>
+                    <a href={"./blocks/" + block.hash}># <pre>{block.hash}</pre></a>
                   </Typography>
                   <Typography className="props" color="textSecondary">
                     height: ⇪ {block.height}<br/>

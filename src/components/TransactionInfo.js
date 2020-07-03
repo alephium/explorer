@@ -21,13 +21,13 @@ class TransactionInfo extends Component {
         <Grid container>
           <Grid item xs={12}>
             <b>
-              <a href={"../transactions/" + this.state.transaction.hash}>{this.state.transaction.hash}</a>
+              <a href={"../transactions/" + this.state.transaction.hash}><pre>{this.state.transaction.hash}</pre></a>
             </b>
           </Grid>
           <Grid item xs={6}>
             <h4>Inputs</h4>
             {this.state.transaction.inputs.map(input => (
-              <a href={"../transactions/" + input.txHash}>{input.txHash}</a>
+              <a href={"../transactions/" + input.txHash}><pre>{input.txHash}</pre></a>
             ))}
           </Grid>
           <Grid item xs={6}>
@@ -38,7 +38,7 @@ class TransactionInfo extends Component {
                   {output.amount} א
                 </div>
                 <div>
-                  <a href={"../addresses/" + output.address + "/transactions"}>{output.address}</a>
+                  <a href={"../addresses/" + output.address + "/transactions"}><pre>{output.address}</pre></a>
                 </div>
               </div>
             ))}

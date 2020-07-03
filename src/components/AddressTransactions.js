@@ -14,11 +14,11 @@ class AddressTransactions extends Component {
   render() {
     return (
       <div>
-        <p>{this.state.address}</p>
+        <p><pre>{this.state.address}</pre></p>
         <h4>Transactions</h4>
         {this.state.transactions.map(tx => (
           <div key={tx.hash}>
-            <a href={"../../transactions/" + tx.hash}>{tx.hash}</a>
+            <a href={"../../transactions/" + tx.hash}><pre>{tx.hash}</pre></a>
           </div>
         ))}
       </div>
