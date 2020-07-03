@@ -35,7 +35,7 @@ class TransactionInfo extends Component {
             {this.state.transaction.outputs.map(output => (
               <div key={output.address}>
                 <div className="foo">
-                  {output.value} א
+                  {output.amount} א
                 </div>
                 <div>
                   <a href={"../addresses/" + output.address + "/transactions"}>{output.address}</a>
