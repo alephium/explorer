@@ -32,7 +32,7 @@ class AddressTransactions extends Component {
 
     this.setState({ 
       address: address,
-      transactions: transactions.reverse(),
+      transactions: transactions,
     });
   }
 }
