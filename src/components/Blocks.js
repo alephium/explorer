@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Moment from 'react-moment';
-import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
@@ -8,25 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import { createClient } from "../utils/util";
 
 const moment = require("moment");
-
-const useStyles = theme => ({
-  root: {
-    padding: 24,
-  },
-  card: {
-    minWidth: 375,
-  },
-  title: {
-    fontSize: 22,
-  },
-  props: {
-    marginBottom: 12,
-  },
-  time: {
-    fontSize: 14,
-    fontStyle: 'italic',
-  },
-});
 
 const loadingCSS = {
   height: "100px",
@@ -44,11 +24,11 @@ class Blocks extends Component {
       timestamp: moment().valueOf(),
       prevY: 0
     };
+
+    this.update = this.update.bind(this)
   }
 
   render() {
-    const { classes } = this.props;
-
     // To change the loading icon behavior
     const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
 
@@ -56,17 +36,17 @@ class Blocks extends Component {
       <div>
         <Grid container>
           {this.state.blocks.map(block => (
-            <Grid className={classes.root} key={block.hash} container xs={6} justify="center">
-              <Card className={classes.card}>
+            <Grid item xs={6} className="content" key={block.hash} container justify="center">
+              <Card className="card">
                 <CardContent>
-                  <Typography className={classes.title}>
-                    # {block.hash}
+                  <Typography className="title">
+                    <a href={"./blocks/" + block.hash}><pre>#{block.hash}</pre></a>
                   </Typography>
-                  <Typography className={classes.props} color="textSecondary">
+                  <Typography className="props" color="textSecondary">
                     height: ⇪ {block.height}<br/>
                     chain index: {block.chainFrom} ➡ {block.chainTo}
                   </Typography>
-                  <Typography className={classes.time}>
+                  <Typography className="time">
                     <Moment fromNow>{block.timestamp}</Moment> (<Moment format="YYYY/MM/DD HH:mm:ss">{block.timestamp}</Moment>)
                   </Typography>
                 </CardContent>
@@ -89,22 +69,10 @@ class Blocks extends Component {
 
     this.getBlocks(this.state.timestamp);
 
-    this.websocket = this.client.getWebSocket(0);
+    let intervalId = setInterval(this.update, 5 * 60 * 1000);
+    this.setState({intervalId: intervalId});
 
-    this.websocket.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
-
-    this.websocket.onmessage = (message) => {
-      const notification = JSON.parse(message.data);
-      if (notification.method === 'block_notify') {
-        const block = notification.params;
-        console.log('Prepending new block: ' + block.hash);
-        this.setState({ blocks: [block].concat(this.state.blocks) });
-      } 
-    };
-
-    var options = {
+    const options = {
       root: null,
       rootMargin: "0px",
       threshold: 1.0
@@ -119,6 +87,7 @@ class Blocks extends Component {
   }
 
   async componentWillUnmount() {
+    if (this.state.intervalId) clearInterval(this.state.intervalId);
     if (this.websocket) this.websocket.close();
     if (this.observer) this.observer.disconnect();
   }
@@ -131,15 +100,14 @@ class Blocks extends Component {
 
     console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')');
 
-    const response = await this.client.blockflowFetch(from.valueOf(), timestamp);
-    const blocks = response.result.blocks;
+    const blocks = await this.client.blocks(from.valueOf(), timestamp);
 
     blocks.sort(function (a, b) {
       return b.timestamp - a.timestamp;
     });
 
     this.setState({ 
-      blocks: this.state.blocks.concat(response.result.blocks),
+      blocks: this.state.blocks.concat(blocks),
       loading: false
     });
   }
@@ -156,6 +124,11 @@ class Blocks extends Component {
     }
     this.setState({ prevY: y });
   }
+
+  update() {
+    this.setState({timestamp: moment().valueOf()});
+    this.getBlocks(this.state.timestamp);
+  }
 }
 
-export default withStyles(useStyles)(Blocks);
+export default Blocks;

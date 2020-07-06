@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { DefaultRoute } from 'react-router'
 import { BrowserRouter as Router, Route} from 'react-router-dom'
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 import logo from './images/logo-h.svg';
 
+import AddressTransactions from './components/AddressTransactions'
 import Blocks from './components/Blocks'
+import BlockInfo from './components/BlockInfo'
 import Navigator from './components/Navigator'
-import Wallet from './components/Wallet'
+import TransactionInfo from './components/TransactionInfo'
 
 class App extends React.Component {
   render() {
@@ -18,11 +19,15 @@ class App extends React.Component {
         <div>
           <img alt="alephium" src={logo} className="logo"/>
           <Navigator/>
-          <main>
-            <Route exact path="/" component={Blocks}/>
-            <Route path="/blocks" component={Blocks} />
-            <Route path="/wallet" component={Wallet} />
-          </main>
+          <div className="content">
+            <main>
+              <Route exact path="/" component={Blocks}/>
+              <Route exact path="/blocks" component={Blocks} />
+              <Route path="/blocks/:id" component={BlockInfo} />
+              <Route path="/addresses/:id/transactions" component={AddressTransactions} />
+              <Route path="/transactions/:id" component={TransactionInfo} />
+            </main>
+          </div>
         </div>
       </Router>
     )

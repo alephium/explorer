@@ -3,13 +3,11 @@ import PropTypes from "prop-types";
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { Link, useLocation, withRouter} from 'react-router-dom'
+import { Link, withRouter} from 'react-router-dom'
 
 class Navigator extends React.Component {
   static propTypes = {
-    match: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
   };
 
   state = {
@@ -21,22 +19,28 @@ class Navigator extends React.Component {
   };
 
   render() {
-    const { match, location, history } = this.props;
+    const { location } = this.props;
 
-    if (location.pathname == '/wallet') {
-      this.state.value = 1;
+    let value = this.state.value;
+    // TODO Find nice way to deal with this
+    if (location.pathname.startsWith('/addresses')) {
+      value = 1;
+    } else if (location.pathname.startsWith('/transactions')) {
+      value = 2;
     }
+
 
     return (
       <AppBar position="static" color="default">
         <Tabs
-          value={this.state.value}
+          value={value}
           onChange={this.handleChange}
           indicatorColor="primary"
           textColor="primary"
         >
           <Tab label="Blocks" component={Link} to="/blocks" />
-          <Tab label="Wallet" component={Link} to="/wallet" />
+          <Tab label="Addresses" disabled />
+          <Tab label="Transactions" disabled />
         </Tabs>
       </AppBar>
     );
