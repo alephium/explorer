@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { createClient } from "../utils/util";
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 class AddressTransactions extends Component {
   constructor() {
@@ -14,11 +16,11 @@ class AddressTransactions extends Component {
   render() {
     return (
       <div>
-        <p><pre>{this.state.address}</pre></p>
+        <p><pre><AccountBalanceWalletIcon/> {this.state.address}</pre></p>
         <h4>Transactions</h4>
         {this.state.transactions.map(tx => (
           <div key={tx.hash}>
-            <a href={"../../transactions/" + tx.hash}><pre>{tx.hash}</pre></a>
+            <pre><CompareArrowsIcon/> <a href={"../../transactions/" + tx.hash}>{tx.hash}</a></pre>
           </div>
         ))}
       </div>

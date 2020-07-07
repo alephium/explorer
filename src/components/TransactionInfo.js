@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Grid from '@material-ui/core/Grid';
 import { withRouter } from "react-router-dom";
 import { createClient } from "../utils/util";
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 class TransactionInfo extends Component {
   constructor() {
@@ -21,19 +23,21 @@ class TransactionInfo extends Component {
         <Grid container>
           <Grid item xs={12}>
             <b>
-              <a href={"../transactions/" + this.state.transaction.hash}><pre>{this.state.transaction.hash}</pre></a>
+              <pre><CompareArrowsIcon/> <a href={"../transactions/" + this.state.transaction.hash}>{this.state.transaction.hash}</a></pre>
             </b>
           </Grid>
           <Grid item xs={6}>
             <h4>Inputs</h4>
             {this.state.transaction.inputs.map(input => (
               <div>
+                <div>
+                  <pre><CompareArrowsIcon/> <a href={"../transactions/" + input.txHashRef}>{input.txHashRef}</a></pre>
+                </div>
                 <div className="fieldRight">
                   {input.amount} א
                 </div>
                 <div>
-                  <a href={"../transactions/" + input.txHashRef}><pre>{input.txHashRef}</pre></a>
-                  <a href={"../addresses/" + input.address + "/transactions"}><pre>{input.address}</pre></a>
+                  <pre><AccountBalanceWalletIcon/> <a href={"../addresses/" + input.address + "/transactions"}>{input.address}</a></pre>
                 </div>
               </div>
             ))}
@@ -46,7 +50,7 @@ class TransactionInfo extends Component {
                   {output.amount} א
                 </div>
                 <div>
-                  <a href={"../addresses/" + output.address + "/transactions"}><pre>{output.address}</pre></a>
+                  <pre><AccountBalanceWalletIcon/> <a href={"../addresses/" + output.address + "/transactions"}>{output.address}</a></pre>
                 </div>
               </div>
             ))}
