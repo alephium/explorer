@@ -24,7 +24,7 @@ class App extends React.Component {
               <Route exact path="/" component={Blocks}/>
               <Route exact path="/blocks" component={Blocks} />
               <Route path="/blocks/:id" component={BlockInfo} />
-              <Route path="/addresses/:id/transactions" component={AddressTransactions} />
+              <Route path="/addresses/:id" component={AddressTransactions} />
               <Route path="/transactions/:id" component={TransactionInfo} />
             </main>
           </div>

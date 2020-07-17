@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+pre {
+  font-size: 16px;
+}
+
 .card {
   minWidth: 375px;
 }
@@ -29,6 +33,7 @@ code {
 .fieldRight {
   float: right;
   text-align: right;
+  padding-right: 10%;
 }
 
 .form {

@@ -4,6 +4,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Link, withRouter} from 'react-router-dom'
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 class Navigator extends React.Component {
   static propTypes = {
@@ -38,9 +41,9 @@ class Navigator extends React.Component {
           indicatorColor="primary"
           textColor="primary"
         >
-          <Tab label="Blocks" component={Link} to="/blocks" />
-          <Tab label="Addresses" disabled />
-          <Tab label="Transactions" disabled />
+          <Tab label="Blocks" icon={<AccountTreeIcon/>} component={Link} to="/blocks" />
+          <Tab label="Addresses" icon={<AccountBalanceWalletIcon/>} disabled />
+          <Tab label="Transactions" icon={<CompareArrowsIcon/>} disabled />
         </Tabs>
       </AppBar>
     );
