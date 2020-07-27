@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 import logo from './images/logo-h.svg';
 
-import AddressTransactions from './components/AddressTransactions'
+import AddressInfo from './components/AddressInfo'
 import Blocks from './components/Blocks'
 import BlockInfo from './components/BlockInfo'
 import Navigator from './components/Navigator'
@@ -24,7 +24,7 @@ class App extends React.Component {
               <Route exact path="/" component={Blocks}/>
               <Route exact path="/blocks" component={Blocks} />
               <Route path="/blocks/:id" component={BlockInfo} />
-              <Route path="/addresses/:id" component={AddressTransactions} />
+              <Route path="/addresses/:id" component={AddressInfo} />
               <Route path="/transactions/:id" component={TransactionInfo} />
             </main>
           </div>

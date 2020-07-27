@@ -19,8 +19,8 @@ export class ExplorerClient extends Client {
     return this.get('/blocks?fromTs=' + fromTs + '&toTs=' + toTs);
   }
 
-  addressTransactions(id) {
-    return this.get('/addresses/' + id + '/transactions');
+  address(id) {
+    return this.get('/addresses/' + id);
   }
 
   transaction(id) {
