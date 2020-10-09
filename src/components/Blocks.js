@@ -85,7 +85,7 @@ class Blocks extends Component {
 
     this.getBlocks(this.state.timestamp);
 
-    let intervalId = setInterval(this.update, 5 * 60 * 1000);
+    let intervalId = setInterval(this.update, 20 * 1000);
     this.setState({intervalId: intervalId});
 
     const options = {
