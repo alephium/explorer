@@ -46,14 +46,14 @@ class TransactionInfo extends Component {
             <h4>Inputs</h4>
             {this.state.transaction.inputs.map(input => (
               <div>
-                <div>
-                  <pre><CompareArrowsIcon/> <a href={"../transactions/" + input.txHashRef}>{input.txHashRef}</a></pre>
-                </div>
                 <div className="fieldRight">
                   {input.amount} א
                 </div>
                 <div>
                   <pre><AccountBalanceWalletIcon/> <a href={"../addresses/" + input.address + "/transactions"}>{input.address}</a></pre>
+                </div>
+                <div>
+                  <pre><CompareArrowsIcon/> <a href={"../transactions/" + input.txHashRef}>{input.txHashRef}</a></pre>
                 </div>
               </div>
             ))}
