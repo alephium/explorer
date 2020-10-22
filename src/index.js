@@ -22,11 +22,11 @@ import * as serviceWorker from './serviceWorker';
 
 import logo from './images/logo-h.svg';
 
-import AddressInfo from './components/AddressInfo'
-import Blocks from './components/Blocks'
-import BlockInfo from './components/BlockInfo'
+import AddressInfo from './sections/AddressInfo'
+import Blocks from './sections/Blocks'
+import BlockInfo from './sections/BlockInfo'
 import Navigator from './components/Navigator'
-import TransactionInfo from './components/TransactionInfo'
+import TransactionInfo from './sections/TransactionInfo'
 
 class App extends React.Component {
   render() {
