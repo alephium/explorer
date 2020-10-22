@@ -16,13 +16,15 @@
 
 import React from 'react';
 import PropTypes from "prop-types";
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { Link, withRouter} from 'react-router-dom'
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import styled from 'styled-components'
+
+import logo from '../images/logo-h.svg';
 
 class Navigator extends React.Component {
   static propTypes = {
@@ -50,7 +52,8 @@ class Navigator extends React.Component {
 
 
     return (
-      <AppBar position="static" color="default">
+      <SidebarContainer>
+        <img alt="alephium" src={logo} className="logo"/>
         <Tabs
           value={value}
           onChange={this.handleChange}
@@ -61,9 +64,18 @@ class Navigator extends React.Component {
           <Tab label="Addresses" icon={<AccountBalanceWalletIcon/>} disabled />
           <Tab label="Transactions" icon={<CompareArrowsIcon/>} disabled />
         </Tabs>
-      </AppBar>
+      </SidebarContainer>
     );
   }
 }
+
+const SidebarContainer = styled.div`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid palevioletred;
+  color: palevioletred;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+`
 
 export default withRouter(Navigator);
