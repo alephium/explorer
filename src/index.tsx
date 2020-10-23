@@ -17,7 +17,7 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { BrowserRouter as Router, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
@@ -43,7 +43,9 @@ const App = () => {
           <Content>
             <ThemeSwitcher currentTheme={theme} switchTheme={setTheme} />
             <main>
-              <Route exact path="/" component={Blocks} />
+              <Route exact path="/">
+                <Redirect to="/blocks" />
+              </Route>
               <Route exact path="/blocks" component={Blocks} />
               <Route path="/blocks/:id" component={BlockInfo} />
               <Route path="/addresses/:id" component={AddressInfo} />
