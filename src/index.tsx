@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom'
-import { ThemeProvider } from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
 import * as serviceWorker from './serviceWorker';
@@ -27,7 +27,7 @@ import ThemeSwitcher from './components/ThemeSwitcher'
 import AddressInfo from './sections/AddressInfo'
 import Blocks from './sections/Blocks'
 import BlockInfo from './sections/BlockInfo'
-import Sidebar from './components/Navigator'
+import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
 
 const App = () => {
@@ -38,21 +38,36 @@ const App = () => {
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
         <GlobalStyle />
-        <Sidebar/>
-        <div className="content">
-          <ThemeSwitcher currentTheme={theme} switchTheme={setTheme} />
-          <main>
-            <Route exact path="/" component={Blocks}/>
-            <Route exact path="/blocks" component={Blocks} />
-            <Route path="/blocks/:id" component={BlockInfo} />
-            <Route path="/addresses/:id" component={AddressInfo} />
-            <Route path="/transactions/:id" component={TransactionInfo} />
-          </main>
-        </div>
+        <MainContainer>
+          <Sidebar/>
+          <Content>
+            <ThemeSwitcher currentTheme={theme} switchTheme={setTheme} />
+            <main>
+              <Route exact path="/" component={Blocks} />
+              <Route exact path="/blocks" component={Blocks} />
+              <Route path="/blocks/:id" component={BlockInfo} />
+              <Route path="/addresses/:id" component={AddressInfo} />
+              <Route path="/transactions/:id" component={TransactionInfo} />
+            </main>
+          </Content>
+        </MainContainer>
       </ThemeProvider>
     </Router>
   )
 }
+
+const MainContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+`
+
+const Content = styled.main`
+  flex: 1;
+`
 
 ReactDOM.render(<App/>, document.getElementById('root'));
 
