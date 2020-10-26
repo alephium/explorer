@@ -15,6 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ExplorerClient } from "./explorer";
+import { useEffect, useRef } from 'react';
 
 export async function createClient() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
@@ -31,4 +32,24 @@ export async function createClient() {
   console.log('Connecting to: ' + client.host + ':' + client.port);
 
   return client;
+}
+
+export function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 }

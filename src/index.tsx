@@ -30,6 +30,7 @@ import BlockInfo from './sections/BlockInfo'
 import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
 import SearchBar from './components/SearchBar';
+import BlockSection from './sections/BlockSection';
 
 const App = () => {
 
@@ -48,7 +49,9 @@ const App = () => {
               <Route exact path="/">
                 <Redirect to="/blocks" />
               </Route>
-              <Route exact path="/blocks" component={Blocks} />
+              <Route exact path="/blocks">
+                <BlockSection />
+              </Route>
               <Route path="/blocks/:id" component={BlockInfo} />
               <Route path="/addresses/:id" component={AddressInfo} />
               <Route path="/transactions/:id" component={TransactionInfo} />
