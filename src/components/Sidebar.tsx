@@ -19,8 +19,11 @@ import { NavLink } from 'react-router-dom'
 import * as H from 'history'
 import styled, { useTheme } from 'styled-components'
 
-import logoLight from '../images/explorer-logo-light.svg';
-import logoDark from '../images/explorer-logo-dark.svg';
+import logoLight from '../images/explorer-logo-light.svg'
+import logoDark from '../images/explorer-logo-dark.svg'
+import blockIcon from '../images/block-icon.svg'
+import addressIcon from '../images/address-icon.svg'
+import transactionIcon from '../images/transaction-icon.svg'
 
 
 const Sidebar = () => {
@@ -30,9 +33,9 @@ const Sidebar = () => {
     <SidebarContainer>
       <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } />
       <Tabs>
-        <Tab to="/blocks">Blocks</Tab>
-        <Tab to="/addresses">Addresses</Tab> 
-        <Tab to="/transactions">Transactions</Tab>
+        <Tab to="/blocks"><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
+        <Tab to="/addresses"><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
+        <Tab to="/transactions"><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
       </Tabs>
     </SidebarContainer>
   );
@@ -62,22 +65,50 @@ const SidebarContainer = styled.div`
 `
 
 const Tabs = styled.div`
-  margin-top: 25px;
+  margin-top: 90px;
   display: flex;
   flex-direction: column;
 `
 
 const Tab = styled(NavLink)`
+  font-size: 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s ease;
+  position: relative;
+
+  color: ${( { theme }) => theme.textSecondary };
   &.active {
     color: ${( { theme }) => theme.textPrimary };
+
+    img {
+      filter: none;
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      width: 20px;
+      height: 3px;
+      position: absolute;
+      left: 40px;
+      bottom: -6px;
+      background: linear-gradient(to left, #6510F7, #F76110) border-box;
+    }
   }
-  color: ${( { theme }) => theme.textSecondary };
-  font-size: 1.2rem;
-  cursor: pointer;
-  margin-bottom: 5px;
   &:hover {
     color: ${({ theme }) => theme.textPrimary};
   }
+`
+
+const TabIcon = styled.img`
+  height: 25px;
+  width: 25px;
+  margin-right: 15px; 
+  filter: grayscale(100%);
 `
 
 export default Sidebar
