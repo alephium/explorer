@@ -50,7 +50,7 @@ const Toggle = styled.div`
   }
 
   svg {
-    padding: 5px;
+    margin: 5px;
     cursor: pointer;
   }
 `

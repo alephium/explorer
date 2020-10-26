@@ -46,11 +46,6 @@ interface TabProps {
 
 /* STYLES */
 
-interface StyledTabProps {
-  locationString: string
-  currentLocation: H.Location
-}
-
 const Logo = styled.img`
   height: 100px;
   width: 150px;
@@ -60,10 +55,10 @@ const SidebarContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  max-width: 200px;
+  max-width: 300px;
   padding: 0 20px;
   background-color: ${( { theme }) => theme.bgSecondary };
-  border-right: 1px solid ${( { theme }) => theme.borderPrimary };
+  border-right: 2px solid ${( { theme }) => theme.borderPrimary };
 `
 
 const Tabs = styled.div`

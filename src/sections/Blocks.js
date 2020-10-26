@@ -20,6 +20,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import PageTitle from '../components/PageTitle'
 import { createClient } from "../utils/util";
 
 const moment = require("moment");
@@ -50,6 +51,7 @@ class Blocks extends Component {
 
     return (
       <section>
+        <PageTitle text="Blocks" />
         <Grid container>
           {this.state.blocks.map(block => (
             <Grid item xs={6} className="content" key={block.hash} container justify="center">

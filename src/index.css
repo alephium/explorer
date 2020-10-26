@@ -7,6 +7,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 /* Typography */
 
 /* poppins-600 - latin */
@@ -67,6 +71,7 @@ body {
 
 
 /* Additional resets */
+
 button {
   outline: none;
   cursor: pointer;
@@ -74,4 +79,8 @@ button {
 
 a {
   text-decoration: none;
+}
+
+input {
+  outline: none;
 }

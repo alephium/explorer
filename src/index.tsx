@@ -29,6 +29,7 @@ import Blocks from './sections/Blocks'
 import BlockInfo from './sections/BlockInfo'
 import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
+import SearchBar from './components/SearchBar';
 
 const App = () => {
 
@@ -42,7 +43,8 @@ const App = () => {
           <Sidebar/>
           <Content>
             <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
-            <main>
+            <SearchBar />
+            <SectionWrapper>
               <Route exact path="/">
                 <Redirect to="/blocks" />
               </Route>
@@ -50,7 +52,7 @@ const App = () => {
               <Route path="/blocks/:id" component={BlockInfo} />
               <Route path="/addresses/:id" component={AddressInfo} />
               <Route path="/transactions/:id" component={TransactionInfo} />
-            </main>
+            </SectionWrapper>
           </Content>
         </MainContainer>
       </ThemeProvider>
@@ -86,6 +88,12 @@ const MainContainer = styled.div`
 
 const Content = styled.main`
   flex: 1;
+  max-width: 900px;
+  margin: 60px auto;
+`
+
+const SectionWrapper = styled.main`
+  margin-top: 100px;
 `
 
 ReactDOM.render(<App/>, document.getElementById('root'));

@@ -15,6 +15,7 @@
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.4",
     "bcurl": "~0.1.6",
+    "framer-motion": "^2.9.4",
     "moment": "^2.24.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
