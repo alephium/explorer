@@ -49,7 +49,7 @@ class Blocks extends Component {
     const loadingTextCSS = { display: this.state.loading ? "block" : "none" };
 
     return (
-      <div>
+      <section>
         <Grid container>
           {this.state.blocks.map(block => (
             <Grid item xs={6} className="content" key={block.hash} container justify="center">
@@ -76,7 +76,7 @@ class Blocks extends Component {
         >
           <span style={loadingTextCSS}>Loading...</span>
         </div>
-      </div>
+      </section>
     );
   }
 
