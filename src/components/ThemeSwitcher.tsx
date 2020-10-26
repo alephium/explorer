@@ -30,8 +30,8 @@ const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ currentTheme, switchTheme }) => (
   <Toggle>
-    <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={20} />
     <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={20} />
+    <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={20} />
   </Toggle>
 )
 

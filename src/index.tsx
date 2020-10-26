@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
@@ -32,8 +32,8 @@ import TransactionInfo from './sections/TransactionInfo'
 
 const App = () => {
 
-  const [theme, setTheme] = useState<ThemeType>('dark');
-
+  let [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
@@ -41,7 +41,7 @@ const App = () => {
         <MainContainer>
           <Sidebar/>
           <Content>
-            <ThemeSwitcher currentTheme={theme} switchTheme={setTheme} />
+            <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
             <main>
               <Route exact path="/">
                 <Redirect to="/blocks" />
@@ -57,6 +57,23 @@ const App = () => {
     </Router>
   )
 }
+
+/* Custom hooks */
+// Local storage hook
+
+function useStateWithLocalStorage<T>(localStorageKey: string, defaultValue: T) {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(localStorageKey) || defaultValue
+  )
+ 
+  React.useEffect(() => {
+    localStorage.setItem(localStorageKey, value as string);
+  }, [localStorageKey, value])
+ 
+  return [value, setValue]
+}
+
+/* Styles */
 
 const MainContainer = styled.div`
   position: absolute;
