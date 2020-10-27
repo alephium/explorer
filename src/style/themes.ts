@@ -8,6 +8,7 @@ export const darkTheme: DefaultTheme = {
 
   textPrimary: 'rgba(255, 255, 255, 0.8)',
   textSecondary: 'rgba(255, 255, 255, 0.35)',
+  textAccent: '#FFD036',
 
   bgPrimary: '#212126',
   bgSecondary: '#18191C',
@@ -22,6 +23,7 @@ export const lightTheme: DefaultTheme = {
   
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.50)',
+  textAccent: '#FF7B03',
 
   bgPrimary: 'white',
   bgSecondary: '#FAFAFA',

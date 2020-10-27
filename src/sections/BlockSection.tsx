@@ -14,23 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import Moment from 'react-moment'
 import styled from 'styled-components'
 import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
+import TightLink from '../components/TightLink'
+import { Block } from '../types/api'
 import { ExplorerClient } from '../utils/explorer'
 import { createClient, useInterval } from '../utils/util'
+import blockIcon from '../images/block-icon.svg'
 
 const BlockSection = () => {
-
   const [lastFetchTime, setLastFetchTime] = useState(moment())
-  const [blocks, setBlocks] = useState<any[]>([]) // TODO: define blocks type
+  const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
   let client = useRef<ExplorerClient>()
-
 
   // Fetching Data
   useEffect(() => {
@@ -67,33 +67,69 @@ const BlockSection = () => {
       <PageTitle title="Blocks" surtitle="Latest" />
       <RefreshTimer lastRefreshTimestamp={lastFetchTime.valueOf()} delay={20 * 1000} isLoading={loading}/>
       <Content>
-        <Grid container>
-          {blocks.map(block => (
-            <Grid item xs={6} className="content" key={block.hash} container justify="center">
-              <Card className="card">
-                <CardContent>
-                  <Typography className="title">
-                    <a href={"./blocks/" + block.hash}><pre>#{block.hash}</pre></a>
-                  </Typography>
-                  <Typography className="props" color="textSecondary">
-                    height: ⇪ {block.height}<br/>
-                    chain index: {block.chainFrom} ➡ {block.chainTo}
-                  </Typography>
-                  <Typography className="time">
-                    <Moment fromNow>{block.timestamp}</Moment> (<Moment format="YYYY/MM/DD HH:mm:ss">{block.timestamp}</Moment>)
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+
+        <Table>
+          <TableHeader>
+            <tr>
+              {['', 'Hash', 'Height', 'Chain index', 'Timestamp'].map((v) => <th>{v}</th>)}
+            </tr>
+          </TableHeader>
+          <TableBody>
+            {blocks.map(b =>
+              <tr>
+                <td><BlockIcon src={blockIcon} alt="Block"/></td>
+                <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
+                <td>{b.height}</td>
+                <td>{b.chainFrom} → {b.chainTo}</td>
+                <td><Moment fromNow>{b.timestamp}</Moment></td>
+              </tr>
+            )}
+          </TableBody>
+        </Table>
       </Content>
     </section>
   )
 }
 
 const Content = styled.div`
-  margin-top: 50px;
+  margin-top: 30px;
+`
+
+const Table = styled.table`
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse; 
+`
+
+const TableHeader = styled.thead`
+  font-weight: 400;
+  color: ${({theme}) => theme.textSecondary};
+  font-style: italic;
+
+  tr {
+    height: 60px;
+  }
+`
+
+const TableBody = styled.tbody`
+  color: ${({theme}) => theme.textPrimary};
+
+  tr {
+    td:nth-child(3), td:nth-child(4) {
+      color: ${({ theme }) => theme.textAccent};
+    }
+
+    border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
+
+    td {
+      padding: 10px 0;
+    }
+  }
+`
+
+const BlockIcon = styled.img`
+  height: 25px;
+  width: 25px;
 `
 
 export default BlockSection

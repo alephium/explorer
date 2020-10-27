@@ -41,21 +41,23 @@ const App = () => {
         <GlobalStyle />
         <MainContainer>
           <Sidebar/>
-          <Content>
+          <ContentWrapper>
             <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
-            <SearchBar />
-            <SectionWrapper>
-              <Route exact path="/">
-                <Redirect to="/blocks" />
-              </Route>
-              <Route exact path="/blocks">
-                <BlockSection />
-              </Route>
-              <Route path="/blocks/:id" component={BlockInfo} />
-              <Route path="/addresses/:id" component={AddressInfo} />
-              <Route path="/transactions/:id" component={TransactionInfo} />
-            </SectionWrapper>
-          </Content>
+            <Content>
+              <SearchBar />
+              <SectionWrapper>
+                <Route exact path="/">
+                  <Redirect to="/blocks" />
+                </Route>
+                <Route exact path="/blocks">
+                  <BlockSection />
+                </Route>
+                <Route path="/blocks/:id" component={BlockInfo} />
+                <Route path="/addresses/:id" component={AddressInfo} />
+                <Route path="/transactions/:id" component={TransactionInfo} />
+              </SectionWrapper>
+            </Content>
+          </ContentWrapper>
         </MainContainer>
       </ThemeProvider>
     </Router>
@@ -86,16 +88,21 @@ const MainContainer = styled.div`
   left: 0;
   bottom: 0;
   display: flex;
+  overflow: hidden;
 `
 
-const Content = styled.main`
+const ContentWrapper = styled.main`
   flex: 1;
+  overflow-y: scroll;
+`
+
+const Content = styled.div`
   max-width: 900px;
   margin: 60px auto;
 `
 
 const SectionWrapper = styled.main`
-  margin-top: 130px;
+  padding-top: 105px;
 `
 
 ReactDOM.render(<App/>, document.getElementById('root'));

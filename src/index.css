@@ -77,3 +77,7 @@ a {
 input {
   outline: none;
 }
+
+th {
+  font-weight: normal;
+}
