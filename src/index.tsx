@@ -25,7 +25,6 @@ import * as serviceWorker from './serviceWorker';
 
 import ThemeSwitcher from './components/ThemeSwitcher'
 import AddressInfo from './sections/AddressInfo'
-import Blocks from './sections/Blocks'
 import BlockInfo from './sections/BlockInfo'
 import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
@@ -96,7 +95,7 @@ const Content = styled.main`
 `
 
 const SectionWrapper = styled.main`
-  margin-top: 100px;
+  margin-top: 130px;
 `
 
 ReactDOM.render(<App/>, document.getElementById('root'));

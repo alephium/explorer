@@ -18,7 +18,9 @@ import { Card, CardContent, Grid, Typography } from '@material-ui/core'
 import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
 import Moment from 'react-moment'
+import styled from 'styled-components'
 import PageTitle from '../components/PageTitle'
+import RefreshTimer from '../components/RefreshTimer'
 import { ExplorerClient } from '../utils/explorer'
 import { createClient, useInterval } from '../utils/util'
 
@@ -26,6 +28,7 @@ const BlockSection = () => {
 
   const [lastFetchTime, setLastFetchTime] = useState(moment())
   const [blocks, setBlocks] = useState<any[]>([]) // TODO: define blocks type
+  const [loading, setLoading] = useState(false)
   let client = useRef<ExplorerClient>()
 
 
@@ -41,26 +44,29 @@ const BlockSection = () => {
       const from = to.clone().subtract(10, 'minutes')
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
 
+      setLoading(true)
       const blocks: any[] = await client.current.blocks(from.valueOf(), to.valueOf())
 
       blocks.sort(function (a: any, b: any) {
         return b.timestamp - a.timestamp;
       })
+      setLoading(false)
 
       setBlocks(blocks)
     }
 
     getBlocks()
-  })
-
-  const fetchData = () => setLastFetchTime(moment())
+  }, [lastFetchTime])
 
   // Polling
-  useInterval(fetchData, 20 * 1000)
+  const fetchData = () => setLastFetchTime(moment())
+  useInterval(fetchData, 20 * 1000, loading)
 
   return (
     <section>
-      <PageTitle text="Blocks" />
+      <PageTitle title="Blocks" surtitle="Latest" />
+      <RefreshTimer lastRefreshTimestamp={lastFetchTime.valueOf()} delay={20 * 1000} isLoading={loading}/>
+      <Content>
         <Grid container>
           {blocks.map(block => (
             <Grid item xs={6} className="content" key={block.hash} container justify="center">
@@ -81,9 +87,13 @@ const BlockSection = () => {
             </Grid>
           ))}
         </Grid>
+      </Content>
     </section>
   )
-
 }
+
+const Content = styled.div`
+  margin-top: 50px;
+`
 
 export default BlockSection
