@@ -15,7 +15,6 @@
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.6",
     "@types/styled-components": "^5.1.4",
-    "bcurl": "~0.1.6",
     "dayjs": "^1.9.4",
     "framer-motion": "^2.9.4",
     "lodash": "^4.17.20",

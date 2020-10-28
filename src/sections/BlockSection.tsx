@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import styled from 'styled-components'
@@ -22,12 +22,12 @@ import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
 import TightLink from '../components/TightLink'
 import { Block } from '../types/api'
-import { ExplorerClient } from '../utils/explorer'
-import { createClient, useInterval } from '../utils/util'
+import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
 import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { APIContext } from '..'
 
 dayjs.extend(relativeTime)
 
@@ -38,14 +38,12 @@ const BlockSection = () => {
   const [loading, setLoading] = useState(false)
   const [lastPollingTime, setLastPollingTime] = useState(dayjs())
 
-  let client = useRef<ExplorerClient>()
+  let client = useContext(APIContext).client
 
   // Fetching Data
   useEffect(() => {
     const getBlocks = async () => {
-      if (!client.current)  {
-        client.current = await createClient()
-      }
+      if (!client) return
 
       const to = fetchTs.to
       const from = fetchTs.from
@@ -53,7 +51,7 @@ const BlockSection = () => {
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
       
       setLoading(true)
-      const fetchedBlocks: any[] = await client.current.blocks(from.valueOf(), to.valueOf())
+      const fetchedBlocks: Block[] = await client.blocks(from.valueOf(), to.valueOf())
       console.log('Number of block fetched: ' + fetchedBlocks.length)
       
       setBlocks(prev => _.unionBy(fetchedBlocks, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp))
@@ -61,7 +59,7 @@ const BlockSection = () => {
     }
 
     getBlocks()
-  }, [fetchTs])
+  }, [client, fetchTs])
 
   // Polling
   const fetchData = useCallback(() => {

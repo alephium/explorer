@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { ExplorerClient } from "./explorer";
+import { AlephClient } from "./client";
 import { useEffect, useRef } from 'react';
 
 export async function createClient() {
@@ -24,10 +24,7 @@ export async function createClient() {
   let port = process.env.REACT_APP_ALEPHIUM_PORT;
   if (!port) { port = 9090; }
 
-  const client = new ExplorerClient({
-    host: address,
-    port: port
-  });
+  const client = new AlephClient(address, port);
 
   console.log('Connecting to: ' + client.host + ':' + client.port);
 

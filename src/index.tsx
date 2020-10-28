@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
@@ -30,35 +30,56 @@ import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
 import SearchBar from './components/SearchBar';
 import BlockSection from './sections/BlockSection';
+import { createClient } from './utils/util';
+import { AlephClient } from './utils/client';
+
+interface APIContextType {
+  client: AlephClient | undefined
+}
+
+export const APIContext = React.createContext<APIContextType>({ client: undefined })
 
 const App = () => {
 
-  let [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [client, setClient] = useState<AlephClient | undefined>(undefined)
+
+  useEffect(() => {
+    const initClient = async () => {
+      const client = await createClient()
+      setClient(client)
+    }
+    initClient()
+  }, [])
   
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
         <GlobalStyle />
-        <MainContainer>
-          <Sidebar/>
-          <ContentWrapper>
-            <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
-            <Content>
-              <SearchBar />
-              <SectionWrapper>
-                <Route exact path="/">
-                  <Redirect to="/blocks" />
-                </Route>
-                <Route exact path="/blocks">
-                  <BlockSection />
-                </Route>
-                <Route path="/blocks/:id" component={BlockInfo} />
-                <Route path="/addresses/:id" component={AddressInfo} />
-                <Route path="/transactions/:id" component={TransactionInfo} />
-              </SectionWrapper>
-            </Content>
-          </ContentWrapper>
-        </MainContainer>
+        <APIContext.Provider value={{ client }}>
+          <MainContainer>
+            <Sidebar/>
+            <ContentWrapper>
+              <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
+              <Content>
+                <SearchBar />
+                {client ?
+                <SectionWrapper>
+                  <Route exact path="/">
+                    <Redirect to="/blocks" />
+                  </Route>
+                  <Route exact path="/blocks">
+                    <BlockSection />
+                  </Route>
+                  <Route path="/blocks/:id" component={BlockInfo} />
+                  <Route path="/addresses/:id" component={AddressInfo} />
+                  <Route path="/transactions/:id" component={TransactionInfo} />
+                </SectionWrapper>
+                : null}
+              </Content>
+            </ContentWrapper>
+          </MainContainer>
+        </APIContext.Provider>
       </ThemeProvider>
     </Router>
   )

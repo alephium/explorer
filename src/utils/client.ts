@@ -14,32 +14,33 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const assert = require('bsert');
-const {Client} = require('bcurl');
+import { Block } from "../types/api";
 
-/**
- * Explorer Client
- * @extends {bcurl.Client}
- */
+export class AlephClient {
+  host: string
+  port: string
+  fetchAPI: (arg0: string) => any
 
-export class ExplorerClient extends Client {
+  constructor(host: string, port: string) {
+    this.host = host
+    this.port = port
 
-  block(id) {
-    return this.get('/blocks/' + id);
+    this.fetchAPI = async (path: string) => (await fetch('http://' + host + ':' + port + path)).json()
   }
 
-  blocks(fromTs, toTs) {
-    assert(typeof fromTs === 'number');
-    assert(typeof toTs === 'number');
-
-    return this.get('/blocks?fromTs=' + fromTs + '&toTs=' + toTs);
+  async block(id: string) {
+    return await this.fetchAPI('/blocks/' + id);
   }
 
-  address(id) {
-    return this.get('/addresses/' + id);
+  async blocks(fromTs: number, toTs: number) {
+    return await this.fetchAPI('/blocks?fromTs=' + fromTs + '&toTs=' + toTs) as Block[];
   }
 
-  transaction(id) {
-    return this.get('/transactions/' + id);
+  async address(id: string) {
+    return await this.fetchAPI('/addresses/' + id);
+  }
+
+  async transaction(id: string) {
+    return await this.fetchAPI('/transactions/' + id);
   }
 }
