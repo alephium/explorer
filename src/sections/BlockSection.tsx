@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import styled from 'styled-components'
@@ -33,9 +33,11 @@ dayjs.extend(relativeTime)
 
 const BlockSection = () => {
   const [fetchTs, setFetchTs] = useState({ from: dayjs().subtract(5, 'm'), to: dayjs() })
-  const [displayFromMinute, setDisplayFromMinute] = useState(5)
+  const [displayFromTs, setDisplayFromTs] = useState(dayjs().subtract(5, 'm'))
   const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
+  const [lastPollingTime, setLastPollingTime] = useState(dayjs())
+
   let client = useRef<ExplorerClient>()
 
   // Fetching Data
@@ -62,17 +64,25 @@ const BlockSection = () => {
   }, [fetchTs])
 
   // Polling
-  const fetchData = () => setFetchTs(prevState => ({ from: prevState.to, to: dayjs() }))
+  const fetchData = useCallback(() => {
+    setFetchTs({ from: dayjs(blocks[0].timestamp).add(1), to: dayjs() })
+    setLastPollingTime(dayjs())
+  }, [blocks])
 
-  useInterval(fetchData, 20 * 1000, loading)
+  useInterval(fetchData, 20 * 1000)
 
   // Load more
-  const loadMore = () => setDisplayFromMinute(prev => prev + 5)
+  const loadMore = useCallback(() => {
+    const previousDisplayFromTs = displayFromTs
+    const newDisplayFromTs = dayjs(displayFromTs).subtract(5, 'm')
+    setDisplayFromTs(newDisplayFromTs)
+    setFetchTs({ from: newDisplayFromTs, to: previousDisplayFromTs })
+  }, [displayFromTs])
 
   return (
     <section>
       <PageTitle title="Blocks" surtitle="Latest" />
-      <RefreshTimer lastRefreshTimestamp={fetchTs.to.valueOf()} delay={20 * 1000} isLoading={loading}/>
+      <RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>
       <Content>
         <Table>
           <TableHeader>
@@ -81,7 +91,7 @@ const BlockSection = () => {
             </tr>
           </TableHeader>
           <TableBody>
-            {blocks.filter(b => dayjs(b.timestamp).isAfter(dayjs().subtract(displayFromMinute, 'm'))).map(b =>
+            {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <tr key={b.hash}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
@@ -92,7 +102,7 @@ const BlockSection = () => {
             )}
           </TableBody>
         </Table>
-        {loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <LoadMore onClick={loadMore}><Plus />Load more...</LoadMore>}
+        <LoadMore>{loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <button onClick={loadMore}><Plus />Load more...</button>}</LoadMore>
       </Content>
     </section>
   )
@@ -143,7 +153,7 @@ const TableBody = styled.tbody`
     border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
 
     td {
-      padding: 10px 0;
+      height: 50px;
     }
   }
 `
@@ -153,13 +163,27 @@ const BlockIcon = styled.img`
   width: 25px;
 `
 
-const LoadMore = styled.a`
+const LoadMore = styled.span`
   display: flex;
   align-items: center;
   margin-top: 25px;
 
   svg {
     margin-right: 5px;
+  }
+
+  button {
+    background: transparent;
+    font-size: inherit;
+    color: ${({theme}) => theme.link};
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
+
+    &:hover {
+      color: ${({theme}) => theme.linkHighlight};
+    }
   }
 `
 
