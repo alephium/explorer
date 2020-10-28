@@ -16,7 +16,6 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom'
-import * as H from 'history'
 import styled, { useTheme } from 'styled-components'
 
 import logoLight from '../images/explorer-logo-light.svg'

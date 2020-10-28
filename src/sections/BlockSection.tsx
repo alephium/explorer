@@ -16,6 +16,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
+import _ from 'lodash'
 import styled from 'styled-components'
 import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
@@ -26,11 +27,13 @@ import { createClient, useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
 import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 dayjs.extend(relativeTime)
 
 const BlockSection = () => {
-  const [lastFetchTime, setLastFetchTime] = useState(dayjs())
+  const [fetchTs, setFetchTs] = useState({ from: dayjs().subtract(5, 'm'), to: dayjs() })
+  const [displayFromMinute, setDisplayFromMinute] = useState(5)
   const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
   let client = useRef<ExplorerClient>()
@@ -42,44 +45,44 @@ const BlockSection = () => {
         client.current = await createClient()
       }
 
-      const to = lastFetchTime
+      const to = fetchTs.to
+      const from = fetchTs.from
 
-      const from = to.subtract(10, 'm')
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
-
+      
       setLoading(true)
-      const blocks: any[] = await client.current.blocks(from.valueOf(), to.valueOf())
-
-      blocks.sort(function (a: any, b: any) {
-        return b.timestamp - a.timestamp;
-      })
+      const fetchedBlocks: any[] = await client.current.blocks(from.valueOf(), to.valueOf())
+      console.log('Number of block fetched: ' + fetchedBlocks.length)
+      
+      setBlocks(prev => _.unionBy(fetchedBlocks, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp))
       setLoading(false)
-
-      setBlocks(blocks)
     }
 
     getBlocks()
-  }, [lastFetchTime])
+  }, [fetchTs])
 
   // Polling
-  const fetchData = () => setLastFetchTime(dayjs())
+  const fetchData = () => setFetchTs(prevState => ({ from: prevState.to, to: dayjs() }))
+
   useInterval(fetchData, 20 * 1000, loading)
+
+  // Load more
+  const loadMore = () => setDisplayFromMinute(prev => prev + 5)
 
   return (
     <section>
       <PageTitle title="Blocks" surtitle="Latest" />
-      <RefreshTimer lastRefreshTimestamp={lastFetchTime.valueOf()} delay={20 * 1000} isLoading={loading}/>
+      <RefreshTimer lastRefreshTimestamp={fetchTs.to.valueOf()} delay={20 * 1000} isLoading={loading}/>
       <Content>
-
         <Table>
           <TableHeader>
             <tr>
-              {['', 'Hash', 'Height', 'Chain index', 'Timestamp'].map((v) => <th>{v}</th>)}
+              {['', 'Hash', 'Height', 'Chain index', 'Timestamp'].map((v) => <th key={v}>{v}</th>)}
             </tr>
           </TableHeader>
           <TableBody>
-            {blocks.map(b =>
-              <tr>
+            {blocks.filter(b => dayjs(b.timestamp).isAfter(dayjs().subtract(displayFromMinute, 'm'))).map(b =>
+              <tr key={b.hash}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
                 <td>{b.height}</td>
@@ -89,7 +92,7 @@ const BlockSection = () => {
             )}
           </TableBody>
         </Table>
-        <LoadMore><Plus />Load more...</LoadMore>
+        {loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <LoadMore onClick={loadMore}><Plus />Load more...</LoadMore>}
       </Content>
     </section>
   )
@@ -131,6 +134,10 @@ const TableBody = styled.tbody`
 
     td:nth-child(4) {
       width: 30%;
+    }
+
+    td:nth-child(5) {
+      width: 20%;
     }
 
     border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};

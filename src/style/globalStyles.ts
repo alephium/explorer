@@ -7,6 +7,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.body};
     transition: background-color 0.2s ease;
+
+    color: ${({ theme }) => theme.textPrimary};
   }
 
   a {
@@ -15,6 +17,16 @@ const GlobalStyle = createGlobalStyle`
 
     &:hover {
       color: ${({ theme }) => theme.linkHighlight};;
+    }
+  }
+
+  // Animations
+  @keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
     }
   }
 `

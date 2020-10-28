@@ -15,22 +15,19 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React from 'react'
-import { Link, LinkProps } from 'react-router-dom'
+import { Loader } from 'react-feather'
+import styled from 'styled-components'
 
-interface TightLinkProps extends LinkProps {
-  maxCharacters: number
-  text: string
+interface LoadingSpinnerProps {
+  size?: number;
 }
 
-const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...props}) => {
-  //const [formatedText, setFormatedText] = useState(props.text)
-  const midLength = Math.round(maxCharacters / 2)
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (
+  <Spinner size={size} />
+)
 
-  const formatedText = text.substr(0, midLength) + '...' + text.substr(text.length - midLength, text.length)
+const Spinner = styled(Loader)`
+  animation: spin 1s infinite;
+`
 
-  return (
-    <Link {...props}>{formatedText}</Link>
-  )
-}
-
-export default TightLink
+export default LoadingSpinner

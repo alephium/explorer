@@ -18,6 +18,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useInterval } from '../utils/util'
+import LoadingSpinner from './LoadingSpinner'
 
 interface RefreshTimerProps {
   lastRefreshTimestamp: number,
@@ -27,12 +28,12 @@ interface RefreshTimerProps {
 
 const RefreshTimer: React.FC<RefreshTimerProps> = ({ lastRefreshTimestamp, delay, isLoading }) => {
   const [timeLeft, setTimeLeft] = useState(delay/1000)
-
+  
   const updateTimeLeft = () => setTimeLeft(Math.round((lastRefreshTimestamp + delay - Date.now())/1000))
   useInterval(updateTimeLeft, 1000)
 
   return (
-    isLoading || timeLeft <= 0 ? <Timer>Loading...</Timer>
+    isLoading || timeLeft <= 0 ? <Timer><LoadingSpinner size={14} />Loading...</Timer>
     : <Timer>Refreshing in {timeLeft}s...</Timer>
   )
 }
@@ -40,5 +41,11 @@ const RefreshTimer: React.FC<RefreshTimerProps> = ({ lastRefreshTimestamp, delay
 const Timer = styled.span`
   color: ${({ theme }) => theme.textSecondary};
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: 5px;
+  }
 `
 export default RefreshTimer
