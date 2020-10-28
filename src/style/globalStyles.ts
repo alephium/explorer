@@ -10,7 +10,12 @@ const GlobalStyle = createGlobalStyle`
   }
 
   a {
-    color: #53A9F5;
+    color: ${({ theme }) => theme.link};;
+    cursor: pointer;
+
+    &:hover {
+      color: ${({ theme }) => theme.linkHighlight};;
+    }
   }
 `
 

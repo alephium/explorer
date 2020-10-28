@@ -12,6 +12,9 @@ declare module 'styled-components' {
     textSecondary: string,
     textAccent: string,
 
+    link: string,
+    linkHighlight: string,
+
     bgPrimary: string,
     bgSecondary: string,
 

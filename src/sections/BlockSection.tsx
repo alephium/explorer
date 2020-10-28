@@ -25,6 +25,7 @@ import { Block } from '../types/api'
 import { ExplorerClient } from '../utils/explorer'
 import { createClient, useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
+import { Plus } from 'react-feather'
 
 const BlockSection = () => {
   const [lastFetchTime, setLastFetchTime] = useState(moment())
@@ -86,6 +87,7 @@ const BlockSection = () => {
             )}
           </TableBody>
         </Table>
+        <LoadMore><Plus />Load more...</LoadMore>
       </Content>
     </section>
   )
@@ -106,6 +108,12 @@ const TableHeader = styled.thead`
   color: ${({theme}) => theme.textSecondary};
   font-style: italic;
 
+  th {
+    position: sticky;
+    top: 0;
+    background-color: ${({ theme }) => theme.bgPrimary }
+  }
+
   tr {
     height: 60px;
   }
@@ -119,6 +127,10 @@ const TableBody = styled.tbody`
       color: ${({ theme }) => theme.textAccent};
     }
 
+    td:nth-child(4) {
+      width: 30%;
+    }
+
     border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
 
     td {
@@ -130,6 +142,16 @@ const TableBody = styled.tbody`
 const BlockIcon = styled.img`
   height: 25px;
   width: 25px;
+`
+
+const LoadMore = styled.a`
+  display: flex;
+  align-items: center;
+  margin-top: 25px;
+
+  svg {
+    margin-right: 5px;
+  }
 `
 
 export default BlockSection
