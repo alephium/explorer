@@ -14,9 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import moment from 'moment'
 import React, { useEffect, useRef, useState } from 'react'
-import Moment from 'react-moment'
+import dayjs from 'dayjs'
 import styled from 'styled-components'
 import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
@@ -26,9 +25,12 @@ import { ExplorerClient } from '../utils/explorer'
 import { createClient, useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
 import { Plus } from 'react-feather'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 const BlockSection = () => {
-  const [lastFetchTime, setLastFetchTime] = useState(moment())
+  const [lastFetchTime, setLastFetchTime] = useState(dayjs())
   const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
   let client = useRef<ExplorerClient>()
@@ -42,7 +44,7 @@ const BlockSection = () => {
 
       const to = lastFetchTime
 
-      const from = to.clone().subtract(10, 'minutes')
+      const from = to.subtract(10, 'm')
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
 
       setLoading(true)
@@ -60,7 +62,7 @@ const BlockSection = () => {
   }, [lastFetchTime])
 
   // Polling
-  const fetchData = () => setLastFetchTime(moment())
+  const fetchData = () => setLastFetchTime(dayjs())
   useInterval(fetchData, 20 * 1000, loading)
 
   return (
@@ -82,7 +84,7 @@ const BlockSection = () => {
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
                 <td>{b.height}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>
-                <td><Moment fromNow>{b.timestamp}</Moment></td>
+                <td>{dayjs().to(b.timestamp)}</td>
               </tr>
             )}
           </TableBody>
