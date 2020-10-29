@@ -4,14 +4,6 @@ export interface Block {
   chainFrom: number
   chainTo: number
   timestamp: number
-}
-
-export interface BlockInfo {
-  hash: string
-  height: number
-  chainFrom: number
-  chainTo: number
-  timestamp: number
   transactions: Transaction[]
 }
 

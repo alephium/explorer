@@ -83,12 +83,13 @@ const BlockSection = () => {
       <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
         <Table>
-          <TableHeader headerTitles={['', 'Hash', 'Height', 'Chain index', 'Timestamp']} />
+          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <tr key={b.hash}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
+                <td>{b.transactions.length}</td>
                 <td>{b.height}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>
                 <td>{dayjs().to(b.timestamp)}</td>
@@ -111,19 +112,14 @@ const TableBodyCustomStyles: TDStyle[] = [
     tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
-    `
-  },
-  { 
-    tdPos: 4,
-    style: css`
-      color: ${({ theme }) => theme.textAccent};
-      width: 30%;
+      font-weight: 600;
+      width: 15%;
     `
   },
   { 
     tdPos: 5,
     style: css`
-      width: 20%;
+      width: 30%;
     `
   }
 ]

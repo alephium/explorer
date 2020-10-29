@@ -21,11 +21,12 @@ import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle from '../components/PageTitle'
 import { Table, TableHeader, TDStyle, TableBody } from '../components/Table'
-import { BlockInfo } from '../types/api'
+import { Block } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import TightLink from '../components/TightLink'
 import { ArrowRight } from 'react-feather'
 import Badge from '../components/Badge'
+import { APIError } from '../utils/client'
 
 interface ParamTypes {
   id: string
@@ -33,15 +34,20 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const [blockInfo, setBlockInfo] = useState<BlockInfo>()
+  const [blockInfo, setBlockInfo] = useState<Block & APIError>()
   const client = useContext(APIContext).client
 
   useEffect(() => {
-    (async () => setBlockInfo(await client.block(id)))()
+    (async () => {
+      setBlockInfo(await client.block(id))
+    })()
   }, [id, client])
+
+  console.log(blockInfo)
 
   return (
     <section>
+      {!blockInfo?.status ? <>
       <PageTitle title="Block" />
       <Table>
         <TableBody tdStyles={BlockTableBodyCustomStyles}>
@@ -68,6 +74,7 @@ const BlockInfoSection = () => {
           ))}
         </TableBody>
       </Table>
+      </> : <span>{blockInfo?.detail}</span>}
     </section>
   )
 }

@@ -16,24 +16,32 @@
 
 import { Block } from "../types/api";
 
+export interface APIError {
+  status: number
+  detail: string
+}
+
 export class AlephClient {
   host: string
   port: string
-  fetchAPI: (arg0: string) => any
+  fetchAPI: <T>(path: string) => Promise<T & APIError>
 
   constructor(host: string, port: string) {
     this.host = host
     this.port = port
 
-    this.fetchAPI = async (path: string) => (await fetch('http://' + host + ':' + port + path)).json()
+    this.fetchAPI = async function <T>(path: string) {
+      const resp = await fetch('http://' + host + ':' + port + path)
+      return await resp.json() as Promise<T>
+    }
   }
 
   async block(id: string) {
-    return await this.fetchAPI('/blocks/' + id);
+    return await this.fetchAPI<Block>('/blocks/' + id);
   }
 
   async blocks(fromTs: number, toTs: number) {
-    return await this.fetchAPI('/blocks?fromTs=' + fromTs + '&toTs=' + toTs) as Block[];
+    return await this.fetchAPI<Block[]>('/blocks?fromTs=' + fromTs + '&toTs=' + toTs);
   }
 
   async address(id: string) {
