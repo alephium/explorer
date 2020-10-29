@@ -15,6 +15,7 @@ export const darkTheme: DefaultTheme = {
 
   bgPrimary: '#212126',
   bgSecondary: '#18191C',
+  bgHighlight: 'rgba(0, 0, 0, 0.1)',
 
   borderPrimary: '#34353A',
   borderHighlight: '#585962'
@@ -33,6 +34,7 @@ export const lightTheme: DefaultTheme = {
 
   bgPrimary: 'white',
   bgSecondary: '#FAFAFA',
+  bgHighlight: 'rgba(0, 0, 0, 0.02)',
 
   borderPrimary: '#F2F2F3',
   borderHighlight: '#D1D1D4'

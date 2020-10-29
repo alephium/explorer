@@ -34,6 +34,10 @@ export const Table = styled.table`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
+
+  td, th {
+    padding: 0 5px;
+  }
 `
 
 export const StyledTableHeader = styled.thead`
@@ -58,19 +62,23 @@ export interface TDStyle {
 }
 
 export interface TableBopyProps {
-  tdStyles: TDStyle[]
+  tdStyles?: TDStyle[]
 }
 
 export const TableBody = styled.tbody<TableBopyProps>`
   color: ${({theme}) => theme.textPrimary};
 
   tr {
-    ${props => props.tdStyles.map(s => css`td:nth-child(${s.tdPos}) { ${s.style} }`)}
+    ${props => props.tdStyles ? props.tdStyles.map(s => css`td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
 
     border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
 
     td {
       height: 50px;
+    }
+
+    &:hover {
+      background-color: ${({ theme }) => theme.bgHighlight};
     }
   }
 `

@@ -43,19 +43,19 @@ const BlockInfoSection = () => {
   return (
     <section>
       <PageTitle title="Block" />
-      <List>
-        <tbody>
-          <Row><td>Hash</td><HighlightedCell>{blockInfo?.hash}</HighlightedCell></Row>
-          <Row><td>Height</td><td>{blockInfo?.height}</td></Row>
-          <Row><td>Chain Index</td><td>{blockInfo?.chainFrom} → {blockInfo?.chainTo}</td></Row>
-          <Row><td>Nb. of transactions</td><td>{blockInfo?.transactions.length}</td></Row>
-          <Row><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></Row>
-        </tbody>
-      </List>
+      <Table>
+        <TableBody tdStyles={BlockTableBodyCustomStyles}>
+          <tr><td>Hash</td><HighlightedCell>{blockInfo?.hash}</HighlightedCell></tr>
+          <tr><td>Height</td><td>{blockInfo?.height}</td></tr>
+          <tr><td>Chain Index</td><td>{blockInfo?.chainFrom} → {blockInfo?.chainTo}</td></tr>
+          <tr><td>Nb. of transactions</td><td>{blockInfo?.transactions.length}</td></tr>
+          <tr><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
+        </TableBody>
+      </Table>
       <Subtitle>Transactions</Subtitle>
       <Table>
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
-        <TableBody tdStyles={TableBodyCustomStyles}>
+        <TableBody tdStyles={TXTableBodyCustomStyles}>
           {blockInfo?.transactions.map(t => (
             <tr key={t.hash}>
               <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
@@ -73,23 +73,6 @@ const BlockInfoSection = () => {
 }
 
 
-const List = styled.table`
-  width: 100%;
-  border-collapse: collapse; 
-`
-
-const Row = styled.tr`
-  height: 50px;
-  border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
-
-  td:nth-child(1) {
-    width: 30%;
-  }
-
-  td:nth-child(2) {
-    font-weight: 500;
-  }
-`
 
 const HighlightedCell = styled.td`
   font-weight: bold;
@@ -105,7 +88,37 @@ const TransactionIcon = styled.img`
   width: 25px;
 `
 
-const TableBodyCustomStyles: TDStyle[] = [
+const BlockTableBodyCustomStyles: TDStyle[] = [
+  { 
+    tdPos: 1,
+    style: css`
+      width: 30%;
+    `
+  },
+  { 
+    tdPos: 2,
+    style: css`
+      font-weight: 500;
+    `
+  },
+  { 
+    tdPos: 4,
+    style: css`
+      text-align: center;
+      color: ${({ theme }) => theme.textSecondary};
+      width: 15%;
+    `
+  },
+  { 
+    tdPos: 5,
+    style: css`
+      color: ${({ theme }) => theme.textAccent};
+      width: 30%;
+    `
+  }
+]
+
+const TXTableBodyCustomStyles: TDStyle[] = [
   { 
     tdPos: 2,
     style: css`

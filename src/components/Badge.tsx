@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React, { FC } from 'react'
-import styled from 'styled-components'
+import styled, { DefaultTheme } from 'styled-components'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
@@ -30,7 +30,7 @@ let Badge: FC<BadgeProps> = ({ children, className }) => (
   </div>
 )
 
-const getBadgeColor = (badgeType: BadgeType) => {
+const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   let backgroundColor
   let color
 
@@ -44,8 +44,8 @@ const getBadgeColor = (badgeType: BadgeType) => {
       color = 'rgba(243, 113, 93, 1)'
       break
     case 'neutral':
-      backgroundColor = 'rgba(101, 16, 247, 0.28)'
-      color = 'rgba(255, 255, 255, 0.8)'
+      backgroundColor = theme.name === 'dark' ? 'rgba(101, 16, 247, 0.28)' : 'rgba(101, 16, 247, 0.6)'
+      color = theme.name === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 1)'
       break
     case 'neutralHighlight':
       backgroundColor = 'rgba(101, 16, 247, 1)'
@@ -56,8 +56,8 @@ const getBadgeColor = (badgeType: BadgeType) => {
 }
 
 Badge = styled(Badge)`
-  background-color: ${( { type } ) => getBadgeColor(type).backgroundColor};
-  color: ${( { type } ) => getBadgeColor(type).color};
+  background-color: ${( { type, theme } ) => getBadgeColor(type, theme).backgroundColor};
+  color: ${( { type, theme } ) => getBadgeColor(type, theme).color};
   text-align: center;
   padding: 6px;
   border-radius: 3px;
