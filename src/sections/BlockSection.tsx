@@ -17,7 +17,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import _ from 'lodash'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
 import TightLink from '../components/TightLink'
@@ -28,6 +28,7 @@ import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { APIContext } from '..'
+import { Table, TableBody, TableHeader, TDStyle } from '../style/globalStyles'
 
 dayjs.extend(relativeTime)
 
@@ -79,8 +80,7 @@ const BlockSection = () => {
 
   return (
     <section>
-      <PageTitle title="Blocks" surtitle="Latest" />
-      <RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>
+      <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
         <Table>
           <TableHeader>
@@ -88,7 +88,7 @@ const BlockSection = () => {
               {['', 'Hash', 'Height', 'Chain index', 'Timestamp'].map((v) => <th key={v}>{v}</th>)}
             </tr>
           </TableHeader>
-          <TableBody>
+          <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <tr key={b.hash}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
@@ -110,51 +110,27 @@ const Content = styled.div`
   margin-top: 30px;
 `
 
-const Table = styled.table`
-  width: 100%;
-  text-align: left;
-  border-collapse: collapse; 
-`
-
-const TableHeader = styled.thead`
-  font-weight: 400;
-  color: ${({theme}) => theme.textSecondary};
-  font-style: italic;
-
-  th {
-    position: sticky;
-    top: 0;
-    background-color: ${({ theme }) => theme.bgPrimary }
-  }
-
-  tr {
-    height: 60px;
-  }
-`
-
-const TableBody = styled.tbody`
-  color: ${({theme}) => theme.textPrimary};
-
-  tr {
-    td:nth-child(3), td:nth-child(4) {
+const TableBodyCustomStyles: TDStyle[] = [
+  { 
+    tdIndex: 3,
+    style: css`
       color: ${({ theme }) => theme.textAccent};
-    }
-
-    td:nth-child(4) {
+    `
+  },
+  { 
+    tdIndex: 4,
+    style: css`
+      color: ${({ theme }) => theme.textAccent};
       width: 30%;
-    }
-
-    td:nth-child(5) {
+    `
+  },
+  { 
+    tdIndex: 5,
+    style: css`
       width: 20%;
-    }
-
-    border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
-
-    td {
-      height: 50px;
-    }
+    `
   }
-`
+]
 
 const BlockIcon = styled.img`
   height: 25px;

@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
+import dayjs from 'dayjs'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -40,26 +41,43 @@ const BlockInfoSection = () => {
       <List>
         <tbody>
           <Row><td>Hash</td><HighlightedCell>{blockInfo?.hash}</HighlightedCell></Row>
-          <Row></Row>
-          <Row></Row>
+          <Row><td>Height</td><td>{blockInfo?.height}</td></Row>
+          <Row><td>Chain Index</td><td>{blockInfo?.chainFrom} → {blockInfo?.chainTo}</td></Row>
+          <Row><td>Nb. of transactions</td><td>{blockInfo?.transactions.length}</td></Row>
+          <Row><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></Row>
         </tbody>
       </List>
+      <Subtitle>Transactions</Subtitle>
     </section>
   )
 }
 
 
 const List = styled.table`
-
+  width: 100%;
+  border-collapse: collapse; 
 `
 
 const Row = styled.tr`
-  height: 60px;
+  height: 50px;
+  border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
+
+  td:nth-child(1) {
+    width: 30%;
+  }
+
+  td:nth-child(2) {
+    font-weight: 500;
+  }
 `
 
 const HighlightedCell = styled.td`
   font-weight: bold;
   color: ${({ theme }) => theme.textAccent };
+`
+
+const Subtitle = styled.h2`
+  margin-top: 40px;
 `
 
 export default BlockInfoSection

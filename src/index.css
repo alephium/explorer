@@ -51,6 +51,19 @@ body {
        url('../src/fonts/WorkSans-Regular.woff') format('woff'), /* Modern Browsers */
        url('../src/fonts/WorkSans-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
 }
+
+/* work-sans-medium - latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+       url('../src/fonts/WorkSans-Medium.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/WorkSans-Medium.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+
 /* work-sans-600 - latin */
 @font-face {
   font-family: 'Work Sans';
