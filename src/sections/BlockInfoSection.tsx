@@ -24,9 +24,10 @@ import { Table, TableHeader, TDStyle, TableBody } from '../components/Table'
 import { Block } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import TightLink from '../components/TightLink'
-import { ArrowRight } from 'react-feather'
+import { ArrowRight, ChevronDown } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
+import { TextButton } from '../components/Buttons'
 
 interface ParamTypes {
   id: string
@@ -42,8 +43,6 @@ const BlockInfoSection = () => {
       setBlockInfo(await client.block(id))
     })()
   }, [id, client])
-
-  console.log(blockInfo)
 
   return (
     <section>
@@ -63,14 +62,17 @@ const BlockInfoSection = () => {
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
         <TableBody tdStyles={TXTableBodyCustomStyles}>
           {blockInfo?.transactions.map(t => (
-            <tr key={t.hash}>
-              <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
-              <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
-              <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
-              <td><ArrowRight size={15}/></td>
-              <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-              <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
-            </tr> 
+            <>
+              <tr key={t.hash}>
+                <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
+                <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
+                <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
+                <td><ArrowRight size={15} /></td>
+                <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
+                <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
+                <td><DetailToggle size={20} /></td>
+              </tr> 
+            </>
           ))}
         </TableBody>
       </Table>
@@ -155,5 +157,9 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const DetailToggle = styled(ChevronDown)`
+  color: ${({ theme }) => theme.textPrimary };
+`
 
 export default BlockInfoSection

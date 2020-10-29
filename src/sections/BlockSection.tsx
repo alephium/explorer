@@ -29,6 +29,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { APIContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
+import { TextButton } from '../components/Buttons'
 
 dayjs.extend(relativeTime)
 
@@ -97,7 +98,7 @@ const BlockSection = () => {
             )}
           </TableBody>
         </Table>
-        <LoadMore>{loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <button onClick={loadMore}><Plus />Load more...</button>}</LoadMore>
+        <LoadMore>{loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <TextButton onClick={loadMore}><Plus />Load more...</TextButton>}</LoadMore>
       </Content>
     </section>
   )
@@ -136,20 +137,6 @@ const LoadMore = styled.span`
 
   svg {
     margin-right: 5px;
-  }
-
-  button {
-    background: transparent;
-    font-size: inherit;
-    color: ${({theme}) => theme.link};
-    display: flex;
-    align-items: center;
-    padding: 0;
-    border: 0;
-
-    &:hover {
-      color: ${({theme}) => theme.linkHighlight};
-    }
   }
 `
 

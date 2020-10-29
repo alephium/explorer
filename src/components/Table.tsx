@@ -34,9 +34,14 @@ export const Table = styled.table`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
+  vertical-align: middle;
 
   td, th {
     padding: 0 5px;
+  }
+
+  svg {
+    vertical-align: middle;
   }
 `
 
