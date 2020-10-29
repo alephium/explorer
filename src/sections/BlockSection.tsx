@@ -28,7 +28,7 @@ import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { APIContext } from '..'
-import { Table, TableBody, TableHeader, TDStyle } from '../style/globalStyles'
+import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 
 dayjs.extend(relativeTime)
 
@@ -83,11 +83,7 @@ const BlockSection = () => {
       <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
         <Table>
-          <TableHeader>
-            <tr>
-              {['', 'Hash', 'Height', 'Chain index', 'Timestamp'].map((v) => <th key={v}>{v}</th>)}
-            </tr>
-          </TableHeader>
+          <TableHeader headerTitles={['', 'Hash', 'Height', 'Chain index', 'Timestamp']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <tr key={b.hash}>
@@ -112,20 +108,20 @@ const Content = styled.div`
 
 const TableBodyCustomStyles: TDStyle[] = [
   { 
-    tdIndex: 3,
+    tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
     `
   },
   { 
-    tdIndex: 4,
+    tdPos: 4,
     style: css`
       color: ${({ theme }) => theme.textAccent};
       width: 30%;
     `
   },
   { 
-    tdIndex: 5,
+    tdPos: 5,
     style: css`
       width: 20%;
     `

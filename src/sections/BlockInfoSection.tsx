@@ -17,10 +17,14 @@
 import dayjs from 'dayjs'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle from '../components/PageTitle'
+import { Table, TableHeader, TDStyle, TableBody } from '../components/Table'
 import { BlockInfo } from '../types/api'
+import transactionIcon from '../images/transaction-icon.svg'
+import TightLink from '../components/TightLink'
+import { ArrowRight } from 'react-feather'
 
 interface ParamTypes {
   id: string
@@ -48,6 +52,21 @@ const BlockInfoSection = () => {
         </tbody>
       </List>
       <Subtitle>Transactions</Subtitle>
+      <Table>
+        <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
+        <TableBody tdStyles={TableBodyCustomStyles}>
+          {blockInfo?.transactions.map(t => (
+            <tr key={t.hash}>
+              <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
+              <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
+              <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
+              <td><ArrowRight size={15}/></td>
+              <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
+              <td>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)}</td>
+            </tr> 
+          ))}
+        </TableBody>
+      </Table>
     </section>
   )
 }
@@ -79,5 +98,33 @@ const HighlightedCell = styled.td`
 const Subtitle = styled.h2`
   margin-top: 40px;
 `
+
+const TransactionIcon = styled.img`
+  height: 25px;
+  width: 25px;
+`
+
+const TableBodyCustomStyles: TDStyle[] = [
+  { 
+    tdPos: 3,
+    style: css`
+      color: ${({ theme }) => theme.textAccent};
+    `
+  },
+  { 
+    tdPos: 4,
+    style: css`
+      text-align: center;
+      color: ${({ theme }) => theme.textSecondary};
+      width: 20%;
+    `
+  },
+  { 
+    tdPos: 5,
+    style: css`
+      color: ${({ theme }) => theme.textAccent};
+    `
+  }
+]
 
 export default BlockInfoSection
