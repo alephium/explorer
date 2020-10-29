@@ -43,8 +43,6 @@ const BlockSection = () => {
   // Fetching Data
   useEffect(() => {
     const getBlocks = async () => {
-      if (!client) return
-
       const to = fetchTs.to
       const from = fetchTs.from
 
@@ -63,8 +61,10 @@ const BlockSection = () => {
 
   // Polling
   const fetchData = useCallback(() => {
-    setFetchTs({ from: dayjs(blocks[0].timestamp).add(1), to: dayjs() })
-    setLastPollingTime(dayjs())
+    if (blocks.length > 0) {
+      setFetchTs({ from: dayjs(blocks[0].timestamp).add(1), to: dayjs() })
+      setLastPollingTime(dayjs())
+    }
   }, [blocks])
 
   useInterval(fetchData, 20 * 1000)

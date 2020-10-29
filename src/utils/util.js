@@ -17,7 +17,7 @@
 import { AlephClient } from "./client";
 import { useEffect, useRef } from 'react';
 
-export async function createClient() {
+export function createClient() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
   if (!address) { address = 'localhost'; }
 
