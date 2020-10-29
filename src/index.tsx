@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
@@ -25,31 +25,33 @@ import * as serviceWorker from './serviceWorker';
 
 import ThemeSwitcher from './components/ThemeSwitcher'
 import AddressInfo from './sections/AddressInfo'
-import BlockInfo from './sections/BlockInfo'
 import Sidebar from './components/Sidebar'
 import TransactionInfo from './sections/TransactionInfo'
 import SearchBar from './components/SearchBar';
 import BlockSection from './sections/BlockSection';
 import { createClient } from './utils/util';
 import { AlephClient } from './utils/client';
+import BlockInfoSection from './sections/BlockInfoSection';
 
 interface APIContextType {
   client: AlephClient
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: createClient() })
+export const APIContext = React.createContext<APIContextType>({ client: new AlephClient("", "") })
 
 const App = () => {
 
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [client, setClient] = useState<AlephClient>(new AlephClient("", ""))
 
-  const client = useRef<AlephClient>(createClient())
+  useEffect(() => { setClient(createClient()) }, [])
   
   return (
+    client.host !== "" ?
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
         <GlobalStyle />
-        <APIContext.Provider value={{ client: client.current }}>
+        <APIContext.Provider value={{ client }}>
           <MainContainer>
             <Sidebar/>
             <ContentWrapper>
@@ -63,7 +65,7 @@ const App = () => {
                   <Route exact path="/blocks">
                     <BlockSection />
                   </Route>
-                  <Route path="/blocks/:id" component={BlockInfo} />
+                  <Route path="/blocks/:id" component={BlockInfoSection} />
                   <Route path="/addresses/:id" component={AddressInfo} />
                   <Route path="/transactions/:id" component={TransactionInfo} />
                 </SectionWrapper>
@@ -73,6 +75,7 @@ const App = () => {
         </APIContext.Provider>
       </ThemeProvider>
     </Router>
+    : null
   )
 }
 
