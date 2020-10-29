@@ -1,0 +1,67 @@
+// Copyright 2018 The Alephium Authors
+// This file is part of the alephium project.
+//
+// The library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the library. If not, see <http://www.gnu.org/licenses/>.
+
+import React, { FC } from 'react'
+import styled from 'styled-components'
+
+type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
+
+interface BadgeProps {
+  type: BadgeType,
+  className?: string
+}
+
+let Badge: FC<BadgeProps> = ({ children, className }) => (
+  <div className={className}>
+    {children}
+  </div>
+)
+
+const getBadgeColor = (badgeType: BadgeType) => {
+  let backgroundColor
+  let color
+
+  switch (badgeType) {
+    case 'plus':
+      backgroundColor = 'rgba(93, 203, 126, 0.12)'
+      color = 'rgba(93, 203, 126, 1)'
+      break
+    case 'minus':
+      backgroundColor = 'rgba(243, 113, 93, 0.1)'
+      color = 'rgba(243, 113, 93, 1)'
+      break
+    case 'neutral':
+      backgroundColor = 'rgba(101, 16, 247, 0.28)'
+      color = 'rgba(255, 255, 255, 0.8)'
+      break
+    case 'neutralHighlight':
+      backgroundColor = 'rgba(101, 16, 247, 1)'
+      color = 'rgba(255, 255, 255, 1)'
+  }
+
+  return { backgroundColor, color }
+}
+
+Badge = styled(Badge)`
+  background-color: ${( { type } ) => getBadgeColor(type).backgroundColor};
+  color: ${( { type } ) => getBadgeColor(type).color};
+  text-align: center;
+  padding: 6px;
+  border-radius: 3px;
+  font-weight: 600;
+`
+
+export default Badge

@@ -25,6 +25,7 @@ import { BlockInfo } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import TightLink from '../components/TightLink'
 import { ArrowRight } from 'react-feather'
+import Badge from '../components/Badge'
 
 interface ParamTypes {
   id: string
@@ -62,7 +63,7 @@ const BlockInfoSection = () => {
               <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
               <td><ArrowRight size={15}/></td>
               <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-              <td>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)}</td>
+              <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
             </tr> 
           ))}
         </TableBody>
@@ -106,9 +107,16 @@ const TransactionIcon = styled.img`
 
 const TableBodyCustomStyles: TDStyle[] = [
   { 
+    tdPos: 2,
+    style: css`
+      width: 30%;
+    `
+  },
+  { 
     tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
+      width: 10%;
     `
   },
   { 
@@ -116,13 +124,14 @@ const TableBodyCustomStyles: TDStyle[] = [
     style: css`
       text-align: center;
       color: ${({ theme }) => theme.textSecondary};
-      width: 20%;
+      width: 15%;
     `
   },
   { 
     tdPos: 5,
     style: css`
       color: ${({ theme }) => theme.textAccent};
+      width: 30%;
     `
   }
 ]
