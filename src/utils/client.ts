@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Block } from "../types/api";
+import { Block, Transaction, Address } from "../types/api";
 
 export interface APIError {
   status: number
@@ -45,10 +45,10 @@ export class AlephClient {
   }
 
   async address(id: string) {
-    return await this.fetchAPI('/addresses/' + id);
+    return await this.fetchAPI<Address>('/addresses/' + id);
   }
 
   async transaction(id: string) {
-    return await this.fetchAPI('/transactions/' + id);
+    return await this.fetchAPI<Transaction>('/transactions/' + id);
   }
 }

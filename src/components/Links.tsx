@@ -14,7 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react'
+import React, { FC } from 'react'
+import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
 
 interface TightLinkProps extends LinkProps {
@@ -22,7 +23,7 @@ interface TightLinkProps extends LinkProps {
   text: string
 }
 
-const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...props}) => {
+export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...props}) => {
   //const [formatedText, setFormatedText] = useState(props.text)
   const midLength = Math.round(maxCharacters / 2)
 
@@ -33,4 +34,26 @@ const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...props}) =>
   )
 }
 
-export default TightLink
+interface InputAddressLinkProps {
+  maxCharacters?: number
+  address: string
+  txHashRef: string
+}
+
+export const InputAddressLink: FC<InputAddressLinkProps> = ({ maxCharacters = 12, address, txHashRef }) => {
+  return (
+    <div style={{ whiteSpace: 'nowrap' }}>
+      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} />
+      <Link to={`/transactions/${txHashRef}`} style={{ marginLeft: '8px' }}><ExternalLink size={12}/></Link>
+    </div>
+  )
+}
+
+interface OutputAddressLinkProps {
+  address: string,
+  maxCharacters?: number
+}
+
+export const OutputAddressLink: FC<OutputAddressLinkProps> = ({ maxCharacters = 12, address }) => (
+  <div><TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} /></div>
+)

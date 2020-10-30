@@ -26,12 +26,12 @@ import * as serviceWorker from './serviceWorker';
 import ThemeSwitcher from './components/ThemeSwitcher'
 import AddressInfo from './sections/AddressInfo'
 import Sidebar from './components/Sidebar'
-import TransactionInfo from './sections/TransactionInfo'
 import SearchBar from './components/SearchBar';
 import BlockSection from './sections/BlockSection';
 import { createClient } from './utils/util';
 import { AlephClient } from './utils/client';
 import BlockInfoSection from './sections/BlockInfoSection';
+import TransactionInfoSection from './sections/TransactionInfoSection';
 
 interface APIContextType {
   client: AlephClient
@@ -67,7 +67,7 @@ const App = () => {
                   </Route>
                   <Route path="/blocks/:id" component={BlockInfoSection} />
                   <Route path="/addresses/:id" component={AddressInfo} />
-                  <Route path="/transactions/:id" component={TransactionInfo} />
+                  <Route path="/transactions/:id" component={TransactionInfoSection} />
                 </SectionWrapper>
               </Content>
             </ContentWrapper>

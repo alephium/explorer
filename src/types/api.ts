@@ -27,3 +27,8 @@ export interface TransactionOutput {
   address: string
   spent: string
 }
+
+export interface Address {
+  balance: number,
+  transactions: Transaction[]
+}

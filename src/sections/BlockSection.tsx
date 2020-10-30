@@ -20,7 +20,6 @@ import _ from 'lodash'
 import styled, { css } from 'styled-components'
 import PageTitle from '../components/PageTitle'
 import RefreshTimer from '../components/RefreshTimer'
-import TightLink from '../components/TightLink'
 import { Block } from '../types/api'
 import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
@@ -30,6 +29,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { APIContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import { TextButton } from '../components/Buttons'
+import { TightLink } from '../components/Links'
 
 dayjs.extend(relativeTime)
 

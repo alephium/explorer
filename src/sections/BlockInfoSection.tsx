@@ -16,15 +16,15 @@
 
 import dayjs from 'dayjs'
 import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle from '../components/PageTitle'
-import { Table, TableHeader, TDStyle, TableBody } from '../components/Table'
+import { Table, TableHeader, TDStyle, TableBody, HighlightedCell } from '../components/Table'
 import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
-import TightLink from '../components/TightLink'
-import { ArrowRight, ChevronDown, ExternalLink } from 'react-feather'
+import { InputAddressLink, OutputAddressLink, TightLink } from '../components/Links'
+import { ArrowRight, ChevronDown } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -97,15 +97,10 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td/>
         <td/>
         <AnimatedCell>
-          {t.inputs.map(i => 
-            <div style={{ whiteSpace: 'nowrap' }}>
-              <TightLink to={`/addresses/${i.address}`} maxCharacters={12} text={i.address} />
-              <Link to={`/transactions/${i.txHashRef}`} style={{ marginLeft: '8px' }}><ExternalLink size={12}/></Link>
-            </div>
-          )}
+          {t.inputs.map(i => <InputAddressLink address={i.address} txHashRef={i.txHashRef} /> )}
         </AnimatedCell>
         <td />
-        <AnimatedCell>{t.outputs.map(o => <TightLink to={`/addresses/${o.address}`} maxCharacters={12} text={o.address} />)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map(o => <OutputAddressLink address={o.address} />)}</AnimatedCell>
         <AnimatedCell>{t.outputs.map(o => <div>{o.amount} א</div>)}</AnimatedCell>
         <td />
       </DetailsRow>      
@@ -154,11 +149,6 @@ const AnimatedCell: FC = ({ children }) => {
     </td>
   )
 }
-
-const HighlightedCell = styled.td`
-  font-weight: bold;
-  color: ${({ theme }) => theme.textAccent };
-`
 
 const AnimatedCellContainer = styled(motion.div)`
   padding: 10px 0;

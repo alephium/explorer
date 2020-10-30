@@ -40,8 +40,8 @@ export const Table = styled.table<TableProps>`
   border-collapse: collapse; 
   vertical-align: middle;
 
-  td, th {
-    padding: 0 5px;
+  tr:not(.details) td, th {
+    padding: 10px 5px;
   }
 
   svg {
@@ -91,10 +91,6 @@ export const TableBody = styled.tbody<TableBopyProps>`
   tr {
     ${props => props.tdStyles ? props.tdStyles.map(s => css`td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
 
-    &:not(.details) td {
-      height: 50px;
-    }
-
     &.details {
       div { overflow: hidden; }
     }
@@ -103,4 +99,9 @@ export const TableBody = styled.tbody<TableBopyProps>`
       background-color: ${({ theme }) => theme.bgHighlight};
     }
   }
+`
+
+export const HighlightedCell = styled.td`
+  font-weight: 600 !important;
+  color: ${({ theme }) => theme.textAccent };
 `
