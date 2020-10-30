@@ -62,7 +62,7 @@ const BlockInfoSection = () => {
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
         <TableBody tdStyles={TXTableBodyCustomStyles}>
           {blockInfo?.transactions.map(t => (
-            <Row transaction={t} />
+            <TransactionRow transaction={t} />
           ))}
         </TableBody>
       </Table>
@@ -72,11 +72,11 @@ const BlockInfoSection = () => {
 }
 
 
-interface RowProps {
+interface TransactionRowProps {
   transaction: Transaction
 }
 
-const Row: FC<RowProps> = ({ transaction }) => {
+const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
   const [detailOpen, setDetailOpen] = useState(false)
 
@@ -84,7 +84,7 @@ const Row: FC<RowProps> = ({ transaction }) => {
 
   return (
     <>
-      <tr key={t.hash}>
+      <Row key={t.hash} isActive={detailOpen} >
         <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
         <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
@@ -92,22 +92,29 @@ const Row: FC<RowProps> = ({ transaction }) => {
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
         <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
         <td><DetailToggle size={20} onClick={toggleDetail} /></td>
-      </tr> 
+      </Row> 
       <DetailsRow openCondition={detailOpen}>
-        <td colSpan={2} />
-        <td>
-          <AnimatedCell>{t.inputs.map(i => i.address)}</AnimatedCell>
-        </td>
+        <td/>
+        <td/>
+        <AnimatedCell>{t.inputs.map(i => <TightLink to={`/addresses/${i.address}`} maxCharacters={12} text={i.address} />)}</AnimatedCell>
         <td />
-        <td>
-          <AnimatedCell>{t.outputs.map(i => <TightLink to={`/addresses/${i.address}`} maxCharacters={12} text={i.address} />)}</AnimatedCell>
-        </td>
+        <AnimatedCell>{t.outputs.map(o => <TightLink to={`/addresses/${o.address}`} maxCharacters={12} text={o.address} />)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map(o => <div>{o.amount} א</div>)}</AnimatedCell>
         <td />
       </DetailsRow>      
     </>
   )
 }
 
+// TODO: make expandlable elements generic (in Table.tsx)
+
+interface RowProps {
+  isActive?: boolean
+}
+
+const Row = styled.tr<RowProps>`
+  background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
+`
 
 interface DetailsRowProps {
   openCondition: boolean
@@ -127,13 +134,17 @@ const AnimatedCell: FC = ({ children }) => {
   const condition = useContext(OpenConditionContext)
 
   return (
-    <AnimatePresence>
-      {condition &&
-      <AnimatedCellContainer initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} >
-        { children }
-      </AnimatedCellContainer>
-      }
-    </AnimatePresence>
+    <td style={{ verticalAlign: 'top' }}>
+      <AnimatePresence>
+        {condition &&
+        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }}>
+          <AnimatedCellContainer>
+            { children }
+          </AnimatedCellContainer>
+        </motion.div>
+        }
+      </AnimatePresence>
+    </td>
   )
 }
 
@@ -146,6 +157,10 @@ const AnimatedCellContainer = styled(motion.div)`
   padding: 10px 0;
   text-align: left;
   overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `
 
 const Subtitle = styled.h2`

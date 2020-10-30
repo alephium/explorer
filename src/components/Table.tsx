@@ -55,7 +55,7 @@ export const Table = styled.table<TableProps>`
 
     tr.details {
       border-bottom: 2px solid ${({ theme  }) => theme.borderPrimary};
-      background-color: ${({ theme  }) => theme.bgSecondary};
+      background-color: ${({ theme  }) => theme.bgHighlight};
     }
   }
 `
