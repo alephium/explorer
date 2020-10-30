@@ -45,7 +45,7 @@ export const Table = styled.table<TableProps>`
   }
 
   svg {
-    vertical-align: middle;
+    vertical-align: inherit;
   }
 
   tbody {

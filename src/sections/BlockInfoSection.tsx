@@ -16,7 +16,7 @@
 
 import dayjs from 'dayjs'
 import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle from '../components/PageTitle'
@@ -24,7 +24,7 @@ import { Table, TableHeader, TDStyle, TableBody } from '../components/Table'
 import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import TightLink from '../components/TightLink'
-import { ArrowRight, ChevronDown } from 'react-feather'
+import { ArrowRight, ChevronDown, ExternalLink } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -85,18 +85,25 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   return (
     <>
       <Row key={t.hash} isActive={detailOpen} >
-        <td><TransactionIcon src={transactionIcon} alt="Transaction" /></td>
+        <td><TransactionIcon /></td>
         <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
         <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
-        <td><DetailToggle size={20} onClick={toggleDetail} /></td>
+        <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
       </Row> 
       <DetailsRow openCondition={detailOpen}>
         <td/>
         <td/>
-        <AnimatedCell>{t.inputs.map(i => <TightLink to={`/addresses/${i.address}`} maxCharacters={12} text={i.address} />)}</AnimatedCell>
+        <AnimatedCell>
+          {t.inputs.map(i => 
+            <div style={{ whiteSpace: 'nowrap' }}>
+              <TightLink to={`/addresses/${i.address}`} maxCharacters={12} text={i.address} />
+              <Link to={`/transactions/${i.txHashRef}`} style={{ marginLeft: '8px' }}><ExternalLink size={12}/></Link>
+            </div>
+          )}
+        </AnimatedCell>
         <td />
         <AnimatedCell>{t.outputs.map(o => <TightLink to={`/addresses/${o.address}`} maxCharacters={12} text={o.address} />)}</AnimatedCell>
         <AnimatedCell>{t.outputs.map(o => <div>{o.amount} א</div>)}</AnimatedCell>
@@ -167,7 +174,10 @@ const Subtitle = styled.h2`
   margin-top: 40px;
 `
 
-const TransactionIcon = styled.img`
+const TransactionIcon = styled.div`
+  background-image: url(${transactionIcon});
+  background-position: center;
+  background-repeat: no-repeat;
   height: 25px;
   width: 25px;
 `
@@ -206,14 +216,14 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   { 
     tdPos: 2,
     style: css`
-      width: 30%;
+      width: 25%;
     `
   },
   { 
     tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
-      width: 10%;
+      width: 20%;
     `
   },
   { 
@@ -221,20 +231,42 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     style: css`
       text-align: center;
       color: ${({ theme }) => theme.textSecondary};
-      width: 15%;
+      width: 10%;
     `
   },
   { 
     tdPos: 5,
     style: css`
       color: ${({ theme }) => theme.textAccent};
-      width: 30%;
+      width: 20%;
     `
   }
 ]
 
-const DetailToggle = styled(ChevronDown)`
-  color: ${({ theme }) => theme.textPrimary };
+
+// Toggle
+
+const variants = {
+  closed: { rotate: 0 },
+  open: { rotate: 180 },
+}
+
+interface DetailToggleProps {
+  isOpen: boolean
+  onClick: () => void
+}
+
+const DetailToggle: FC<DetailToggleProps> = ({ isOpen, onClick }) => {
+  return (
+    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
+      <ChevronDown size={20} />
+    </DetailToggleWrapper>
+  )
+}
+
+const DetailToggleWrapper = styled(motion.div)`
+  cursor: pointer;
+  padding: 10px;
 `
 
 export default BlockInfoSection
