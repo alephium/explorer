@@ -30,7 +30,11 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles }) => (
 )
 // === Styles
 
-export const Table = styled.table`
+interface TableProps {
+  hasDetails?: boolean
+}
+
+export const Table = styled.table<TableProps>`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
@@ -42,6 +46,17 @@ export const Table = styled.table`
 
   svg {
     vertical-align: middle;
+  }
+
+  tbody {
+    tr {
+      border-bottom: ${({ hasDetails, theme }) => !hasDetails ? `2px solid ${theme.borderPrimary}` : ''};
+    }
+
+    tr.details {
+      border-bottom: 2px solid ${({ theme  }) => theme.borderPrimary};
+      background-color: ${({ theme  }) => theme.bgSecondary};
+    }
   }
 `
 
@@ -76,10 +91,12 @@ export const TableBody = styled.tbody<TableBopyProps>`
   tr {
     ${props => props.tdStyles ? props.tdStyles.map(s => css`td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
 
-    border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
-
-    td {
+    &:not(.details) td {
       height: 50px;
+    }
+
+    &.details {
+      div { overflow: hidden; }
     }
 
     &:hover {
