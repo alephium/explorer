@@ -28,6 +28,7 @@ import { ArrowRight, ChevronDown } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
 import { motion, AnimatePresence } from 'framer-motion'
+import Amount from '../components/Amount'
 
 interface ParamTypes {
   id: string
@@ -90,7 +91,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-        <td><Badge type={'neutral'}>{t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} א</Badge></td>
+        <td><Badge type={'neutral'}>{t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()} א</Badge></td>
         <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
       </Row> 
       <DetailsRow openCondition={detailOpen}>
@@ -101,7 +102,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </AnimatedCell>
         <td />
         <AnimatedCell>{t.outputs.map(o => <OutputAddressLink address={o.address} />)}</AnimatedCell>
-        <AnimatedCell>{t.outputs.map(o => <div>{o.amount} א</div>)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map(o => <Amount value={o.amount} />)}</AnimatedCell>
         <td />
       </DetailsRow>      
     </>

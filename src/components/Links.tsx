@@ -43,8 +43,8 @@ interface InputAddressLinkProps {
 export const InputAddressLink: FC<InputAddressLinkProps> = ({ maxCharacters = 12, address, txHashRef }) => {
   return (
     <div style={{ whiteSpace: 'nowrap' }}>
-      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} />
-      <Link to={`/transactions/${txHashRef}`} style={{ marginLeft: '8px' }}><ExternalLink size={12}/></Link>
+      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address}/>
+      <Link to={`/transactions/${txHashRef}`} style={{ marginLeft: '8px' }} title={txHashRef} ><ExternalLink size={12} /></Link>
     </div>
   )
 }
@@ -55,5 +55,5 @@ interface OutputAddressLinkProps {
 }
 
 export const OutputAddressLink: FC<OutputAddressLinkProps> = ({ maxCharacters = 12, address }) => (
-  <div><TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} /></div>
+  <div><TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address} /></div>
 )
