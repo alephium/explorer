@@ -16,15 +16,17 @@
 import React, { FC } from 'react'
 
 interface AmountProps {
-  value: number
+  value: number | undefined
+  className?: string
 }
 
-const Amount: FC<AmountProps> = ({ value }) => {
-  let valueString = BigInt(value).toString()
-
-  return (
-    <span>{valueString} א</span>
-  )
+const Amount: FC<AmountProps> = ({ value, className }) => {
+  if (value) {
+    let valueString = BigInt(value).toString()
+    return <span className={className}>{valueString} א</span>
+  } else {
+    return null
+  }
 }
 
 export default Amount

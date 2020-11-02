@@ -14,7 +14,9 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import React, { createContext, FC, useContext } from 'react'
+import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 interface TableHeaderProps {
@@ -28,7 +30,79 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles }) => (
     </tr>
   </StyledTableHeader>
 )
-// === Styles
+
+// == Row 
+
+interface RowProps {
+  isActive?: boolean
+}
+
+export const Row = styled.tr<RowProps>`
+  background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
+`
+
+// == Details Row 
+
+interface DetailsRowProps {
+  openCondition: boolean
+}
+
+const OpenConditionContext = createContext(false)
+
+export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
+  <OpenConditionContext.Provider value={openCondition}>
+    <tr className="details">
+      {children}
+    </tr>
+  </OpenConditionContext.Provider>
+)
+
+export const AnimatedCell: FC = ({ children }) => {
+  const condition = useContext(OpenConditionContext)
+
+  return (
+    <td style={{ verticalAlign: 'top' }}>
+      <AnimatePresence>
+        {condition &&
+        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }}>
+          <AnimatedCellContainer>
+            { children }
+          </AnimatedCellContainer>
+        </motion.div>
+        }
+      </AnimatePresence>
+    </td>
+  )
+}
+
+// == Details Toggle
+
+const variants = {
+  closed: { rotate: 0 },
+  open: { rotate: 180 },
+}
+
+interface DetailToggleProps {
+  isOpen: boolean
+  onClick: () => void
+}
+
+export const DetailToggle: FC<DetailToggleProps> = ({ isOpen, onClick }) => {
+  return (
+    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
+      <ChevronDown size={20} />
+    </DetailToggleWrapper>
+  )
+}
+
+const DetailToggleWrapper = styled(motion.div)`
+  cursor: pointer;
+  padding: 10px;
+`
+
+// === 
+// === Styles ====
+// === 
 
 interface TableProps {
   hasDetails?: boolean
@@ -56,6 +130,10 @@ export const Table = styled.table<TableProps>`
     tr.details {
       border-bottom: 2px solid ${({ theme  }) => theme.borderPrimary};
       background-color: ${({ theme  }) => theme.bgHighlight};
+
+      td {
+        padding: 0
+      }
     }
   }
 `
@@ -104,4 +182,14 @@ export const TableBody = styled.tbody<TableBopyProps>`
 export const HighlightedCell = styled.td`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent };
+`
+
+export const AnimatedCellContainer = styled(motion.div)`
+  padding: 10px 0;
+  text-align: left;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `

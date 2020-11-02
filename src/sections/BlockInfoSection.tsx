@@ -15,19 +15,18 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
-import React, { createContext, FC, useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
-import PageTitle from '../components/PageTitle'
-import { Table, TableHeader, TDStyle, TableBody, HighlightedCell } from '../components/Table'
+import PageTitle, { SecondaryTitle } from '../components/PageTitle'
+import { Table, TableHeader, TDStyle, TableBody, HighlightedCell, AnimatedCell, DetailsRow, Row, DetailToggle } from '../components/Table'
 import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { InputAddressLink, OutputAddressLink, TightLink } from '../components/Links'
-import { ArrowRight, ChevronDown } from 'react-feather'
+import { ArrowRight } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
-import { motion, AnimatePresence } from 'framer-motion'
 import Amount from '../components/Amount'
 
 interface ParamTypes {
@@ -58,12 +57,13 @@ const BlockInfoSection = () => {
           <tr><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
         </TableBody>
       </Table>
-      <Subtitle>Transactions</Subtitle>
+      
+      <SecondaryTitle>Transactions</SecondaryTitle>
       <Table hasDetails>
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
         <TableBody tdStyles={TXTableBodyCustomStyles}>
-          {blockInfo?.transactions.map(t => (
-            <TransactionRow transaction={t} />
+          {blockInfo?.transactions.map((t, i) => (
+            <TransactionRow transaction={t} key={i} />
           ))}
         </TableBody>
       </Table>
@@ -71,7 +71,6 @@ const BlockInfoSection = () => {
     </section>
   )
 }
-
 
 interface TransactionRowProps {
   transaction: Transaction
@@ -98,11 +97,11 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td/>
         <td/>
         <AnimatedCell>
-          {t.inputs.map(i => <InputAddressLink address={i.address} txHashRef={i.txHashRef} /> )}
+          {t.inputs.map((input, i) => <InputAddressLink key={i} address={input.address} txHashRef={input.txHashRef} /> )}
         </AnimatedCell>
         <td />
-        <AnimatedCell>{t.outputs.map(o => <OutputAddressLink address={o.address} />)}</AnimatedCell>
-        <AnimatedCell>{t.outputs.map(o => <Amount value={o.amount} />)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map((o, i) => <OutputAddressLink address={o.address} key={i} />)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map((o, i) => <Amount value={o.amount} key={i} />)}</AnimatedCell>
         <td />
       </DetailsRow>      
     </>
@@ -110,60 +109,6 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
 }
 
 // TODO: make expandlable elements generic (in Table.tsx)
-
-interface RowProps {
-  isActive?: boolean
-}
-
-const Row = styled.tr<RowProps>`
-  background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
-`
-
-interface DetailsRowProps {
-  openCondition: boolean
-}
-
-const OpenConditionContext = createContext(false)
-
-const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
-  <OpenConditionContext.Provider value={openCondition}>
-    <tr className="details">
-      {children}
-    </tr>
-  </OpenConditionContext.Provider>
-)
-
-const AnimatedCell: FC = ({ children }) => {
-  const condition = useContext(OpenConditionContext)
-
-  return (
-    <td style={{ verticalAlign: 'top' }}>
-      <AnimatePresence>
-        {condition &&
-        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }}>
-          <AnimatedCellContainer>
-            { children }
-          </AnimatedCellContainer>
-        </motion.div>
-        }
-      </AnimatePresence>
-    </td>
-  )
-}
-
-const AnimatedCellContainer = styled(motion.div)`
-  padding: 10px 0;
-  text-align: left;
-  overflow: hidden;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-`
-
-const Subtitle = styled.h2`
-  margin-top: 40px;
-`
 
 const TransactionIcon = styled.div`
   background-image: url(${transactionIcon});
@@ -233,31 +178,5 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-
-// Toggle
-
-const variants = {
-  closed: { rotate: 0 },
-  open: { rotate: 180 },
-}
-
-interface DetailToggleProps {
-  isOpen: boolean
-  onClick: () => void
-}
-
-const DetailToggle: FC<DetailToggleProps> = ({ isOpen, onClick }) => {
-  return (
-    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
-      <ChevronDown size={20} />
-    </DetailToggleWrapper>
-  )
-}
-
-const DetailToggleWrapper = styled(motion.div)`
-  cursor: pointer;
-  padding: 10px;
-`
 
 export default BlockInfoSection

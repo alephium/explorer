@@ -17,6 +17,8 @@
 import React, { FC } from 'react'
 import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
+import styled from 'styled-components'
+import Amount from './Amount'
 
 interface TightLinkProps extends LinkProps {
   maxCharacters: number
@@ -38,13 +40,15 @@ interface InputAddressLinkProps {
   maxCharacters?: number
   address: string
   txHashRef: string
+  amount?: number
 }
 
-export const InputAddressLink: FC<InputAddressLinkProps> = ({ maxCharacters = 12, address, txHashRef }) => {
+export const InputAddressLink: FC<InputAddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
   return (
     <div style={{ whiteSpace: 'nowrap' }}>
       <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address}/>
-      <Link to={`/transactions/${txHashRef}`} style={{ marginLeft: '8px' }} title={txHashRef} ><ExternalLink size={12} /></Link>
+      {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
+      <TxLink to={`/transactions/${txHashRef}`} title={txHashRef} ><ExternalLink size={12} /></TxLink>
     </div>
   )
 }
@@ -57,3 +61,12 @@ interface OutputAddressLinkProps {
 export const OutputAddressLink: FC<OutputAddressLinkProps> = ({ maxCharacters = 12, address }) => (
   <div><TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address} /></div>
 )
+
+const OutputValue = styled.span`
+  color: ${( {theme} ) => theme.textSecondary };
+  margin-left: 25px;
+`
+
+const TxLink = styled(Link)`
+  margin-left: 8px;
+`

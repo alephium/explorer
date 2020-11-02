@@ -62,4 +62,8 @@ const Subtitle = styled.h2`
   margin: 0;
 `
 
+export const SecondaryTitle = styled.h2`
+  margin-top: 40px;
+`
+
 export default PageTitle
