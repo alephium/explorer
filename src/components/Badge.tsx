@@ -16,17 +16,25 @@
 
 import React, { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
+import Amount from './Amount'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
 interface BadgeProps {
-  type: BadgeType,
+  type: BadgeType
+  content: string | number | bigint | undefined
   className?: string
+  amount?: boolean
+  prefix?: string
 }
 
-let Badge: FC<BadgeProps> = ({ children, className }) => (
+let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => (
   <div className={className}>
-    {children}
+    {prefix && <span>{prefix}</span>}
+    {
+      amount && content ? <Amount value={BigInt(content)} />
+      : content
+    }
   </div>
 )
 
@@ -63,6 +71,7 @@ Badge = styled(Badge)`
   border-radius: 3px;
   font-weight: 600;
   float: left;
+  white-space: nowrap;
 `
 
 export default Badge

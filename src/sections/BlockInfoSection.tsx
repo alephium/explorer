@@ -23,7 +23,7 @@ import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Table, TableHeader, TDStyle, TableBody, HighlightedCell, AnimatedCell, DetailsRow, Row, DetailToggle } from '../components/Table'
 import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
-import { InputAddressLink, OutputAddressLink, TightLink } from '../components/Links'
+import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
@@ -90,17 +90,17 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-        <td><Badge type={'neutral'}>{t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()} א</Badge></td>
+        <td><Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0))} amount /></td>
         <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
       </Row> 
       <DetailsRow openCondition={detailOpen}>
         <td/>
         <td/>
         <AnimatedCell>
-          {t.inputs.map((input, i) => <InputAddressLink key={i} address={input.address} txHashRef={input.txHashRef} /> )}
+          {t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} /> )}
         </AnimatedCell>
         <td />
-        <AnimatedCell>{t.outputs.map((o, i) => <OutputAddressLink address={o.address} key={i} />)}</AnimatedCell>
+        <AnimatedCell>{t.outputs.map((o, i) => <AddressLink address={o.address} key={i} />)}</AnimatedCell>
         <AnimatedCell>{t.outputs.map((o, i) => <Amount value={o.amount} key={i} />)}</AnimatedCell>
         <td />
       </DetailsRow>      

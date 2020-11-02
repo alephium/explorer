@@ -14,16 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 import React, { FC } from 'react'
+import { abbreviateAmount } from '../utils/util'
 
 interface AmountProps {
-  value: number | undefined
+  value: number | bigint | undefined
   className?: string
 }
 
 const Amount: FC<AmountProps> = ({ value, className }) => {
   if (value) {
-    let valueString = BigInt(value).toString()
-    return <span className={className}>{valueString} א</span>
+    if (typeof value !== 'bigint') {
+      value = BigInt(value)
+    }
+
+    return <span className={className}>{abbreviateAmount(value).toString()} א</span>
   } else {
     return null
   }

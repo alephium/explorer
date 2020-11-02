@@ -21,10 +21,12 @@ import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'sty
 
 interface TableHeaderProps {
   headerTitles: string[]
+  compact?: boolean
+  transparent?: boolean
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles }) => (
-  <StyledTableHeader>
+export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, compact = false, transparent = false }) => (
+  <StyledTableHeader compact={compact} transparent={transparent}>
     <tr>
       {headerTitles.map((v, i) => <th key={i}>{v}</th>)}
     </tr>
@@ -35,10 +37,12 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles }) => (
 
 interface RowProps {
   isActive?: boolean
+  noBorder?: boolean
 }
 
 export const Row = styled.tr<RowProps>`
   background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
+  border-bottom: 0px;
 `
 
 // == Details Row 
@@ -57,14 +61,19 @@ export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => 
   </OpenConditionContext.Provider>
 )
 
-export const AnimatedCell: FC = ({ children }) => {
+interface AnimatedCellProps {
+  className?: string
+  colSpan?: number
+}
+
+export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSpan }) => {
   const condition = useContext(OpenConditionContext)
 
   return (
-    <td style={{ verticalAlign: 'top' }}>
+    <td style={{ verticalAlign: 'top' }} colSpan={colSpan}>
       <AnimatePresence>
         {condition &&
-        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }}>
+        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }} className={className} >
           <AnimatedCellContainer>
             { children }
           </AnimatedCellContainer>
@@ -138,7 +147,12 @@ export const Table = styled.table<TableProps>`
   }
 `
 
-export const StyledTableHeader = styled.thead`
+interface StyledTableHeaderProps {
+  compact: boolean
+  transparent: boolean
+}
+
+export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   font-weight: 400;
   color: ${({theme}) => theme.textSecondary};
   font-style: italic;
@@ -146,11 +160,11 @@ export const StyledTableHeader = styled.thead`
   th {
     position: sticky;
     top: 0;
-    background-color: ${({ theme }) => theme.bgPrimary }
+    background-color: ${({theme, transparent}) => transparent ? 'transparent' : `${theme.bgPrimary}`};
   }
 
   tr {
-    height: 60px;
+    height: ${({compact}) => compact ? '30px' : '60px'};
   }
 `
 
@@ -173,7 +187,7 @@ export const TableBody = styled.tbody<TableBopyProps>`
       div { overflow: hidden; }
     }
 
-    &:hover {
+    &:hover td {
       background-color: ${({ theme }) => theme.bgHighlight};
     }
   }

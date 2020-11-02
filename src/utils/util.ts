@@ -22,7 +22,7 @@ export function createClient() {
   if (!address) { address = 'localhost'; }
 
   let port = process.env.REACT_APP_ALEPHIUM_PORT;
-  if (!port) { port = 9090; }
+  if (!port) { port = '9090' }
 
   const client = new AlephClient(address, port);
 
@@ -31,8 +31,8 @@ export function createClient() {
   return client;
 }
 
-export function useInterval(callback, delay, shouldPause = false) {
-  const savedCallback = useRef();
+export function useInterval(callback: () => any, delay: number, shouldPause = false) {
+  const savedCallback = useRef(() => null);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -49,4 +49,35 @@ export function useInterval(callback, delay, shouldPause = false) {
       return () => clearInterval(id);
     }
   }, [delay, shouldPause]);
+}
+
+// MATHS
+
+var MONEY_SYMBOL = ["", "k", "M", "B", "T", "Q"];
+
+export const abbreviateAmount = (number: number | bigint) => {
+  let num: number = Number(number)
+
+  const isNeg = num < 0
+  if (isNeg) num = num * -1
+
+  
+  // what tier? (determines SI symbol)
+  let tier = Math.log10(Number(num)) / 3 | 0
+  
+  // if zero, we don't need a suffix
+  if(tier === 0) return num
+  if(tier > 5) tier = 5
+  
+  // get suffix and determine scale
+  const suffix = MONEY_SYMBOL[tier]
+  const scale = Math.pow(10, tier * 3)
+
+  // scale the bigNum
+  let scaled = num / scale
+
+  // format bigNum and add suffix
+  if (isNeg) scaled = scaled * -1
+  
+  return scaled.toFixed(2) + suffix
 }

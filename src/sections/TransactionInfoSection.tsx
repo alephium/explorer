@@ -23,9 +23,7 @@ import { Transaction } from '../types/api'
 import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell } from '../components/Table'
-import { InputAddressLink, OutputAddressLink } from '../components/Links'
-import styled from 'styled-components'
-import Amount from '../components/Amount'
+import { AddressLink } from '../components/Links'
 
 interface ParamTypes {
   id: string
@@ -42,8 +40,6 @@ const TransactionInfoSection = () => {
     )()
   }, [client, id])
 
-  console.log(txInfo)
-
   return (
     <section>
       {!txInfo?.status ? <>
@@ -52,21 +48,14 @@ const TransactionInfoSection = () => {
         <TableBody>
           <tr><td>Hash</td><HighlightedCell>{txInfo?.hash}</HighlightedCell></tr>
           <tr><td>Timestamp</td><td>{dayjs(txInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
-          <tr><td>Inputs</td><td>{txInfo?.inputs.map((v, i) => <InputAddressLink address={v.address} txHashRef={v.txHashRef} maxCharacters={24} key={i} amount={v.amount}/>)}</td></tr>
-          <tr><td>Outputs</td><td>{txInfo?.outputs.map((v, i) => <AddressAndAmount key={i}><OutputAddressLink address={v.address} maxCharacters={24} /> <Amount value={v.amount} /></AddressAndAmount>)}</td></tr>
-          <tr><td><b>Total value</b></td><td><Badge type={'neutral'}>{txInfo?.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()} א</Badge></td></tr>
+          <tr><td>Inputs</td><td>{txInfo?.inputs.map((v, i) => <AddressLink address={v.address} txHashRef={v.txHashRef} maxCharacters={24} key={i} amount={v.amount}/>)}</td></tr>
+          <tr><td>Outputs</td><td>{txInfo?.outputs.map((v, i) => <AddressLink address={v.address} maxCharacters={24} key={i} amount={v.amount} txHashRef={v.spent} /> )}</td></tr>
+          <tr><td><b>Total value</b></td><td><Badge type={'neutral'} content={txInfo?.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0))} amount /></td></tr>
         </TableBody>
       </Table>
       </> : <span>{txInfo?.detail}</span>}
     </section>
   )
 }
-
-const AddressAndAmount = styled.div`
-  div {
-    float: left;
-    margin-right: 25px;
-  }
-`
 
 export default TransactionInfoSection

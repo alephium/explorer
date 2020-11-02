@@ -36,31 +36,22 @@ export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...pro
   )
 }
 
-interface InputAddressLinkProps {
+interface AddressLinkProps {
   maxCharacters?: number
   address: string
-  txHashRef: string
+  txHashRef?: string
   amount?: number
 }
 
-export const InputAddressLink: FC<InputAddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
+export const AddressLink: FC<AddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
   return (
     <div style={{ whiteSpace: 'nowrap' }}>
       <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address}/>
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
-      <TxLink to={`/transactions/${txHashRef}`} title={txHashRef} ><ExternalLink size={12} /></TxLink>
+      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} title={txHashRef} ><ExternalLink size={12} /></TxLink>}
     </div>
   )
 }
-
-interface OutputAddressLinkProps {
-  address: string,
-  maxCharacters?: number
-}
-
-export const OutputAddressLink: FC<OutputAddressLinkProps> = ({ maxCharacters = 12, address }) => (
-  <div><TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address} /></div>
-)
 
 const OutputValue = styled.span`
   color: ${( {theme} ) => theme.textSecondary };
