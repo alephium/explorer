@@ -20,7 +20,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
 import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
-import { Address, Transaction } from '../types/api'
+import { Address, Transaction, TransactionInput, TransactionOutput } from '../types/api'
 import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell, TableHeader, AnimatedCell, DetailsRow, Row, DetailToggle, TDStyle } from '../components/Table'
@@ -83,38 +83,36 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
 
   const toggleDetail = useCallback(() => setDetailOpen(!detailOpen), [detailOpen])
 
-  const isOut = t.inputs.findIndex(i => i.address === id) === -1
+  const isOut = t.inputs.findIndex(i => i.address === id) !== -1
+
+  const renderOutputAccounts = () => {
+    return t.outputs.filter(o => o.address !== id).map((output, i) => <AddressLink key={i} address={output.address} />)
+  }
+
+  const renderInputAccounts = () => {
+    return t.inputs.filter(o => o.address !== id).map((input, i) => <AddressLink key={i} address={input.address} />)
+  }
 
   return (
     <>
       <Row key={t.hash} isActive={detailOpen} >
         <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={8}/></td>
         <td>{dayjs().to(t.timestamp)}</td>
-        <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
+        <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()}/></td>
         <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
       </Row> 
       <DetailsRow openCondition={detailOpen}>
         <td />
         <td />
-        <AnimatedCell>
-          <Table>
+        <AnimatedCell colSpan={2}>
+          <Table noBorder>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} compact transparent/>
             <TableBody>
-              <Row noBorder>
+              <Row>
                 <td>{t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} amount={input.amount} /> )}</td>
-                <td><ArrowRight /></td>
-                <td>{t.outputs.map((output, i) => <AddressLink key={i} address={output.address} /> )}</td>
-              </Row>
-            </TableBody>
-          </Table>
-        </AnimatedCell>
-        <AnimatedCell>
-          <Table>
-            <TableHeader headerTitles={['Amount']} compact transparent/>
-            <TableBody>
-              <Row noBorder>
-                {t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} amount={input.amount} /> )}
+                <td style={{ textAlign: 'center' }}><ArrowRight size={12}/></td>
+                <td>{t.outputs.map((output, i) => <AddressLink key={i} address={output.address} amount={output.amount} /> )}</td>
               </Row>
             </TableBody>
           </Table>
@@ -142,6 +140,12 @@ const AdressTxTableBodyCustomStyles: TDStyle[] = [
     tdPos: 3,
     style: css`
       width: 50%;
+    `
+  },
+  { 
+    tdPos: 4,
+    style: css`
+      width: 10%;
     `
   },
   { 

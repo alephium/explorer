@@ -37,12 +37,11 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, compact 
 
 interface RowProps {
   isActive?: boolean
-  noBorder?: boolean
 }
 
 export const Row = styled.tr<RowProps>`
   background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
-  border-bottom: 0px;
+  border: none;
 `
 
 // == Details Row 
@@ -115,6 +114,7 @@ const DetailToggleWrapper = styled(motion.div)`
 
 interface TableProps {
   hasDetails?: boolean
+  noBorder?: boolean
 }
 
 export const Table = styled.table<TableProps>`
@@ -128,12 +128,12 @@ export const Table = styled.table<TableProps>`
   }
 
   svg {
-    vertical-align: inherit;
+    vertical-align: middle;
   }
 
   tbody {
     tr {
-      border-bottom: ${({ hasDetails, theme }) => !hasDetails ? `2px solid ${theme.borderPrimary}` : ''};
+      border-bottom: ${({ hasDetails, noBorder, theme }) => !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
     }
 
     tr.details {
@@ -141,7 +141,8 @@ export const Table = styled.table<TableProps>`
       background-color: ${({ theme  }) => theme.bgHighlight};
 
       td {
-        padding: 0
+        padding-top: 0;
+        padding-bottom: 0;
       }
     }
   }

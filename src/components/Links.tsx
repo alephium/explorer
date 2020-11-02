@@ -45,19 +45,26 @@ interface AddressLinkProps {
 
 export const AddressLink: FC<AddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
   return (
-    <div style={{ whiteSpace: 'nowrap' }}>
+    <AddressWrapper>
       <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address}/>
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
       {txHashRef && <TxLink to={`/transactions/${txHashRef}`} title={txHashRef} ><ExternalLink size={12} /></TxLink>}
-    </div>
+    </AddressWrapper>
   )
 }
 
 const OutputValue = styled.span`
   color: ${( {theme} ) => theme.textSecondary };
-  margin-left: 25px;
+  margin-left: 15px;
 `
 
 const TxLink = styled(Link)`
   margin-left: 8px;
+`
+
+const AddressWrapper = styled.div`
+  white-space: nowrap;
+  font-family: monospace;
+  font-size: 1.1rem;
+  padding: 3px 0;
 `
