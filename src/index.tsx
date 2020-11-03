@@ -118,8 +118,9 @@ const ContentWrapper = styled.main`
 `
 
 const Content = styled.div`
-  max-width: 900px;
-  margin: 60px auto;
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 0 5vw;
 `
 
 const SectionWrapper = styled.main`

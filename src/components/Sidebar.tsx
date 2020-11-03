@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -23,37 +23,72 @@ import logoDark from '../images/explorer-logo-dark.svg'
 import blockIcon from '../images/block-icon.svg'
 import addressIcon from '../images/address-icon.svg'
 import transactionIcon from '../images/transaction-icon.svg'
+import { deviceBreakPoints, deviceSizes } from '../style/globalStyles';
+import { Menu, X } from 'react-feather';
+import { useWindowSize } from '../hooks/useWindowSize';
 
 
 const Sidebar = () => {
   const theme = useTheme()
+  const windowWidth = useWindowSize().width
+  const [open, setOpen] = useState(true)
+
+  useEffect(() => {
+    if (windowWidth && windowWidth >= deviceSizes.mobile && !open) {
+      setOpen(true)
+    }
+  }, [open, windowWidth])
 
   return (
-    <SidebarContainer>
-      <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } />
-      <Tabs>
-        <Tab to="/blocks"><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
-        <Tab to="/addresses"><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
-        <Tab to="/transactions"><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
-      </Tabs>
-    </SidebarContainer>
+    <>
+      <HamburgerButton onClick={() => setOpen(!open)}>
+        {open ? <X /> : <Menu />}
+      </ HamburgerButton>
+      <SidebarContainer open={open}>
+        <Header>
+          <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } />
+        </Header>
+        <Tabs>
+          <Tab to="/blocks"><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
+          <Tab to="/addresses"><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
+          <Tab to="/transactions"><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
+        </Tabs>
+      </SidebarContainer>
+    </>
   );
 }
 
-interface TabProps {
-  title: string
-  locationString: string
-  disabled?: boolean
-}
 
 /* STYLES */
 
 const Logo = styled.img`
   height: 100px;
   width: 150px;
+
+  @media ${deviceBreakPoints.mobile} { 
+    margin-left: 45px;
+    width: 125px;
+  }
 `
 
-const SidebarContainer = styled.div`
+interface SidebarContainerProps {
+  open: boolean
+}
+
+const HamburgerButton = styled.div`
+  position: absolute;
+  top: 25px;
+  left: 20px;
+  display: none;
+  z-index: 200;
+
+  @media ${deviceBreakPoints.mobile} { 
+    display: block;
+    cursor: pointer;
+  }
+`
+
+const SidebarContainer = styled.div<SidebarContainerProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -61,6 +96,23 @@ const SidebarContainer = styled.div`
   padding: 0 20px;
   background-color: ${( { theme }) => theme.bgSecondary };
   border-right: 2px solid ${( { theme }) => theme.borderPrimary };
+
+  @media ${deviceBreakPoints.mobile} { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    width: 250px;
+
+    transition: all 0.15s ease-out;
+    transform: ${ ({open}) => !open ? 'translateX(-100%)': '' }
+  }
+`
+
+const Header = styled.header`
+  display: flex;
+  align-items: center;
 `
 
 const Tabs = styled.div`
