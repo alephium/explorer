@@ -35,7 +35,6 @@ export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...pro
   return (
     <>
       <StyledLink {...props} data-tip={text}>{formatedText}</StyledLink>
-      <Tooltip />
     </>
   )
 }
@@ -52,8 +51,7 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxCharacters = 12, address,
     <AddressWrapper>
       <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} />
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
-      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}  ><ExternalLink size={12} /></TxLink>}
-      <Tooltip />
+      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef} ><ExternalLink size={12} /></TxLink>}
     </AddressWrapper>
   )
 }

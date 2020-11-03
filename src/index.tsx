@@ -65,9 +65,15 @@ const App = () => {
                   <Route exact path="/blocks">
                     <BlockSection />
                   </Route>
-                  <Route path="/blocks/:id" component={BlockInfoSection} />
-                  <Route path="/addresses/:id" component={AddressInfoSection} />
-                  <Route path="/transactions/:id" component={TransactionInfoSection} />
+                  <Route path="/blocks/:id">
+                    <BlockInfoSection />
+                  </Route>
+                  <Route path="/addresses/:id">
+                    <AddressInfoSection />
+                  </Route>
+                  <Route path="/transactions/:id">
+                    <TransactionInfoSection />
+                  </Route>
                 </SectionWrapper>
               </Content>
             </ContentWrapper>

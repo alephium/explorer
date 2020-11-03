@@ -20,13 +20,14 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
 import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
-import { Address, Transaction, TransactionInput, TransactionOutput } from '../types/api'
+import { Address, Transaction } from '../types/api'
 import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell, TableHeader, AnimatedCell, DetailsRow, Row, DetailToggle, TDStyle } from '../components/Table'
 import { AddressLink, TightLink } from '../components/Links'
 import { css } from 'styled-components'
 import { ArrowRight } from 'react-feather'
+import Section from '../components/Section'
 
 dayjs.extend(relativeTime)
 
@@ -46,7 +47,7 @@ const TransactionInfoSection = () => {
   }, [client, id])
 
   return (
-    <section>
+    <Section>
       {!addressInfo?.status ? <>
       <PageTitle title="Address" />
       <Table>
@@ -67,7 +68,7 @@ const TransactionInfoSection = () => {
       </Table>
 
       </> : <span>{addressInfo?.detail}</span>}
-    </section>
+    </Section>
   )
 }
 

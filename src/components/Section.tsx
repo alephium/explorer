@@ -14,21 +14,23 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC } from 'react'
+import React, { useEffect } from 'react'
+import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
-import { useTheme } from 'styled-components'
+import Tooltip from './Tooltip'
 
-interface TooltipProps {
-  id?: string
-}
 
-const Tooltip: FC<TooltipProps> = ({ id }) => {
-  const theme = useTheme()
+const Section: FC = ({ children }) => {
+  useEffect(() => {
+    ReactTooltip.rebuild()
+  })
 
   return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id} />
+    <section>
+      <Tooltip />
+      {children}
+    </section>
   )
 }
 
-
-export default Tooltip
+export default Section

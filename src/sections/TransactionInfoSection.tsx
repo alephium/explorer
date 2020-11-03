@@ -24,6 +24,7 @@ import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell } from '../components/Table'
 import { AddressLink } from '../components/Links'
+import Section from '../components/Section'
 
 interface ParamTypes {
   id: string
@@ -41,7 +42,7 @@ const TransactionInfoSection = () => {
   }, [client, id])
 
   return (
-    <section>
+    <Section>
       {!txInfo?.status ? <>
       <PageTitle title="Transaction" />
       <Table>
@@ -54,7 +55,7 @@ const TransactionInfoSection = () => {
         </TableBody>
       </Table>
       </> : <span>{txInfo?.detail}</span>}
-    </section>
+    </Section>
   )
 }
 

@@ -81,3 +81,5 @@ export const abbreviateAmount = (number: number | bigint) => {
   
   return scaled.toFixed(2) + suffix
 }
+
+export const createRandomId = () => Math.random().toString(36).substring(7)

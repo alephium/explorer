@@ -28,6 +28,7 @@ import { ArrowRight } from 'react-feather'
 import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
 import Amount from '../components/Amount'
+import Section from '../components/Section'
 
 interface ParamTypes {
   id: string
@@ -45,7 +46,7 @@ const BlockInfoSection = () => {
   }, [id, client])
 
   return (
-    <section>
+    <Section>
       {!blockInfo?.status ? <>
       <PageTitle title="Block" />
       <Table>
@@ -68,7 +69,7 @@ const BlockInfoSection = () => {
         </TableBody>
       </Table>
       </> : <span>{blockInfo?.detail}</span>}
-    </section>
+    </Section>
   )
 }
 
