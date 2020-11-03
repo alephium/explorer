@@ -19,16 +19,27 @@ import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
 import Tooltip from './Tooltip'
 
+const rebuildTooltips = () => {
+  ReactTooltip.rebuild()
+}
+
+interface SectionContextType {
+  rebuildTooltips: () => void
+}
+
+export const SectionContext = React.createContext<SectionContextType>({ rebuildTooltips: rebuildTooltips })
 
 const Section: FC = ({ children }) => {
   useEffect(() => {
-    ReactTooltip.rebuild()
+    rebuildTooltips()
   })
 
   return (
     <section>
-      <Tooltip />
-      {children}
+      <SectionContext.Provider value={{ rebuildTooltips }}>
+        <Tooltip />
+        {children}
+      </SectionContext.Provider>
     </section>
   )
 }

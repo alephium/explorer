@@ -30,6 +30,7 @@ import { APIContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import { TextButton } from '../components/Buttons'
 import { TightLink } from '../components/Links'
+import Section from '../components/Section'
 
 dayjs.extend(relativeTime)
 
@@ -80,7 +81,7 @@ const BlockSection = () => {
   }, [displayFromTs])
 
   return (
-    <section>
+    <Section>
       <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
         <Table>
@@ -100,7 +101,7 @@ const BlockSection = () => {
         </Table>
         <LoadMore>{loading ? <span><LoadingSpinner size={12} /> Loading...</span> : <TextButton onClick={loadMore}><Plus />Load more...</TextButton>}</LoadMore>
       </Content>
-    </section>
+    </Section>
   )
 }
 

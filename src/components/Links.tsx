@@ -19,7 +19,6 @@ import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
-import Tooltip from './Tooltip'
 
 interface TightLinkProps extends LinkProps {
   maxCharacters: number

@@ -15,9 +15,10 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { createContext, FC, useContext } from 'react'
+import React, { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
+import { SectionContext } from './Section'
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -52,13 +53,18 @@ interface DetailsRowProps {
 
 const OpenConditionContext = createContext(false)
 
-export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
+export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => {
+  const rebuildTooltips = useContext(SectionContext).rebuildTooltips
+  useEffect(() => rebuildTooltips()) // Need to rebuild after lazy rendering
+
+  return (
   <OpenConditionContext.Provider value={openCondition}>
     <tr className="details">
       {children}
     </tr>
   </OpenConditionContext.Provider>
-)
+  )
+}
 
 interface AnimatedCellProps {
   className?: string

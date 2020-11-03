@@ -17,7 +17,6 @@
 import React, { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 import Amount from './Amount'
-import Tooltip from './Tooltip'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
@@ -30,7 +29,7 @@ interface BadgeProps {
 }
 
 let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => (
-  <div className={className} data-tip={amount ? content : null} >
+  <div className={className} data-tip={amount ? `${content} א` : null} >
     {prefix && <span>{prefix}</span>}
     {
       amount && content ? <Amount value={BigInt(content)} />
