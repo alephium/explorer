@@ -31,6 +31,7 @@ import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import { TextButton } from '../components/Buttons'
 import { TightLink } from '../components/Links'
 import Section from '../components/Section'
+import { motion } from 'framer-motion'
 
 dayjs.extend(relativeTime)
 
@@ -88,14 +89,14 @@ const BlockSection = () => {
           <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
-              <tr key={b.hash}>
+              <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
                 <td>{b.transactions.length}</td>
                 <td>{b.height}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>
                 <td>{dayjs().to(b.timestamp)}</td>
-              </tr>
+              </motion.tr>
             )}
           </TableBody>
         </Table>
@@ -122,6 +123,12 @@ const TableBodyCustomStyles: TDStyle[] = [
     tdPos: 5,
     style: css`
       width: 30%;
+    `
+  },
+  { 
+    tdPos: 6,
+    style: css`
+      width: 180px;
     `
   }
 ]
