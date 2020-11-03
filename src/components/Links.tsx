@@ -19,6 +19,7 @@ import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
+import Tooltip from './Tooltip'
 
 interface TightLinkProps extends LinkProps {
   maxCharacters: number
@@ -32,7 +33,10 @@ export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...pro
   const formatedText = text.substr(0, midLength) + '...' + text.substr(text.length - midLength, text.length)
 
   return (
-    <StyledLink {...props}>{formatedText}</StyledLink>
+    <>
+      <StyledLink {...props} data-tip={text}>{formatedText}</StyledLink>
+      <Tooltip />
+    </>
   )
 }
 
@@ -46,16 +50,17 @@ interface AddressLinkProps {
 export const AddressLink: FC<AddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
   return (
     <AddressWrapper>
-      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} title={address}/>
+      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} />
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
-      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} title={txHashRef} ><ExternalLink size={12} /></TxLink>}
+      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}  ><ExternalLink size={12} /></TxLink>}
+      <Tooltip />
     </AddressWrapper>
   )
 }
 
 const OutputValue = styled.span`
   color: ${( {theme} ) => theme.textSecondary };
-  margin-left: 15px;
+  margin-left: 8px;
 `
 
 const TxLink = styled(Link)`
@@ -64,11 +69,10 @@ const TxLink = styled(Link)`
 
 const StyledLink = styled(Link)`
   white-space: nowrap;
-  font-family: 'Source Code Pro';
+  font-family: 'Inconsolata';
+  font-weight: 600;
 `
 
 const AddressWrapper = styled.div`
-  white-space: nowrap;
-  font-family: 'Source Code Pro';
   padding: 3px 0;
 `

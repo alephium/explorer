@@ -181,8 +181,8 @@ export interface TableBopyProps {
 export const TableBody = styled.tbody<TableBopyProps>`
   color: ${({theme}) => theme.textPrimary};
 
-  tr {
-    ${props => props.tdStyles ? props.tdStyles.map(s => css`td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
+  &>tr {
+    ${props => props.tdStyles ? props.tdStyles.map(s => css`&>td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
 
     &.details {
       div { overflow: hidden; }

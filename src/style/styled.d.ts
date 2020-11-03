@@ -21,5 +21,7 @@ declare module 'styled-components' {
 
     borderPrimary: string,
     borderHighlight: string,
+
+    tooltip: string
   }
 }

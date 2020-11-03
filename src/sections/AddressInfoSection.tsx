@@ -105,7 +105,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
       <DetailsRow openCondition={detailOpen}>
         <td />
         <td />
-        <AnimatedCell colSpan={2}>
+        <AnimatedCell colSpan={3}>
           <Table noBorder>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} compact transparent/>
             <TableBody>
@@ -117,7 +117,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
             </TableBody>
           </Table>
         </AnimatedCell>
-        <td />
       </DetailsRow>      
     </>
   )

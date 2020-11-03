@@ -18,7 +18,9 @@ export const darkTheme: DefaultTheme = {
   bgHighlight: 'rgba(0, 0, 0, 0.1)',
 
   borderPrimary: '#34353A',
-  borderHighlight: '#585962'
+  borderHighlight: '#585962',
+
+  tooltip: 'black'
 }
 
 export const lightTheme: DefaultTheme = {
@@ -37,6 +39,8 @@ export const lightTheme: DefaultTheme = {
   bgHighlight: 'rgba(0, 0, 0, 0.02)',
 
   borderPrimary: '#F2F2F3',
-  borderHighlight: '#D1D1D4'
+  borderHighlight: '#D1D1D4',
+
+  tooltip: 'black'
 }
 
