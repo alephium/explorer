@@ -18,13 +18,9 @@ body {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 600;
-  src: url('../src/fonts/poppins-v13-latin-600.eot'); /* IE9 Compat Modes */
   src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
-       url('../src/fonts/poppins-v13-latin-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
        url('../src/fonts/poppins-v13-latin-600.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/poppins-v13-latin-600.woff') format('woff'), /* Modern Browsers */
-       url('../src/fonts/poppins-v13-latin-600.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../src/fonts/poppins-v13-latin-600.svg#Poppins') format('svg'); /* Legacy iOS */
 }
 
 /* poppins-700 - latin */
@@ -32,13 +28,9 @@ body {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 700;
-  src: url('../src/fonts/poppins-v13-latin-700.eot'); /* IE9 Compat Modes */
   src: local('Poppins Bold'), local('Poppins-Bold'),
-       url('../src/fonts/poppins-v13-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
        url('../src/fonts/poppins-v13-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/poppins-v13-latin-700.woff') format('woff'), /* Modern Browsers */
-       url('../src/fonts/poppins-v13-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
-       url('../src/fonts/poppins-v13-latin-700.svg#Poppins') format('svg'); /* Legacy iOS */
 }
 
 /* work-sans-regular - latin */
@@ -49,7 +41,6 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-Regular.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-Regular.woff') format('woff'), /* Modern Browsers */
-       url('../src/fonts/WorkSans-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
 }
 
 /* work-sans-medium - latin */
@@ -60,7 +51,6 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-Medium.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-Medium.woff') format('woff'), /* Modern Browsers */
-       url('../src/fonts/WorkSans-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
 }
 
 
@@ -72,7 +62,25 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-SemiBold.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-SemiBold.woff') format('woff'), /* Modern Browsers */
-       url('../src/fonts/WorkSans-SemiBold.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+/* source-code-pro-regular - latin */
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro Regular'), local('SourceCodePro-Regular'),
+       url('../src/fonts/source-code-pro-v13-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../src/fonts/source-code-pro-v13-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* source-code-pro-600 - latin */
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Source Code Pro SemiBold'), local('SourceCodePro-SemiBold'),
+       url('../src/fonts/source-code-pro-v13-latin-600.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../src/fonts/source-code-pro-v13-latin-600.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
 
 

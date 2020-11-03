@@ -32,7 +32,7 @@ export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...pro
   const formatedText = text.substr(0, midLength) + '...' + text.substr(text.length - midLength, text.length)
 
   return (
-    <Link {...props}>{formatedText}</Link>
+    <StyledLink {...props}>{formatedText}</StyledLink>
   )
 }
 
@@ -62,9 +62,13 @@ const TxLink = styled(Link)`
   margin-left: 8px;
 `
 
+const StyledLink = styled(Link)`
+  white-space: nowrap;
+  font-family: 'Source Code Pro';
+`
+
 const AddressWrapper = styled.div`
   white-space: nowrap;
-  font-family: monospace;
-  font-size: 1.1rem;
+  font-family: 'Source Code Pro';
   padding: 3px 0;
 `
