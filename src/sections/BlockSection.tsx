@@ -32,6 +32,7 @@ import { TextButton } from '../components/Buttons'
 import { TightLink } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
+import { CssBaseline } from '@material-ui/core'
 
 dayjs.extend(relativeTime)
 
@@ -86,7 +87,7 @@ const BlockSection = () => {
       <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
         <Table>
-          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} />
+          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} columnWidths={['50px', '', '10%', '10%', '', '20%']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
@@ -112,23 +113,24 @@ const Content = styled.div`
 
 const TableBodyCustomStyles: TDStyle[] = [
   { 
-    tdPos: 3,
+    tdPos: 1,
     style: css`
-      color: ${({ theme }) => theme.textAccent};
-      font-weight: 600;
-      width: 15%;
+      text-align: center;
+      text-align: -webkit-center;
     `
   },
   { 
-    tdPos: 5,
+    tdPos: 3,
     style: css`
-      width: 30%;
-    `
+      color: ${({ theme }) => theme.textAccent};
+      font-weight: 600;`
   },
   { 
     tdPos: 6,
     style: css`
-      width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     `
   }
 ]

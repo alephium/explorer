@@ -22,14 +22,15 @@ import { SectionContext } from './Section'
 
 interface TableHeaderProps {
   headerTitles: string[]
+  columnWidths?: string[]
   compact?: boolean
   transparent?: boolean
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, compact = false, transparent = false }) => (
+export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, columnWidths, compact = false, transparent = false }) => (
   <StyledTableHeader compact={compact} transparent={transparent}>
     <tr>
-      {headerTitles.map((v, i) => <th key={i}>{v}</th>)}
+      {headerTitles.map((v, i) => <th key={i} style={{ width: columnWidths ? columnWidths[i] || 'auto' : 'auto'}}>{v}</th>)}
     </tr>
   </StyledTableHeader>
 )
@@ -121,12 +122,14 @@ const DetailToggleWrapper = styled(motion.div)`
 interface TableProps {
   hasDetails?: boolean
   noBorder?: boolean
+  bodyOnly?: boolean
 }
 
 export const Table = styled.table<TableProps>`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
+  table-layout: ${({ bodyOnly }) => bodyOnly ? 'auto' : 'fixed'};
   vertical-align: middle;
 
   tr:not(.details) td, th {
@@ -186,10 +189,10 @@ export interface TableBopyProps {
 
 export const TableBody = styled.tbody<TableBopyProps>`
   color: ${({theme}) => theme.textPrimary};
-
+  
   &>tr {
     ${props => props.tdStyles ? props.tdStyles.map(s => css`&>td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
-
+    
     &.details {
       div { overflow: hidden; }
     }

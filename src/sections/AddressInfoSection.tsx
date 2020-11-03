@@ -25,9 +25,9 @@ import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell, TableHeader, AnimatedCell, DetailsRow, Row, DetailToggle, TDStyle } from '../components/Table'
 import { AddressLink, TightLink } from '../components/Links'
-import { css } from 'styled-components'
 import { ArrowRight } from 'react-feather'
 import Section from '../components/Section'
+import { css } from 'styled-components'
 
 dayjs.extend(relativeTime)
 
@@ -50,8 +50,8 @@ const TransactionInfoSection = () => {
     <Section>
       {!addressInfo?.status ? <>
       <PageTitle title="Address" />
-      <Table>
-        <TableBody>
+      <Table bodyOnly>
+        <TableBody tdStyles={AddressTableBodyCustomStyles}>
           <tr><td>Address</td><HighlightedCell>{id}</HighlightedCell></tr>
           <tr><td>Balance</td><td><Badge type={'neutralHighlight'} content={addressInfo?.balance} amount /></td></tr>
         </TableBody>
@@ -59,8 +59,8 @@ const TransactionInfoSection = () => {
       
       <SecondaryTitle>History</SecondaryTitle>
       <Table hasDetails>
-        <TableHeader headerTitles={[ 'Hash', 'Timestamp', 'Account(s)', 'Amount' ]} />
-        <TableBody tdStyles={AdressTxTableBodyCustomStyles}>
+        <TableHeader headerTitles={[ 'Hash', 'Timestamp', 'Account(s)', 'Amount', '' ]} columnWidths={[ '120px', '15%', '', '130px', '50px']} />
+        <TableBody>
           {addressInfo?.transactions.sort((t1, t2) => t2.timestamp - t1.timestamp).map((t, i) => (
             <AddressTransactionRow transaction={t} key={i} />
           ))}
@@ -107,7 +107,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td />
         <td />
         <AnimatedCell colSpan={3}>
-          <Table noBorder>
+          <Table noBorder bodyOnly>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} compact transparent/>
             <TableBody>
               <Row>
@@ -123,35 +123,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   )
 }
 
-const AdressTxTableBodyCustomStyles: TDStyle[] = [
-  { 
-    tdPos: 1,
-    style: css`
-      width: 15%;
-    `
-  },
+const AddressTableBodyCustomStyles: TDStyle[] = [
   { 
     tdPos: 2,
     style: css`
-      width: 20%;
-    `
-  },
-  { 
-    tdPos: 3,
-    style: css`
-      width: 50%;
-    `
-  },
-  { 
-    tdPos: 4,
-    style: css`
-      width: 10%;
-    `
-  },
-  { 
-    tdPos: 5,
-    style: css`
-      width: 50px;
+      font-weight: 600;
     `
   }
 ]

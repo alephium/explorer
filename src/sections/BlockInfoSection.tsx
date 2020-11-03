@@ -49,7 +49,7 @@ const BlockInfoSection = () => {
     <Section>
       {!blockInfo?.status ? <>
       <PageTitle title="Block" />
-      <Table>
+      <Table bodyOnly>
         <TableBody tdStyles={BlockTableBodyCustomStyles}>
           <tr><td>Hash</td><HighlightedCell>{blockInfo?.hash}</HighlightedCell></tr>
           <tr><td>Height</td><td>{blockInfo?.height}</td></tr>
@@ -61,7 +61,7 @@ const BlockInfoSection = () => {
       
       <SecondaryTitle>Transactions</SecondaryTitle>
       <Table hasDetails>
-        <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount' ]} />
+        <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '' ]} columnWidths={ ['50px', '', '15%', '50px', '', '130px', '50px'] }/>
         <TableBody tdStyles={TXTableBodyCustomStyles}>
           {blockInfo?.transactions.map((t, i) => (
             <TransactionRow transaction={t} key={i} />
@@ -121,46 +121,25 @@ const TransactionIcon = styled.div`
 
 const BlockTableBodyCustomStyles: TDStyle[] = [
   { 
-    tdPos: 1,
-    style: css`
-      width: 30%;
-    `
-  },
-  { 
     tdPos: 2,
     style: css`
-      font-weight: 500;
-    `
-  },
-  { 
-    tdPos: 4,
-    style: css`
-      text-align: center;
-      color: ${({ theme }) => theme.textSecondary};
-      width: 15%;
-    `
-  },
-  { 
-    tdPos: 5,
-    style: css`
-      color: ${({ theme }) => theme.textAccent};
-      width: 30%;
+      font-weight: 600;
     `
   }
 ]
 
 const TXTableBodyCustomStyles: TDStyle[] = [
   { 
-    tdPos: 2,
+    tdPos: 1,
     style: css`
-      width: 25%;
+      text-align: center;
+      text-align: -webkit-center;
     `
   },
   { 
     tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
-      width: 20%;
     `
   },
   { 
@@ -168,14 +147,12 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     style: css`
       text-align: center;
       color: ${({ theme }) => theme.textSecondary};
-      width: 10%;
     `
   },
   { 
     tdPos: 5,
     style: css`
       color: ${({ theme }) => theme.textAccent};
-      width: 20%;
     `
   }
 ]
