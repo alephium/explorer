@@ -28,6 +28,7 @@ import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
 import Section from '../components/Section'
 import { css } from 'styled-components'
+import _ from 'lodash'
 
 dayjs.extend(relativeTime)
 
@@ -59,7 +60,7 @@ const TransactionInfoSection = () => {
       
       <SecondaryTitle>History</SecondaryTitle>
       <Table hasDetails>
-        <TableHeader headerTitles={[ 'Hash', 'Timestamp', 'Account(s)', 'Amount', '' ]} columnWidths={[ '120px', '15%', '', '130px', '50px']} />
+        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '120px', '15%', '80px', '', '130px', '50px']} />
         <TableBody>
           {addressInfo?.transactions.sort((t1, t2) => t2.timestamp - t1.timestamp).map((t, i) => (
             <AddressTransactionRow transaction={t} key={i} />
@@ -87,11 +88,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   const isOut = t.inputs.findIndex(i => i.address === id) !== -1
 
   const renderOutputAccounts = () => {
-    return t.outputs.filter(o => o.address !== id).map((output, i) => <AddressLink key={i} address={output.address} />)
+    return _(t.outputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} />)
   }
 
   const renderInputAccounts = () => {
-    return t.inputs.filter(o => o.address !== id).map((input, i) => <AddressLink key={i} address={input.address} />)
+    return _(t.inputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} />)
   }
 
   return (
@@ -99,6 +100,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
       <Row key={t.hash} isActive={detailOpen} >
         <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={8}/></td>
         <td>{dayjs().to(t.timestamp)}</td>
+        <td><Badge type={isOut ? 'minus' : 'plus'} content={isOut ? "To" : "From"}/></td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()}/></td>
         <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
@@ -106,7 +108,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
       <DetailsRow openCondition={detailOpen}>
         <td />
         <td />
-        <AnimatedCell colSpan={3}>
+        <AnimatedCell colSpan={4}>
           <Table noBorder bodyOnly>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} compact transparent/>
             <TableBody>
