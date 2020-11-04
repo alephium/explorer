@@ -59,8 +59,8 @@ const TransactionInfoSection = () => {
       </Table>
       
       <SecondaryTitle>History</SecondaryTitle>
-      <Table hasDetails>
-        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '10%', '15%', '80px', '', '130px', '50px']} />
+      <Table hasDetails main>
+        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '10%', '15%', '80px', '30%', '130px', '40px']} />
         <TableBody>
           {addressInfo?.transactions.sort((t1, t2) => t2.timestamp - t1.timestamp).map((t, i) => (
             <AddressTransactionRow transaction={t} key={i} />
@@ -88,11 +88,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   const isOut = t.inputs.findIndex(i => i.address === id) !== -1
 
   const renderOutputAccounts = () => {
-    return _(t.outputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} />)
+    return _(t.outputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
   }
 
   const renderInputAccounts = () => {
-    return _(t.inputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} />)
+    return _(t.inputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
   }
 
   return (
@@ -103,7 +103,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td><Badge type={isOut ? 'minus' : 'plus'} content={isOut ? "To" : "From"}/></td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()}/></td>
-        <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
+        <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row> 
       <DetailsRow openCondition={detailOpen}>
         <td />

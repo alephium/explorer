@@ -29,7 +29,7 @@ const SearchBar = () => {
  return (
   <Container>
     <div>
-      <SearchInput onClick={handleInputClick} placeholder="Search for an address or a transaction"/>
+      <SearchInput onClick={handleInputClick} placeholder="Search for an address or a tx..."/>
       <SearchIcon />
     </div>
     {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}/>}

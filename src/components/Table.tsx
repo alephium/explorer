@@ -21,12 +21,28 @@ import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'sty
 import { SectionContext } from './Section'
 import MiddleEllipsis from 'react-middle-ellipsis'
 
+interface TableProps {
+  main?: boolean
+  hasDetails?: boolean
+  noBorder?: boolean
+  bodyOnly?: boolean
+}
+
+export const Table: FC<TableProps> = ({ children, ...props }) => (
+  <TableWrapper>
+    <StyledTable {...props}>
+      {children}
+    </StyledTable>
+  </TableWrapper>
+)
+
 interface TableHeaderProps {
   headerTitles: string[]
   columnWidths?: string[]
   compact?: boolean
   transparent?: boolean
 }
+
 
 export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, columnWidths, compact = false, transparent = false }) => (
   <StyledTableHeader compact={compact} transparent={transparent}>
@@ -105,15 +121,16 @@ interface DetailToggleProps {
 
 export const DetailToggle: FC<DetailToggleProps> = ({ isOpen, onClick }) => {
   return (
-    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
-      <ChevronDown size={20} />
-    </DetailToggleWrapper>
+    <td style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
+      <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
+        <ChevronDown size={20} />
+      </DetailToggleWrapper>
+    </td>
   )
 }
 
 const DetailToggleWrapper = styled(motion.div)`
   cursor: pointer;
-  padding: 10px;
 `
 
 // == Highlighted cell (address, hash...)
@@ -132,21 +149,23 @@ export const HighlightedCell: FC = ({ children }) => {
 // === Styles ====
 // === 
 
-interface TableProps {
-  hasDetails?: boolean
-  noBorder?: boolean
-  bodyOnly?: boolean
-}
+const TableWrapper = styled.div<TableProps>`
+  overflow-x: auto;
+`
 
-export const Table = styled.table<TableProps>`
+const StyledTable = styled.table<TableProps>`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
   table-layout: fixed;
   vertical-align: middle;
 
+  ${({ bodyOnly, main }) => (!bodyOnly && main ? css`
+    min-width: 700px;
+  ` : '')}
+
   td:nth-child(1) {
-    width: ${({ bodyOnly }) => bodyOnly ? '25%' : 'auto'}
+    width: ${({ bodyOnly }) => bodyOnly ? '30%' : 'auto'}
   }
 
   tr:not(.details) td, th {

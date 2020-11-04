@@ -60,7 +60,7 @@ const BlockInfoSection = () => {
       </Table>
       
       <SecondaryTitle>Transactions</SecondaryTitle>
-      <Table hasDetails>
+      <Table main hasDetails>
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '' ]} columnWidths={ ['50px', '', '15%', '50px', '', '130px', '50px'] }/>
         <TableBody tdStyles={TXTableBodyCustomStyles}>
           {blockInfo?.transactions.map((t, i) => (
@@ -92,7 +92,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
         <td><Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0))} amount /></td>
-        <td><DetailToggle isOpen={detailOpen} onClick={toggleDetail} /></td>
+        <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row> 
       <DetailsRow openCondition={detailOpen}>
         <td/>

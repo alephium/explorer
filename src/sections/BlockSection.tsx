@@ -85,8 +85,8 @@ const BlockSection = () => {
     <Section>
       <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
       <Content>
-        <Table>
-          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} columnWidths={['50px', '', '10%', '10%', '', '20%']} />
+        <Table main>
+          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} columnWidths={['50px', '25%', '10%', '10%', '', '20%']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
@@ -143,6 +143,7 @@ const LoadMore = styled.span`
   display: flex;
   align-items: center;
   margin-top: 25px;
+  height: 20px;
 
   svg {
     margin-right: 5px;

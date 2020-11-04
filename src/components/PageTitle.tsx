@@ -52,6 +52,7 @@ const Surtitle = styled.h2`
   font-size: 1.8rem;
   color: ${({ theme }) => theme.textSecondary };
   margin-bottom: 0;
+  overflow: hidden;
 `
 
 const Subtitle = styled.h2`

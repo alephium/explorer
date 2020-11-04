@@ -113,6 +113,7 @@ const MainContainer = styled.div`
 `
 
 const ContentWrapper = styled.main`
+  position: relative;
   flex: 1;
   overflow-y: scroll;
 `

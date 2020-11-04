@@ -33,14 +33,12 @@ const Sidebar = () => {
   const theme = useTheme()
   const windowWidth = useWindowSize().width
   const lastWindowWidth = useRef(windowWidth)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (windowWidth) {
-      if (windowWidth >= deviceSizes.mobile && !open) {
-        setOpen(true)
-      } 
-      else if (lastWindowWidth.current && lastWindowWidth.current >= deviceSizes.mobile && windowWidth < deviceSizes.mobile && open) {
+
+      if (lastWindowWidth.current && lastWindowWidth.current >= deviceSizes.mobile && windowWidth < deviceSizes.mobile && open) {
         setOpen(false)
       }
   
@@ -59,9 +57,9 @@ const Sidebar = () => {
           <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } />
         </Header>
         <Tabs>
-          <Tab to="/blocks"><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
-          <Tab to="/addresses"><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
-          <Tab to="/transactions"><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
+          <Tab to="/blocks" onClick={() => setOpen(false)}><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
+          <Tab to="/addresses" onClick={() => setOpen(false)}><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
+          <Tab to="/transactions" onClick={() => setOpen(false)}><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
         </Tabs>
       </SidebarContainer>
       <AnimatePresence>{open && <Backdrop onClick={() => setOpen(false)} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.15 }} />}</AnimatePresence>
@@ -137,7 +135,7 @@ const Header = styled.header`
 `
 
 const Tabs = styled.div`
-  margin-top: 90px;
+  margin-top: 5vw;
   display: flex;
   flex-direction: column;
 `

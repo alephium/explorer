@@ -38,7 +38,7 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ currentTheme, switchTheme
 const Toggle = styled.div`
   position: absolute;
   top: 20px;
-  right: 30px;
+  right: 5vw;
   display: flex;
   border: 2px solid ${({ theme }) => theme.borderPrimary };
   border-radius: 30px;
