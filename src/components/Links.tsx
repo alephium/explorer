@@ -28,7 +28,7 @@ interface TightLinkProps extends LinkProps {
 
 export const TightLink: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
   return (
-    <div style={{ maxWidth: maxWidth}}>
+    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
       <MiddleEllipisis><StyledLink {...props} data-tip={text}>{text}</StyledLink></MiddleEllipisis>
     </div>
   )
@@ -44,7 +44,7 @@ interface AddressLinkProps {
 export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {
   return (
     <AddressWrapper>
-      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
+      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} className="ellipseMe" />
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
       {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef} ><ExternalLink size={12} /></TxLink>}
     </AddressWrapper>
@@ -68,4 +68,6 @@ const StyledLink = styled(Link)`
 
 const AddressWrapper = styled.div`
   padding: 3px 0;
+  display: flex;
+  width: 100%;
 `

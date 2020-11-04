@@ -19,6 +19,7 @@ import React, { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
+import MiddleEllipsis from 'react-middle-ellipsis'
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -76,7 +77,7 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
   const condition = useContext(OpenConditionContext)
 
   return (
-    <td style={{ verticalAlign: 'top' }} colSpan={colSpan}>
+    <td colSpan={colSpan}>
       <AnimatePresence>
         {condition &&
         <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }} className={className} >
@@ -115,6 +116,18 @@ const DetailToggleWrapper = styled(motion.div)`
   padding: 10px;
 `
 
+// == Highlighted cell (address, hash...)
+
+export const HighlightedCell: FC = ({ children }) => {
+  return (
+    <StyledHighlightedCell>
+      <MiddleEllipsis>
+        <span>{children}</span>
+      </MiddleEllipsis>
+    </StyledHighlightedCell>
+  )
+}
+
 // === 
 // === Styles ====
 // === 
@@ -129,8 +142,12 @@ export const Table = styled.table<TableProps>`
   width: 100%;
   text-align: left;
   border-collapse: collapse; 
-  table-layout: ${({ bodyOnly }) => bodyOnly ? 'auto' : 'fixed'};
+  table-layout: fixed;
   vertical-align: middle;
+
+  td:nth-child(1) {
+    width: ${({ bodyOnly }) => bodyOnly ? '25%' : 'auto'}
+  }
 
   tr:not(.details) td, th {
     padding: 10px 5px;
@@ -193,8 +210,8 @@ export const TableBody = styled.tbody<TableBopyProps>`
   &>tr {
     ${props => props.tdStyles ? props.tdStyles.map(s => css`&>td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
     
-    &.details {
-      div { overflow: hidden; }
+    &.details div {
+      overflow: hidden;
     }
 
     &:hover td {
@@ -203,7 +220,7 @@ export const TableBody = styled.tbody<TableBopyProps>`
   }
 `
 
-export const HighlightedCell = styled.td`
+const StyledHighlightedCell = styled.div`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent };
 `

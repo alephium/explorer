@@ -60,7 +60,7 @@ const TransactionInfoSection = () => {
       
       <SecondaryTitle>History</SecondaryTitle>
       <Table hasDetails>
-        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '120px', '15%', '80px', '', '130px', '50px']} />
+        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '10%', '15%', '80px', '', '130px', '50px']} />
         <TableBody>
           {addressInfo?.transactions.sort((t1, t2) => t2.timestamp - t1.timestamp).map((t, i) => (
             <AddressTransactionRow transaction={t} key={i} />
@@ -109,13 +109,13 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td />
         <td />
         <AnimatedCell colSpan={4}>
-          <Table noBorder bodyOnly>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} compact transparent/>
+          <Table noBorder>
+            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={[ '', '50px', '']} compact transparent/>
             <TableBody>
               <Row>
-                <td>{t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} amount={input.amount} /> )}</td>
+                <td>{t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} amount={input.amount} maxWidth="180px" /> )}</td>
                 <td style={{ textAlign: 'center' }}><ArrowRight size={12}/></td>
-                <td>{t.outputs.map((output, i) => <AddressLink key={i} address={output.address} amount={output.amount} /> )}</td>
+                <td>{t.outputs.map((output, i) => <AddressLink key={i} address={output.address} amount={output.amount} maxWidth="180px" /> )}</td>
               </Row>
             </TableBody>
           </Table>
