@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -31,12 +31,21 @@ import { useWindowSize } from '../hooks/useWindowSize';
 const Sidebar = () => {
   const theme = useTheme()
   const windowWidth = useWindowSize().width
+  const lastWindowWidth = useRef(windowWidth)
   const [open, setOpen] = useState(true)
 
   useEffect(() => {
-    if (windowWidth && windowWidth >= deviceSizes.mobile && !open) {
-      setOpen(true)
+    if (windowWidth) {
+      if (windowWidth >= deviceSizes.mobile && !open) {
+        setOpen(true)
+      } 
+      else if (lastWindowWidth.current && lastWindowWidth.current >= deviceSizes.mobile && windowWidth < deviceSizes.mobile && open) {
+        setOpen(false)
+      }
+  
+      lastWindowWidth.current = windowWidth
     }
+
   }, [open, windowWidth])
 
   return (

@@ -19,36 +19,32 @@ import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
+import MiddleEllipisis from 'react-middle-ellipsis'
 
 interface TightLinkProps extends LinkProps {
-  maxCharacters: number
+  maxWidth: string
   text: string
 }
 
-export const TightLink: React.FC<TightLinkProps> = ({maxCharacters, text, ...props}) => {
-  //const [formatedText, setFormatedText] = useState(props.text)
-  const midLength = Math.round(maxCharacters / 2)
-
-  const formatedText = text.substr(0, midLength) + '...' + text.substr(text.length - midLength, text.length)
-
+export const TightLink: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
   return (
-    <>
-      <StyledLink {...props} data-tip={text}>{formatedText}</StyledLink>
-    </>
+    <div style={{ maxWidth: maxWidth}}>
+      <MiddleEllipisis><StyledLink {...props} data-tip={text}>{text}</StyledLink></MiddleEllipisis>
+    </div>
   )
 }
 
 interface AddressLinkProps {
-  maxCharacters?: number
+  maxWidth?: string
   address: string
   txHashRef?: string
   amount?: number
 }
 
-export const AddressLink: FC<AddressLinkProps> = ({ maxCharacters = 12, address, txHashRef, amount }) => {
+export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {
   return (
     <AddressWrapper>
-      <TightLink to={`/addresses/${address}`} maxCharacters={maxCharacters} text={address} />
+      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
       {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
       {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef} ><ExternalLink size={12} /></TxLink>}
     </AddressWrapper>

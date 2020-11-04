@@ -98,7 +98,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   return (
     <>
       <Row key={t.hash} isActive={detailOpen} >
-        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={8}/></td>
+        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth='120px'/></td>
         <td>{dayjs().to(t.timestamp)}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} content={isOut ? "To" : "From"}/></td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>

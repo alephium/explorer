@@ -32,7 +32,6 @@ import { TextButton } from '../components/Buttons'
 import { TightLink } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
-import { CssBaseline } from '@material-ui/core'
 
 dayjs.extend(relativeTime)
 
@@ -92,7 +91,7 @@ const BlockSection = () => {
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
-                <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxCharacters={12}/></td>
+                <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth='150px'/></td>
                 <td>{b.transactions.length}</td>
                 <td>{b.height}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>

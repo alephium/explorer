@@ -87,7 +87,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
     <>
       <Row key={t.hash} isActive={detailOpen} >
         <td><TransactionIcon /></td>
-        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxCharacters={16}/></td>
+        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth='150px'/></td>
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
