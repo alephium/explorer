@@ -220,7 +220,7 @@ export const TableBody = styled.tbody<TableBopyProps>`
   }
 `
 
-const StyledHighlightedCell = styled.div`
+const StyledHighlightedCell = styled.td`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent };
 `

@@ -26,6 +26,7 @@ import transactionIcon from '../images/transaction-icon.svg'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles';
 import { Menu, X } from 'react-feather';
 import { useWindowSize } from '../hooks/useWindowSize';
+import { AnimatePresence, motion } from 'framer-motion';
 
 
 const Sidebar = () => {
@@ -63,6 +64,7 @@ const Sidebar = () => {
           <Tab to="/transactions"><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
         </Tabs>
       </SidebarContainer>
+      <AnimatePresence>{open && <Backdrop onClick={() => setOpen(false)} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.15 }} />}</AnimatePresence>
     </>
   );
 }
@@ -80,10 +82,6 @@ const Logo = styled.img`
   }
 `
 
-interface SidebarContainerProps {
-  open: boolean
-}
-
 const HamburgerButton = styled.div`
   position: absolute;
   top: 25px;
@@ -96,6 +94,20 @@ const HamburgerButton = styled.div`
     cursor: pointer;
   }
 `
+
+const Backdrop = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: black;
+  z-index: 99;
+`
+
+interface SidebarContainerProps {
+  open: boolean
+}
 
 const SidebarContainer = styled.div<SidebarContainerProps>`
   flex: 1;
