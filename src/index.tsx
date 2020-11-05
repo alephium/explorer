@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
@@ -27,7 +27,7 @@ import ThemeSwitcher from './components/ThemeSwitcher'
 import Sidebar from './components/Sidebar'
 import SearchBar from './components/SearchBar';
 import BlockSection from './sections/BlockSection';
-import { createClient } from './utils/util';
+import { createClient, ScrollToTop } from './utils/util';
 import { AlephClient } from './utils/client';
 import BlockInfoSection from './sections/BlockInfoSection';
 import TransactionInfoSection from './sections/TransactionInfoSection';
@@ -44,6 +44,10 @@ const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>(new AlephClient("", ""))
 
+  const contentRef = useRef(null)
+
+  const getContentRef = useCallback(() => contentRef.current, [])
+
   useEffect(() => { setClient(createClient()) }, [])
   
   return (
@@ -54,7 +58,8 @@ const App = () => {
         <APIContext.Provider value={{ client }}>
           <MainContainer>
             <Sidebar/>
-            <ContentWrapper>
+            <ContentWrapper ref={contentRef}>
+              <ScrollToTop getScrollContainer={getContentRef} />
               <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
               <Content>
                 <SearchBar />
@@ -115,7 +120,7 @@ const MainContainer = styled.div`
 const ContentWrapper = styled.main`
   position: relative;
   flex: 1;
-  overflow-y: scroll;
+  overflow-y: auto;
 `
 
 const Content = styled.div`

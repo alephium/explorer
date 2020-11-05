@@ -1,5 +1,5 @@
 html {
-  font-size: calc(0.75rem + 1.5 * ((100vw - 320px) / 680));
+  font-size: calc(0.75rem + 1 * ((100vw - 320px) / 680));
 }
 
 body {

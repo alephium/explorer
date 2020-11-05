@@ -16,6 +16,10 @@
 
 import { AlephClient } from "./client";
 import { useEffect, useRef } from 'react';
+import { useLocation } from "react-router-dom";
+import { FC } from "react";
+
+// ==== API
 
 export function createClient() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
@@ -31,27 +35,7 @@ export function createClient() {
   return client;
 }
 
-export function useInterval(callback: () => any, delay: number, shouldPause = false) {
-  const savedCallback = useRef(() => null);
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current();
-    }
-    if (delay !== null && !shouldPause) {
-      let id = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay, shouldPause]);
-}
-
-// MATHS
+// ==== MATHS
 
 var MONEY_SYMBOL = ["", "k", "M", "B", "T", "Q"];
 
@@ -83,3 +67,42 @@ export const abbreviateAmount = (number: number | bigint) => {
 }
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
+
+// ==== ROUTING
+
+interface ScrollToTopProps {
+  getScrollContainer: () => (HTMLElement | null)
+}
+
+export const ScrollToTop: FC<ScrollToTopProps> = ({ getScrollContainer }) => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    getScrollContainer()?.scrollTo(0, 0);
+  }, [getScrollContainer, pathname]);
+
+  return null;
+}
+
+
+// ==== MISC
+
+export function useInterval(callback: () => any, delay: number, shouldPause = false) {
+  const savedCallback = useRef(() => null);
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null && !shouldPause) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay, shouldPause]);
+}
