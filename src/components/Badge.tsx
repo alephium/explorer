@@ -22,7 +22,7 @@ type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
 interface BadgeProps {
   type: BadgeType
-  content: string | number | bigint | undefined
+  content: string | number | undefined
   className?: string
   amount?: boolean
   prefix?: string
@@ -32,7 +32,7 @@ let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => (
   <div className={className} data-tip={amount ? `${content} א` : null} >
     {prefix && <span>{prefix}</span>}
     {
-      amount && content ? <Amount value={BigInt(content)} />
+      amount && content ? <Amount value={parseFloat(content.toString())} />
       : content
     }
   </div>

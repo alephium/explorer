@@ -90,7 +90,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
         <td><ArrowRight size={15} /></td>
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-        <td><Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0))} amount /></td>
+        <td><Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} amount /></td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row> 
       <DetailsRow openCondition={detailOpen}>

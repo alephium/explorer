@@ -17,16 +17,12 @@ import React, { FC } from 'react'
 import { abbreviateAmount } from '../utils/util'
 
 interface AmountProps {
-  value: number | bigint | undefined
+  value: number | undefined
   className?: string
 }
 
 const Amount: FC<AmountProps> = ({ value, className }) => {
   if (value) {
-    if (typeof value !== 'bigint') {
-      value = BigInt(value)
-    }
-
     return <span className={className}>{abbreviateAmount(value).toString()} א</span>
   } else {
     return null

@@ -101,7 +101,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td>{dayjs().to(t.timestamp)}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} content={isOut ? "To" : "From"}/></td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
-        <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0)).toString()}/></td>
+        <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0).toString()}/></td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row> 
       <DetailsRow openCondition={detailOpen}>

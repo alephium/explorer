@@ -51,7 +51,7 @@ const TransactionInfoSection = () => {
           <tr><td>Timestamp</td><td>{dayjs(txInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
           <tr><td>Inputs</td><td>{txInfo?.inputs.map((v, i) => <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={v.amount}/>)}</td></tr>
           <tr><td>Outputs</td><td>{txInfo?.outputs.map((v, i) => <AddressLink address={v.address} key={i} amount={v.amount} txHashRef={v.spent} /> )}</td></tr>
-          <tr><td><b>Total value</b></td><td><Badge type={'neutral'} content={txInfo?.outputs.reduce<bigint>((acc, o) => (acc + BigInt(o.amount)), BigInt(0))} amount /></td></tr>
+          <tr><td><b>Total value</b></td><td><Badge type={'neutral'} content={txInfo?.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} amount /></td></tr>
         </TableBody>
       </Table>
       </> : <span>{txInfo?.detail}</span>}

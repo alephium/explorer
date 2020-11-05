@@ -37,21 +37,25 @@ export function createClient() {
 
 // ==== MATHS
 
-var MONEY_SYMBOL = ["", "k", "M", "B", "T", "Q"];
+var MONEY_SYMBOL = ["", "k", "M", "B", "T", "q", "Q"];
 
-export const abbreviateAmount = (number: number | bigint) => {
-  let num: number = Number(number)
+export const truncateToDecimals = (num: number, dec = 2) => {
+  const calcDec = Math.pow(10, dec);
+  return Math.trunc(num * calcDec) / calcDec;
+}
 
+export const abbreviateAmount = (num: number) => {
   const isNeg = num < 0
   if (isNeg) num = num * -1
 
   
   // what tier? (determines SI symbol)
   let tier = Math.log10(Number(num)) / 3 | 0
+
   
   // if zero, we don't need a suffix
-  if(tier === 0) return num
-  if(tier > 5) tier = 5
+  if(tier <= 0) return num
+  if(tier > 6) tier = 6
   
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
@@ -63,7 +67,7 @@ export const abbreviateAmount = (number: number | bigint) => {
   // format bigNum and add suffix
   if (isNeg) scaled = scaled * -1
   
-  return scaled.toFixed(2) + suffix
+  return truncateToDecimals(scaled, 2) + suffix
 }
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
