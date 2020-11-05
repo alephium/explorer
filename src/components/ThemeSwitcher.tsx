@@ -26,25 +26,27 @@ interface ThemeSwitcherProps {
 }
 
 const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
-  return theme === buttonTheme ? '#F6C76A' : '#646775'
+  return theme === buttonTheme 
+    ? (theme === 'dark' ? '#F6C76A' : 'white')
+    : '#646775'
 }
 
 const toggleWidth = 70
 const toggleHeight = 35
-const toggleIndicatorSize = toggleHeight - 6
+const toggleIndicatorSize = toggleWidth / 2
 
 const toggleVariants = {
-  light: { left: 2 },
-  dark: { left: toggleWidth - toggleIndicatorSize - 6 },
+  light: { left: 0, backgroundColor: '#F6C76A' },
+  dark: { left: toggleWidth - toggleIndicatorSize, backgroundColor: '#3A0595' },
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ currentTheme, switchTheme }) => (
   <Toggle onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')}>
     <ToggleContent>
-      <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} />
-      <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} />
+      <ToggleIcon><Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} /></ToggleIcon>
+      <ToggleIcon><Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} /></ToggleIcon>
     </ToggleContent>
-    <ToggleFloatingIndicator variants={toggleVariants} animate={currentTheme} />
+    <ToggleFloatingIndicator variants={toggleVariants} animate={currentTheme} transition={{duration: 0.5, type: 'spring'}}/>
   </Toggle>
 )
 
@@ -58,6 +60,7 @@ const Toggle = styled.div`
   border-radius: 60px;
   background-color: ${({ theme }) => theme.bgSecondary};
   cursor: pointer;
+  box-sizing: content-box;
 
   svg {
     cursor: pointer;
@@ -69,11 +72,17 @@ const ToggleContent = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
   margin: 0;
-  padding: 0 7px;
   z-index: 1;
+`
+
+const ToggleIcon = styled.div`
+  display: flex;
+  flex: 1;
+
+  * {
+    margin: auto;
+  }
 `
 
 const ToggleFloatingIndicator = styled(motion.div)`
@@ -83,7 +92,6 @@ const ToggleFloatingIndicator = styled(motion.div)`
   background-color: ${({theme}) => theme.textPrimary };
   border-radius: 60px;
   z-index: 0;
-  top: 1px;
 `
 
 export default ThemeSwitcher

@@ -20,7 +20,7 @@ export const darkTheme: DefaultTheme = {
   borderPrimary: '#34353A',
   borderHighlight: '#585962',
 
-  tooltip: 'black'
+  tooltip: 'black',
 }
 
 export const lightTheme: DefaultTheme = {
@@ -41,6 +41,6 @@ export const lightTheme: DefaultTheme = {
   borderPrimary: '#F2F2F3',
   borderHighlight: '#D1D1D4',
 
-  tooltip: 'black'
+  tooltip: 'black',
 }
 
