@@ -25,6 +25,7 @@ body {
   src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
        url('../src/fonts/poppins-v13-latin-600.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/poppins-v13-latin-600.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-600.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 /* poppins-700 - latin */
@@ -35,6 +36,7 @@ body {
   src: local('Poppins Bold'), local('Poppins-Bold'),
        url('../src/fonts/poppins-v13-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/poppins-v13-latin-700.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-700.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 /* work-sans-regular - latin */
@@ -45,6 +47,7 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-Regular.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-Regular.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 /* work-sans-medium - latin */
@@ -55,6 +58,7 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-Medium.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-Medium.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-Medium.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 
@@ -66,6 +70,7 @@ body {
   src: local(''),
        url('../src/fonts/WorkSans-SemiBold.woff2') format('woff2'), /* Super Modern Browsers */
        url('../src/fonts/WorkSans-SemiBold.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-SemiBold.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 /* inconsolata-regular - latin */
@@ -75,7 +80,9 @@ body {
   font-weight: 400;
   src: local(''),
        url('../src/fonts/inconsolata-v20-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('../src/fonts/inconsolata-v20-latin-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-regular.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-regular.ttf') format('truetype'); /* Safari, Android, iOS */
+
 }
 /* inconsolata-600 - latin */
 @font-face {
@@ -84,7 +91,8 @@ body {
   font-weight: 600;
   src: local(''),
        url('../src/fonts/inconsolata-v20-latin-600.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
-       url('../src/fonts/inconsolata-v20-latin-600.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-600.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-600.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
 
