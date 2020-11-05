@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
@@ -29,6 +29,7 @@ import Badge from '../components/Badge'
 import { APIError } from '../utils/client'
 import Amount from '../components/Amount'
 import Section from '../components/Section'
+import useTableDetailsState from '../hooks/useTableDetailsState'
 
 interface ParamTypes {
   id: string
@@ -79,9 +80,7 @@ interface TransactionRowProps {
 
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
-  const [detailOpen, setDetailOpen] = useState(false)
-
-  const toggleDetail = useCallback(() => setDetailOpen(!detailOpen), [detailOpen])
+  const {detailOpen, toggleDetail} = useTableDetailsState(false)
 
   return (
     <>

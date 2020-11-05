@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
@@ -29,6 +29,7 @@ import { ArrowRight } from 'react-feather'
 import Section from '../components/Section'
 import { css } from 'styled-components'
 import _ from 'lodash'
+import useTableDetailsState from '../hooks/useTableDetailsState'
 
 dayjs.extend(relativeTime)
 
@@ -81,9 +82,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   const { id } = useParams<ParamTypes>()
 
   const t = transaction
-  const [detailOpen, setDetailOpen] = useState(false)
-
-  const toggleDetail = useCallback(() => setDetailOpen(!detailOpen), [detailOpen])
+  const {detailOpen, toggleDetail} = useTableDetailsState(false)
 
   const isOut = t.inputs.findIndex(i => i.address === id) !== -1
 
