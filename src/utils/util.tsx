@@ -23,7 +23,7 @@ import { FC } from "react";
 
 export function createClient() {
   let address = process.env.REACT_APP_ALEPHIUM_HOST;
-  if (!address) { address = 'localhost'; }
+  if (!address) { address =  '18.198.1.137'; }
 
   let port = process.env.REACT_APP_ALEPHIUM_PORT;
   if (!port) { port = '9090' }
