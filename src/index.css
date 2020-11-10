@@ -1,65 +1,116 @@
+html {
+  font-size: calc(0.75rem + 1 * ((100vw - 320px) / 680));
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+* {
+  box-sizing: border-box;
 }
 
-pre {
-  font-size: 16px;
+/* Typography */
+
+/* poppins-600 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
+       url('../src/fonts/poppins-v13-latin-600.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-600.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-600.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.card {
-  minWidth: 375px;
+/* poppins-700 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Poppins Bold'), local('Poppins-Bold'),
+       url('../src/fonts/poppins-v13-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-700.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/poppins-v13-latin-700.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.content {
-  padding: 24px;
-  flexGrow: 1;
-  margin: 0 auto;
+/* work-sans-regular - latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('../src/fonts/WorkSans-Regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/WorkSans-Regular.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-Regular.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.field {
-  width: 99%;
+/* work-sans-medium - latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: local(''),
+       url('../src/fonts/WorkSans-Medium.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/WorkSans-Medium.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-Medium.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.fieldRight {
-  float: right;
-  text-align: right;
-  padding-right: 10%;
+
+/* work-sans-600 - latin */
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+       url('../src/fonts/WorkSans-SemiBold.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/WorkSans-SemiBold.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/WorkSans-SemiBold.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.form {
-  width: 600px;
-  margin: 'auto';
+/* inconsolata-regular - latin */
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('../src/fonts/inconsolata-v20-latin-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../src/fonts/inconsolata-v20-latin-regular.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-regular.ttf') format('truetype'); /* Safari, Android, iOS */
+
+}
+/* inconsolata-600 - latin */
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+       url('../src/fonts/inconsolata-v20-latin-600.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../src/fonts/inconsolata-v20-latin-600.woff') format('woff'), /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+       url('../src/fonts/inconsolata-v20-latin-600.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
-.logo {
-  width: 130px;
-  height: 40px;
-  padding: 10px;
+
+/* Additional resets */
+
+button {
+  outline: none;
+  cursor: pointer;
 }
 
-.props {
-  marginBottom: 12px;
+a {
+  text-decoration: none;
 }
 
-.section {
-  paddingBottom: 42px;
+input {
+  outline: none;
 }
 
-.time {
-  fontSize: 14px;
-  fontStyle: 'italic';
-}
-
-.title {
-  fontSize: 22px;
+th {
+  font-weight: normal;
 }

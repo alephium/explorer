@@ -14,21 +14,21 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { ExplorerClient } from "./explorer";
+import React, { FC } from 'react'
+import ReactTooltip from 'react-tooltip'
+import { useTheme } from 'styled-components'
 
-export async function createClient() {
-  let address = process.env.REACT_APP_ALEPHIUM_HOST;
-  if (!address) { address = 'localhost'; }
-
-  let port = process.env.REACT_APP_ALEPHIUM_PORT;
-  if (!port) { port = 9090; }
-
-  const client = new ExplorerClient({
-    host: address,
-    port: port
-  });
-
-  console.log('Connecting to: ' + client.host + ':' + client.port);
-
-  return client;
+interface TooltipProps {
+  id?: string
 }
+
+const Tooltip: FC<TooltipProps> = ({ id }) => {
+  const theme = useTheme()
+
+  return (
+    <ReactTooltip backgroundColor={theme.tooltip} id={id} />
+  )
+}
+
+
+export default Tooltip

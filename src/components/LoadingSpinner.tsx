@@ -14,32 +14,20 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-const assert = require('bsert');
-const {Client} = require('bcurl');
+import React from 'react'
+import { Loader } from 'react-feather'
+import styled from 'styled-components'
 
-/**
- * Explorer Client
- * @extends {bcurl.Client}
- */
-
-export class ExplorerClient extends Client {
-
-  block(id) {
-    return this.get('/blocks/' + id);
-  }
-
-  blocks(fromTs, toTs) {
-    assert(typeof fromTs === 'number');
-    assert(typeof toTs === 'number');
-
-    return this.get('/blocks?fromTs=' + fromTs + '&toTs=' + toTs);
-  }
-
-  address(id) {
-    return this.get('/addresses/' + id);
-  }
-
-  transaction(id) {
-    return this.get('/transactions/' + id);
-  }
+interface LoadingSpinnerProps {
+  size?: number;
 }
+
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (
+  <Spinner size={size} />
+)
+
+const Spinner = styled(Loader)`
+  animation: spin 1s infinite;
+`
+
+export default LoadingSpinner
