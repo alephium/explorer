@@ -1,6 +1,6 @@
 with import <nixpkgs> {}; {
   sdlEnv = stdenv.mkDerivation {
-    name = "alephscan";
+    name = "alephium-explorer";
     shellHook = ''
     '';
     buildInputs = [

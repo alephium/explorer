@@ -17,7 +17,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { BrowserRouter as Router, Redirect, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
@@ -48,7 +48,12 @@ const App = () => {
 
   const getContentRef = useCallback(() => contentRef.current, [])
 
-  useEffect(() => { setClient(createClient()) }, [])
+  const location = useLocation()
+
+  useEffect(() => { 
+    const params = new URLSearchParams(location.search)
+    setClient(createClient(params.get("address")))
+  }, [location])
   
   return (
     client.host !== "" ?
@@ -133,7 +138,7 @@ const SectionWrapper = styled.main`
   padding-top: 105px;
 `
 
-ReactDOM.render(<App/>, document.getElementById('root'));
+ReactDOM.render(<Router><App/></Router>, document.getElementById('root'));
 
 //
 // If you want your app to work offline and load faster, you can change
