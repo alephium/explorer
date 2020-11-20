@@ -16,21 +16,60 @@
 
 import { motion } from 'framer-motion'
 import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Search } from 'react-feather'
 
 const SearchBar = () => {
- 
+
  const [active, setActive] = useState(false)
+ const [search, setSearch] = useState('')
+
+ const history = useHistory()
 
  const handleInputClick = () => setActive(true)
+
  const handleBackdropClick = () => setActive(false)
+
+ const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>  {
+   setSearch(e.target.value)
+ }
+
+ const handleSearchClick = () => searching(search)
+
+ const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+   if(e.key === 'Enter'){
+     searching(search)
+   }
+ }
+
+ const cleanSearch = () => {
+   setSearch("")
+   setActive(false)
+ }
+
+ const redirect = (to: string) => {
+   cleanSearch()
+   history.push(to)
+ }
+
+ const searching = (str: String) => {
+   const word = str.trim()
+   //TODO This is a very dummy way do differentiate address and transaction, need improvement
+    if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
+      redirect(`/addresses/${word}`)
+    } else if(word.length === 64) {
+      redirect(`/transactions/${word}`)
+    } else {
+      cleanSearch()
+    }
+ }
 
  return (
   <Container>
     <div>
-      <SearchInput onClick={handleInputClick} placeholder="Search for an address or a tx..."/>
-      <SearchIcon />
+      <SearchInput onChange={handleSearchChange} value={search} onClick={handleInputClick} onKeyDown={handleSearchKeyDown} placeholder="Search for an address or a tx..."/>
+      <SearchIcon onClick={handleSearchClick}/>
     </div>
     {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}/>}
   </Container>
@@ -66,7 +105,7 @@ const SearchInput = styled.input`
 
   &:focus, &:active {
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
-    background: 
+    background:
       linear-gradient(${({theme}) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box, /*this is your grey background*/
       linear-gradient(to right, #6510F7, #F76110) border-box;
     border: 2px solid transparent;
