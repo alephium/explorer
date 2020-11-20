@@ -22,16 +22,13 @@ export interface APIError {
 }
 
 export class AlephClient {
-  host: string
-  port: string
+  url: string
   fetchAPI: <T>(path: string) => Promise<T & APIError>
 
-  constructor(host: string, port: string) {
-    this.host = host
-    this.port = port
-
+  constructor(url: string) {
+    this.url = url
     this.fetchAPI = async function <T>(path: string) {
-      const resp = await fetch('http://' + host + ':' + port + path)
+      const resp = await fetch(url + path)
       return await resp.json() as Promise<T>
     }
   }
