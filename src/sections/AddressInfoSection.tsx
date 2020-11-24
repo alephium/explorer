@@ -44,7 +44,7 @@ const TransactionInfoSection = () => {
 
   useEffect(() => {
     (async () =>
-    setAddressInfo(await client.address(id))
+      setAddressInfo(await client.address(id))
     )()
   }, [client, id])
 
@@ -58,7 +58,7 @@ const TransactionInfoSection = () => {
           <tr><td>Balance</td><td><Badge type={'neutralHighlight'} content={addressInfo?.balance} amount /></td></tr>
         </TableBody>
       </Table>
-      
+
       <SecondaryTitle>History</SecondaryTitle>
       <Table hasDetails main>
         <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '10%', '15%', '80px', '30%', '130px', '40px']} />
@@ -103,7 +103,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0).toString()}/></td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
-      </Row> 
+      </Row>
       <DetailsRow openCondition={detailOpen}>
         <td />
         <td />
@@ -119,13 +119,13 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
             </TableBody>
           </Table>
         </AnimatedCell>
-      </DetailsRow>      
+      </DetailsRow>
     </>
   )
 }
 
 const AddressTableBodyCustomStyles: TDStyle[] = [
-  { 
+  {
     tdPos: 2,
     style: css`
       font-weight: 600;
