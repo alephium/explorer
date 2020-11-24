@@ -50,11 +50,11 @@ const App = () => {
 
   const location = useLocation()
 
-  useEffect(() => { 
+  useEffect(() => {
     const params = new URLSearchParams(location.search)
     setClient(createClient(params.get("address")))
   }, [location])
-  
+
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
@@ -100,11 +100,11 @@ function useStateWithLocalStorage<T>(localStorageKey: string, defaultValue: T) {
   const [value, setValue] = React.useState(
     localStorage.getItem(localStorageKey) || defaultValue
   )
- 
+
   React.useEffect(() => {
     localStorage.setItem(localStorageKey, value as string);
   }, [localStorageKey, value])
- 
+
   return [value, setValue]
 }
 
