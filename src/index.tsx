@@ -37,12 +37,12 @@ interface APIContextType {
   client: AlephClient
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: new AlephClient("", "") })
+export const APIContext = React.createContext<APIContextType>({ client: new AlephClient("") })
 
 const App = () => {
 
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<AlephClient>(new AlephClient("", ""))
+  const [client, setClient] = useState<AlephClient>(new AlephClient(""))
 
   const contentRef = useRef(null)
 
@@ -56,7 +56,6 @@ const App = () => {
   }, [location])
   
   return (
-    client.host !== "" ?
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
         <GlobalStyle />
@@ -91,7 +90,6 @@ const App = () => {
         </APIContext.Provider>
       </ThemeProvider>
     </Router>
-    : null
   )
 }
 

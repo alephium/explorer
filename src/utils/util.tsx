@@ -21,16 +21,12 @@ import { FC } from "react";
 
 // ==== API
 
-export function createClient(address: any) {
-  if (!address) { address = process.env.REACT_APP_ALEPHIUM_HOST; }
-  if (!address) { address = 'localhost'; }
+export function createClient(url: any) {
+  if (!url) { url = process.env.REACT_APP_BACKEND_URL; }
+  if (!url) { url = 'http://localhost:9090'; }
+  const client = new AlephClient(url);
 
-  let port = process.env.REACT_APP_ALEPHIUM_PORT;
-  if (!port) { port = '9090' }
-
-  const client = new AlephClient(address, port);
-
-  console.log('Connecting to: ' + client.host + ':' + client.port);
+  console.log('Connecting to: ' + client.url);
 
   return client;
 }
