@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useRef, useState } from 'react';
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
 import logoLight from '../images/explorer-logo-light.svg'
@@ -41,7 +41,7 @@ const Sidebar = () => {
       if (lastWindowWidth.current && lastWindowWidth.current >= deviceSizes.mobile && windowWidth < deviceSizes.mobile && open) {
         setOpen(false)
       }
-  
+
       lastWindowWidth.current = windowWidth
     }
 
@@ -54,11 +54,11 @@ const Sidebar = () => {
       </ HamburgerButton>
       <SidebarContainer open={open}>
         <Header>
-          <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } />
+          <Link to="/"><Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } /></Link>
         </Header>
         <Tabs>
           <Tab to="/blocks" onClick={() => setOpen(false)}><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
-          <Tab to="/addresses" onClick={() => setOpen(false)}><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab> 
+          <Tab to="/addresses" onClick={() => setOpen(false)}><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab>
           <Tab to="/transactions" onClick={() => setOpen(false)}><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
         </Tabs>
       </SidebarContainer>
@@ -74,7 +74,7 @@ const Logo = styled.img`
   height: 100px;
   width: 150px;
 
-  @media ${deviceBreakPoints.mobile} { 
+  @media ${deviceBreakPoints.mobile} {
     margin-left: 45px;
     width: 125px;
   }
@@ -87,7 +87,7 @@ const HamburgerButton = styled.div`
   display: none;
   z-index: 200;
 
-  @media ${deviceBreakPoints.mobile} { 
+  @media ${deviceBreakPoints.mobile} {
     display: block;
     cursor: pointer;
   }
@@ -116,7 +116,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   background-color: ${( { theme }) => theme.bgSecondary };
   border-right: 2px solid ${( { theme }) => theme.borderPrimary };
 
-  @media ${deviceBreakPoints.mobile} { 
+  @media ${deviceBreakPoints.mobile} {
     position: absolute;
     top: 0;
     left: 0;
@@ -177,7 +177,7 @@ const Tab = styled(NavLink)`
 const TabIcon = styled.img`
   height: 25px;
   width: 25px;
-  margin-right: 15px; 
+  margin-right: 15px;
   filter: grayscale(100%);
 `
 

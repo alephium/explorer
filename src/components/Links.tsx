@@ -45,7 +45,7 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
   return (
     <AddressWrapper>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} className="ellipseMe" />
-      {amount && <OutputValue>(<Amount value={amount} />)</OutputValue>}
+      {amount !== undefined && <OutputValue>(<Amount value={amount} />)</OutputValue>}
       {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef} ><ExternalLink size={12} /></TxLink>}
     </AddressWrapper>
   )

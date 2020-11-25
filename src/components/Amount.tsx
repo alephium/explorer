@@ -22,10 +22,10 @@ interface AmountProps {
 }
 
 const Amount: FC<AmountProps> = ({ value, className }) => {
-  if (value) {
+  if (value !== undefined) {
     return <span className={className}>{abbreviateAmount(value).toString()} א</span>
   } else {
-    return null
+    return <span className={className}>- א</span>
   }
 }
 
