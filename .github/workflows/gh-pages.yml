@@ -14,7 +14,7 @@ jobs:
       - name: Install and Build 🔧 
         run: |
           npm install
-          REACT_APP_BACKEND_URL='https://explorer-backend.alephium.org:9443' npm run build
+          REACT_APP_BACKEND_URL='https://devnet-backend.alephium.org:9443' npm run build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.7.1
