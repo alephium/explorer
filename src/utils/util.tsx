@@ -22,8 +22,6 @@ import { FC } from "react";
 // ==== API
 
 export function createClient(url: any) {
-  if (!url) { url = process.env.REACT_APP_BACKEND_URL; }
-  if (!url) { url = 'http://localhost:9090'; }
   const client = new AlephClient(url);
 
   console.log('Connecting to: ' + client.url);

@@ -52,7 +52,20 @@ const App = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search)
-    setClient(createClient(params.get("address")))
+
+    var url: any = params.get("address")
+
+    if (window.location.hostname === "localhost") {
+      if (!url) { url = process.env.REACT_APP_BACKEND_URL; }
+    } else {
+      const xs = window.location.hostname.split('.')
+      if (!url && xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
+        url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
+      }
+    }
+    if (!url) { url = 'http://localhost:9090'; }
+
+    setClient(createClient(url))
   }, [location])
 
   return (
