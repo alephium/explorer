@@ -17,7 +17,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { BrowserRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
+import { HashRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
