@@ -92,7 +92,7 @@ const BlockSection = () => {
               <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
                 <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth='150px'/></td>
-                <td>{b.transactions.length}</td>
+                <td>{b.txNumber}</td>
                 <td>{b.height}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>
                 <td>{dayjs().to(b.timestamp)}</td>

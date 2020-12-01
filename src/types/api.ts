@@ -4,6 +4,15 @@ export interface Block {
   chainFrom: number
   chainTo: number
   timestamp: number
+  txNumber: number
+}
+
+export interface BlockDetail {
+  hash: string
+  height: number
+  chainFrom: number
+  chainTo: number
+  timestamp: number
   transactions: Transaction[]
 }
 

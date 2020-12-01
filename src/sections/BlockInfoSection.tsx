@@ -21,7 +21,7 @@ import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Table, TableHeader, TDStyle, TableBody, HighlightedCell, AnimatedCell, DetailsRow, Row, DetailToggle } from '../components/Table'
-import { Block, Transaction } from '../types/api'
+import { BlockDetail, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
@@ -37,7 +37,7 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const [blockInfo, setBlockInfo] = useState<Block & APIError>()
+  const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
   const client = useContext(APIContext).client
 
   useEffect(() => {
