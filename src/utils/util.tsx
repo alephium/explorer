@@ -31,7 +31,7 @@ export function createClient(url: any) {
 
 // ==== MATHS
 
-var MONEY_SYMBOL = ["", "k", "M", "B", "T", "q", "Q"];
+var MONEY_SYMBOL = ["", "K", "M", "B", "T"];
 
 export const truncateToDecimals = (num: number, dec = 2) => {
   const calcDec = Math.pow(10, dec);
@@ -39,17 +39,14 @@ export const truncateToDecimals = (num: number, dec = 2) => {
 }
 
 export const abbreviateAmount = (num: number) => {
-  const isNeg = num < 0
-  if (isNeg) num = num * -1
-
+  if (num < 0) return '0.00'
 
   // what tier? (determines SI symbol)
   let tier = Math.log10(Number(num)) / 3 | 0
 
-
   // if zero, we don't need a suffix
-  if(tier <= 0) return num
-  if(tier > 6) tier = 6
+  if(tier <= 0) return num.toFixed(2).toString()
+  if(tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
 
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
@@ -57,11 +54,7 @@ export const abbreviateAmount = (num: number) => {
 
   // scale the bigNum
   let scaled = num / scale
-
-  // format bigNum and add suffix
-  if (isNeg) scaled = scaled * -1
-
-  return truncateToDecimals(scaled, 2) + suffix
+  return scaled.toFixed(2) + suffix
 }
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
@@ -106,5 +99,6 @@ export function useInterval(callback: () => any, delay: number, shouldPause = fa
 }
 
 export function smartHash(hash: string) {
-  return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
+  if (hash.length <= 16) return hash
+  else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
