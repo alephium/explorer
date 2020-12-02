@@ -42,15 +42,15 @@ export const abbreviateAmount = (num: number) => {
   const isNeg = num < 0
   if (isNeg) num = num * -1
 
-  
+
   // what tier? (determines SI symbol)
   let tier = Math.log10(Number(num)) / 3 | 0
 
-  
+
   // if zero, we don't need a suffix
   if(tier <= 0) return num
   if(tier > 6) tier = 6
-  
+
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
   const scale = Math.pow(10, tier * 3)
@@ -60,7 +60,7 @@ export const abbreviateAmount = (num: number) => {
 
   // format bigNum and add suffix
   if (isNeg) scaled = scaled * -1
-  
+
   return truncateToDecimals(scaled, 2) + suffix
 }
 
@@ -103,4 +103,8 @@ export function useInterval(callback: () => any, delay: number, shouldPause = fa
       return () => clearInterval(id);
     }
   }, [delay, shouldPause]);
+}
+
+export function smartHash(hash: string) {
+  return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
