@@ -95,6 +95,17 @@ body {
        url('../src/fonts/inconsolata-v20-latin-600.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 
+/* roboto-mono-regular - latin */
+@font-face {
+  font-family: 'Roboto Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local(''),
+       url('../src/fonts/roboto-mono-v12-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../src/fonts/roboto-mono-v12-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../src/fonts/roboto-mono-v12-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
 
 /* Additional resets */
 
