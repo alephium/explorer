@@ -20,16 +20,25 @@ import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
 import { smartHash } from '../utils/util'
+import MiddleEllipisis from 'react-middle-ellipsis'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string
   text: string
 }
 
-export const TightLink: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
+export const TightLinkStrict: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
       <StyledLink {...props} data-tip={text}>{smartHash(text)}</StyledLink>
+    </div>
+  )
+}
+
+export const TightLink: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
+  return (
+    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
+      <MiddleEllipisis><StyledLink {...props} data-tip={text}>{text}</StyledLink></MiddleEllipisis>
     </div>
   )
 }

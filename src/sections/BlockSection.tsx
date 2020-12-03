@@ -29,7 +29,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import { APIContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import { TextButton } from '../components/Buttons'
-import { TightLink } from '../components/Links'
+import { TightLinkStrict } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
 
@@ -51,11 +51,11 @@ const BlockSection = () => {
       const from = fetchTs.from
 
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
-      
+
       setLoading(true)
       const fetchedBlocks: Block[] = await client.blocks(from.valueOf(), to.valueOf())
       console.log('Number of block fetched: ' + fetchedBlocks.length)
-      
+
       setBlocks(prev => _.unionBy(fetchedBlocks, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp))
       setLoading(false)
     }
@@ -71,7 +71,7 @@ const BlockSection = () => {
     }
   }, [blocks])
 
-  useInterval(fetchData, 20 * 1000)
+  useInterval(fetchData, 5 * 1000)
 
   // Load more
   const loadMore = useCallback(() => {
@@ -83,17 +83,17 @@ const BlockSection = () => {
 
   return (
     <Section>
-      <PageTitle title="Blocks" surtitle="Latest" subtitle={<RefreshTimer lastRefreshTimestamp={lastPollingTime.valueOf()} delay={20 * 1000} isLoading={loading}/>} />
+      <PageTitle title="Blocks"/>
       <Content>
         <Table main>
-          <TableHeader headerTitles={['', 'Hash', 'Txn', 'Height', 'Chain index', 'Timestamp']} columnWidths={['50px', '25%', '10%', '10%', '', '20%']} />
+          <TableHeader headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']} columnWidths={['50px', '25%', '16%', '12%', '20%', '']} />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blocks.filter(b => dayjs(b.timestamp).isAfter(displayFromTs)).map(b =>
               <motion.tr key={b.hash} animate={{ opacity: 1 }} initial={{ opacity: 0 }} transition={{ duration: 0.8 }}>
                 <td><BlockIcon src={blockIcon} alt="Block"/></td>
-                <td><TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth='150px'/></td>
-                <td>{b.txNumber}</td>
+                <td><TightLinkStrict to={`blocks/${b.hash}`} text={b.hash} maxWidth='150px'/></td>
                 <td>{b.height}</td>
+                <td>{b.txNumber}</td>
                 <td>{b.chainFrom} → {b.chainTo}</td>
                 <td>{dayjs().to(b.timestamp)}</td>
               </motion.tr>
@@ -111,20 +111,39 @@ const Content = styled.div`
 `
 
 const TableBodyCustomStyles: TDStyle[] = [
-  { 
+  {
     tdPos: 1,
     style: css`
       text-align: center;
       text-align: -webkit-center;
     `
   },
-  { 
+  {
     tdPos: 3,
     style: css`
+      font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
-      font-weight: 600;`
+      font-weight: 400;
+      font-size: 95%;
+    `
   },
-  { 
+  {
+    tdPos: 4,
+    style: css`
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 400;
+      font-size: 95%;
+    `
+  },
+  {
+    tdPos: 5,
+    style: css`
+      font-family: 'Roboto Mono', monospace;
+      font-weight: 400;
+      font-size: 95%;
+    `
+  },
+  {
     tdPos: 6,
     style: css`
       white-space: nowrap;

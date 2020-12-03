@@ -59,7 +59,7 @@ const BlockInfoSection = () => {
           <tr><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
         </TableBody>
       </Table>
-      
+
       <SecondaryTitle>Transactions</SecondaryTitle>
       <Table main hasDetails>
         <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '' ]} columnWidths={ ['50px', '', '15%', '50px', '', '130px', '50px'] }/>
@@ -92,7 +92,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
         <td><Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} amount /></td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
-      </Row> 
+      </Row>
       <DetailsRow openCondition={detailOpen}>
         <td/>
         <td/>
@@ -103,7 +103,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <AnimatedCell>{t.outputs.map((o, i) => <AddressLink address={o.address} key={i} />)}</AnimatedCell>
         <AnimatedCell>{t.outputs.map((o, i) => <Amount value={o.amount} key={i} />)}</AnimatedCell>
         <td />
-      </DetailsRow>      
+      </DetailsRow>
     </>
   )
 }
@@ -119,7 +119,7 @@ const TransactionIcon = styled.div`
 `
 
 const BlockTableBodyCustomStyles: TDStyle[] = [
-  { 
+  {
     tdPos: 2,
     style: css`
       font-weight: 600;
@@ -128,27 +128,27 @@ const BlockTableBodyCustomStyles: TDStyle[] = [
 ]
 
 const TXTableBodyCustomStyles: TDStyle[] = [
-  { 
+  {
     tdPos: 1,
     style: css`
       text-align: center;
       text-align: -webkit-center;
     `
   },
-  { 
+  {
     tdPos: 3,
     style: css`
       color: ${({ theme }) => theme.textAccent};
     `
   },
-  { 
+  {
     tdPos: 4,
     style: css`
       text-align: center;
       color: ${({ theme }) => theme.textSecondary};
     `
   },
-  { 
+  {
     tdPos: 5,
     style: css`
       color: ${({ theme }) => theme.textAccent};
