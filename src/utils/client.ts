@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Block, BlockDetail, Transaction, Address } from "../types/api";
+import { Block, BlockDetail, Transaction, Address } from '../types/api'
 
 export interface APIError {
   status: number
@@ -29,23 +29,23 @@ export class AlephClient {
     this.url = url
     this.fetchAPI = async function <T>(path: string) {
       const resp = await fetch(url + path)
-      return await resp.json() as Promise<T>
+      return (await resp.json()) as Promise<T>
     }
   }
 
   async block(id: string) {
-    return await this.fetchAPI<BlockDetail>('/blocks/' + id);
+    return await this.fetchAPI<BlockDetail>('/blocks/' + id)
   }
 
   async blocks(fromTs: number, toTs: number) {
-    return await this.fetchAPI<Block[]>('/blocks?fromTs=' + fromTs + '&toTs=' + toTs);
+    return await this.fetchAPI<Block[]>('/blocks?fromTs=' + fromTs + '&toTs=' + toTs)
   }
 
   async address(id: string) {
-    return await this.fetchAPI<Address>('/addresses/' + id);
+    return await this.fetchAPI<Address>('/addresses/' + id)
   }
 
   async transaction(id: string) {
-    return await this.fetchAPI<Transaction>('/transactions/' + id);
+    return await this.fetchAPI<Transaction>('/transactions/' + id)
   }
 }

@@ -25,10 +25,7 @@ interface TooltipProps {
 const Tooltip: FC<TooltipProps> = ({ id }) => {
   const theme = useTheme()
 
-  return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id} />
-  )
+  return <ReactTooltip backgroundColor={theme.tooltip} id={id} />
 }
-
 
 export default Tooltip

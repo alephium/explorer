@@ -14,35 +14,34 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
 import { HashRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
-import * as serviceWorker from './serviceWorker';
+import * as serviceWorker from './serviceWorker'
 
 import ThemeSwitcher from './components/ThemeSwitcher'
 import Sidebar from './components/Sidebar'
-import SearchBar from './components/SearchBar';
-import BlockSection from './sections/BlockSection';
-import { createClient, ScrollToTop } from './utils/util';
-import { AlephClient } from './utils/client';
-import BlockInfoSection from './sections/BlockInfoSection';
-import TransactionInfoSection from './sections/TransactionInfoSection';
+import SearchBar from './components/SearchBar'
+import BlockSection from './sections/BlockSection'
+import { createClient, ScrollToTop } from './utils/util'
+import { AlephClient } from './utils/client'
+import BlockInfoSection from './sections/BlockInfoSection'
+import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
 
 interface APIContextType {
   client: AlephClient
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: new AlephClient("") })
+export const APIContext = React.createContext<APIContextType>({ client: new AlephClient('') })
 
 const App = () => {
-
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<AlephClient>(new AlephClient(""))
+  const [client, setClient] = useState<AlephClient>(new AlephClient(''))
 
   const contentRef = useRef(null)
 
@@ -53,28 +52,32 @@ const App = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search)
 
-    let url: string | null | undefined = params.get("address")
+    let url: string | null | undefined = params.get('address')
 
-    if (window.location.hostname === "localhost") {
-      if (!url) { url = process.env.REACT_APP_BACKEND_URL; }
+    if (window.location.hostname === 'localhost') {
+      if (!url) {
+        url = process.env.REACT_APP_BACKEND_URL
+      }
     } else {
       const xs = window.location.hostname.split('.')
       if (!url && xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
         url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
       }
     }
-    if (!url) { url = 'http://localhost:9090'; }
+    if (!url) {
+      url = 'http://localhost:9090'
+    }
 
     setClient(createClient(url))
   }, [location])
 
   return (
     <Router>
-      <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme} >
+      <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
         <GlobalStyle />
         <APIContext.Provider value={{ client }}>
           <MainContainer>
-            <Sidebar/>
+            <Sidebar />
             <ContentWrapper ref={contentRef}>
               <ScrollToTop getScrollContainer={getContentRef} />
               <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
@@ -110,12 +113,10 @@ const App = () => {
 // Local storage hook
 
 function useStateWithLocalStorage<T>(localStorageKey: string, defaultValue: T) {
-  const [value, setValue] = React.useState(
-    localStorage.getItem(localStorageKey) || defaultValue
-  )
+  const [value, setValue] = React.useState(localStorage.getItem(localStorageKey) || defaultValue)
 
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value as string);
+    localStorage.setItem(localStorageKey, value as string)
   }, [localStorageKey, value])
 
   return [value, setValue]
@@ -149,10 +150,15 @@ const SectionWrapper = styled.main`
   padding-top: 105px;
 `
 
-ReactDOM.render(<Router><App/></Router>, document.getElementById('root'));
+ReactDOM.render(
+  <Router>
+    <App />
+  </Router>,
+  document.getElementById('root')
+)
 
 //
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.unregister()

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -23,11 +23,10 @@ import logoDark from '../images/explorer-logo-dark.svg'
 import blockIcon from '../images/block-icon.svg'
 import addressIcon from '../images/address-icon.svg'
 import transactionIcon from '../images/transaction-icon.svg'
-import { deviceBreakPoints, deviceSizes } from '../style/globalStyles';
-import { Menu, X } from 'react-feather';
-import { useWindowSize } from '../hooks/useWindowSize';
-import { AnimatePresence, motion } from 'framer-motion';
-
+import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
+import { Menu, X } from 'react-feather'
+import { useWindowSize } from '../hooks/useWindowSize'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Sidebar = () => {
   const theme = useTheme()
@@ -37,36 +36,54 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (windowWidth) {
-
-      if (lastWindowWidth.current && lastWindowWidth.current >= deviceSizes.mobile && windowWidth < deviceSizes.mobile && open) {
+      if (
+        lastWindowWidth.current &&
+        lastWindowWidth.current >= deviceSizes.mobile &&
+        windowWidth < deviceSizes.mobile &&
+        open
+      ) {
         setOpen(false)
       }
 
       lastWindowWidth.current = windowWidth
     }
-
   }, [open, windowWidth])
 
   return (
     <>
-      <HamburgerButton onClick={() => setOpen(!open)}>
-        {open ? <X /> : <Menu />}
-      </ HamburgerButton>
+      <HamburgerButton onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</HamburgerButton>
       <SidebarContainer open={open}>
         <Header>
-          <Link to="/"><Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark } /></Link>
+          <Link to="/">
+            <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
+          </Link>
         </Header>
         <Tabs>
-          <Tab to="/blocks" onClick={() => setOpen(false)}><TabIcon src={blockIcon} alt="blocks" /> Blocks</Tab>
-          <Tab to="/addresses" onClick={() => setOpen(false)}><TabIcon src={addressIcon} alt="addresses" /> Addresses</Tab>
-          <Tab to="/transactions" onClick={() => setOpen(false)}><TabIcon src={transactionIcon} alt="transactions" /> Transactions</Tab>
+          <Tab to="/blocks" onClick={() => setOpen(false)}>
+            <TabIcon src={blockIcon} alt="blocks" /> Blocks
+          </Tab>
+          <Tab to="/addresses" onClick={() => setOpen(false)}>
+            <TabIcon src={addressIcon} alt="addresses" /> Addresses
+          </Tab>
+          <Tab to="/transactions" onClick={() => setOpen(false)}>
+            <TabIcon src={transactionIcon} alt="transactions" /> Transactions
+          </Tab>
         </Tabs>
       </SidebarContainer>
-      <AnimatePresence>{open && <Backdrop onClick={() => setOpen(false)} animate={{ opacity: 0.4 }} exit={{ opacity: 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.15 }} />}</AnimatePresence>
+      <AnimatePresence>
+        {open && (
+          <Backdrop
+            onClick={() => setOpen(false)}
+            animate={{ opacity: 0.4 }}
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          />
+        )}
+      </AnimatePresence>
     </>
-  );
+  )
 }
-
 
 /* STYLES */
 
@@ -113,8 +130,8 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   flex-direction: column;
   max-width: 300px;
   padding: 0 20px;
-  background-color: ${( { theme }) => theme.bgSecondary };
-  border-right: 2px solid ${( { theme }) => theme.borderPrimary };
+  background-color: ${({ theme }) => theme.bgSecondary};
+  border-right: 2px solid ${({ theme }) => theme.borderPrimary};
 
   @media ${deviceBreakPoints.mobile} {
     position: absolute;
@@ -125,7 +142,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
     width: 250px;
 
     transition: all 0.15s ease-out;
-    transform: ${ ({open}) => !open ? 'translateX(-100%)': '' }
+    transform: ${({ open }) => (!open ? 'translateX(-100%)' : '')};
   }
 `
 
@@ -150,23 +167,23 @@ const Tab = styled(NavLink)`
   transition: all 0.15s ease;
   position: relative;
 
-  color: ${( { theme }) => theme.textSecondary };
+  color: ${({ theme }) => theme.textSecondary};
   &.active {
-    color: ${( { theme }) => theme.textPrimary };
+    color: ${({ theme }) => theme.textPrimary};
 
     img {
       filter: none;
     }
 
     &::after {
-      content: "";
+      content: '';
       display: block;
       width: 20px;
       height: 3px;
       position: absolute;
       left: 40px;
       bottom: -6px;
-      background: linear-gradient(to left, #6510F7, #F76110) border-box;
+      background: linear-gradient(to left, #6510f7, #f76110) border-box;
     }
   }
   &:hover {

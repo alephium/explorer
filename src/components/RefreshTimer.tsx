@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { useInterval } from '../utils/util'
@@ -27,14 +26,18 @@ interface RefreshTimerProps {
 }
 
 const RefreshTimer: React.FC<RefreshTimerProps> = ({ lastRefreshTimestamp, delay, isLoading }) => {
-  const [timeLeft, setTimeLeft] = useState(delay/1000)
-  
-  const updateTimeLeft = () => setTimeLeft(Math.round((lastRefreshTimestamp + delay - Date.now())/1000))
+  const [timeLeft, setTimeLeft] = useState(delay / 1000)
+
+  const updateTimeLeft = () => setTimeLeft(Math.round((lastRefreshTimestamp + delay - Date.now()) / 1000))
   useInterval(updateTimeLeft, 1000)
 
-  return (
-    isLoading || timeLeft <= 0 ? <Timer><LoadingSpinner size={14} />Loading...</Timer>
-    : <Timer>Refreshing in {timeLeft}s...</Timer>
+  return isLoading || timeLeft <= 0 ? (
+    <Timer>
+      <LoadingSpinner size={14} />
+      Loading...
+    </Timer>
+  ) : (
+    <Timer>Refreshing in {timeLeft}s...</Timer>
   )
 }
 
