@@ -5,11 +5,11 @@
     "main.js.map": "/static/js/main.df712dba.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.adeadfc6.js",
     "runtime-main.js.map": "/static/js/runtime-main.adeadfc6.js.map",
-    "static/js/2.81741840.chunk.js": "/static/js/2.81741840.chunk.js",
-    "static/js/2.81741840.chunk.js.map": "/static/js/2.81741840.chunk.js.map",
+    "static/js/2.d77d12c6.chunk.js": "/static/js/2.d77d12c6.chunk.js",
+    "static/js/2.d77d12c6.chunk.js.map": "/static/js/2.d77d12c6.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.9546e9c5.chunk.css.map": "/static/css/main.9546e9c5.chunk.css.map",
-    "static/js/2.81741840.chunk.js.LICENSE.txt": "/static/js/2.81741840.chunk.js.LICENSE.txt",
+    "static/js/2.d77d12c6.chunk.js.LICENSE.txt": "/static/js/2.d77d12c6.chunk.js.LICENSE.txt",
     "static/media/index.css": "/static/media/roboto-mono-v12-latin-regular.535bc89d.woff2",
     "static/media/address-icon.143269ad.svg": "/static/media/address-icon.143269ad.svg",
     "static/media/block-icon.a6a8f086.svg": "/static/media/block-icon.a6a8f086.svg",
@@ -19,7 +19,7 @@
   },
   "entrypoints": [
     "static/js/runtime-main.adeadfc6.js",
-    "static/js/2.81741840.chunk.js",
+    "static/js/2.d77d12c6.chunk.js",
     "static/css/main.9546e9c5.chunk.css",
     "static/js/main.df712dba.chunk.js"
   ]
