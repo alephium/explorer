@@ -19,7 +19,7 @@ import { Loader } from 'react-feather'
 import styled from 'styled-components'
 
 interface LoadingSpinnerProps {
-  size?: number;
+  size?: number
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (

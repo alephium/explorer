@@ -26,7 +26,7 @@ export const darkTheme: DefaultTheme = {
 export const lightTheme: DefaultTheme = {
   name: 'light',
   body: 'white',
-  
+
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.50)',
   textAccent: '#FF7B03',

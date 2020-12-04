@@ -53,7 +53,7 @@ const App = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search)
 
-    var url: any = params.get("address")
+    let url: string | null | undefined = params.get("address")
 
     if (window.location.hostname === "localhost") {
       if (!url) { url = process.env.REACT_APP_BACKEND_URL; }

@@ -19,7 +19,6 @@ import dayjs from 'dayjs'
 import _ from 'lodash'
 import styled, { css } from 'styled-components'
 import PageTitle from '../components/PageTitle'
-import RefreshTimer from '../components/RefreshTimer'
 import { Block } from '../types/api'
 import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
@@ -40,9 +39,8 @@ const BlockSection = () => {
   const [displayFromTs, setDisplayFromTs] = useState(dayjs().subtract(5, 'm'))
   const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
-  const [lastPollingTime, setLastPollingTime] = useState(dayjs())
 
-  let client = useContext(APIContext).client
+  const client = useContext(APIContext).client
 
   // Fetching Data
   useEffect(() => {
@@ -67,7 +65,6 @@ const BlockSection = () => {
   const fetchData = useCallback(() => {
     if (blocks.length > 0) {
       setFetchTs({ from: dayjs(blocks[0].timestamp).add(1), to: dayjs() })
-      setLastPollingTime(dayjs())
     }
   }, [blocks])
 

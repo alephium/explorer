@@ -53,7 +53,7 @@ const SearchBar = () => {
    history.push(to)
  }
 
- const searching = (str: String) => {
+ const searching = (str: string) => {
    const word = str.trim()
    //TODO This is a very dummy way do differentiate address and transaction, need improvement
     if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
