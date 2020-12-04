@@ -21,7 +21,7 @@ import { FC } from "react";
 
 // ==== API
 
-export function createClient(url: any) {
+export const createClient = (url: string) => {
   const client = new AlephClient(url);
 
   console.log('Connecting to: ' + client.url);
@@ -31,7 +31,7 @@ export function createClient(url: any) {
 
 // ==== MATHS
 
-var MONEY_SYMBOL = ["", "K", "M", "B", "T"];
+const MONEY_SYMBOL = ["", "K", "M", "B", "T"];
 
 export const truncateToDecimals = (num: number, dec = 2) => {
   const calcDec = Math.pow(10, dec);
@@ -53,7 +53,7 @@ export const abbreviateAmount = (num: number) => {
   const scale = Math.pow(10, tier * 3)
 
   // scale the bigNum
-  let scaled = num / scale
+  const scaled = num / scale
   return scaled.toFixed(2) + suffix
 }
 
@@ -78,8 +78,8 @@ export const ScrollToTop: FC<ScrollToTopProps> = ({ getScrollContainer }) => {
 
 // ==== MISC
 
-export function useInterval(callback: () => any, delay: number, shouldPause = false) {
-  const savedCallback = useRef(() => null);
+export function useInterval(callback: () => void, delay: number, shouldPause = false) {
+  const savedCallback = useRef<() => void>(() => null);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -92,7 +92,7 @@ export function useInterval(callback: () => any, delay: number, shouldPause = fa
       savedCallback.current();
     }
     if (delay !== null && !shouldPause) {
-      let id = setInterval(tick, delay);
+      const id = setInterval(tick, delay);
       return () => clearInterval(id);
     }
   }, [delay, shouldPause]);

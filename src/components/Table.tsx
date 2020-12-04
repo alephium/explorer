@@ -52,18 +52,18 @@ export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, columnWi
   </StyledTableHeader>
 )
 
-// == Row 
+// == Row
 
 interface RowProps {
   isActive?: boolean
 }
 
 export const Row = styled.tr<RowProps>`
-  background-color: ${({ theme, isActive  }) => isActive ? theme.bgHighlight : '' };
+  background-color: ${({ theme, isActive }) => isActive ? theme.bgHighlight : '' };
   border: none;
 `
 
-// == Details Row 
+// == Details Row
 
 interface DetailsRowProps {
   openCondition: boolean
@@ -145,9 +145,9 @@ export const HighlightedCell: FC = ({ children }) => {
   )
 }
 
-// === 
+// ===
 // === Styles ====
-// === 
+// ===
 
 const TableWrapper = styled.div<TableProps>`
   overflow-x: auto;
@@ -156,7 +156,7 @@ const TableWrapper = styled.div<TableProps>`
 const StyledTable = styled.table<TableProps>`
   width: 100%;
   text-align: left;
-  border-collapse: collapse; 
+  border-collapse: collapse;
   table-layout: fixed;
   vertical-align: middle;
 
@@ -182,8 +182,8 @@ const StyledTable = styled.table<TableProps>`
     }
 
     tr.details {
-      border-bottom: 2px solid ${({ theme  }) => theme.borderPrimary};
-      background-color: ${({ theme  }) => theme.bgHighlight};
+      border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
+      background-color: ${({ theme }) => theme.bgHighlight};
 
       td {
         padding-top: 0;
@@ -225,10 +225,10 @@ export interface TableBopyProps {
 
 export const TableBody = styled.tbody<TableBopyProps>`
   color: ${({theme}) => theme.textPrimary};
-  
+
   &>tr {
     ${props => props.tdStyles ? props.tdStyles.map(s => css`&>td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
-    
+
     &.details div {
       overflow: hidden;
     }

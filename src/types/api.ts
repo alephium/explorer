@@ -38,6 +38,6 @@ export interface TransactionOutput {
 }
 
 export interface Address {
-  balance: number,
+  balance: number
   transactions: Transaction[]
 }

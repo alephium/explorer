@@ -21,8 +21,8 @@ import { useInterval } from '../utils/util'
 import LoadingSpinner from './LoadingSpinner'
 
 interface RefreshTimerProps {
-  lastRefreshTimestamp: number,
-  delay: number,
+  lastRefreshTimestamp: number
+  delay: number
   isLoading: boolean
 }
 
