@@ -21,59 +21,64 @@ import styled from 'styled-components'
 import { Search } from 'react-feather'
 
 const SearchBar = () => {
+  const [active, setActive] = useState(false)
+  const [search, setSearch] = useState('')
 
- const [active, setActive] = useState(false)
- const [search, setSearch] = useState('')
+  const history = useHistory()
 
- const history = useHistory()
+  const handleInputClick = () => setActive(true)
 
- const handleInputClick = () => setActive(true)
+  const handleBackdropClick = () => setActive(false)
 
- const handleBackdropClick = () => setActive(false)
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value)
+  }
 
- const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) =>  {
-   setSearch(e.target.value)
- }
+  const handleSearchClick = () => searching(search)
 
- const handleSearchClick = () => searching(search)
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      searching(search)
+    }
+  }
 
- const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-   if(e.key === 'Enter'){
-     searching(search)
-   }
- }
+  const cleanSearch = () => {
+    setSearch('')
+    setActive(false)
+  }
 
- const cleanSearch = () => {
-   setSearch("")
-   setActive(false)
- }
+  const redirect = (to: string) => {
+    cleanSearch()
+    history.push(to)
+  }
 
- const redirect = (to: string) => {
-   cleanSearch()
-   history.push(to)
- }
-
- const searching = (str: string) => {
-   const word = str.trim()
-   //TODO This is a very dummy way do differentiate address and transaction, need improvement
+  const searching = (str: string) => {
+    const word = str.trim()
+    //TODO This is a very dummy way do differentiate address and transaction, need improvement
     if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
       redirect(`/addresses/${word}`)
-    } else if(word.length === 64) {
+    } else if (word.length === 64) {
       redirect(`/transactions/${word}`)
     } else {
       cleanSearch()
     }
- }
+  }
 
- return (
-  <Container>
-    <div>
-      <SearchInput onChange={handleSearchChange} value={search} onClick={handleInputClick} onKeyDown={handleSearchKeyDown} placeholder="Search for an address or a tx..."/>
-      <SearchIcon onClick={handleSearchClick}/>
-    </div>
-    {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}/>}
-  </Container>
- )
+  return (
+    <Container>
+      <div>
+        <SearchInput
+          onChange={handleSearchChange}
+          value={search}
+          onClick={handleInputClick}
+          onKeyDown={handleSearchKeyDown}
+          placeholder="Search for an address or a tx..."
+        />
+        <SearchIcon onClick={handleSearchClick} />
+      </div>
+      {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
+    </Container>
+  )
 }
 
 const Container = styled.div`
@@ -81,7 +86,7 @@ const Container = styled.div`
 `
 
 const SearchIcon = styled(Search)`
-  color: ${({theme}) => theme.textPrimary};
+  color: ${({ theme }) => theme.textPrimary};
   position: absolute;
   right: 20px;
   top: 12px;
@@ -94,20 +99,20 @@ const SearchInput = styled.input`
   height: 50px;
   border-radius: 30px;
   padding: 0 20px;
-  color: ${({theme}) => theme.textPrimary};
-  background: ${({theme}) => theme.bgSecondary};
-  border: 2px solid ${({theme}) => theme.borderPrimary};
+  color: ${({ theme }) => theme.textPrimary};
+  background: ${({ theme }) => theme.bgSecondary};
+  border: 2px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
 
   &:hover {
-    border: 2px solid ${({theme}) => theme.borderHighlight};
+    border: 2px solid ${({ theme }) => theme.borderHighlight};
   }
 
-  &:focus, &:active {
+  &:focus,
+  &:active {
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
-    background:
-      linear-gradient(${({theme}) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box, /*this is your grey background*/
-      linear-gradient(to right, #6510F7, #F76110) border-box;
+    background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
+      /*this is your grey background*/ linear-gradient(to right, #6510f7, #f76110) border-box;
     border: 2px solid transparent;
     z-index: 10;
   }

@@ -17,7 +17,6 @@
 import React from 'react'
 import styled from 'styled-components'
 
-
 interface PageTitleProps {
   title: string
   surtitle?: string | JSX.Element
@@ -27,9 +26,7 @@ interface PageTitleProps {
 const PageTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
-    <Title>
-      {title}
-    </Title>
+    <Title>{title}</Title>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
   </TitleWrapper>
 )
@@ -42,7 +39,7 @@ const Title = styled.h1`
   font-family: 'Poppins';
   font-weight: bold;
   font-size: 3.5rem;
-  color: ${({ theme }) => theme.textPrimary };
+  color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
 `
 
@@ -50,7 +47,7 @@ const Surtitle = styled.h2`
   font-family: 'Poppins';
   font-weight: 500;
   font-size: 1.8rem;
-  color: ${({ theme }) => theme.textSecondary };
+  color: ${({ theme }) => theme.textSecondary};
   margin-bottom: 0;
   overflow: hidden;
 `
@@ -59,7 +56,7 @@ const Subtitle = styled.h2`
   font-family: 'Poppins';
   font-weight: 500;
   font-size: 1.8rem;
-  color: ${({ theme }) => theme.textSecondary };
+  color: ${({ theme }) => theme.textSecondary};
   margin: 0;
 `
 

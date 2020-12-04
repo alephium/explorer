@@ -20,7 +20,17 @@ import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
-import { Table, TableHeader, TDStyle, TableBody, HighlightedCell, AnimatedCell, DetailsRow, Row, DetailToggle } from '../components/Table'
+import {
+  Table,
+  TableHeader,
+  TDStyle,
+  TableBody,
+  HighlightedCell,
+  AnimatedCell,
+  DetailsRow,
+  Row,
+  DetailToggle
+} from '../components/Table'
 import { BlockDetail, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
@@ -41,35 +51,59 @@ const BlockInfoSection = () => {
   const client = useContext(APIContext).client
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       setBlockInfo(await client.block(id))
     })()
   }, [id, client])
 
   return (
     <Section>
-      {!blockInfo?.status ? <>
-      <PageTitle title="Block" />
-      <Table bodyOnly>
-        <TableBody tdStyles={BlockTableBodyCustomStyles}>
-          <tr><td>Hash</td><HighlightedCell>{blockInfo?.hash}</HighlightedCell></tr>
-          <tr><td>Height</td><td>{blockInfo?.height}</td></tr>
-          <tr><td>Chain Index</td><td>{blockInfo?.chainFrom} → {blockInfo?.chainTo}</td></tr>
-          <tr><td>Nb. of transactions</td><td>{blockInfo?.transactions.length}</td></tr>
-          <tr><td>Timestamp</td><td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td></tr>
-        </TableBody>
-      </Table>
+      {!blockInfo?.status ? (
+        <>
+          <PageTitle title="Block" />
+          <Table bodyOnly>
+            <TableBody tdStyles={BlockTableBodyCustomStyles}>
+              <tr>
+                <td>Hash</td>
+                <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
+              </tr>
+              <tr>
+                <td>Height</td>
+                <td>{blockInfo?.height}</td>
+              </tr>
+              <tr>
+                <td>Chain Index</td>
+                <td>
+                  {blockInfo?.chainFrom} → {blockInfo?.chainTo}
+                </td>
+              </tr>
+              <tr>
+                <td>Nb. of transactions</td>
+                <td>{blockInfo?.transactions.length}</td>
+              </tr>
+              <tr>
+                <td>Timestamp</td>
+                <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+              </tr>
+            </TableBody>
+          </Table>
 
-      <SecondaryTitle>Transactions</SecondaryTitle>
-      <Table main hasDetails>
-        <TableHeader headerTitles={[ '', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '' ]} columnWidths={ ['50px', '', '15%', '50px', '', '130px', '50px'] }/>
-        <TableBody tdStyles={TXTableBodyCustomStyles}>
-          {blockInfo?.transactions.map((t, i) => (
-            <TransactionRow transaction={t} key={i} />
-          ))}
-        </TableBody>
-      </Table>
-      </> : <span>{blockInfo?.detail}</span>}
+          <SecondaryTitle>Transactions</SecondaryTitle>
+          <Table main hasDetails>
+            <TableHeader
+              headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+              columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+            />
+            <TableBody tdStyles={TXTableBodyCustomStyles}>
+              {blockInfo?.transactions.map((t, i) => (
+                <TransactionRow transaction={t} key={i} />
+              ))}
+            </TableBody>
+          </Table>
+        </>
+      ) : (
+        <span>{blockInfo?.detail}</span>
+      )}
     </Section>
   )
 }
@@ -80,28 +114,50 @@ interface TransactionRowProps {
 
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
-  const {detailOpen, toggleDetail} = useTableDetailsState(false)
+  const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen} >
-        <td><TransactionIcon /></td>
-        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth='150px'/></td>
-        <td>{t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}</td>
-        <td><ArrowRight size={15} /></td>
-        <td>{t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}</td>
-        <td><Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0)} amount /></td>
+      <Row key={t.hash} isActive={detailOpen}>
+        <td>
+          <TransactionIcon />
+        </td>
+        <td>
+          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="150px" />
+        </td>
+        <td>
+          {t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}
+        </td>
+        <td>
+          <ArrowRight size={15} />
+        </td>
+        <td>
+          {t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}
+        </td>
+        <td>
+          <Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => acc + o.amount, 0)} amount />
+        </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row>
       <DetailsRow openCondition={detailOpen}>
-        <td/>
-        <td/>
+        <td />
+        <td />
         <AnimatedCell>
-          {t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} /> )}
+          {t.inputs.map((input, i) => (
+            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} />
+          ))}
         </AnimatedCell>
         <td />
-        <AnimatedCell>{t.outputs.map((o, i) => <AddressLink address={o.address} key={i} />)}</AnimatedCell>
-        <AnimatedCell>{t.outputs.map((o, i) => <Amount value={o.amount} key={i} />)}</AnimatedCell>
+        <AnimatedCell>
+          {t.outputs.map((o, i) => (
+            <AddressLink address={o.address} key={i} />
+          ))}
+        </AnimatedCell>
+        <AnimatedCell>
+          {t.outputs.map((o, i) => (
+            <Amount value={o.amount} key={i} />
+          ))}
+        </AnimatedCell>
         <td />
       </DetailsRow>
     </>

@@ -27,18 +27,24 @@ interface TightLinkProps extends LinkProps {
   text: string
 }
 
-export const TightLinkStrict: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
+export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink {...props} data-tip={text}>{smartHash(text)}</StyledLink>
+      <StyledLink {...props} data-tip={text}>
+        {smartHash(text)}
+      </StyledLink>
     </div>
   )
 }
 
-export const TightLink: React.FC<TightLinkProps> = ({maxWidth, text, ...props}) => {
+export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <MiddleEllipisis><StyledLink {...props} data-tip={text}>{text}</StyledLink></MiddleEllipisis>
+      <MiddleEllipisis>
+        <StyledLink {...props} data-tip={text}>
+          {text}
+        </StyledLink>
+      </MiddleEllipisis>
     </div>
   )
 }
@@ -54,14 +60,22 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
   return (
     <AddressWrapper>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} className="ellipseMe" />
-      {amount !== undefined && <OutputValue>(<Amount value={amount} />)</OutputValue>}
-      {txHashRef && <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef} ><ExternalLink size={12} /></TxLink>}
+      {amount !== undefined && (
+        <OutputValue>
+          (<Amount value={amount} />)
+        </OutputValue>
+      )}
+      {txHashRef && (
+        <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
+          <ExternalLink size={12} />
+        </TxLink>
+      )}
     </AddressWrapper>
   )
 }
 
 const OutputValue = styled.span`
-  color: ${( {theme} ) => theme.textSecondary };
+  color: ${({ theme }) => theme.textSecondary};
   margin-left: 8px;
 `
 

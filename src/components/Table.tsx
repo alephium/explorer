@@ -30,9 +30,7 @@ interface TableProps {
 
 export const Table: FC<TableProps> = ({ children, ...props }) => (
   <TableWrapper>
-    <StyledTable {...props}>
-      {children}
-    </StyledTable>
+    <StyledTable {...props}>{children}</StyledTable>
   </TableWrapper>
 )
 
@@ -43,11 +41,19 @@ interface TableHeaderProps {
   transparent?: boolean
 }
 
-
-export const TableHeader: React.FC<TableHeaderProps> = ({ headerTitles, columnWidths, compact = false, transparent = false }) => (
+export const TableHeader: React.FC<TableHeaderProps> = ({
+  headerTitles,
+  columnWidths,
+  compact = false,
+  transparent = false
+}) => (
   <StyledTableHeader compact={compact} transparent={transparent}>
     <tr>
-      {headerTitles.map((v, i) => <th key={i} style={{ width: columnWidths ? columnWidths[i] || 'auto' : 'auto'}}>{v}</th>)}
+      {headerTitles.map((v, i) => (
+        <th key={i} style={{ width: columnWidths ? columnWidths[i] || 'auto' : 'auto' }}>
+          {v}
+        </th>
+      ))}
     </tr>
   </StyledTableHeader>
 )
@@ -59,7 +65,7 @@ interface RowProps {
 }
 
 export const Row = styled.tr<RowProps>`
-  background-color: ${({ theme, isActive }) => isActive ? theme.bgHighlight : '' };
+  background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
   border: none;
 `
 
@@ -76,11 +82,9 @@ export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => 
   useEffect(() => rebuildTooltips()) // Need to rebuild after lazy rendering
 
   return (
-  <OpenConditionContext.Provider value={openCondition}>
-    <tr className="details">
-      {children}
-    </tr>
-  </OpenConditionContext.Provider>
+    <OpenConditionContext.Provider value={openCondition}>
+      <tr className="details">{children}</tr>
+    </OpenConditionContext.Provider>
   )
 }
 
@@ -95,13 +99,17 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
   return (
     <td colSpan={colSpan}>
       <AnimatePresence>
-        {condition &&
-        <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} transition={{ duration: 0.15 }} className={className} >
-          <AnimatedCellContainer>
-            { children }
-          </AnimatedCellContainer>
-        </motion.div>
-        }
+        {condition && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.15 }}
+            className={className}
+          >
+            <AnimatedCellContainer>{children}</AnimatedCellContainer>
+          </motion.div>
+        )}
       </AnimatePresence>
     </td>
   )
@@ -111,7 +119,7 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
 
 const variants = {
   closed: { rotate: 0 },
-  open: { rotate: 180 },
+  open: { rotate: 180 }
 }
 
 interface DetailToggleProps {
@@ -122,7 +130,7 @@ interface DetailToggleProps {
 export const DetailToggle: FC<DetailToggleProps> = ({ isOpen, onClick }) => {
   return (
     <td style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
-      <DetailToggleWrapper animate={isOpen ? 'open' : 'closed' } variants={variants} onClick={onClick} >
+      <DetailToggleWrapper animate={isOpen ? 'open' : 'closed'} variants={variants} onClick={onClick}>
         <ChevronDown size={20} />
       </DetailToggleWrapper>
     </td>
@@ -160,15 +168,19 @@ const StyledTable = styled.table<TableProps>`
   table-layout: fixed;
   vertical-align: middle;
 
-  ${({ bodyOnly, main }) => (!bodyOnly && main ? css`
-    min-width: 700px;
-  ` : '')}
+  ${({ bodyOnly, main }) =>
+    !bodyOnly && main
+      ? css`
+          min-width: 700px;
+        `
+      : ''}
 
   td:nth-child(1) {
-    width: ${({ bodyOnly }) => bodyOnly ? '30%' : 'auto'}
+    width: ${({ bodyOnly }) => (bodyOnly ? '30%' : 'auto')};
   }
 
-  tr:not(.details) td, th {
+  tr:not(.details) td,
+  th {
     padding: 10px 5px;
   }
 
@@ -178,7 +190,8 @@ const StyledTable = styled.table<TableProps>`
 
   tbody {
     tr {
-      border-bottom: ${({ hasDetails, noBorder, theme }) => !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
+      border-bottom: ${({ hasDetails, noBorder, theme }) =>
+        !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
     }
 
     tr.details {
@@ -200,17 +213,17 @@ interface StyledTableHeaderProps {
 
 export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   font-weight: 400;
-  color: ${({theme}) => theme.textSecondary};
+  color: ${({ theme }) => theme.textSecondary};
   font-style: italic;
 
   th {
     position: sticky;
     top: 0;
-    background-color: ${({theme, transparent}) => transparent ? 'transparent' : `${theme.bgPrimary}`};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
   }
 
   tr {
-    height: ${({compact}) => compact ? '30px' : '60px'};
+    height: ${({ compact }) => (compact ? '30px' : '60px')};
   }
 `
 
@@ -224,10 +237,20 @@ export interface TableBopyProps {
 }
 
 export const TableBody = styled.tbody<TableBopyProps>`
-  color: ${({theme}) => theme.textPrimary};
+  color: ${({ theme }) => theme.textPrimary};
 
-  &>tr {
-    ${props => props.tdStyles ? props.tdStyles.map(s => css`&>td:nth-child(${s.tdPos}) { ${s.style} }`) : ''}
+  & > tr {
+    ${(props) =>
+      props.tdStyles
+        ? props.tdStyles.map(
+            (s) =>
+              css`
+                & > td:nth-child(${s.tdPos}) {
+                  ${s.style}
+                }
+              `
+          )
+        : ''}
 
     &.details div {
       overflow: hidden;
@@ -241,7 +264,7 @@ export const TableBody = styled.tbody<TableBopyProps>`
 
 const StyledHighlightedCell = styled.td`
   font-weight: 600 !important;
-  color: ${({ theme }) => theme.textAccent };
+  color: ${({ theme }) => theme.textAccent};
 `
 
 export const AnimatedCellContainer = styled(motion.div)`

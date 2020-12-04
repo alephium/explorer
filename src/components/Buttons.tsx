@@ -17,23 +17,20 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 
-
 export const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, ...props }) => (
-  <StyledTextButton {...props}>
-    { children }
-  </StyledTextButton>
+  <StyledTextButton {...props}>{children}</StyledTextButton>
 )
 
 const StyledTextButton = styled.button`
   background: transparent;
   font-size: inherit;
-  color: ${({theme}) => theme.link};
+  color: ${({ theme }) => theme.link};
   display: flex;
   align-items: center;
   padding: 0;
   border: 0;
 
   &:hover {
-    color: ${({theme}) => theme.linkHighlight};
+    color: ${({ theme }) => theme.linkHighlight};
   }
 `

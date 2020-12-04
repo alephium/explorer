@@ -14,39 +14,39 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { AlephClient } from "./client";
-import { useEffect, useRef } from 'react';
-import { useLocation } from "react-router-dom";
-import { FC } from "react";
+import { AlephClient } from './client'
+import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+import { FC } from 'react'
 
 // ==== API
 
 export const createClient = (url: string) => {
-  const client = new AlephClient(url);
+  const client = new AlephClient(url)
 
-  console.log('Connecting to: ' + client.url);
+  console.log('Connecting to: ' + client.url)
 
-  return client;
+  return client
 }
 
 // ==== MATHS
 
-const MONEY_SYMBOL = ["", "K", "M", "B", "T"];
+const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 
 export const truncateToDecimals = (num: number, dec = 2) => {
-  const calcDec = Math.pow(10, dec);
-  return Math.trunc(num * calcDec) / calcDec;
+  const calcDec = Math.pow(10, dec)
+  return Math.trunc(num * calcDec) / calcDec
 }
 
 export const abbreviateAmount = (num: number) => {
   if (num < 0) return '0.00'
 
   // what tier? (determines SI symbol)
-  let tier = Math.log10(Number(num)) / 3 | 0
+  let tier = (Math.log10(Number(num)) / 3) | 0
 
   // if zero, we don't need a suffix
-  if(tier <= 0) return num.toFixed(2).toString()
-  if(tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
+  if (tier <= 0) return num.toFixed(2).toString()
+  if (tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
 
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
@@ -62,40 +62,39 @@ export const createRandomId = () => Math.random().toString(36).substring(7)
 // ==== ROUTING
 
 interface ScrollToTopProps {
-  getScrollContainer: () => (HTMLElement | null)
+  getScrollContainer: () => HTMLElement | null
 }
 
 export const ScrollToTop: FC<ScrollToTopProps> = ({ getScrollContainer }) => {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
 
   useEffect(() => {
-    getScrollContainer()?.scrollTo(0, 0);
-  }, [getScrollContainer, pathname]);
+    getScrollContainer()?.scrollTo(0, 0)
+  }, [getScrollContainer, pathname])
 
-  return null;
+  return null
 }
-
 
 // ==== MISC
 
 export function useInterval(callback: () => void, delay: number, shouldPause = false) {
-  const savedCallback = useRef<() => void>(() => null);
+  const savedCallback = useRef<() => void>(() => null)
 
   // Remember the latest callback.
   useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
+    savedCallback.current = callback
+  }, [callback])
 
   // Set up the interval.
   useEffect(() => {
     function tick() {
-      savedCallback.current();
+      savedCallback.current()
     }
     if (delay !== null && !shouldPause) {
-      const id = setInterval(tick, delay);
-      return () => clearInterval(id);
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
     }
-  }, [delay, shouldPause]);
+  }, [delay, shouldPause])
 }
 
 export function smartHash(hash: string) {

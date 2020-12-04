@@ -23,7 +23,17 @@ import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Address, Transaction } from '../types/api'
 import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
-import { Table, TableBody, HighlightedCell, TableHeader, AnimatedCell, DetailsRow, Row, DetailToggle, TDStyle } from '../components/Table'
+import {
+  Table,
+  TableBody,
+  HighlightedCell,
+  TableHeader,
+  AnimatedCell,
+  DetailsRow,
+  Row,
+  DetailToggle,
+  TDStyle
+} from '../components/Table'
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
 import Section from '../components/Section'
@@ -43,33 +53,47 @@ const TransactionInfoSection = () => {
   const [addressInfo, setAddressInfo] = useState<Address & APIError>()
 
   useEffect(() => {
-    (async () =>
-      setAddressInfo(await client.address(id))
-    )()
+    ;(async () => setAddressInfo(await client.address(id)))()
   }, [client, id])
 
   return (
     <Section>
-      {!addressInfo?.status ? <>
-      <PageTitle title="Address" />
-      <Table bodyOnly>
-        <TableBody tdStyles={AddressTableBodyCustomStyles}>
-          <tr><td>Address</td><HighlightedCell>{id}</HighlightedCell></tr>
-          <tr><td>Balance</td><td><Badge type={'neutralHighlight'} content={addressInfo?.balance} amount /></td></tr>
-        </TableBody>
-      </Table>
+      {!addressInfo?.status ? (
+        <>
+          <PageTitle title="Address" />
+          <Table bodyOnly>
+            <TableBody tdStyles={AddressTableBodyCustomStyles}>
+              <tr>
+                <td>Address</td>
+                <HighlightedCell>{id}</HighlightedCell>
+              </tr>
+              <tr>
+                <td>Balance</td>
+                <td>
+                  <Badge type={'neutralHighlight'} content={addressInfo?.balance} amount />
+                </td>
+              </tr>
+            </TableBody>
+          </Table>
 
-      <SecondaryTitle>History</SecondaryTitle>
-      <Table hasDetails main>
-        <TableHeader headerTitles={[ 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '' ]} columnWidths={[ '10%', '15%', '80px', '30%', '130px', '40px']} />
-        <TableBody>
-          {addressInfo?.transactions.sort((t1, t2) => t2.timestamp - t1.timestamp).map((t, i) => (
-            <AddressTransactionRow transaction={t} key={i} />
-          ))}
-        </TableBody>
-      </Table>
-
-      </> : <span>{addressInfo?.detail}</span>}
+          <SecondaryTitle>History</SecondaryTitle>
+          <Table hasDetails main>
+            <TableHeader
+              headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+              columnWidths={['10%', '15%', '80px', '30%', '130px', '40px']}
+            />
+            <TableBody>
+              {addressInfo?.transactions
+                .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                .map((t, i) => (
+                  <AddressTransactionRow transaction={t} key={i} />
+                ))}
+            </TableBody>
+          </Table>
+        </>
+      ) : (
+        <span>{addressInfo?.detail}</span>
+      )}
     </Section>
   )
 }
@@ -82,26 +106,45 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   const { id } = useParams<ParamTypes>()
 
   const t = transaction
-  const {detailOpen, toggleDetail} = useTableDetailsState(false)
+  const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
-  const isOut = t.inputs.findIndex(i => i.address === id) !== -1
+  const isOut = t.inputs.findIndex((i) => i.address === id) !== -1
 
   const renderOutputAccounts = () => {
-    return _(t.outputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    return _(t.outputs.filter((o) => o.address !== id))
+      .map((v) => v.address)
+      .uniq()
+      .value()
+      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
   }
 
   const renderInputAccounts = () => {
-    return _(t.inputs.filter(o => o.address !== id)).map(v => v.address).uniq().value().map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    return _(t.inputs.filter((o) => o.address !== id))
+      .map((v) => v.address)
+      .uniq()
+      .value()
+      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
   }
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen} >
-        <td><TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth='120px'/></td>
+      <Row key={t.hash} isActive={detailOpen}>
+        <td>
+          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
+        </td>
         <td>{dayjs().to(t.timestamp)}</td>
-        <td><Badge type={isOut ? 'minus' : 'plus'} content={isOut ? "To" : "From"}/></td>
+        <td>
+          <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
+        </td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
-        <td><Badge type={isOut ? 'minus' : 'plus'} amount prefix={isOut ? '- ' : '+ '} content={t.outputs.reduce<number>((acc, o) => (acc + o.amount), 0).toString()}/></td>
+        <td>
+          <Badge
+            type={isOut ? 'minus' : 'plus'}
+            amount
+            prefix={isOut ? '- ' : '+ '}
+            content={t.outputs.reduce<number>((acc, o) => acc + o.amount, 0).toString()}
+          />
+        </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row>
       <DetailsRow openCondition={detailOpen}>
@@ -109,12 +152,28 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
         <td />
         <AnimatedCell colSpan={4}>
           <Table noBorder>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={[ '', '50px', '']} compact transparent/>
+            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact transparent />
             <TableBody>
               <Row>
-                <td>{t.inputs.map((input, i) => <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} amount={input.amount} maxWidth="180px" /> )}</td>
-                <td style={{ textAlign: 'center' }}><ArrowRight size={12}/></td>
-                <td>{t.outputs.map((output, i) => <AddressLink key={i} address={output.address} amount={output.amount} maxWidth="180px" /> )}</td>
+                <td>
+                  {t.inputs.map((input, i) => (
+                    <AddressLink
+                      key={i}
+                      address={input.address}
+                      txHashRef={input.txHashRef}
+                      amount={input.amount}
+                      maxWidth="180px"
+                    />
+                  ))}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <ArrowRight size={12} />
+                </td>
+                <td>
+                  {t.outputs.map((output, i) => (
+                    <AddressLink key={i} address={output.address} amount={output.amount} maxWidth="180px" />
+                  ))}
+                </td>
               </Row>
             </TableBody>
           </Table>

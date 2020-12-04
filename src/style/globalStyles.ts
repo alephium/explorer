@@ -40,7 +40,7 @@ export const deviceSizes = {
 
 export const deviceBreakPoints = {
   mobile: `(max-width: ${deviceSizes.mobile}px)`,
-  desktop: `(max-width: ${deviceSizes.desktop}px)`,
-};
+  desktop: `(max-width: ${deviceSizes.desktop}px)`
+}
 
 export default GlobalStyle

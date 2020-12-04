@@ -22,9 +22,7 @@ interface LoadingSpinnerProps {
   size?: number
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => (
-  <Spinner size={size} />
-)
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => <Spinner size={size} />
 
 const Spinner = styled(Loader)`
   animation: spin 1s infinite;

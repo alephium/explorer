@@ -29,12 +29,9 @@ interface BadgeProps {
 }
 
 let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => (
-  <div className={className} data-tip={amount ? `${content} א` : null} >
+  <div className={className} data-tip={amount ? `${content} א` : null}>
     {prefix && <span>{prefix}</span>}
-    {
-      amount && content ? <Amount value={parseFloat(content.toString())} />
-      : content
-    }
+    {amount && content ? <Amount value={parseFloat(content.toString())} /> : content}
   </div>
 )
 
@@ -64,8 +61,8 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
 }
 
 Badge = styled(Badge)`
-  background-color: ${( { type, theme } ) => getBadgeColor(type, theme).backgroundColor};
-  color: ${( { type, theme } ) => getBadgeColor(type, theme).color};
+  background-color: ${({ type, theme }) => getBadgeColor(type, theme).backgroundColor};
+  color: ${({ type, theme }) => getBadgeColor(type, theme).color};
   text-align: center;
   padding: 5px 10px;
   border-radius: 3px;

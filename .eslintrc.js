@@ -1,13 +1,16 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: [
-    'react',
-    '@typescript-eslint',
-  ],
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  plugins: [
+    'react',
+    '@typescript-eslint',
+    'prettier'
   ],
   rules: {
     "react/prop-types": "off",
