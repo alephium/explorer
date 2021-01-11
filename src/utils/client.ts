@@ -38,7 +38,7 @@ export class AlephClient {
   }
 
   async blocks(fromTs: number, toTs: number) {
-    return await this.fetchAPI<Block[]>('/blocks?fromTs=' + fromTs + '&toTs=' + toTs)
+    return await this.fetchAPI<Block[]>('/blocks?from-ts=' + fromTs + '&to-ts=' + toTs)
   }
 
   async address(id: string) {
