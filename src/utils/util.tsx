@@ -108,10 +108,10 @@ export function smartHash(hash: string) {
 
 export function calAmountDelta(t: Transaction, id: string) {
   const inputAmount = t.inputs.reduce<number>((acc, input) => {
-    return input.address === id ? acc + input.amount : acc
+    return (input.address === id ? acc + input.amount : acc)
   }, 0)
   const outputAmount = t.outputs.reduce<number>((acc, output) => {
-    return output.address === id ? acc + output.amount : acc
+    return (output.address === id ? acc + output.amount : acc)
   }, 0)
   return outputAmount - inputAmount
 }
