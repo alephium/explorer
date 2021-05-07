@@ -142,7 +142,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
             type={isOut ? 'minus' : 'plus'}
             amount
             prefix={isOut ? '- ' : '+ '}
-            content={t.outputs.reduce<number>((acc, o) => acc + o.amount, 0).toString()}
+            content={t.outputs
+              .reduce<number>((acc, o) => {
+                return isOut ? (o.address !== id ? acc + o.amount : acc) : o.amount
+              }, 0)
+              .toString()}
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />

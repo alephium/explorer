@@ -20,3 +20,5 @@
 .eslintcache
 
 npm-debug.log*
+
+.env
