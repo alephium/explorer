@@ -22,6 +22,7 @@ import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Address, Transaction } from '../types/api'
 import { APIError } from '../utils/client'
+import { calAmountDelta } from '../utils/util'
 import Badge from '../components/Badge'
 import {
   Table,
@@ -108,7 +109,8 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   const t = transaction
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
-  const isOut = t.inputs.findIndex((i) => i.address === id) !== -1
+  const amountDelta = calAmountDelta(t, id)
+  const isOut = amountDelta < 0
 
   const renderOutputAccounts = () => {
     return _(t.outputs.filter((o) => o.address !== id))
@@ -142,11 +144,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
             type={isOut ? 'minus' : 'plus'}
             amount
             prefix={isOut ? '- ' : '+ '}
-            content={t.outputs
-              .reduce<number>((acc, o) => {
-                return isOut ? (o.address !== id ? acc + o.amount : acc) : o.amount
-              }, 0)
-              .toString()}
+            content={Math.abs(amountDelta).toString()}
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />

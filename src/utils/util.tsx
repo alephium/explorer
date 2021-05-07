@@ -18,6 +18,7 @@ import { AlephClient } from './client'
 import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { FC } from 'react'
+import { Transaction } from '../types/api'
 
 // ==== API
 
@@ -100,4 +101,14 @@ export function useInterval(callback: () => void, delay: number, shouldPause = f
 export function smartHash(hash: string) {
   if (hash.length <= 16) return hash
   else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
+}
+
+export function calAmountDelta(t: Transaction, id: string) {
+  const inputAmount = t.inputs.reduce<number>((acc, input) => {
+    return input.address === id ? acc + input.amount : acc
+  }, 0)
+  const outputAmount = t.outputs.reduce<number>((acc, output) => {
+    return output.address === id ? acc + output.amount : acc
+  }, 0)
+  return outputAmount - inputAmount
 }
