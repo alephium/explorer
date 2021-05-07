@@ -1,4 +1,4 @@
-import { abbreviateAmount, smartHash } from './util'
+import { abbreviateAmount, calAmountDelta, smartHash } from './util'
 
 it('abbreviate amount', () => {
   expect(abbreviateAmount(-1.0)).toEqual('0.00'),
