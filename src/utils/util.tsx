@@ -33,14 +33,17 @@ export const createClient = (url: string) => {
 // ==== MATHS
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
+const QUINTILLION = 1000000000000000000
 
 export const truncateToDecimals = (num: number, dec = 2) => {
   const calcDec = Math.pow(10, dec)
   return Math.trunc(num * calcDec) / calcDec
 }
 
-export const abbreviateAmount = (num: number) => {
-  if (num < 0) return '0.00'
+export const abbreviateAmount = (baseNum: number) => {
+  if (baseNum < 0) return '0.00'
+
+  let num = baseNum / QUINTILLION
 
   // what tier? (determines SI symbol)
   let tier = (Math.log10(Number(num)) / 3) | 0
