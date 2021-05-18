@@ -23,7 +23,7 @@ import { Transaction } from '../types/api'
 import { APIError } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell } from '../components/Table'
-import { AddressLink } from '../components/Links'
+import { AddressLink, TightLinkStrict } from '../components/Links'
 import Section from '../components/Section'
 
 interface ParamTypes {
@@ -49,6 +49,12 @@ const TransactionInfoSection = () => {
               <tr>
                 <td>Hash</td>
                 <HighlightedCell>{txInfo?.hash}</HighlightedCell>
+              </tr>
+              <tr>
+                <td>Block Hash</td>
+                <td>
+                  <TightLinkStrict to={`../blocks/${txInfo?.blockHash || ''}`} text={txInfo?.blockHash || ''} maxWidth="150px" />
+                </td>
               </tr>
               <tr>
                 <td>Timestamp</td>

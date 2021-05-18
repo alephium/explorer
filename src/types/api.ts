@@ -18,6 +18,7 @@ export interface BlockDetail {
 
 export interface Transaction {
   hash: string
+  blockHash: string
   timestamp: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
