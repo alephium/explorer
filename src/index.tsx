@@ -69,7 +69,7 @@ const App = () => {
     }
 
     setClient(createClient(url))
-  }, [location])
+  }, [])
 
   return (
     <Router>

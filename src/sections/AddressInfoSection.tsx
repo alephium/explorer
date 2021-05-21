@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
@@ -38,9 +38,10 @@ import {
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
 import Section from '../components/Section'
-import { css } from 'styled-components'
+import styled, { css } from 'styled-components'
 import _ from 'lodash'
 import useTableDetailsState from '../hooks/useTableDetailsState'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 dayjs.extend(relativeTime)
 
@@ -52,9 +53,25 @@ const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(APIContext).client
   const [addressInfo, setAddressInfo] = useState<Address & APIError>()
+  const [loading, setLoading] = useState(false)
+  const previousId = useRef(id)
 
   useEffect(() => {
-    ;(async () => setAddressInfo(await client.address(id)))()
+    previousId.current = id
+
+    setLoading(true)
+
+    client.address(id)
+      .catch(e => {
+        console.log(e);
+        setLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setAddressInfo(r)
+        setLoading(false)
+      })
+
   }, [client, id])
 
   return (
@@ -62,6 +79,8 @@ const TransactionInfoSection = () => {
       {!addressInfo?.status ? (
         <>
           <PageTitle title="Address" />
+          {(!loading &&  previousId.current === id) ?
+          <>
           <Table bodyOnly>
             <TableBody tdStyles={AddressTableBodyCustomStyles}>
               <tr>
@@ -81,16 +100,18 @@ const TransactionInfoSection = () => {
           <Table hasDetails main>
             <TableHeader
               headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-              columnWidths={['10%', '15%', '80px', '30%', '130px', '40px']}
+              columnWidths={['10%', '15%', '80px', '30%', '80px', '20px']}
             />
             <TableBody>
               {addressInfo?.transactions
                 .sort((t1, t2) => t2.timestamp - t1.timestamp)
                 .map((t, i) => (
-                  <AddressTransactionRow transaction={t} key={i} />
+                  <AddressTransactionRow transaction={t} addressId={id} key={i} />
                 ))}
             </TableBody>
           </Table>
+          </>
+          : <LoadingSpinner />}
         </>
       ) : (
         <span>{addressInfo?.detail}</span>
@@ -101,19 +122,18 @@ const TransactionInfoSection = () => {
 
 interface AddressTransactionRowProps {
   transaction: Transaction
+  addressId: string
 }
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) => {
-  const { id } = useParams<ParamTypes>()
-
+const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, addressId }) => {
   const t = transaction
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
-  const amountDelta = calAmountDelta(t, id)
+  const amountDelta = calAmountDelta(t, addressId)
   const isOut = amountDelta < 0
 
   const renderOutputAccounts = () => {
-    return _(t.outputs.filter((o) => o.address !== id))
+    return _(t.outputs.filter((o) => o.address !== addressId))
       .map((v) => v.address)
       .uniq()
       .value()
@@ -121,11 +141,17 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
   }
 
   const renderInputAccounts = () => {
-    return _(t.inputs.filter((o) => o.address !== id))
+    const inputAccounts = _(t.inputs.filter((o) => o.address !== addressId))
       .map((v) => v.address)
       .uniq()
       .value()
       .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+
+    if (inputAccounts.length > 0) {
+      return inputAccounts
+    } else {
+      return <BlockRewardLabel>Block rewards</BlockRewardLabel>
+    }
   }
 
   return (
@@ -158,7 +184,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
             <TableBody>
               <Row>
                 <td>
-                  {t.inputs.map((input, i) => (
+                  {t.inputs.length > 0 ? t.inputs.map((input, i) => (
                     <AddressLink
                       key={i}
                       address={input.address}
@@ -166,7 +192,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction }) 
                       amount={input.amount}
                       maxWidth="180px"
                     />
-                  ))}
+                  )) : <BlockRewardLabel>Block rewards</BlockRewardLabel>}
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <ArrowRight size={12} />
@@ -193,5 +219,10 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const BlockRewardLabel = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+  font-style: italic;
+`
 
 export default TransactionInfoSection

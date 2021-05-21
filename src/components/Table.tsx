@@ -171,7 +171,7 @@ const StyledTable = styled.table<TableProps>`
   ${({ bodyOnly, main }) =>
     !bodyOnly && main
       ? css`
-          min-width: 700px;
+          min-width: 550px;
         `
       : ''}
 

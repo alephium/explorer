@@ -63,9 +63,9 @@ const TransactionInfoSection = () => {
               <tr>
                 <td>Inputs</td>
                 <td>
-                  {txInfo?.inputs.map((v, i) => (
+                  {txInfo?.inputs && txInfo?.inputs.length > 0 ? txInfo?.inputs.map((v, i) => (
                     <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={v.amount} />
-                  ))}
+                  )) : 'Block Rewards'}
                 </td>
               </tr>
               <tr>
