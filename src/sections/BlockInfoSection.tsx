@@ -52,6 +52,7 @@ const BlockInfoSection = () => {
   const history = useHistory()
 
   useEffect(() => {
+    if (!client) return
     ;(async () => {
       setBlockInfo(await client.block(id))
     })()
@@ -60,6 +61,7 @@ const BlockInfoSection = () => {
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
 
   useEffect(() => {
+    if (!client) return
     ;(async () => {
       if (blockInfo?.status) {
         const res = await client.transaction(id)

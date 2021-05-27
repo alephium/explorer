@@ -36,6 +36,7 @@ const TransactionInfoSection = () => {
   const [txInfo, setTxInfo] = useState<Transaction & APIError>()
 
   useEffect(() => {
+    if (!client) return
     ;(async () => setTxInfo(await client.transaction(id)))()
   }, [client, id])
 
@@ -53,7 +54,11 @@ const TransactionInfoSection = () => {
               <tr>
                 <td>Block Hash</td>
                 <td>
-                  <TightLinkStrict to={`../blocks/${txInfo?.blockHash || ''}`} text={txInfo?.blockHash || ''} maxWidth="150px" />
+                  <TightLinkStrict
+                    to={`../blocks/${txInfo?.blockHash || ''}`}
+                    text={txInfo?.blockHash || ''}
+                    maxWidth="150px"
+                  />
                 </td>
               </tr>
               <tr>
@@ -63,9 +68,11 @@ const TransactionInfoSection = () => {
               <tr>
                 <td>Inputs</td>
                 <td>
-                  {txInfo?.inputs && txInfo?.inputs.length > 0 ? txInfo?.inputs.map((v, i) => (
-                    <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={v.amount} />
-                  )) : 'Block Rewards'}
+                  {txInfo?.inputs && txInfo?.inputs.length > 0
+                    ? txInfo?.inputs.map((v, i) => (
+                        <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={v.amount} />
+                      ))
+                    : 'Block Rewards'}
                 </td>
               </tr>
               <tr>

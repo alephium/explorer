@@ -45,6 +45,8 @@ const BlockSection = () => {
   // Fetching Data
   useEffect(() => {
     const getBlocks = async () => {
+      if (!client) return
+
       const to = fetchTs.to
       const from = fetchTs.from
 

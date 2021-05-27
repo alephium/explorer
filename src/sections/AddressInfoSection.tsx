@@ -57,13 +57,16 @@ const TransactionInfoSection = () => {
   const previousId = useRef(id)
 
   useEffect(() => {
+    if (!client) return
+
     previousId.current = id
 
     setLoading(true)
 
-    client.address(id)
-      .catch(e => {
-        console.log(e);
+    client
+      .address(id)
+      .catch((e) => {
+        console.log(e)
         setLoading(false)
       })
       .then((r) => {
@@ -71,7 +74,6 @@ const TransactionInfoSection = () => {
         setAddressInfo(r)
         setLoading(false)
       })
-
   }, [client, id])
 
   return (
@@ -79,39 +81,41 @@ const TransactionInfoSection = () => {
       {!addressInfo?.status ? (
         <>
           <PageTitle title="Address" />
-          {(!loading &&  previousId.current === id) ?
-          <>
-          <Table bodyOnly>
-            <TableBody tdStyles={AddressTableBodyCustomStyles}>
-              <tr>
-                <td>Address</td>
-                <HighlightedCell>{id}</HighlightedCell>
-              </tr>
-              <tr>
-                <td>Balance</td>
-                <td>
-                  <Badge type={'neutralHighlight'} content={addressInfo?.balance} amount />
-                </td>
-              </tr>
-            </TableBody>
-          </Table>
+          {!loading && previousId.current === id ? (
+            <>
+              <Table bodyOnly>
+                <TableBody tdStyles={AddressTableBodyCustomStyles}>
+                  <tr>
+                    <td>Address</td>
+                    <HighlightedCell>{id}</HighlightedCell>
+                  </tr>
+                  <tr>
+                    <td>Balance</td>
+                    <td>
+                      <Badge type={'neutralHighlight'} content={addressInfo?.balance} amount />
+                    </td>
+                  </tr>
+                </TableBody>
+              </Table>
 
-          <SecondaryTitle>History</SecondaryTitle>
-          <Table hasDetails main>
-            <TableHeader
-              headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-              columnWidths={['10%', '15%', '80px', '30%', '80px', '20px']}
-            />
-            <TableBody>
-              {addressInfo?.transactions
-                .sort((t1, t2) => t2.timestamp - t1.timestamp)
-                .map((t, i) => (
-                  <AddressTransactionRow transaction={t} addressId={id} key={i} />
-                ))}
-            </TableBody>
-          </Table>
-          </>
-          : <LoadingSpinner />}
+              <SecondaryTitle>History</SecondaryTitle>
+              <Table hasDetails main>
+                <TableHeader
+                  headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+                  columnWidths={['10%', '15%', '80px', '30%', '80px', '20px']}
+                />
+                <TableBody>
+                  {addressInfo?.transactions
+                    .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                    .map((t, i) => (
+                      <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                    ))}
+                </TableBody>
+              </Table>
+            </>
+          ) : (
+            <LoadingSpinner />
+          )}
         </>
       ) : (
         <span>{addressInfo?.detail}</span>
@@ -184,15 +188,19 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
             <TableBody>
               <Row>
                 <td>
-                  {t.inputs.length > 0 ? t.inputs.map((input, i) => (
-                    <AddressLink
-                      key={i}
-                      address={input.address}
-                      txHashRef={input.txHashRef}
-                      amount={input.amount}
-                      maxWidth="180px"
-                    />
-                  )) : <BlockRewardLabel>Block rewards</BlockRewardLabel>}
+                  {t.inputs.length > 0 ? (
+                    t.inputs.map((input, i) => (
+                      <AddressLink
+                        key={i}
+                        address={input.address}
+                        txHashRef={input.txHashRef}
+                        amount={input.amount}
+                        maxWidth="180px"
+                      />
+                    ))
+                  ) : (
+                    <BlockRewardLabel>Block rewards</BlockRewardLabel>
+                  )}
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <ArrowRight size={12} />

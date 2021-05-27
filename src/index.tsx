@@ -17,7 +17,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import { HashRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
+import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle from './style/globalStyles'
@@ -34,14 +34,14 @@ import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
 
 interface APIContextType {
-  client: AlephClient
+  client: AlephClient | undefined
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: new AlephClient('') })
+export const APIContext = React.createContext<APIContextType>({ client: undefined })
 
 const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<AlephClient>(new AlephClient(''))
+  const [client, setClient] = useState<AlephClient>()
 
   const contentRef = useRef(null)
 
@@ -51,13 +51,15 @@ const App = () => {
     let url: string | null | undefined
 
     if (process.env.REACT_APP_BACKEND_URL && window.location.hostname === 'localhost') {
-      setClient(createClient(process.env.REACT_APP_BACKEND_URL))
+      url = process.env.REACT_APP_BACKEND_URL
     } else {
       const xs = window.location.hostname.split('.')
       if (!url && xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
         url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
       }
     }
+
+    setClient(createClient(url || 'http://localhost:9090'))
   }, [])
 
   return (
