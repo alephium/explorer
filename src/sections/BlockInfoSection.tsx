@@ -69,7 +69,7 @@ const BlockInfoSection = () => {
         }
       }
     })()
-  }, [blockInfo, id, client])
+  }, [blockInfo, id, client, history])
 
   return (
     <Section>
