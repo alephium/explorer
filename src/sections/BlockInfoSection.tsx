@@ -16,7 +16,7 @@
 
 import dayjs from 'dayjs'
 import React, { FC, useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { APIContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
@@ -49,12 +49,27 @@ const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
   const client = useContext(APIContext).client
+  const history = useHistory()
 
   useEffect(() => {
     ;(async () => {
       setBlockInfo(await client.block(id))
     })()
   }, [id, client])
+
+  // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
+
+  useEffect(() => {
+    ;(async () => {
+      if (blockInfo?.status) {
+        const res = await client.transaction(id)
+        if (!res?.status) {
+          // A transaction exists, redirect automatically
+          history.push(`/transactions/${id}`)
+        }
+      }
+    })()
+  }, [blockInfo, id, client])
 
   return (
     <Section>

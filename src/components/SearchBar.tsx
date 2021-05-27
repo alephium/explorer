@@ -57,6 +57,8 @@ const SearchBar = () => {
     //TODO This is a very dummy way do differentiate address and transaction, need improvement
     if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
       redirect(`/addresses/${word}`)
+    } else if (word.length === 64 && word.slice(0, 4) === '0000') {
+      redirect(`/blocks/${word}`)
     } else if (word.length === 64) {
       redirect(`/transactions/${word}`)
     } else {
