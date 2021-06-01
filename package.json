@@ -22,7 +22,7 @@
     "react-feather": "^2.0.9",
     "react-middle-ellipsis": "^1.1.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.4",
+    "react-scripts": "^4.0.3",
     "react-tooltip": "^4.2.10",
     "styled-components": "^5.2.1",
     "styled-normalize": "^8.0.7",
