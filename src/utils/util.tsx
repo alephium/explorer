@@ -40,13 +40,14 @@ export const truncateToDecimals = (num: number, dec = 2) => {
   return Math.trunc(num * calcDec) / calcDec
 }
 
-export const abbreviateAmount = (baseNum: number) => {
+export const abbreviateAmount = (baseNum: number | bigint) => {
   if (baseNum < 0) return '0.00'
 
-  let num = baseNum / QUINTILLION
+  // For abbreviation, we don't need full precision and can work with number
+  const num = Number(baseNum) / QUINTILLION
 
   // what tier? (determines SI symbol)
-  let tier = (Math.log10(Number(num)) / 3) | 0
+  let tier = (Math.log10(num) / 3) | 0
 
   // if zero, we don't need a suffix
   if (tier <= 0) return num.toFixed(2).toString()
@@ -107,11 +108,13 @@ export function smartHash(hash: string) {
 }
 
 export function calAmountDelta(t: Transaction, id: string) {
-  const inputAmount = t.inputs.reduce<number>((acc, input) => {
-    return (input.address === id ? acc + input.amount : acc)
-  }, 0)
-  const outputAmount = t.outputs.reduce<number>((acc, output) => {
-    return (output.address === id ? acc + output.amount : acc)
-  }, 0)
+  const inputAmount = t.inputs.reduce<bigint>((acc, input) => {
+    const inputAmount = BigInt(input.amount)
+    return input.address === id ? acc + inputAmount : acc
+  }, 0n)
+  const outputAmount = t.outputs.reduce<bigint>((acc, output) => {
+    const outputAmount = BigInt(output.amount)
+    return output.address === id ? acc + outputAmount : acc
+  }, 0n)
   return outputAmount - inputAmount
 }

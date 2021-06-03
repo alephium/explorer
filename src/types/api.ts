@@ -27,18 +27,18 @@ export interface Transaction {
 export interface TransactionInput {
   txHashRef: string
   address: string
-  amount: number
+  amount: string
   unlockScript: string
 }
 
 export interface TransactionOutput {
-  amount: number
+  amount: string
   createdHeight: number
   address: string
   spent: string
 }
 
 export interface Address {
-  balance: number
+  balance: string
   transactions: Transaction[]
 }

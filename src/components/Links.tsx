@@ -53,7 +53,7 @@ interface AddressLinkProps {
   maxWidth?: string
   address: string
   txHashRef?: string
-  amount?: number
+  amount?: bigint
 }
 
 export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {

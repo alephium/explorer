@@ -174,7 +174,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
             type={isOut ? 'minus' : 'plus'}
             amount
             prefix={isOut ? '- ' : '+ '}
-            content={Math.abs(amountDelta).toString()}
+            content={amountDelta < 0 ? (amountDelta * -1n).toString() : amountDelta.toString()}
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
@@ -194,7 +194,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                         key={i}
                         address={input.address}
                         txHashRef={input.txHashRef}
-                        amount={input.amount}
+                        amount={BigInt(input.amount)}
                         maxWidth="180px"
                       />
                     ))
@@ -207,7 +207,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                 </td>
                 <td>
                   {t.outputs.map((output, i) => (
-                    <AddressLink key={i} address={output.address} amount={output.amount} maxWidth="180px" />
+                    <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
                   ))}
                 </td>
               </Row>

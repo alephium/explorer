@@ -152,7 +152,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}
         </td>
         <td>
-          <Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => acc + o.amount, 0)} amount />
+          <Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)} amount />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row>
@@ -172,7 +172,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </AnimatedCell>
         <AnimatedCell>
           {t.outputs.map((o, i) => (
-            <Amount value={o.amount} key={i} />
+            <Amount value={BigInt(o.amount)} key={i} />
           ))}
         </AnimatedCell>
         <td />

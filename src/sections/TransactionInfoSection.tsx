@@ -70,7 +70,7 @@ const TransactionInfoSection = () => {
                 <td>
                   {txInfo?.inputs && txInfo?.inputs.length > 0
                     ? txInfo?.inputs.map((v, i) => (
-                        <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={v.amount} />
+                        <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
                       ))
                     : 'Block Rewards'}
                 </td>
@@ -79,7 +79,7 @@ const TransactionInfoSection = () => {
                 <td>Outputs</td>
                 <td>
                   {txInfo?.outputs.map((v, i) => (
-                    <AddressLink address={v.address} key={i} amount={v.amount} txHashRef={v.spent} />
+                    <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                   ))}
                 </td>
               </tr>
@@ -90,7 +90,7 @@ const TransactionInfoSection = () => {
                 <td>
                   <Badge
                     type={'neutral'}
-                    content={txInfo?.outputs.reduce<number>((acc, o) => acc + o.amount, 0)}
+                    content={txInfo?.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
                     amount
                   />
                 </td>
