@@ -50,7 +50,14 @@ export const abbreviateAmount = (baseNum: number | bigint) => {
   let tier = (Math.log10(num) / 3) | 0
 
   // if zero, we don't need a suffix
-  if (tier <= 0) return num.toFixed(2).toString()
+
+  const numberArray = baseNum.toString().split('')
+  const numberOfNonZero =
+    numberArray.length - numberArray.reduceRight<number>((a, v) => Number(a) + (Number(v) === 0 ? 1 : 0), 0)
+
+  const numberOfDigitsToDisplay = numberOfNonZero < 4 ? numberOfNonZero : 4
+
+  if (tier <= 0) return num.toFixed(numberOfDigitsToDisplay).toString()
   if (tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
 
   // get suffix and determine scale
@@ -59,7 +66,7 @@ export const abbreviateAmount = (baseNum: number | bigint) => {
 
   // scale the bigNum
   const scaled = num / scale
-  return scaled.toFixed(2) + suffix
+  return scaled.toFixed(numberOfDigitsToDisplay) + suffix
 }
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
@@ -116,5 +123,6 @@ export function calAmountDelta(t: Transaction, id: string) {
     const outputAmount = BigInt(output.amount)
     return output.address === id ? acc + outputAmount : acc
   }, 0n)
+
   return outputAmount - inputAmount
 }

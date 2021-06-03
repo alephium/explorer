@@ -28,12 +28,14 @@ interface BadgeProps {
   prefix?: string
 }
 
-let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => (
-  <div className={className} data-tip={amount ? `${content} א` : null}>
-    {prefix && <span>{prefix}</span>}
-    {amount && content ? <Amount value={BigInt(content)} /> : content}
-  </div>
-)
+let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => {
+  return (
+    <div className={className} data-tip={amount ? `${content} א` : null}>
+      {prefix && <span>{prefix}</span>}
+      {amount && content ? <Amount value={BigInt(content)} /> : content}
+    </div>
+  )
+}
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   let backgroundColor
