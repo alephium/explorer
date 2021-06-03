@@ -40,6 +40,7 @@ import { APIError } from '../utils/client'
 import Amount from '../components/Amount'
 import Section from '../components/Section'
 import useTableDetailsState from '../hooks/useTableDetailsState'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 interface ParamTypes {
   id: string
@@ -50,13 +51,24 @@ const BlockInfoSection = () => {
   const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
   const client = useContext(APIContext).client
   const history = useHistory()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!client) return
-    ;(async () => {
-      setBlockInfo(await client.block(id))
-    })()
-  }, [id, client])
+    setLoading(true)
+
+    client
+      .block(id)
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setBlockInfo(r)
+        setLoading(false)
+      })
+  }, [client, id])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
 
@@ -78,45 +90,51 @@ const BlockInfoSection = () => {
       {!blockInfo?.status ? (
         <>
           <PageTitle title="Block" />
-          <Table bodyOnly>
-            <TableBody tdStyles={BlockTableBodyCustomStyles}>
-              <tr>
-                <td>Hash</td>
-                <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
-              </tr>
-              <tr>
-                <td>Height</td>
-                <td>{blockInfo?.height}</td>
-              </tr>
-              <tr>
-                <td>Chain Index</td>
-                <td>
-                  {blockInfo?.chainFrom} → {blockInfo?.chainTo}
-                </td>
-              </tr>
-              <tr>
-                <td>Nb. of transactions</td>
-                <td>{blockInfo?.transactions.length}</td>
-              </tr>
-              <tr>
-                <td>Timestamp</td>
-                <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
-              </tr>
-            </TableBody>
-          </Table>
+          {!loading ? (
+            <>
+              <Table bodyOnly>
+                <TableBody tdStyles={BlockTableBodyCustomStyles}>
+                  <tr>
+                    <td>Hash</td>
+                    <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
+                  </tr>
+                  <tr>
+                    <td>Height</td>
+                    <td>{blockInfo?.height}</td>
+                  </tr>
+                  <tr>
+                    <td>Chain Index</td>
+                    <td>
+                      {blockInfo?.chainFrom} → {blockInfo?.chainTo}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Nb. of transactions</td>
+                    <td>{blockInfo?.transactions.length}</td>
+                  </tr>
+                  <tr>
+                    <td>Timestamp</td>
+                    <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                  </tr>
+                </TableBody>
+              </Table>
 
-          <SecondaryTitle>Transactions</SecondaryTitle>
-          <Table main hasDetails>
-            <TableHeader
-              headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-              columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
-            />
-            <TableBody tdStyles={TXTableBodyCustomStyles}>
-              {blockInfo?.transactions.map((t, i) => (
-                <TransactionRow transaction={t} key={i} />
-              ))}
-            </TableBody>
-          </Table>
+              <SecondaryTitle>Transactions</SecondaryTitle>
+              <Table main hasDetails>
+                <TableHeader
+                  headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+                  columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+                />
+                <TableBody tdStyles={TXTableBodyCustomStyles}>
+                  {blockInfo?.transactions.map((t, i) => (
+                    <TransactionRow transaction={t} key={i} />
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          ) : (
+            <LoadingSpinner />
+          )}
         </>
       ) : (
         <span>{blockInfo?.detail}</span>
