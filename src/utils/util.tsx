@@ -40,24 +40,23 @@ export const truncateToDecimals = (num: number, dec = 2) => {
   return Math.trunc(num * calcDec) / calcDec
 }
 
-export const abbreviateAmount = (baseNum: number | bigint) => {
-  if (baseNum < 0) return '0.00'
+export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
+  if (baseNum < 0n) return '0.00'
 
   // For abbreviation, we don't need full precision and can work with number
-  const num = Number(baseNum) / QUINTILLION
+  const alephNum = Number(baseNum) / QUINTILLION
 
   // what tier? (determines SI symbol)
-  let tier = (Math.log10(num) / 3) | 0
-
-  // if zero, we don't need a suffix
+  let tier = (Math.log10(alephNum) / 3) | 0
 
   const numberArray = baseNum.toString().split('')
   const numberOfNonZero =
     numberArray.length - numberArray.reduceRight<number>((a, v) => Number(a) + (Number(v) === 0 ? 1 : 0), 0)
 
-  const numberOfDigitsToDisplay = numberOfNonZero < 4 ? numberOfNonZero : 4
+  const numberOfDigitsToDisplay = nbOfDecimals ? nbOfDecimals : numberOfNonZero < 4 ? numberOfNonZero : 4
 
-  if (tier <= 0) return num.toFixed(numberOfDigitsToDisplay).toString()
+  // if zero, we don't need a suffix
+  if (tier <= 0) return alephNum.toFixed(numberOfDigitsToDisplay).toString() // Small number, low precision is ok
   if (tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
 
   // get suffix and determine scale
@@ -65,7 +64,17 @@ export const abbreviateAmount = (baseNum: number | bigint) => {
   const scale = Math.pow(10, tier * 3)
 
   // scale the bigNum
-  const scaled = num / scale
+  // Here we need to be careful of precision issues
+  const scaled = alephNum / scale
+
+  if (showFullPrecision) {
+    // Work with string to avoid rounding issues
+    const nonDigitLength = Math.round(scaled).toString().length
+    const numberArrayWithDecimals = [...numberArray.slice(0, nonDigitLength), '.', ...numberArray.slice(nonDigitLength)]
+    const numberArrayWithoutTrailingZeros = [...numberArrayWithDecimals.slice(0, numberOfNonZero + 2)] // Taking into account the dot
+    return numberArrayWithoutTrailingZeros.join().replaceAll(',', '') + suffix
+  }
+
   return scaled.toFixed(numberOfDigitsToDisplay) + suffix
 }
 

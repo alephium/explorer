@@ -16,6 +16,7 @@
 
 import React, { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
+import { abbreviateAmount } from '../utils/util'
 import Amount from './Amount'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
@@ -30,7 +31,7 @@ interface BadgeProps {
 
 let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => {
   return (
-    <div className={className} data-tip={amount ? `${content} א` : null}>
+    <div className={className} data-tip={amount && content ? `${abbreviateAmount(BigInt(content), true)} א` : null}>
       {prefix && <span>{prefix}</span>}
       {amount && content ? <Amount value={BigInt(content)} /> : content}
     </div>
