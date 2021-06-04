@@ -2,11 +2,11 @@ import React from 'react'
 import styled from 'styled-components'
 import logo from '../images/alephium-logo-gradient-stroke.svg'
 
-const ComingSoon = () => {
+const ComingSoon = ({ text }: { text: string }) => {
   return (
     <ComingSoonWrapper>
       <ComingSoonLogo />
-      <ComingSoonText>Dashboard coming soon.</ComingSoonText>
+      <ComingSoonText>{text}</ComingSoonText>
     </ComingSoonWrapper>
   )
 }

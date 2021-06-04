@@ -6,7 +6,7 @@ import styled from 'styled-components'
 const AddressesSection = () => {
   return (
     <StyledSection>
-      <ComingSoon />
+      <ComingSoon text="Coming soon." />
     </StyledSection>
   )
 }

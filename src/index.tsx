@@ -84,7 +84,6 @@ const App = () => {
                 <ScrollToTop getScrollContainer={getContentRef} />
                 <Header>
                   <SearchBar />
-                  <ThemeSwitcher />
                 </Header>
                 <Content>
                   <Route exact path="/">

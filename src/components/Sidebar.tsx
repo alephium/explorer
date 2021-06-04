@@ -135,10 +135,10 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   background-color: ${({ theme }) => theme.bgSecondary};
   border-right: 2px solid ${({ theme }) => theme.borderPrimary};
 
-  @media ${deviceBreakPoints.desktop} {
-    ${StyledThemeSwitcher} {
-      display: none;
-    }
+  ${StyledThemeSwitcher} {
+    display: block;
+    position: absolute;
+    bottom: 25px;
   }
 
   @media ${deviceBreakPoints.mobile} {
@@ -151,12 +151,6 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
 
     transition: all 0.15s ease-out;
     transform: ${({ open }) => (!open ? 'translateX(-100%)' : '')};
-
-    ${StyledThemeSwitcher} {
-      display: block;
-      position: absolute;
-      bottom: 25px;
-    }
   }
 `
 
