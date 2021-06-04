@@ -29,13 +29,13 @@ interface SectionContextType {
 
 export const SectionContext = React.createContext<SectionContextType>({ rebuildTooltips: rebuildTooltips })
 
-const Section: FC = ({ children }) => {
+const Section: FC<{ className?: string }> = ({ children, className }) => {
   useEffect(() => {
     rebuildTooltips()
   })
 
   return (
-    <section>
+    <section className={className}>
       <SectionContext.Provider value={{ rebuildTooltips }}>
         <Tooltip />
         {children}

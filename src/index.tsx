@@ -82,29 +82,27 @@ const App = () => {
                   />
                 </Header>
                 <Content>
-                  <SectionWrapper>
-                    <Route exact path="/">
-                      <Redirect to="/blocks" />
-                    </Route>
-                    <Route exact path="/blocks">
-                      <BlockSection />
-                    </Route>
-                    <Route path="/blocks/:id">
-                      <BlockInfoSection />
-                    </Route>
-                    <Route exact path="/addresses">
-                      <AddressesSection />
-                    </Route>
-                    <Route path="/addresses/:id">
-                      <AddressInfoSection />
-                    </Route>
-                    <Route exact path="/transactions">
-                      <TransactionsSection />
-                    </Route>
-                    <Route path="/transactions/:id">
-                      <TransactionInfoSection />
-                    </Route>
-                  </SectionWrapper>
+                  <Route exact path="/">
+                    <Redirect to="/blocks" />
+                  </Route>
+                  <Route exact path="/blocks">
+                    <BlockSection />
+                  </Route>
+                  <Route path="/blocks/:id">
+                    <BlockInfoSection />
+                  </Route>
+                  <Route exact path="/addresses">
+                    <AddressesSection />
+                  </Route>
+                  <Route path="/addresses/:id">
+                    <AddressInfoSection />
+                  </Route>
+                  <Route exact path="/transactions">
+                    <TransactionsSection />
+                  </Route>
+                  <Route path="/transactions/:id">
+                    <TransactionInfoSection />
+                  </Route>
                 </Content>
               </ContentWrapper>
             </ContentContainer>
@@ -149,6 +147,7 @@ const ContentContainer = styled.div`
 `
 
 const ContentWrapper = styled.main`
+  min-height: 100%;
   flex: 1 1 1200px;
   position: relative;
   display: flex;
@@ -158,6 +157,7 @@ const ContentWrapper = styled.main`
 
 const Content = styled.div`
   flex: 1;
+  display: flex;
   padding: 0 min(5vw, 50px);
   margin-top: 40px;
   margin-bottom: 40px;
@@ -171,8 +171,6 @@ const Header = styled.header`
   top: 25px;
   z-index: 1;
 `
-
-const SectionWrapper = styled.main``
 
 ReactDOM.render(
   <Router>
