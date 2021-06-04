@@ -32,6 +32,8 @@ import { AlephClient } from './utils/client'
 import BlockInfoSection from './sections/BlockInfoSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
+import AddressesSection from './sections/AdressesSection'
+import TransactionsSection from './sections/TransactionsSection'
 
 interface APIContextType {
   client: AlephClient | undefined
@@ -69,30 +71,43 @@ const App = () => {
         <APIContext.Provider value={{ client }}>
           <MainContainer>
             <Sidebar />
-            <ContentWrapper ref={contentRef}>
-              <ScrollToTop getScrollContainer={getContentRef} />
-              <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
-              <Content>
-                <SearchBar />
-                <SectionWrapper>
-                  <Route exact path="/">
-                    <Redirect to="/blocks" />
-                  </Route>
-                  <Route exact path="/blocks">
-                    <BlockSection />
-                  </Route>
-                  <Route path="/blocks/:id">
-                    <BlockInfoSection />
-                  </Route>
-                  <Route path="/addresses/:id">
-                    <AddressInfoSection />
-                  </Route>
-                  <Route path="/transactions/:id">
-                    <TransactionInfoSection />
-                  </Route>
-                </SectionWrapper>
-              </Content>
-            </ContentWrapper>
+            <ContentContainer>
+              <ContentWrapper ref={contentRef}>
+                <ScrollToTop getScrollContainer={getContentRef} />
+                <Header>
+                  <SearchBar />
+                  <ThemeSwitcher
+                    currentTheme={theme as ThemeType}
+                    switchTheme={setTheme as (arg0: ThemeType) => void}
+                  />
+                </Header>
+                <Content>
+                  <SectionWrapper>
+                    <Route exact path="/">
+                      <Redirect to="/blocks" />
+                    </Route>
+                    <Route exact path="/blocks">
+                      <BlockSection />
+                    </Route>
+                    <Route path="/blocks/:id">
+                      <BlockInfoSection />
+                    </Route>
+                    <Route exact path="/addresses">
+                      <AddressesSection />
+                    </Route>
+                    <Route path="/addresses/:id">
+                      <AddressInfoSection />
+                    </Route>
+                    <Route exact path="/transactions">
+                      <TransactionsSection />
+                    </Route>
+                    <Route path="/transactions/:id">
+                      <TransactionInfoSection />
+                    </Route>
+                  </SectionWrapper>
+                </Content>
+              </ContentWrapper>
+            </ContentContainer>
           </MainContainer>
         </APIContext.Provider>
       </ThemeProvider>
@@ -125,21 +140,39 @@ const MainContainer = styled.div`
   overflow: hidden;
 `
 
-const ContentWrapper = styled.main`
-  position: relative;
+const ContentContainer = styled.div`
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   overflow-y: auto;
 `
 
-const Content = styled.div`
-  max-width: 1200px;
-  margin: 80px auto;
-  padding: 0 5vw;
+const ContentWrapper = styled.main`
+  flex: 1 1 1200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
 `
 
-const SectionWrapper = styled.main`
-  padding-top: 105px;
+const Content = styled.div`
+  flex: 1;
+  padding: 0 min(5vw, 50px);
+  margin-top: 40px;
+  margin-bottom: 40px;
 `
+
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  margin: 40px;
+  position: sticky;
+  top: 25px;
+  z-index: 1;
+`
+
+const SectionWrapper = styled.main``
 
 ReactDOM.render(
   <Router>

@@ -68,23 +68,24 @@ const SearchBar = () => {
 
   return (
     <Container>
-      <div>
-        <SearchInput
-          onChange={handleSearchChange}
-          value={search}
-          onClick={handleInputClick}
-          onKeyDown={handleSearchKeyDown}
-          placeholder="Search for an address or a tx..."
-        />
-        <SearchIcon onClick={handleSearchClick} />
-      </div>
+      <SearchInput
+        onChange={handleSearchChange}
+        value={search}
+        onClick={handleInputClick}
+        onKeyDown={handleSearchKeyDown}
+        placeholder="Search for an address or a tx..."
+      />
+      <SearchIcon onClick={handleSearchClick} />
       {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
     </Container>
   )
 }
 
 const Container = styled.div`
+  flex: 1;
   position: relative;
+  height: 50px;
+  margin-right: 50px;
 `
 
 const SearchIcon = styled(Search)`
@@ -96,9 +97,8 @@ const SearchIcon = styled(Search)`
 `
 
 const SearchInput = styled.input`
-  position: absolute;
   width: 100%;
-  height: 50px;
+  height: 100%;
   border-radius: 30px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};

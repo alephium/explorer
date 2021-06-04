@@ -29,8 +29,8 @@ const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
   return theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
 }
 
-const toggleWidth = 70
-const toggleHeight = 35
+const toggleWidth = 80
+const toggleHeight = toggleWidth / 2
 const toggleIndicatorSize = toggleWidth / 2
 
 const toggleVariants = {
@@ -57,11 +57,9 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ currentTheme, switchTheme
 )
 
 const Toggle = styled.div`
-  position: absolute;
+  position: relative;
   width: ${toggleWidth}px;
   height: ${toggleHeight}px;
-  top: 20px;
-  right: 5vw;
   border: 2px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 60px;
   background-color: ${({ theme }) => theme.bgSecondary};

@@ -152,7 +152,7 @@ const Header = styled.header`
 `
 
 const Tabs = styled.div`
-  margin-top: 5vw;
+  margin-top: 5vh;
   display: flex;
   flex-direction: column;
 `
