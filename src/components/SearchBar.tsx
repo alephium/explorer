@@ -19,6 +19,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Search } from 'react-feather'
+import { deviceBreakPoints } from '../style/globalStyles'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
@@ -75,8 +76,8 @@ const SearchBar = () => {
         onKeyDown={handleSearchKeyDown}
         placeholder="Search for an address or a tx..."
       />
-      <SearchIcon onClick={handleSearchClick} />
       {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
+      <SearchIcon onClick={handleSearchClick} />
     </Container>
   )
 }
@@ -86,6 +87,16 @@ const Container = styled.div`
   position: relative;
   height: 50px;
   margin-right: 50px;
+
+  @media ${deviceBreakPoints.mobile} {
+    position: fixed;
+    top: 25px;
+    right: 10px;
+    left: 10px;
+    margin-left: 50px;
+    margin-right: 10px;
+    z-index: 1;
+  }
 `
 
 const SearchIcon = styled(Search)`
@@ -97,6 +108,7 @@ const SearchIcon = styled(Search)`
 `
 
 const SearchInput = styled.input`
+  position: absolute;
   width: 100%;
   height: 100%;
   border-radius: 30px;
@@ -105,6 +117,7 @@ const SearchInput = styled.input`
   background: ${({ theme }) => theme.bgSecondary};
   border: 2px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
+  z-index: 10;
 
   &:hover {
     border: 2px solid ${({ theme }) => theme.borderHighlight};

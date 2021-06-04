@@ -18,7 +18,7 @@ import React, { FC, useContext, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
-import { APIContext } from '..'
+import { GlobalContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Address, Transaction } from '../types/api'
 import { APIError } from '../utils/client'
@@ -51,7 +51,7 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(APIContext).client
+  const client = useContext(GlobalContext).client
   const [addressInfo, setAddressInfo] = useState<Address & APIError>()
   const [loading, setLoading] = useState(false)
   const previousId = useRef(id)

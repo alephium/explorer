@@ -16,6 +16,7 @@
 
 import React from 'react'
 import styled from 'styled-components'
+import { deviceBreakPoints } from '../style/globalStyles'
 
 interface PageTitleProps {
   title: string
@@ -41,6 +42,11 @@ const Title = styled.h1`
   font-size: 3.5rem;
   color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
+
+  @media ${deviceBreakPoints.mobile} {
+    font-size: 2.5rem;
+    margin-top: 40px;
+  }
 `
 
 const Surtitle = styled.h2`

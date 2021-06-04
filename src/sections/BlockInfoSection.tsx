@@ -18,7 +18,7 @@ import dayjs from 'dayjs'
 import React, { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { APIContext } from '..'
+import { GlobalContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import {
   Table,
@@ -49,7 +49,7 @@ interface ParamTypes {
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
-  const client = useContext(APIContext).client
+  const client = useContext(GlobalContext).client
   const history = useHistory()
   const [loading, setLoading] = useState(false)
 

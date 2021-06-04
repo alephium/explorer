@@ -20,10 +20,10 @@ import './index.css'
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
-import GlobalStyle from './style/globalStyles'
+import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
 
-import ThemeSwitcher from './components/ThemeSwitcher'
+import ThemeSwitcher, { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
@@ -35,11 +35,17 @@ import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import TransactionsSection from './sections/TransactionsSection'
 
-interface APIContextType {
+interface GlobalContext {
   client: AlephClient | undefined
+  currentTheme: ThemeType
+  switchTheme: (arg0: ThemeType) => void
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: undefined })
+export const GlobalContext = React.createContext<GlobalContext>({
+  client: undefined,
+  currentTheme: 'dark',
+  switchTheme: () => null
+})
 
 const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
@@ -68,7 +74,9 @@ const App = () => {
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
         <GlobalStyle />
-        <APIContext.Provider value={{ client }}>
+        <GlobalContext.Provider
+          value={{ client, currentTheme: theme as ThemeType, switchTheme: setTheme as (arg0: ThemeType) => void }}
+        >
           <MainContainer>
             <Sidebar />
             <ContentContainer>
@@ -76,10 +84,7 @@ const App = () => {
                 <ScrollToTop getScrollContainer={getContentRef} />
                 <Header>
                   <SearchBar />
-                  <ThemeSwitcher
-                    currentTheme={theme as ThemeType}
-                    switchTheme={setTheme as (arg0: ThemeType) => void}
-                  />
+                  <ThemeSwitcher />
                 </Header>
                 <Content>
                   <Route exact path="/">
@@ -107,7 +112,7 @@ const App = () => {
               </ContentWrapper>
             </ContentContainer>
           </MainContainer>
-        </APIContext.Provider>
+        </GlobalContext.Provider>
       </ThemeProvider>
     </Router>
   )
@@ -153,6 +158,11 @@ const ContentWrapper = styled.main`
   display: flex;
   flex-direction: column;
   max-width: 1400px;
+
+  @media ${deviceBreakPoints.mobile} {
+    width: 100%;
+    justify-self: flex-start;
+  }
 `
 
 const Content = styled.div`
@@ -170,6 +180,16 @@ const Header = styled.header`
   position: sticky;
   top: 25px;
   z-index: 1;
+
+  @media ${deviceBreakPoints.mobile} {
+    margin: 10px;
+  }
+
+  ${StyledThemeSwitcher} {
+    @media ${deviceBreakPoints.mobile} {
+      display: none;
+    }
+  }
 `
 
 ReactDOM.render(

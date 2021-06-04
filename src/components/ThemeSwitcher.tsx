@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { Moon, Sun } from 'react-feather'
 import { ThemeType } from '../style/themes'
 import { motion } from 'framer-motion'
+import { GlobalContext } from '..'
 
 interface ThemeSwitcherProps {
-  currentTheme: ThemeType
-  switchTheme: (arg0: ThemeType) => void
+  className?: string
 }
 
 const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
@@ -38,25 +38,29 @@ const toggleVariants = {
   dark: { left: toggleWidth - toggleIndicatorSize, backgroundColor: '#3A0595' }
 }
 
-const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ currentTheme, switchTheme }) => (
-  <Toggle onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')}>
-    <ToggleContent>
-      <ToggleIcon>
-        <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} />
-      </ToggleIcon>
-      <ToggleIcon>
-        <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} />
-      </ToggleIcon>
-    </ToggleContent>
-    <ToggleFloatingIndicator
-      variants={toggleVariants}
-      animate={currentTheme}
-      transition={{ duration: 0.5, type: 'spring' }}
-    />
-  </Toggle>
-)
+const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
+  const { currentTheme, switchTheme } = useContext(GlobalContext)
 
-const Toggle = styled.div`
+  return (
+    <StyledThemeSwitcher onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')} className={className}>
+      <ToggleContent>
+        <ToggleIcon>
+          <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} />
+        </ToggleIcon>
+        <ToggleIcon>
+          <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} />
+        </ToggleIcon>
+      </ToggleContent>
+      <ToggleFloatingIndicator
+        variants={toggleVariants}
+        animate={currentTheme}
+        transition={{ duration: 0.5, type: 'spring' }}
+      />
+    </StyledThemeSwitcher>
+  )
+}
+
+export const StyledThemeSwitcher = styled.div`
   position: relative;
   width: ${toggleWidth}px;
   height: ${toggleHeight}px;
