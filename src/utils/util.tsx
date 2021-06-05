@@ -64,7 +64,8 @@ const removeTrailingZeros = (numString: string) => {
   if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
     numberArrayWithoutTrailingZeros.push('0')
 
-  return numberArrayWithoutTrailingZeros.join().replaceAll(',', '')
+  console.log(numberArrayWithoutTrailingZeros)
+  return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
