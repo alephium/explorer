@@ -33,29 +33,88 @@ export const createClient = (url: string) => {
 // ==== MATHS
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
+const QUINTILLION = 1000000000000000000
 
 export const truncateToDecimals = (num: number, dec = 2) => {
   const calcDec = Math.pow(10, dec)
   return Math.trunc(num * calcDec) / calcDec
 }
 
-export const abbreviateAmount = (num: number) => {
-  if (num < 0) return '0.00'
+const getNumberOfTrailingZeros = (numberArray: string[]) => {
+  let numberOfZeros = 0
+
+  for (let i = numberArray.length - 1; i >= 0; i--) {
+    if (numberArray[i] === '0') {
+      numberOfZeros++
+    } else {
+      break
+    }
+  }
+
+  return numberOfZeros
+}
+
+const removeTrailingZeros = (numString: string) => {
+  const numberArray = numString.split('')
+
+  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
+
+  const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
+
+  if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
+    numberArrayWithoutTrailingZeros.push('0')
+
+  console.log(numberArrayWithoutTrailingZeros)
+  return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
+}
+
+export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
+  const maxDecimals = 6
+
+  if (baseNum < 0n) return '0.00'
+
+  // For abbreviation, we don't need full precision and can work with number
+  const alephNum = Number(baseNum) / QUINTILLION
 
   // what tier? (determines SI symbol)
-  let tier = (Math.log10(Number(num)) / 3) | 0
+  let tier = (Math.log10(alephNum) / 3) | 0
 
-  // if zero, we don't need a suffix
-  if (tier <= 0) return num.toFixed(2).toString()
-  if (tier >= MONEY_SYMBOL.length) tier = MONEY_SYMBOL.length - 1
+  const numberArray = baseNum.toString().split('')
+
+  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
+  const numberOfNonZero = numberArray.length - numberOfZeros
+
+  const numberOfDigitsToDisplay = nbOfDecimals
+    ? nbOfDecimals
+    : numberOfNonZero < maxDecimals
+    ? numberOfNonZero
+    : maxDecimals
+
+  if (tier < 0) {
+    return removeTrailingZeros(alephNum.toFixed(8))
+  } else if (tier === 0) {
+    // Small number, low precision is ok
+    return removeTrailingZeros(alephNum.toFixed(numberOfDigitsToDisplay).toString())
+  } else if (tier >= MONEY_SYMBOL.length) {
+    tier = MONEY_SYMBOL.length - 1
+  }
 
   // get suffix and determine scale
   const suffix = MONEY_SYMBOL[tier]
   const scale = Math.pow(10, tier * 3)
 
   // scale the bigNum
-  const scaled = num / scale
-  return scaled.toFixed(2) + suffix
+  // Here we need to be careful of precision issues
+  const scaled = alephNum / scale
+
+  if (showFullPrecision) {
+    // Work with string to avoid rounding issues
+    const nonDigitLength = Math.round(scaled).toString().length
+    const numberArrayWithDecimals = [...numberArray.slice(0, nonDigitLength), '.', ...numberArray.slice(nonDigitLength)]
+    return removeTrailingZeros(numberArrayWithDecimals.join().replaceAll(',', '')) + suffix
+  }
+
+  return scaled.toFixed(numberOfDigitsToDisplay) + suffix
 }
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
@@ -104,11 +163,14 @@ export function smartHash(hash: string) {
 }
 
 export function calAmountDelta(t: Transaction, id: string) {
-  const inputAmount = t.inputs.reduce<number>((acc, input) => {
-    return input.address === id ? acc + input.amount : acc
-  }, 0)
-  const outputAmount = t.outputs.reduce<number>((acc, output) => {
-    return output.address === id ? acc + output.amount : acc
-  }, 0)
+  const inputAmount = t.inputs.reduce<bigint>((acc, input) => {
+    const inputAmount = BigInt(input.amount)
+    return input.address === id ? acc + inputAmount : acc
+  }, 0n)
+  const outputAmount = t.outputs.reduce<bigint>((acc, output) => {
+    const outputAmount = BigInt(output.amount)
+    return output.address === id ? acc + outputAmount : acc
+  }, 0n)
+
   return outputAmount - inputAmount
 }

@@ -17,7 +17,7 @@ import React, { FC } from 'react'
 import { abbreviateAmount } from '../utils/util'
 
 interface AmountProps {
-  value: number | undefined
+  value: bigint | undefined
   className?: string
 }
 

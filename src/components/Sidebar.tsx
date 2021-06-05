@@ -27,6 +27,7 @@ import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
 import { Menu, X } from 'react-feather'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { AnimatePresence, motion } from 'framer-motion'
+import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
 
 const Sidebar = () => {
   const theme = useTheme()
@@ -69,6 +70,7 @@ const Sidebar = () => {
             <TabIcon src={transactionIcon} alt="transactions" /> Transactions
           </Tab>
         </Tabs>
+        <ThemeSwitcher />
       </SidebarContainer>
       <AnimatePresence>
         {open && (
@@ -99,7 +101,7 @@ const Logo = styled.img`
 
 const HamburgerButton = styled.div`
   position: absolute;
-  top: 25px;
+  top: 38px;
   left: 20px;
   display: none;
   z-index: 200;
@@ -133,6 +135,12 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   background-color: ${({ theme }) => theme.bgSecondary};
   border-right: 2px solid ${({ theme }) => theme.borderPrimary};
 
+  ${StyledThemeSwitcher} {
+    display: block;
+    position: absolute;
+    bottom: 25px;
+  }
+
   @media ${deviceBreakPoints.mobile} {
     position: absolute;
     top: 0;
@@ -152,7 +160,7 @@ const Header = styled.header`
 `
 
 const Tabs = styled.div`
-  margin-top: 5vw;
+  margin-top: 5vh;
   display: flex;
   flex-direction: column;
 `

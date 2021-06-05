@@ -17,13 +17,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import { HashRouter as Router, Redirect, Route, useLocation } from 'react-router-dom'
+import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
-import GlobalStyle from './style/globalStyles'
+import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
 
-import ThemeSwitcher from './components/ThemeSwitcher'
+import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
@@ -32,58 +32,60 @@ import { AlephClient } from './utils/client'
 import BlockInfoSection from './sections/BlockInfoSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
+import AddressesSection from './sections/AdressesSection'
+import TransactionsSection from './sections/TransactionsSection'
 
-interface APIContextType {
-  client: AlephClient
+interface GlobalContext {
+  client: AlephClient | undefined
+  currentTheme: ThemeType
+  switchTheme: (arg0: ThemeType) => void
 }
 
-export const APIContext = React.createContext<APIContextType>({ client: new AlephClient('') })
+export const GlobalContext = React.createContext<GlobalContext>({
+  client: undefined,
+  currentTheme: 'dark',
+  switchTheme: () => null
+})
 
 const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<AlephClient>(new AlephClient(''))
+  const [client, setClient] = useState<AlephClient>()
 
   const contentRef = useRef(null)
 
   const getContentRef = useCallback(() => contentRef.current, [])
 
-  const location = useLocation()
-
   useEffect(() => {
-    const params = new URLSearchParams(location.search)
+    let url: string | null | undefined
 
-    let url: string | null | undefined = params.get('address')
-
-    if (window.location.hostname === 'localhost') {
-      if (!url) {
-        url = process.env.REACT_APP_BACKEND_URL
-      }
+    if (process.env.REACT_APP_BACKEND_URL && window.location.hostname === 'localhost') {
+      url = process.env.REACT_APP_BACKEND_URL
     } else {
       const xs = window.location.hostname.split('.')
       if (!url && xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
         url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
       }
     }
-    if (!url) {
-      url = 'http://localhost:9090'
-    }
 
-    setClient(createClient(url))
-  }, [location])
+    setClient(createClient(url || 'http://localhost:9090'))
+  }, [])
 
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
         <GlobalStyle />
-        <APIContext.Provider value={{ client }}>
+        <GlobalContext.Provider
+          value={{ client, currentTheme: theme as ThemeType, switchTheme: setTheme as (arg0: ThemeType) => void }}
+        >
           <MainContainer>
             <Sidebar />
-            <ContentWrapper ref={contentRef}>
-              <ScrollToTop getScrollContainer={getContentRef} />
-              <ThemeSwitcher currentTheme={theme as ThemeType} switchTheme={setTheme as (arg0: ThemeType) => void} />
-              <Content>
-                <SearchBar />
-                <SectionWrapper>
+            <ContentContainer>
+              <ContentWrapper ref={contentRef}>
+                <ScrollToTop getScrollContainer={getContentRef} />
+                <Header>
+                  <SearchBar />
+                </Header>
+                <Content>
                   <Route exact path="/">
                     <Redirect to="/blocks" />
                   </Route>
@@ -93,17 +95,23 @@ const App = () => {
                   <Route path="/blocks/:id">
                     <BlockInfoSection />
                   </Route>
+                  <Route exact path="/addresses">
+                    <AddressesSection />
+                  </Route>
                   <Route path="/addresses/:id">
                     <AddressInfoSection />
+                  </Route>
+                  <Route exact path="/transactions">
+                    <TransactionsSection />
                   </Route>
                   <Route path="/transactions/:id">
                     <TransactionInfoSection />
                   </Route>
-                </SectionWrapper>
-              </Content>
-            </ContentWrapper>
+                </Content>
+              </ContentWrapper>
+            </ContentContainer>
           </MainContainer>
-        </APIContext.Provider>
+        </GlobalContext.Provider>
       </ThemeProvider>
     </Router>
   )
@@ -134,20 +142,53 @@ const MainContainer = styled.div`
   overflow: hidden;
 `
 
-const ContentWrapper = styled.main`
-  position: relative;
+const ContentContainer = styled.div`
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
   overflow-y: auto;
 `
 
-const Content = styled.div`
-  max-width: 1200px;
-  margin: 80px auto;
-  padding: 0 5vw;
+const ContentWrapper = styled.main`
+  min-height: 100%;
+  flex: 1 1 1200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+
+  @media ${deviceBreakPoints.mobile} {
+    width: 100%;
+    justify-self: flex-start;
+  }
 `
 
-const SectionWrapper = styled.main`
-  padding-top: 105px;
+const Content = styled.div`
+  flex: 1;
+  display: flex;
+  padding: 0 min(5vw, 50px);
+  margin-top: 40px;
+  margin-bottom: 40px;
+`
+
+const Header = styled.header`
+  display: flex;
+  align-items: center;
+  margin: 40px;
+  position: sticky;
+  top: 25px;
+  z-index: 1;
+
+  @media ${deviceBreakPoints.mobile} {
+    margin: 10px;
+  }
+
+  ${StyledThemeSwitcher} {
+    @media ${deviceBreakPoints.mobile} {
+      display: none;
+    }
+  }
 `
 
 ReactDOM.render(

@@ -1,14 +1,17 @@
 import { abbreviateAmount, calAmountDelta, smartHash } from './util'
 
+function alf(amount: bigint): bigint {
+  return amount * 1000000000000000000n
+}
+
 it('abbreviate amount', () => {
-  expect(abbreviateAmount(-1.0)).toEqual('0.00'),
-    expect(abbreviateAmount(1.23)).toEqual('1.23'),
-    expect(abbreviateAmount(1230.0)).toEqual('1.23K'),
-    expect(abbreviateAmount(1230000.0)).toEqual('1.23M'),
-    expect(abbreviateAmount(1230000000.0)).toEqual('1.23B'),
-    expect(abbreviateAmount(1230000000000.0)).toEqual('1.23T'),
-    expect(abbreviateAmount(1230000000000000.0)).toEqual('1230.00T'),
-    expect(abbreviateAmount(1.0)).toEqual('1.00')
+  expect(abbreviateAmount(alf(-1n))).toEqual('0.00'),
+    expect(abbreviateAmount(alf(1230n))).toEqual('1.230K'),
+    expect(abbreviateAmount(alf(1230000n))).toEqual('1.230M'),
+    expect(abbreviateAmount(alf(1230000000n))).toEqual('1.230B'),
+    expect(abbreviateAmount(alf(1230000000000n))).toEqual('1.230T'),
+    expect(abbreviateAmount(alf(1230000000000000n))).toEqual('1230.000T'),
+    expect(abbreviateAmount(alf(1n))).toEqual('1.0')
 })
 
 it('smart hash', () => {

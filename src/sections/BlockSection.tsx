@@ -25,7 +25,7 @@ import blockIcon from '../images/block-icon.svg'
 import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
-import { APIContext } from '..'
+import { GlobalContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import { TextButton } from '../components/Buttons'
 import { TightLinkStrict } from '../components/Links'
@@ -40,11 +40,13 @@ const BlockSection = () => {
   const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
   const [loading, setLoading] = useState(false)
 
-  const client = useContext(APIContext).client
+  const client = useContext(GlobalContext).client
 
   // Fetching Data
   useEffect(() => {
     const getBlocks = async () => {
+      if (!client) return
+
       const to = fetchTs.to
       const from = fetchTs.from
 

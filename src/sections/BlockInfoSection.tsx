@@ -16,9 +16,9 @@
 
 import dayjs from 'dayjs'
 import React, { FC, useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-import { APIContext } from '..'
+import { GlobalContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import {
   Table,
@@ -40,6 +40,7 @@ import { APIError } from '../utils/client'
 import Amount from '../components/Amount'
 import Section from '../components/Section'
 import useTableDetailsState from '../hooks/useTableDetailsState'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 interface ParamTypes {
   id: string
@@ -48,58 +49,92 @@ interface ParamTypes {
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
-  const client = useContext(APIContext).client
+  const client = useContext(GlobalContext).client
+  const history = useHistory()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    if (!client) return
+    setLoading(true)
+
+    client
+      .block(id)
+      .catch((e) => {
+        console.log(e)
+        setLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setBlockInfo(r)
+        setLoading(false)
+      })
+  }, [client, id])
+
+  // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
+
+  useEffect(() => {
+    if (!client) return
     ;(async () => {
-      setBlockInfo(await client.block(id))
+      if (blockInfo?.status) {
+        const res = await client.transaction(id)
+        if (!res?.status) {
+          // A transaction exists, redirect automatically
+          history.push(`/transactions/${id}`)
+        }
+      }
     })()
-  }, [id, client])
+  }, [blockInfo, id, client, history])
 
   return (
     <Section>
       {!blockInfo?.status ? (
         <>
           <PageTitle title="Block" />
-          <Table bodyOnly>
-            <TableBody tdStyles={BlockTableBodyCustomStyles}>
-              <tr>
-                <td>Hash</td>
-                <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
-              </tr>
-              <tr>
-                <td>Height</td>
-                <td>{blockInfo?.height}</td>
-              </tr>
-              <tr>
-                <td>Chain Index</td>
-                <td>
-                  {blockInfo?.chainFrom} → {blockInfo?.chainTo}
-                </td>
-              </tr>
-              <tr>
-                <td>Nb. of transactions</td>
-                <td>{blockInfo?.transactions.length}</td>
-              </tr>
-              <tr>
-                <td>Timestamp</td>
-                <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
-              </tr>
-            </TableBody>
-          </Table>
+          {!loading ? (
+            <>
+              <Table bodyOnly>
+                <TableBody tdStyles={BlockTableBodyCustomStyles}>
+                  <tr>
+                    <td>Hash</td>
+                    <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
+                  </tr>
+                  <tr>
+                    <td>Height</td>
+                    <td>{blockInfo?.height}</td>
+                  </tr>
+                  <tr>
+                    <td>Chain Index</td>
+                    <td>
+                      {blockInfo?.chainFrom} → {blockInfo?.chainTo}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Nb. of transactions</td>
+                    <td>{blockInfo?.transactions.length}</td>
+                  </tr>
+                  <tr>
+                    <td>Timestamp</td>
+                    <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                  </tr>
+                </TableBody>
+              </Table>
 
-          <SecondaryTitle>Transactions</SecondaryTitle>
-          <Table main hasDetails>
-            <TableHeader
-              headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-              columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
-            />
-            <TableBody tdStyles={TXTableBodyCustomStyles}>
-              {blockInfo?.transactions.map((t, i) => (
-                <TransactionRow transaction={t} key={i} />
-              ))}
-            </TableBody>
-          </Table>
+              <SecondaryTitle>Transactions</SecondaryTitle>
+              <Table main hasDetails>
+                <TableHeader
+                  headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+                  columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+                />
+                <TableBody tdStyles={TXTableBodyCustomStyles}>
+                  {blockInfo?.transactions.map((t, i) => (
+                    <TransactionRow transaction={t} key={i} />
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          ) : (
+            <LoadingSpinner />
+          )}
         </>
       ) : (
         <span>{blockInfo?.detail}</span>
@@ -135,7 +170,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}
         </td>
         <td>
-          <Badge type={'neutral'} content={t.outputs.reduce<number>((acc, o) => acc + o.amount, 0)} amount />
+          <Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)} amount />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row>
@@ -155,7 +190,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </AnimatedCell>
         <AnimatedCell>
           {t.outputs.map((o, i) => (
-            <Amount value={o.amount} key={i} />
+            <Amount value={BigInt(o.amount)} key={i} />
           ))}
         </AnimatedCell>
         <td />

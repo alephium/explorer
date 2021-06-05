@@ -19,6 +19,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Search } from 'react-feather'
+import { deviceBreakPoints } from '../style/globalStyles'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
@@ -57,6 +58,8 @@ const SearchBar = () => {
     //TODO This is a very dummy way do differentiate address and transaction, need improvement
     if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
       redirect(`/addresses/${word}`)
+    } else if (word.length === 64 && word.slice(0, 4) === '0000') {
+      redirect(`/blocks/${word}`)
     } else if (word.length === 64) {
       redirect(`/transactions/${word}`)
     } else {
@@ -66,23 +69,33 @@ const SearchBar = () => {
 
   return (
     <Container>
-      <div>
-        <SearchInput
-          onChange={handleSearchChange}
-          value={search}
-          onClick={handleInputClick}
-          onKeyDown={handleSearchKeyDown}
-          placeholder="Search for an address or a tx..."
-        />
-        <SearchIcon onClick={handleSearchClick} />
-      </div>
+      <SearchInput
+        onChange={handleSearchChange}
+        value={search}
+        onClick={handleInputClick}
+        onKeyDown={handleSearchKeyDown}
+        placeholder="Search for an address or a tx..."
+      />
       {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
+      <SearchIcon onClick={handleSearchClick} />
     </Container>
   )
 }
 
 const Container = styled.div`
+  flex: 1;
   position: relative;
+  height: 50px;
+
+  @media ${deviceBreakPoints.mobile} {
+    position: fixed;
+    top: 25px;
+    right: 10px;
+    left: 10px;
+    margin-left: 50px;
+    margin-right: 10px;
+    z-index: 1;
+  }
 `
 
 const SearchIcon = styled(Search)`
@@ -96,13 +109,14 @@ const SearchIcon = styled(Search)`
 const SearchInput = styled.input`
   position: absolute;
   width: 100%;
-  height: 50px;
+  height: 100%;
   border-radius: 30px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
   background: ${({ theme }) => theme.bgSecondary};
   border: 2px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
+  z-index: 10;
 
   &:hover {
     border: 2px solid ${({ theme }) => theme.borderHighlight};
