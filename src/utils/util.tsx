@@ -40,9 +40,7 @@ export const truncateToDecimals = (num: number, dec = 2) => {
   return Math.trunc(num * calcDec) / calcDec
 }
 
-const removeTrailingZeros = (numString: string) => {
-  const numberArray = numString.split('')
-
+const getNumberOfTrailingZeros = (numberArray: string[]) => {
   let numberOfZeros = 0
 
   for (let i = numberArray.length - 1; i >= 0; i--) {
@@ -53,6 +51,14 @@ const removeTrailingZeros = (numString: string) => {
     }
   }
 
+  return numberOfZeros
+}
+
+const removeTrailingZeros = (numString: string) => {
+  const numberArray = numString.split('')
+
+  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
+
   const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
 
   if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
@@ -62,7 +68,7 @@ const removeTrailingZeros = (numString: string) => {
 }
 
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
-  const maxDecimals = 8
+  const maxDecimals = 6
 
   if (baseNum < 0n) return '0.00'
 
@@ -73,8 +79,9 @@ export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbO
   let tier = (Math.log10(alephNum) / 3) | 0
 
   const numberArray = baseNum.toString().split('')
-  const numberOfNonZero =
-    numberArray.length - numberArray.reduceRight<number>((a, v) => Number(a) + (Number(v) === 0 ? 1 : 0), 0)
+
+  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
+  const numberOfNonZero = numberArray.length - numberOfZeros
 
   const numberOfDigitsToDisplay = nbOfDecimals
     ? nbOfDecimals
