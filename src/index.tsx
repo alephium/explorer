@@ -23,7 +23,7 @@ import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
 
-import ThemeSwitcher, { StyledThemeSwitcher } from './components/ThemeSwitcher'
+import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
