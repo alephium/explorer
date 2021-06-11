@@ -88,8 +88,7 @@ const Container = styled.div`
   height: 50px;
 
   @media ${deviceBreakPoints.mobile} {
-    position: fixed;
-    top: 25px;
+    //position: fixed;
     right: 10px;
     left: 10px;
     margin-left: 50px;

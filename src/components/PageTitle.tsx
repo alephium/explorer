@@ -33,7 +33,7 @@ const PageTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
 )
 
 const TitleWrapper = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 `
 
 const Title = styled.h1`
@@ -46,7 +46,7 @@ const Title = styled.h1`
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2.5rem;
-    margin-top: 40px;
+    margin-top: 20px;
   }
 `
 

@@ -64,7 +64,6 @@ const removeTrailingZeros = (numString: string) => {
   if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
     numberArrayWithoutTrailingZeros.push('0')
 
-  console.log(numberArrayWithoutTrailingZeros)
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 

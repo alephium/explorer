@@ -168,7 +168,7 @@ const Content = styled.div`
   flex: 1;
   display: flex;
   padding: 0 min(5vw, 50px);
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 40px;
 `
 
@@ -176,8 +176,8 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   margin: 40px;
-  position: sticky;
-  top: 25px;
+  //position: sticky;
+  //top: 25px;
   z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {

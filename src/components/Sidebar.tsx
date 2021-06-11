@@ -101,10 +101,10 @@ const Logo = styled.img`
 
 const HamburgerButton = styled.div`
   position: absolute;
-  top: 38px;
+  top: 17px;
   left: 20px;
   display: none;
-  z-index: 200;
+  z-index: 300;
 
   @media ${deviceBreakPoints.mobile} {
     display: block;
@@ -146,7 +146,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 100;
+    z-index: 200;
     width: 250px;
 
     transition: all 0.15s ease-out;
