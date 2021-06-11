@@ -214,7 +214,6 @@ interface StyledTableHeaderProps {
 export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   font-weight: 400;
   color: ${({ theme }) => theme.textSecondary};
-  font-style: italic;
 
   th {
     position: sticky;

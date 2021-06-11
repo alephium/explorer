@@ -166,7 +166,7 @@ const Tabs = styled.div`
 `
 
 const Tab = styled(NavLink)`
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 25px;

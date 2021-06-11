@@ -37,11 +37,12 @@ const TitleWrapper = styled.div`
 `
 
 const Title = styled.h1`
-  font-family: 'Poppins';
+  font-family: 'Inter';
   font-weight: bold;
-  font-size: 3.5rem;
+  font-size: 3.2rem;
   color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
+  font-weight: 800;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2.5rem;
@@ -50,7 +51,7 @@ const Title = styled.h1`
 `
 
 const Surtitle = styled.h2`
-  font-family: 'Poppins';
+  font-family: 'Inter';
   font-weight: 500;
   font-size: 1.8rem;
   color: ${({ theme }) => theme.textSecondary};
@@ -59,7 +60,7 @@ const Surtitle = styled.h2`
 `
 
 const Subtitle = styled.h2`
-  font-family: 'Poppins';
+  font-family: 'Inter';
   font-weight: 500;
   font-size: 1.8rem;
   color: ${({ theme }) => theme.textSecondary};
