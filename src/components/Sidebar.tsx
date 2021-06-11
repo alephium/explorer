@@ -91,20 +91,25 @@ const Sidebar = () => {
 
 const Logo = styled.img`
   height: 100px;
-  width: 150px;
+  width: 160px;
+  margin-top: 15px;
 
   @media ${deviceBreakPoints.mobile} {
-    margin-left: 45px;
-    width: 125px;
+    width: 150px;
   }
 `
 
 const HamburgerButton = styled.div`
   position: absolute;
+  width: 35px;
+  height: 35px;
   top: 17px;
   left: 20px;
   display: none;
   z-index: 300;
+  background-color: ${({ theme }) => theme.bgPrimary};
+  padding: 5px;
+  border-radius: 100%;
 
   @media ${deviceBreakPoints.mobile} {
     display: block;
@@ -113,13 +118,18 @@ const HamburgerButton = styled.div`
 `
 
 const Backdrop = styled(motion.div)`
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  background-color: black;
-  z-index: 99;
+  display: none;
+
+  @media ${deviceBreakPoints.mobile} {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: black;
+    z-index: 101;
+  }
 `
 
 interface SidebarContainerProps {
@@ -157,12 +167,20 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
 const Header = styled.header`
   display: flex;
   align-items: center;
+
+  @media ${deviceBreakPoints.mobile} {
+    margin-top: 50px;
+  }
 `
 
 const Tabs = styled.div`
   margin-top: 5vh;
   display: flex;
   flex-direction: column;
+
+  @media ${deviceBreakPoints.mobile} {
+    margin-top: 30px;
+  }
 `
 
 const Tab = styled(NavLink)`
