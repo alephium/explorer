@@ -28,11 +28,7 @@ interface TableProps {
   bodyOnly?: boolean
 }
 
-export const Table: FC<TableProps> = ({ children, ...props }) => (
-  <TableWrapper>
-    <StyledTable {...props}>{children}</StyledTable>
-  </TableWrapper>
-)
+export const Table: FC<TableProps> = ({ children, ...props }) => <StyledTable {...props}>{children}</StyledTable>
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -157,10 +153,6 @@ export const HighlightedCell: FC = ({ children }) => {
 // === Styles ====
 // ===
 
-const TableWrapper = styled.div<TableProps>`
-  overflow-x: auto;
-`
-
 const StyledTable = styled.table<TableProps>`
   width: 100%;
   text-align: left;
@@ -214,11 +206,11 @@ interface StyledTableHeaderProps {
 export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   font-weight: 400;
   color: ${({ theme }) => theme.textSecondary};
-  font-style: italic;
 
   th {
     position: sticky;
     top: 0;
+    z-index: 100;
     background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
   }
 
