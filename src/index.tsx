@@ -176,8 +176,6 @@ const Header = styled.header`
   display: flex;
   align-items: center;
   margin: 40px;
-  //position: sticky;
-  //top: 25px;
   z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {

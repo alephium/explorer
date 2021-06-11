@@ -13,16 +13,6 @@ body {
 
 /* Typography */
 
-/* work-sans-600 - latin */
-@font-face {
-  font-family: 'Work Sans';
-  font-style: normal;
-  font-weight: 600;
-  src: local(''), url('../src/fonts/WorkSans-SemiBold.woff2') format('woff2'),
-    /* Super Modern Browsers */ url('../src/fonts/WorkSans-SemiBold.woff') format('woff'),
-    /* Modern Browsers */ url('../src/fonts/WorkSans-SemiBold.ttf') format('truetype'); /* Safari, Android, iOS */
-}
-
 /* inconsolata-regular - latin */
 @font-face {
   font-family: 'Inconsolata';
