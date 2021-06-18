@@ -79,9 +79,9 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
+      <PageTitle title="Address" />
       {!loading && previousId.current === id ? (
         <>
-          <PageTitle title="Address" />
           {addressInfo?.status === 200 ? (
             <>
               <Table bodyOnly>
@@ -103,7 +103,7 @@ const TransactionInfoSection = () => {
               <Table hasDetails main>
                 <TableHeader
                   headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                  columnWidths={['10%', '15%', '80px', '30%', '80px', '20px']}
+                  columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
                 />
                 <TableBody>
                   {addressInfo?.data.transactions

@@ -35,6 +35,8 @@ import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import TransactionsSection from './sections/TransactionsSection'
 import { AnimatePresence, motion } from 'framer-motion'
+import dayjs from 'dayjs'
+import updateLocale from 'dayjs/plugin/updateLocale'
 
 interface GlobalContext {
   client: AlephClient | undefined
@@ -55,6 +57,27 @@ interface SnackbarMessage {
   type: 'info' | 'alert' | 'success'
   duration?: number
 }
+
+/* Customize data format accross the app */
+dayjs.extend(updateLocale)
+
+dayjs.updateLocale('en', {
+  relativeTime: {
+    future: 'in %s',
+    past: '%s ago',
+    s: 'a few secs',
+    m: 'a min',
+    mm: '%d mins',
+    h: 'an hour',
+    hh: '%d hours',
+    d: 'a day',
+    dd: '%d days',
+    M: 'a month',
+    MM: '%d months',
+    y: 'a year',
+    yy: '%d years'
+  }
+})
 
 const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')

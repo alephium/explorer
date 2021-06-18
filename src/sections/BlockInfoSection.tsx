@@ -88,9 +88,9 @@ const BlockInfoSection = () => {
 
   return (
     <Section>
+      <PageTitle title="Block" />
       {!loading ? (
         <>
-          <PageTitle title="Block" />
           {blockInfo?.status === 200 ? (
             <>
               <Table bodyOnly>
