@@ -55,7 +55,8 @@ const BlockSection = () => {
 
       setLoading(true)
       const fetchedBlocks: APIResp<Block[]> = await client.blocks(from.valueOf(), to.valueOf())
-      console.log('Number of block fetched: ' + fetchedBlocks.data.length)
+
+      console.log('Number of block fetched: ' + fetchedBlocks.data?.length)
 
       setBlocks((prev) =>
         _.unionBy(fetchedBlocks.data, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp)

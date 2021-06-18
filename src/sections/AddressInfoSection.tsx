@@ -82,7 +82,7 @@ const TransactionInfoSection = () => {
       <PageTitle title="Address" />
       {!loading && previousId.current === id ? (
         <>
-          {addressInfo?.status === 200 ? (
+          {addressInfo && addressInfo.status === 200 && addressInfo.data ? (
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
@@ -93,7 +93,7 @@ const TransactionInfoSection = () => {
                   <tr>
                     <td>Balance</td>
                     <td>
-                      <Badge type={'neutralHighlight'} content={addressInfo?.data.balance} amount />
+                      <Badge type={'neutralHighlight'} content={addressInfo.data.balance} amount />
                     </td>
                   </tr>
                 </TableBody>
@@ -106,7 +106,7 @@ const TransactionInfoSection = () => {
                   columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
                 />
                 <TableBody>
-                  {addressInfo?.data.transactions
+                  {addressInfo.data.transactions
                     .sort((t1, t2) => t2.timestamp - t1.timestamp)
                     .map((t, i) => (
                       <AddressTransactionRow transaction={t} addressId={id} key={i} />

@@ -36,7 +36,6 @@ const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(GlobalContext).client
   const [txInfo, setTxInfo] = useState<APIResp<Transaction>>()
-  const [errorCode, setErrorCode] = useState<number>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -52,10 +51,6 @@ const TransactionInfoSection = () => {
       .then((r) => {
         if (!r) return
 
-        if (r.status) {
-          setErrorCode(r.status)
-        }
-
         setTxInfo(r)
         setLoading(false)
       })
@@ -66,32 +61,32 @@ const TransactionInfoSection = () => {
       <PageTitle title="Transaction" />
       {!loading ? (
         <>
-          {txInfo?.status === 200 ? (
+          {txInfo && txInfo.status === 200 && txInfo.data ? (
             <Table bodyOnly>
               <TableBody>
                 <tr>
                   <td>Hash</td>
-                  <HighlightedCell>{txInfo?.data.hash}</HighlightedCell>
+                  <HighlightedCell>{txInfo.data.hash}</HighlightedCell>
                 </tr>
                 <tr>
                   <td>Block Hash</td>
                   <td>
                     <TightLink
-                      to={`../blocks/${txInfo?.data.blockHash || ''}`}
-                      text={txInfo?.data.blockHash || ''}
+                      to={`../blocks/${txInfo.data.blockHash || ''}`}
+                      text={txInfo.data.blockHash || ''}
                       maxWidth="550px"
                     />
                   </td>
                 </tr>
                 <tr>
                   <td>Timestamp</td>
-                  <td>{dayjs(txInfo?.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                  <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
                 </tr>
                 <tr>
                   <td>Inputs</td>
                   <td>
-                    {txInfo?.data.inputs && txInfo?.data.inputs.length > 0
-                      ? txInfo?.data.inputs.map((v, i) => (
+                    {txInfo.data.inputs && txInfo.data.inputs.length > 0
+                      ? txInfo.data.inputs.map((v, i) => (
                           <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
                         ))
                       : 'Block Rewards'}
@@ -100,7 +95,7 @@ const TransactionInfoSection = () => {
                 <tr>
                   <td>Outputs</td>
                   <td>
-                    {txInfo?.data.outputs.map((v, i) => (
+                    {txInfo.data.outputs.map((v, i) => (
                       <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                     ))}
                   </td>
@@ -112,7 +107,7 @@ const TransactionInfoSection = () => {
                   <td>
                     <Badge
                       type={'neutral'}
-                      content={txInfo?.data.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
+                      content={txInfo.data.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
                       amount
                     />
                   </td>
@@ -120,7 +115,7 @@ const TransactionInfoSection = () => {
               </TableBody>
             </Table>
           ) : (
-            <InlineErrorMessage message={txInfo?.detail} code={errorCode} />
+            <InlineErrorMessage message={txInfo?.detail} code={txInfo?.status} />
           )}
         </>
       ) : (

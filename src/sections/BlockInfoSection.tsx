@@ -91,31 +91,31 @@ const BlockInfoSection = () => {
       <PageTitle title="Block" />
       {!loading ? (
         <>
-          {blockInfo?.status === 200 ? (
+          {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={BlockTableBodyCustomStyles}>
                   <tr>
                     <td>Hash</td>
-                    <HighlightedCell>{blockInfo?.data.hash}</HighlightedCell>
+                    <HighlightedCell>{blockInfo.data.hash}</HighlightedCell>
                   </tr>
                   <tr>
                     <td>Height</td>
-                    <td>{blockInfo?.data.height}</td>
+                    <td>{blockInfo.data.height}</td>
                   </tr>
                   <tr>
                     <td>Chain Index</td>
                     <td>
-                      {blockInfo?.data.chainFrom} → {blockInfo?.data.chainTo}
+                      {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
                     </td>
                   </tr>
                   <tr>
                     <td>Nb. of transactions</td>
-                    <td>{blockInfo?.data.transactions.length}</td>
+                    <td>{blockInfo.data.transactions.length}</td>
                   </tr>
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(blockInfo?.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                    <td>{dayjs(blockInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
                   </tr>
                 </TableBody>
               </Table>
@@ -127,7 +127,7 @@ const BlockInfoSection = () => {
                   columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
                 />
                 <TableBody tdStyles={TXTableBodyCustomStyles}>
-                  {blockInfo?.data.transactions.map((t, i) => (
+                  {blockInfo.data.transactions.map((t, i) => (
                     <TransactionRow transaction={t} key={i} />
                   ))}
                 </TableBody>

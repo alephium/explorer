@@ -11,15 +11,13 @@ const InlineErrorMessage = ({ message, code }: { message?: string; code?: number
     shownMessage = message
   }
 
-  const capitalizedMessage = shownMessage.charAt(0).toUpperCase() + shownMessage.slice(1)
-
   return (
     <ErrorWrapper>
       <Container>
         <ErrorLogo />
         <ErrorMessageContainer>
           <ErrorCode>{code}</ErrorCode>
-          <ErrorMessage>{capitalizedMessage}</ErrorMessage>
+          <ErrorMessage>{shownMessage}</ErrorMessage>
         </ErrorMessageContainer>
       </Container>
     </ErrorWrapper>
