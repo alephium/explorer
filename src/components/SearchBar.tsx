@@ -15,21 +15,22 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
-import React, { useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import { Search } from 'react-feather'
 import { deviceBreakPoints } from '../style/globalStyles'
+import { GlobalContext } from '..'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
+  const { setSnackbarMessage } = useContext(GlobalContext)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const history = useHistory()
 
   const handleInputClick = () => setActive(true)
-
-  const handleBackdropClick = () => setActive(false)
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value)
@@ -43,13 +44,19 @@ const SearchBar = () => {
     }
   }
 
+  const handleRemoveFocus = () => {
+    setActive(false)
+  }
+
   const cleanSearch = () => {
     setSearch('')
     setActive(false)
   }
 
   const redirect = (to: string) => {
+    handleRemoveFocus()
     cleanSearch()
+    inputRef.current?.blur()
     history.push(to)
   }
 
@@ -63,20 +70,22 @@ const SearchBar = () => {
     } else if (word.length === 64) {
       redirect(`/transactions/${word}`)
     } else {
-      cleanSearch()
+      setSnackbarMessage({ text: 'Please look for a correct address, transaction or block hash', type: 'info' })
     }
   }
 
   return (
     <Container>
       <SearchInput
+        ref={inputRef}
+        onBlur={handleRemoveFocus}
         onChange={handleSearchChange}
         value={search}
         onClick={handleInputClick}
         onKeyDown={handleSearchKeyDown}
         placeholder="Search for an address or a tx..."
       />
-      {active && <Backdrop onClick={handleBackdropClick} animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
+      {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
     </Container>
   )
@@ -102,6 +111,7 @@ const SearchIcon = styled(Search)`
   right: 20px;
   top: 12px;
   z-index: 11;
+  cursor: pointer;
 `
 
 const SearchInput = styled.input`

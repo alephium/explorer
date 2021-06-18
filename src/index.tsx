@@ -34,22 +34,32 @@ import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import TransactionsSection from './sections/TransactionsSection'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface GlobalContext {
   client: AlephClient | undefined
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
+  setSnackbarMessage: (message: SnackbarMessage) => void
 }
 
 export const GlobalContext = React.createContext<GlobalContext>({
   client: undefined,
   currentTheme: 'dark',
-  switchTheme: () => null
+  switchTheme: () => null,
+  setSnackbarMessage: () => null
 })
+
+interface SnackbarMessage {
+  text: string
+  type: 'info' | 'alert' | 'success'
+  duration?: number
+}
 
 const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
+  const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
 
   const contentRef = useRef(null)
 
@@ -70,12 +80,24 @@ const App = () => {
     setClient(createClient(url || 'http://localhost:9090'))
   }, [])
 
+  // Remove snackbar popup
+  useEffect(() => {
+    if (snackbarMessage) {
+      setTimeout(() => setSnackbarMessage(undefined), snackbarMessage.duration || 3000)
+    }
+  }, [snackbarMessage])
+
   return (
     <Router>
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
         <GlobalStyle />
         <GlobalContext.Provider
-          value={{ client, currentTheme: theme as ThemeType, switchTheme: setTheme as (arg0: ThemeType) => void }}
+          value={{
+            client,
+            currentTheme: theme as ThemeType,
+            switchTheme: setTheme as (arg0: ThemeType) => void,
+            setSnackbarMessage
+          }}
         >
           <MainContainer>
             <Sidebar />
@@ -110,10 +132,30 @@ const App = () => {
                 </Content>
               </ContentWrapper>
             </ContentContainer>
+            <SnackbarManager message={snackbarMessage} />
           </MainContainer>
         </GlobalContext.Provider>
       </ThemeProvider>
     </Router>
+  )
+}
+
+const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) => {
+  return (
+    <SnackbarManagerContainer>
+      <AnimatePresence>
+        {message && (
+          <SnackbarPopup
+            initial={{ y: 10, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={message?.type}
+          >
+            {message?.text}
+          </SnackbarPopup>
+        )}
+      </AnimatePresence>
+    </SnackbarManagerContainer>
   )
 }
 
@@ -186,6 +228,40 @@ const Header = styled.header`
     @media ${deviceBreakPoints.mobile} {
       display: none;
     }
+  }
+`
+
+const SnackbarManagerContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  z-index: 10001;
+`
+
+const SnackbarPopup = styled(motion.div)`
+  bottom: 10px;
+  margin: 10px auto;
+  text-align: center;
+  min-width: 300px;
+  width: 50vw;
+  padding: 20px 15px;
+  color: white;
+  border-radius: 14px;
+  z-index: 1000;
+  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
+
+  &.alert {
+    background-color: rgb(219, 99, 69);
+  }
+
+  &.info {
+    background-color: black;
+  }
+
+  &.success {
+    background-color: rgb(56, 168, 93);
   }
 `
 

@@ -210,7 +210,6 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   th {
     position: sticky;
     top: 0;
-    z-index: 100;
     background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
   }
 
