@@ -36,11 +36,12 @@ import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
 import Badge from '../components/Badge'
-import { APIError } from '../utils/client'
+import { APIResp } from '../utils/client'
 import Amount from '../components/Amount'
 import Section from '../components/Section'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
+import InlineErrorMessage from '../components/InlineErrorMessage'
 
 interface ParamTypes {
   id: string
@@ -48,10 +49,10 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const [blockInfo, setBlockInfo] = useState<BlockDetail & APIError>()
+  const [blockInfo, setBlockInfo] = useState<APIResp<BlockDetail>>()
   const client = useContext(GlobalContext).client
   const history = useHistory()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!client) return
@@ -75,9 +76,9 @@ const BlockInfoSection = () => {
   useEffect(() => {
     if (!client) return
     ;(async () => {
-      if (blockInfo?.status) {
+      if (blockInfo?.detail) {
         const res = await client.transaction(id)
-        if (!res?.status) {
+        if (!res?.detail) {
           // A transaction exists, redirect automatically
           history.push(`/transactions/${id}`)
         }
@@ -87,34 +88,34 @@ const BlockInfoSection = () => {
 
   return (
     <Section>
-      {!blockInfo?.status ? (
+      <PageTitle title="Block" />
+      {!loading ? (
         <>
-          <PageTitle title="Block" />
-          {!loading ? (
+          {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={BlockTableBodyCustomStyles}>
                   <tr>
                     <td>Hash</td>
-                    <HighlightedCell>{blockInfo?.hash}</HighlightedCell>
+                    <HighlightedCell>{blockInfo.data.hash}</HighlightedCell>
                   </tr>
                   <tr>
                     <td>Height</td>
-                    <td>{blockInfo?.height}</td>
+                    <td>{blockInfo.data.height}</td>
                   </tr>
                   <tr>
                     <td>Chain Index</td>
                     <td>
-                      {blockInfo?.chainFrom} → {blockInfo?.chainTo}
+                      {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
                     </td>
                   </tr>
                   <tr>
                     <td>Nb. of transactions</td>
-                    <td>{blockInfo?.transactions.length}</td>
+                    <td>{blockInfo.data.transactions.length}</td>
                   </tr>
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(blockInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                    <td>{dayjs(blockInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
                   </tr>
                 </TableBody>
               </Table>
@@ -126,18 +127,18 @@ const BlockInfoSection = () => {
                   columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
                 />
                 <TableBody tdStyles={TXTableBodyCustomStyles}>
-                  {blockInfo?.transactions.map((t, i) => (
+                  {blockInfo.data.transactions.map((t, i) => (
                     <TransactionRow transaction={t} key={i} />
                   ))}
                 </TableBody>
               </Table>
             </>
           ) : (
-            <LoadingSpinner />
+            <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
           )}
         </>
       ) : (
-        <span>{blockInfo?.detail}</span>
+        <LoadingSpinner />
       )}
     </Section>
   )

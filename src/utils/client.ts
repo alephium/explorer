@@ -16,20 +16,44 @@
 
 import { Block, BlockDetail, Transaction, Address } from '../types/api'
 
+export interface APIData<T> {
+  data: T
+  status: number
+  resource?: never
+  detail?: never
+}
+
 export interface APIError {
   status: number
   detail: string
+  resource?: string
+  data?: never
 }
+
+export type APIResp<T> = APIData<T> | APIError
 
 export class AlephClient {
   url: string
-  fetchAPI: <T>(path: string) => Promise<T & APIError>
+  fetchAPI: <T>(path: string) => Promise<APIResp<T>>
 
   constructor(url: string) {
     this.url = url
     this.fetchAPI = async function <T>(path: string) {
-      const resp = await fetch(url + path)
-      return (await resp.json()) as Promise<T>
+      return fetch(url + path)
+        .then((resp) => {
+          return new Promise((resolve, reject) => {
+            if (resp.ok) {
+              resp.json().then((r) => resolve({ data: r as T, status: resp.status }))
+            } else {
+              resp.json().then((e) => {
+                return reject({ detail: e.detail, status: resp.status, resource: e.resource } as APIError)
+              })
+            }
+          }) as Promise<APIResp<T>>
+        })
+        .catch((e) => {
+          return e as APIError
+        })
     }
   }
 

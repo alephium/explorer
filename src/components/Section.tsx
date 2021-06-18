@@ -17,6 +17,7 @@
 import React, { useEffect } from 'react'
 import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
+import styled from 'styled-components'
 import Tooltip from './Tooltip'
 
 const rebuildTooltips = () => {
@@ -35,13 +36,17 @@ const Section: FC<{ className?: string }> = ({ children, className }) => {
   })
 
   return (
-    <section className={className}>
+    <Container className={className}>
       <SectionContext.Provider value={{ rebuildTooltips }}>
         <Tooltip />
         {children}
       </SectionContext.Provider>
-    </section>
+    </Container>
   )
 }
+
+const Container = styled.section`
+  width: 100%;
+`
 
 export default Section

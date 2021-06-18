@@ -20,12 +20,13 @@ import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
 import PageTitle from '../components/PageTitle'
 import { Transaction } from '../types/api'
-import { APIError } from '../utils/client'
+import { APIResp } from '../utils/client'
 import Badge from '../components/Badge'
 import { Table, TableBody, HighlightedCell } from '../components/Table'
 import { AddressLink, TightLink } from '../components/Links'
 import Section from '../components/Section'
 import LoadingSpinner from '../components/LoadingSpinner'
+import InlineErrorMessage from '../components/InlineErrorMessage'
 
 interface ParamTypes {
   id: string
@@ -34,8 +35,8 @@ interface ParamTypes {
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(GlobalContext).client
-  const [txInfo, setTxInfo] = useState<Transaction & APIError>()
-  const [loading, setLoading] = useState(false)
+  const [txInfo, setTxInfo] = useState<APIResp<Transaction>>()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!client) return
@@ -49,6 +50,7 @@ const TransactionInfoSection = () => {
       })
       .then((r) => {
         if (!r) return
+
         setTxInfo(r)
         setLoading(false)
       })
@@ -56,35 +58,35 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      {!txInfo?.status ? (
+      <PageTitle title="Transaction" />
+      {!loading ? (
         <>
-          <PageTitle title="Transaction" />
-          {!loading ? (
+          {txInfo && txInfo.status === 200 && txInfo.data ? (
             <Table bodyOnly>
               <TableBody>
                 <tr>
                   <td>Hash</td>
-                  <HighlightedCell>{txInfo?.hash}</HighlightedCell>
+                  <HighlightedCell>{txInfo.data.hash}</HighlightedCell>
                 </tr>
                 <tr>
                   <td>Block Hash</td>
                   <td>
                     <TightLink
-                      to={`../blocks/${txInfo?.blockHash || ''}`}
-                      text={txInfo?.blockHash || ''}
+                      to={`../blocks/${txInfo.data.blockHash || ''}`}
+                      text={txInfo.data.blockHash || ''}
                       maxWidth="550px"
                     />
                   </td>
                 </tr>
                 <tr>
                   <td>Timestamp</td>
-                  <td>{dayjs(txInfo?.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                  <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
                 </tr>
                 <tr>
                   <td>Inputs</td>
                   <td>
-                    {txInfo?.inputs && txInfo?.inputs.length > 0
-                      ? txInfo?.inputs.map((v, i) => (
+                    {txInfo.data.inputs && txInfo.data.inputs.length > 0
+                      ? txInfo.data.inputs.map((v, i) => (
                           <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
                         ))
                       : 'Block Rewards'}
@@ -93,7 +95,7 @@ const TransactionInfoSection = () => {
                 <tr>
                   <td>Outputs</td>
                   <td>
-                    {txInfo?.outputs.map((v, i) => (
+                    {txInfo.data.outputs.map((v, i) => (
                       <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                     ))}
                   </td>
@@ -105,7 +107,7 @@ const TransactionInfoSection = () => {
                   <td>
                     <Badge
                       type={'neutral'}
-                      content={txInfo?.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
+                      content={txInfo.data.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
                       amount
                     />
                   </td>
@@ -113,11 +115,11 @@ const TransactionInfoSection = () => {
               </TableBody>
             </Table>
           ) : (
-            <LoadingSpinner />
+            <InlineErrorMessage message={txInfo?.detail} code={txInfo?.status} />
           )}
         </>
       ) : (
-        <span>{txInfo?.detail}</span>
+        <LoadingSpinner />
       )}
     </Section>
   )
