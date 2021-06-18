@@ -1,4 +1,4 @@
-import { abbreviateAmount, calAmountDelta, smartHash } from './util'
+import { abbreviateAmount, smartHash } from './util'
 
 function alf(amount: bigint): bigint {
   return amount * 1000000000000000000n
@@ -6,6 +6,7 @@ function alf(amount: bigint): bigint {
 
 it('abbreviate amount', () => {
   expect(abbreviateAmount(alf(-1n))).toEqual('0.00'),
+    expect(abbreviateAmount(alf(0n))).toEqual('0.00'),
     expect(abbreviateAmount(alf(1230n))).toEqual('1.230K'),
     expect(abbreviateAmount(alf(1230000n))).toEqual('1.230M'),
     expect(abbreviateAmount(alf(1230000000n))).toEqual('1.230B'),

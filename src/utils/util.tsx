@@ -70,7 +70,7 @@ const removeTrailingZeros = (numString: string) => {
 export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
   const maxDecimals = 6
 
-  if (baseNum < 0n) return '0.00'
+  if (baseNum <= 0n) return '0.00'
 
   // For abbreviation, we don't need full precision and can work with number
   const alephNum = Number(baseNum) / QUINTILLION

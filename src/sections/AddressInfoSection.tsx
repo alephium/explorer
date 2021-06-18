@@ -100,19 +100,23 @@ const TransactionInfoSection = () => {
               </Table>
 
               <SecondaryTitle>History</SecondaryTitle>
-              <Table hasDetails main>
-                <TableHeader
-                  headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                  columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
-                />
-                <TableBody>
-                  {addressInfo.data.transactions
-                    .sort((t1, t2) => t2.timestamp - t1.timestamp)
-                    .map((t, i) => (
-                      <AddressTransactionRow transaction={t} addressId={id} key={i} />
-                    ))}
-                </TableBody>
-              </Table>
+              {addressInfo.data.transactions.length > 0 ? (
+                <Table hasDetails main>
+                  <TableHeader
+                    headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+                    columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
+                  />
+                  <TableBody>
+                    {addressInfo.data.transactions
+                      .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                      .map((t, i) => (
+                        <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                      ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <NoTxMessage>No transactions yet</NoTxMessage>
+              )}
             </>
           ) : (
             <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
@@ -230,6 +234,10 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
 ]
 
 const BlockRewardLabel = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+`
+
+const NoTxMessage = styled.span`
   color: ${({ theme }) => theme.textSecondary};
 `
 
