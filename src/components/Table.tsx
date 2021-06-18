@@ -181,7 +181,7 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tbody {
-    tr {
+    tr:not(:last-child) {
       border-bottom: ${({ hasDetails, noBorder, theme }) =>
         !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
     }

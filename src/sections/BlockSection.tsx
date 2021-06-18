@@ -31,6 +31,7 @@ import { TextButton } from '../components/Buttons'
 import { TightLinkStrict } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
+import { APIResp } from '../utils/client'
 
 dayjs.extend(relativeTime)
 
@@ -53,11 +54,11 @@ const BlockSection = () => {
       console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
 
       setLoading(true)
-      const fetchedBlocks: Block[] = await client.blocks(from.valueOf(), to.valueOf())
-      console.log('Number of block fetched: ' + fetchedBlocks.length)
+      const fetchedBlocks: APIResp<Block[]> = await client.blocks(from.valueOf(), to.valueOf())
+      console.log('Number of block fetched: ' + fetchedBlocks.data.length)
 
       setBlocks((prev) =>
-        _.unionBy(fetchedBlocks, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp)
+        _.unionBy(fetchedBlocks.data, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp)
       )
       setLoading(false)
     }

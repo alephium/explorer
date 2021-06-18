@@ -21,7 +21,7 @@ import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
 import PageTitle, { SecondaryTitle } from '../components/PageTitle'
 import { Address, Transaction } from '../types/api'
-import { APIError } from '../utils/client'
+import { APIResp } from '../utils/client'
 import { calAmountDelta } from '../utils/util'
 import Badge from '../components/Badge'
 import {
@@ -42,6 +42,7 @@ import styled, { css } from 'styled-components'
 import _ from 'lodash'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
+import InlineErrorMessage from '../components/InlineErrorMessage'
 
 dayjs.extend(relativeTime)
 
@@ -52,8 +53,8 @@ interface ParamTypes {
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(GlobalContext).client
-  const [addressInfo, setAddressInfo] = useState<Address & APIError>()
-  const [loading, setLoading] = useState(false)
+  const [addressInfo, setAddressInfo] = useState<APIResp<Address>>()
+  const [loading, setLoading] = useState(true)
   const previousId = useRef(id)
 
   useEffect(() => {
@@ -78,10 +79,10 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      {!addressInfo?.status ? (
+      {!loading && previousId.current === id ? (
         <>
           <PageTitle title="Address" />
-          {!loading && previousId.current === id ? (
+          {addressInfo?.status === 200 ? (
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
@@ -92,7 +93,7 @@ const TransactionInfoSection = () => {
                   <tr>
                     <td>Balance</td>
                     <td>
-                      <Badge type={'neutralHighlight'} content={addressInfo?.balance} amount />
+                      <Badge type={'neutralHighlight'} content={addressInfo?.data.balance} amount />
                     </td>
                   </tr>
                 </TableBody>
@@ -105,7 +106,7 @@ const TransactionInfoSection = () => {
                   columnWidths={['10%', '15%', '80px', '30%', '80px', '20px']}
                 />
                 <TableBody>
-                  {addressInfo?.transactions
+                  {addressInfo?.data.transactions
                     .sort((t1, t2) => t2.timestamp - t1.timestamp)
                     .map((t, i) => (
                       <AddressTransactionRow transaction={t} addressId={id} key={i} />
@@ -114,11 +115,11 @@ const TransactionInfoSection = () => {
               </Table>
             </>
           ) : (
-            <LoadingSpinner />
+            <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
           )}
         </>
       ) : (
-        <span>{addressInfo?.detail}</span>
+        <LoadingSpinner />
       )}
     </Section>
   )

@@ -16,20 +16,24 @@
 
 import { Block, BlockDetail, Transaction, Address } from '../types/api'
 
-export interface APIError {
+export interface APIResp<T> {
+  data: T
   status: number
   detail: string
 }
 
 export class AlephClient {
   url: string
-  fetchAPI: <T>(path: string) => Promise<T & APIError>
+  fetchAPI: <T>(path: string) => Promise<APIResp<T>>
 
   constructor(url: string) {
     this.url = url
     this.fetchAPI = async function <T>(path: string) {
       const resp = await fetch(url + path)
-      return (await resp.json()) as Promise<T>
+
+      return new Promise((resolve) => {
+        resp.json().then((r) => resolve({ data: r as T, detail: r.detail, status: resp.status }))
+      }) as Promise<APIResp<T>>
     }
   }
 
