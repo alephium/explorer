@@ -21,6 +21,7 @@ import styled from 'styled-components'
 import Amount from './Amount'
 import { smartHash } from '../utils/util'
 import MiddleEllipisis from 'react-middle-ellipsis'
+import JSBI from 'jsbi'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string
@@ -53,7 +54,7 @@ interface AddressLinkProps {
   maxWidth?: string
   address: string
   txHashRef?: string
-  amount?: bigint
+  amount?: JSBI
 }
 
 export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {

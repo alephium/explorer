@@ -43,6 +43,7 @@ import _ from 'lodash'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
+import JSBI from 'jsbi'
 
 dayjs.extend(relativeTime)
 
@@ -139,7 +140,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   const amountDelta = calAmountDelta(t, addressId)
-  const isOut = amountDelta < 0
+  const isOut = JSBI.lessThan(amountDelta, JSBI.BigInt(0))
 
   const renderOutputAccounts = () => {
     return _(t.outputs.filter((o) => o.address !== addressId))
@@ -179,7 +180,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
             type={isOut ? 'minus' : 'plus'}
             amount
             prefix={isOut ? '- ' : '+ '}
-            content={amountDelta < 0 ? (amountDelta * -1n).toString() : amountDelta.toString()}
+            content={
+              JSBI.lessThan(amountDelta, JSBI.BigInt(0))
+                ? JSBI.multiply(amountDelta, JSBI.BigInt(-1)).toString()
+                : amountDelta.toString()
+            }
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
@@ -199,7 +204,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                         key={i}
                         address={input.address}
                         txHashRef={input.txHashRef}
-                        amount={BigInt(input.amount)}
+                        amount={JSBI.BigInt(input.amount)}
                         maxWidth="180px"
                       />
                     ))
@@ -212,7 +217,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                 </td>
                 <td>
                   {t.outputs.map((output, i) => (
-                    <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
+                    <AddressLink
+                      key={i}
+                      address={output.address}
+                      amount={JSBI.BigInt(output.amount)}
+                      maxWidth="180px"
+                    />
                   ))}
                 </td>
               </Row>

@@ -1,18 +1,19 @@
 import { abbreviateAmount, smartHash } from './util'
+import JSBI from 'jsbi'
 
-function alf(amount: bigint): bigint {
-  return amount * 1000000000000000000n
+function alf(amount: JSBI): JSBI {
+  return JSBI.multiply(amount, JSBI.BigInt(1000000000000000000))
 }
 
 it('abbreviate amount', () => {
-  expect(abbreviateAmount(alf(-1n))).toEqual('0.00'),
-    expect(abbreviateAmount(alf(0n))).toEqual('0.00'),
-    expect(abbreviateAmount(alf(1230n))).toEqual('1.230K'),
-    expect(abbreviateAmount(alf(1230000n))).toEqual('1.230M'),
-    expect(abbreviateAmount(alf(1230000000n))).toEqual('1.230B'),
-    expect(abbreviateAmount(alf(1230000000000n))).toEqual('1.230T'),
-    expect(abbreviateAmount(alf(1230000000000000n))).toEqual('1230.000T'),
-    expect(abbreviateAmount(alf(1n))).toEqual('1.0')
+  expect(abbreviateAmount(alf(JSBI.BigInt(-1)))).toEqual('0.00'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(0)))).toEqual('0.00'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1230)))).toEqual('1.230K'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1230000)))).toEqual('1.230M'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000)))).toEqual('1.230B'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000000)))).toEqual('1.230T'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000000000)))).toEqual('1230.000T'),
+    expect(abbreviateAmount(alf(JSBI.BigInt(1)))).toEqual('1.0')
 })
 
 it('smart hash', () => {

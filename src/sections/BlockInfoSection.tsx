@@ -42,6 +42,7 @@ import Section from '../components/Section'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
+import JSBI from 'jsbi'
 
 interface ParamTypes {
   id: string
@@ -171,7 +172,11 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}
         </td>
         <td>
-          <Badge type={'neutral'} content={t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)} amount />
+          <Badge
+            type={'neutral'}
+            content={t.outputs.reduce<JSBI>((acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)), JSBI.BigInt(0))}
+            amount
+          />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </Row>
@@ -191,7 +196,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </AnimatedCell>
         <AnimatedCell>
           {t.outputs.map((o, i) => (
-            <Amount value={BigInt(o.amount)} key={i} />
+            <Amount value={JSBI.BigInt(o.amount)} key={i} />
           ))}
         </AnimatedCell>
         <td />
