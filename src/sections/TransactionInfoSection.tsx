@@ -27,6 +27,7 @@ import { AddressLink, TightLink } from '../components/Links'
 import Section from '../components/Section'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
+import JSBI from 'jsbi'
 
 interface ParamTypes {
   id: string
@@ -87,7 +88,12 @@ const TransactionInfoSection = () => {
                   <td>
                     {txInfo.data.inputs && txInfo.data.inputs.length > 0
                       ? txInfo.data.inputs.map((v, i) => (
-                          <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
+                          <AddressLink
+                            address={v.address}
+                            txHashRef={v.txHashRef}
+                            key={i}
+                            amount={JSBI.BigInt(v.amount)}
+                          />
                         ))
                       : 'Block Rewards'}
                   </td>
@@ -96,7 +102,7 @@ const TransactionInfoSection = () => {
                   <td>Outputs</td>
                   <td>
                     {txInfo.data.outputs.map((v, i) => (
-                      <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
+                      <AddressLink address={v.address} key={i} amount={JSBI.BigInt(v.amount)} txHashRef={v.spent} />
                     ))}
                   </td>
                 </tr>
@@ -107,7 +113,10 @@ const TransactionInfoSection = () => {
                   <td>
                     <Badge
                       type={'neutral'}
-                      content={txInfo.data.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), 0n)}
+                      content={txInfo.data.outputs.reduce<JSBI>(
+                        (acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)),
+                        JSBI.BigInt(0)
+                      )}
                       amount
                     />
                   </td>

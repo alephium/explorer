@@ -15,9 +15,10 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 import React, { FC } from 'react'
 import { abbreviateAmount } from '../utils/util'
+import JSBI from 'jsbi'
 
 interface AmountProps {
-  value: bigint | undefined
+  value: JSBI | undefined
   className?: string
 }
 

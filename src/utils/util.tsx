@@ -19,6 +19,7 @@ import { useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { FC } from 'react'
 import { Transaction } from '../types/api'
+import JSBI from 'jsbi'
 
 // ==== API
 
@@ -67,10 +68,10 @@ const removeTrailingZeros = (numString: string) => {
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
-export const abbreviateAmount = (baseNum: bigint, showFullPrecision = false, nbOfDecimals?: number) => {
+export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfDecimals?: number) => {
   const maxDecimals = 6
 
-  if (baseNum <= 0n) return '0.00'
+  if (JSBI.lessThanOrEqual(baseNum, JSBI.BigInt(0))) return '0.00'
 
   // For abbreviation, we don't need full precision and can work with number
   const alephNum = Number(baseNum) / QUINTILLION
@@ -162,14 +163,14 @@ export function smartHash(hash: string) {
 }
 
 export function calAmountDelta(t: Transaction, id: string) {
-  const inputAmount = t.inputs.reduce<bigint>((acc, input) => {
-    const inputAmount = BigInt(input.amount)
-    return input.address === id ? acc + inputAmount : acc
-  }, 0n)
-  const outputAmount = t.outputs.reduce<bigint>((acc, output) => {
-    const outputAmount = BigInt(output.amount)
-    return output.address === id ? acc + outputAmount : acc
-  }, 0n)
+  const inputAmount = t.inputs.reduce<JSBI>((acc, input) => {
+    const inputAmount = JSBI.BigInt(input.amount)
+    return input.address === id ? JSBI.add(acc, inputAmount) : acc
+  }, JSBI.BigInt(0))
+  const outputAmount = t.outputs.reduce<JSBI>((acc, output) => {
+    const outputAmount = JSBI.BigInt(output.amount)
+    return output.address === id ? JSBI.add(acc, outputAmount) : acc
+  }, JSBI.BigInt(0))
 
-  return outputAmount - inputAmount
+  return JSBI.subtract(outputAmount, inputAmount)
 }
