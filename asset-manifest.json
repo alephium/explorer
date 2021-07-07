@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/static/css/main.9869dbef.chunk.css",
-    "main.js": "/static/js/main.5fcf6407.chunk.js",
-    "main.js.map": "/static/js/main.5fcf6407.chunk.js.map",
+    "main.js": "/static/js/main.186b9c43.chunk.js",
+    "main.js.map": "/static/js/main.186b9c43.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.9590e3be.js",
     "runtime-main.js.map": "/static/js/runtime-main.9590e3be.js.map",
-    "static/js/2.2898b411.chunk.js": "/static/js/2.2898b411.chunk.js",
-    "static/js/2.2898b411.chunk.js.map": "/static/js/2.2898b411.chunk.js.map",
+    "static/js/2.5fc3fc39.chunk.js": "/static/js/2.5fc3fc39.chunk.js",
+    "static/js/2.5fc3fc39.chunk.js.map": "/static/js/2.5fc3fc39.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.9869dbef.chunk.css.map": "/static/css/main.9869dbef.chunk.css.map",
-    "static/js/2.2898b411.chunk.js.LICENSE.txt": "/static/js/2.2898b411.chunk.js.LICENSE.txt",
+    "static/js/2.5fc3fc39.chunk.js.LICENSE.txt": "/static/js/2.5fc3fc39.chunk.js.LICENSE.txt",
     "static/media/index.css": "/static/media/roboto-mono-v12-latin-regular.535bc89d.woff2",
     "static/media/address-icon.143269ad.svg": "/static/media/address-icon.143269ad.svg",
     "static/media/alephium-logo-gradient-stroke.be7cb67e.svg": "/static/media/alephium-logo-gradient-stroke.be7cb67e.svg",
@@ -21,8 +21,8 @@
   },
   "entrypoints": [
     "static/js/runtime-main.9590e3be.js",
-    "static/js/2.2898b411.chunk.js",
+    "static/js/2.5fc3fc39.chunk.js",
     "static/css/main.9869dbef.chunk.css",
-    "static/js/main.5fcf6407.chunk.js"
+    "static/js/main.186b9c43.chunk.js"
   ]
 }
