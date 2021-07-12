@@ -36,6 +36,6 @@ const SwitchContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 35px;
 `
 export default PageSwitch

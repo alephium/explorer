@@ -1,10 +1,11 @@
 export interface Block {
   hash: string
-  height: number
+  timestamp: number
   chainFrom: number
   chainTo: number
-  timestamp: number
+  height: number
   txNumber: number
+  mainChain: boolean
 }
 
 export interface BlockDetail {
@@ -13,6 +14,8 @@ export interface BlockDetail {
   chainFrom: number
   chainTo: number
   timestamp: number
+  mainChain: boolean
+  deps: string[]
   transactions: Transaction[]
 }
 

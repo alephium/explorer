@@ -5,14 +5,15 @@ import useQueryParams from './useQueryParams'
 const usePageNumber = () => {
   const history = useHistory()
   const location = history.location
-  const page = parseInt(useQueryParams('p') || '1')
+  const pageParam = useQueryParams('p')
+  const pageNumber = pageParam && parseInt(pageParam)
 
   // Default page query param
   useEffect(() => {
-    history.replace(location.pathname + '?p=1')
-  }, [history, location.pathname])
+    if (!pageParam) history.replace(location.pathname + '?p=1')
+  }, [history, location.pathname, pageParam])
 
-  return page
+  return pageNumber || 1
 }
 
 export default usePageNumber

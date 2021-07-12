@@ -16,92 +16,87 @@
 
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
-import _ from 'lodash'
 import styled, { css } from 'styled-components'
 import SectionTitle from '../components/SectionTitle'
 import { Block } from '../types/api'
 import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
-import { Plus } from 'react-feather'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { GlobalContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
-import { TextButton } from '../components/Buttons'
 import { TightLinkStrict } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
 import { APIResp } from '../utils/client'
 import PageSwitch from '../components/PageSwitch'
-import useDefaultPage from '../hooks/usePageNumber'
+import usePageNumber from '../hooks/usePageNumber'
 
 dayjs.extend(relativeTime)
 
 const BlockSection = () => {
-  const [fetchTs, setFetchTs] = useState({ from: dayjs().subtract(5, 'm'), to: dayjs() })
-  const [displayFromTs, setDisplayFromTs] = useState(dayjs().subtract(5, 'm'))
-  const [blocks, setBlocks] = useState<Block[]>([]) // TODO: define blocks type
+  const [blocks, setBlocks] = useState<Block[]>([])
   const [loading, setLoading] = useState(false)
+  const [manualLoading, setManualLoading] = useState(false)
 
   const client = useContext(GlobalContext).client
 
   // Default page
-  useDefaultPage()
+  const currentPageNumber = usePageNumber()
 
-  // Fetching Data
-  useEffect(() => {
-    const getBlocks = async () => {
+  const getBlocks = useCallback(
+    async (pageNumber: number, manualFetch?: boolean) => {
       if (!client) return
 
-      const to = fetchTs.to
-      const from = fetchTs.from
+      console.log('Fetching blocks...')
 
-      console.log('Fetching blocks: ' + from.format() + ' -> ' + to.format() + ' (' + from + ' -> ' + to + ')')
+      manualFetch ? setManualLoading(true) : setLoading(true)
+      const fetchedBlocks: APIResp<Block[]> = await client.blocks(pageNumber)
 
-      setLoading(true)
-      const fetchedBlocks: APIResp<Block[]> = await client.blocks(from.valueOf(), to.valueOf())
+      // Check if manual fetching has been set in the meantime (overridign polling fetch)
+
+      if (currentPageNumber !== pageNumber) {
+        setLoading(false)
+        return
+      }
 
       console.log('Number of block fetched: ' + fetchedBlocks.data?.length)
+      setBlocks(fetchedBlocks.data || [])
 
-      setBlocks((prev) =>
-        _.unionBy(fetchedBlocks.data, prev, 'hash').sort((a: Block, b: Block) => b.timestamp - a.timestamp)
-      )
-      setLoading(false)
-    }
+      manualFetch ? setManualLoading(false) : setLoading(false)
+    },
+    [client, currentPageNumber]
+  )
 
-    getBlocks()
-  }, [client, fetchTs])
+  // Fetching Data when page number changes or page loads initially
+  useEffect(() => {
+    getBlocks(currentPageNumber, true)
+  }, [getBlocks, currentPageNumber])
 
   // Polling
-  const fetchData = useCallback(() => {
-    if (blocks.length > 0) {
-      setFetchTs({ from: dayjs(blocks[0].timestamp).add(1), to: dayjs() })
-    }
-  }, [blocks])
-
-  useInterval(fetchData, 5 * 1000)
-
-  // Load more
-  const loadMore = useCallback(() => {
-    const previousDisplayFromTs = displayFromTs
-    const newDisplayFromTs = dayjs(displayFromTs).subtract(5, 'm')
-    setDisplayFromTs(newDisplayFromTs)
-    setFetchTs({ from: newDisplayFromTs, to: previousDisplayFromTs })
-  }, [displayFromTs])
+  useInterval(() => {
+    if (!loading && !manualLoading) getBlocks(currentPageNumber)
+  }, 10 * 1000)
 
   return (
     <Section>
-      <SectionTitle title="Blocks" />
-      <Content>
-        <Table main>
-          <TableHeader
-            headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']}
-            columnWidths={['50px', '25%', '16%', '12%', '20%', '']}
-          />
-          <TableBody tdStyles={TableBodyCustomStyles}>
-            {blocks
-              .filter((b) => dayjs(b.timestamp).isAfter(displayFromTs))
-              .map((b) => (
+      <TitleAndLoader>
+        <SectionTitle title="Blocks" />
+        {loading && !manualLoading && (
+          <PollingLoadingSpinner>
+            <LoadingSpinner size={12} /> Loading...
+          </PollingLoadingSpinner>
+        )}
+      </TitleAndLoader>
+      {!manualLoading ? (
+        <Content>
+          <Table main>
+            <TableHeader
+              headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']}
+              columnWidths={['50px', '25%', '16%', '12%', '20%', '']}
+            />
+            <TableBody tdStyles={TableBodyCustomStyles}>
+              {blocks.map((b) => (
                 <motion.tr
                   key={b.hash}
                   animate={{ opacity: 1 }}
@@ -122,28 +117,29 @@ const BlockSection = () => {
                   <td>{dayjs().to(b.timestamp)}</td>
                 </motion.tr>
               ))}
-          </TableBody>
-        </Table>
-        <LoadMore>
-          {loading ? (
-            <span>
-              <LoadingSpinner size={12} /> Loading...
-            </span>
-          ) : (
-            <TextButton onClick={loadMore}>
-              <Plus />
-              Load more...
-            </TextButton>
-          )}
-        </LoadMore>
-        <PageSwitch />
-      </Content>
+            </TableBody>
+          </Table>
+          <PageSwitch />
+        </Content>
+      ) : (
+        <LoadingSpinner />
+      )}
     </Section>
   )
 }
 
+const TitleAndLoader = styled.div`
+  position: relative;
+`
+
 const Content = styled.div`
   margin-top: 30px;
+`
+
+const PollingLoadingSpinner = styled.div`
+  position: absolute;
+  bottom: -25px;
+  color: ${({ theme }) => theme.textSecondary};
 `
 
 const TableBodyCustomStyles: TDStyle[] = [

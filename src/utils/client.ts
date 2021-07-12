@@ -61,8 +61,8 @@ export class AlephClient {
     return await this.fetchAPI<BlockDetail>('/blocks/' + id)
   }
 
-  async blocks(fromTs: number, toTs: number) {
-    return await this.fetchAPI<Block[]>('/blocks?from-ts=' + fromTs + '&to-ts=' + toTs)
+  async blocks(page: number) {
+    return await this.fetchAPI<Block[]>('/blocks?page=' + page)
   }
 
   async address(id: string, page: number) {
