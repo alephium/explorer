@@ -18,7 +18,7 @@ import dayjs from 'dayjs'
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
-import PageTitle from '../components/PageTitle'
+import SectionTitle from '../components/SectionTitle'
 import { Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
 import Badge from '../components/Badge'
@@ -59,7 +59,7 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      <PageTitle title="Transaction" />
+      <SectionTitle title="Transaction" />
       {!loading ? (
         <>
           {txInfo && txInfo.status === 200 && txInfo.data ? (

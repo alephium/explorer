@@ -18,7 +18,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import styled, { css } from 'styled-components'
-import PageTitle from '../components/PageTitle'
+import SectionTitle from '../components/SectionTitle'
 import { Block } from '../types/api'
 import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
@@ -32,6 +32,8 @@ import { TightLinkStrict } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
 import { APIResp } from '../utils/client'
+import PageSwitch from '../components/PageSwitch'
+import useDefaultPage from '../hooks/usePageNumber'
 
 dayjs.extend(relativeTime)
 
@@ -42,6 +44,9 @@ const BlockSection = () => {
   const [loading, setLoading] = useState(false)
 
   const client = useContext(GlobalContext).client
+
+  // Default page
+  useDefaultPage()
 
   // Fetching Data
   useEffect(() => {
@@ -86,7 +91,7 @@ const BlockSection = () => {
 
   return (
     <Section>
-      <PageTitle title="Blocks" />
+      <SectionTitle title="Blocks" />
       <Content>
         <Table main>
           <TableHeader
@@ -131,6 +136,7 @@ const BlockSection = () => {
             </TextButton>
           )}
         </LoadMore>
+        <PageSwitch />
       </Content>
     </Section>
   )

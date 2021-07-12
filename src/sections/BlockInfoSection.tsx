@@ -19,7 +19,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { GlobalContext } from '..'
-import PageTitle, { SecondaryTitle } from '../components/PageTitle'
+import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import {
   Table,
   TableHeader,
@@ -89,7 +89,7 @@ const BlockInfoSection = () => {
 
   return (
     <Section>
-      <PageTitle title="Block" />
+      <SectionTitle title="Block" />
       {!loading ? (
         <>
           {blockInfo && blockInfo.status === 200 && blockInfo.data ? (

@@ -19,7 +19,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
-import PageTitle, { SecondaryTitle } from '../components/PageTitle'
+import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import { Address, Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
 import { calAmountDelta } from '../utils/util'
@@ -44,6 +44,8 @@ import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
+import usePageNumber from '../hooks/usePageNumber'
+import PageSwitch from '../components/PageSwitch'
 
 dayjs.extend(relativeTime)
 
@@ -58,6 +60,9 @@ const TransactionInfoSection = () => {
   const [loading, setLoading] = useState(true)
   const previousId = useRef(id)
 
+  // Default page
+  const pageNumber = usePageNumber()
+
   useEffect(() => {
     if (!client) return
 
@@ -66,7 +71,7 @@ const TransactionInfoSection = () => {
     setLoading(true)
 
     client
-      .address(id)
+      .address(id, pageNumber)
       .catch((e) => {
         console.log(e)
         setLoading(false)
@@ -76,11 +81,11 @@ const TransactionInfoSection = () => {
         setAddressInfo(r)
         setLoading(false)
       })
-  }, [client, id])
+  }, [client, id, pageNumber])
 
   return (
     <Section>
-      <PageTitle title="Address" />
+      <SectionTitle title="Address" />
       {!loading && previousId.current === id ? (
         <>
           {addressInfo && addressInfo.status === 200 && addressInfo.data ? (
@@ -122,6 +127,7 @@ const TransactionInfoSection = () => {
           ) : (
             <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
           )}
+          <PageSwitch />
         </>
       ) : (
         <LoadingSpinner />
