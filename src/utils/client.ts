@@ -57,8 +57,8 @@ export class AlephClient {
     }
   }
 
-  async block(id: string) {
-    return await this.fetchAPI<BlockDetail>('/blocks/' + id)
+  async block(id: string, page: number) {
+    return await this.fetchAPI<BlockDetail>('/blocks/' + id + '?page=' + page)
   }
 
   async blocks(page: number) {

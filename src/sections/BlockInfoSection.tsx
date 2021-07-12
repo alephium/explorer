@@ -43,6 +43,8 @@ import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
+import PageSwitch from '../components/PageSwitch'
+import usePageNumber from '../hooks/usePageNumber'
 
 interface ParamTypes {
   id: string
@@ -55,12 +57,14 @@ const BlockInfoSection = () => {
   const history = useHistory()
   const [loading, setLoading] = useState(true)
 
+  const currentPageNumber = usePageNumber()
+
   useEffect(() => {
     if (!client) return
     setLoading(true)
 
     client
-      .block(id)
+      .block(id, currentPageNumber)
       .catch((e) => {
         console.log(e)
         setLoading(false)
@@ -70,7 +74,7 @@ const BlockInfoSection = () => {
         setBlockInfo(r)
         setLoading(false)
       })
-  }, [client, id])
+  }, [client, id, currentPageNumber])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
 
@@ -133,6 +137,7 @@ const BlockInfoSection = () => {
                   ))}
                 </TableBody>
               </Table>
+              <PageSwitch />
             </>
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
