@@ -137,7 +137,7 @@ const BlockInfoSection = () => {
                   ))}
                 </TableBody>
               </Table>
-              <PageSwitch />
+              <PageSwitch numberOfElementsLoaded={blockInfo.data.transactions.length} />
             </>
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />

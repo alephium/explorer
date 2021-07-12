@@ -5,7 +5,10 @@ import styled from 'styled-components'
 import useQueryParams from '../hooks/useQueryParams'
 import { TextButton } from './Buttons'
 
-const PageSwitch = () => {
+const PageSwitch = ({ numberOfElementsLoaded }: { numberOfElementsLoaded: number }) => {
+  // NOTA BENE // TODO: numberOfElementsLoaded is a temporary solution to guess if we're at the end of the list.
+  // This will be removed as soon as the backend is ready
+
   const page = parseInt(useQueryParams('p') || '1')
   const history = useHistory()
   const location = history.location
@@ -24,7 +27,7 @@ const PageSwitch = () => {
         <ChevronLeft />
         <span>Previous</span>
       </TextButton>
-      <TextButton onClick={() => handlePageSwitch('next')}>
+      <TextButton disabled={numberOfElementsLoaded < 20} onClick={() => handlePageSwitch('next')}>
         <span>Next</span>
         <ChevronRight />
       </TextButton>

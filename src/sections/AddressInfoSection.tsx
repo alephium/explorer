@@ -127,7 +127,9 @@ const TransactionInfoSection = () => {
           ) : (
             <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
           )}
-          <PageSwitch />
+          {addressInfo && addressInfo.data && (
+            <PageSwitch numberOfElementsLoaded={addressInfo.data.transactions.length} />
+          )}
         </>
       ) : (
         <LoadingSpinner />
