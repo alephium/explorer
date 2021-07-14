@@ -25,6 +25,8 @@ export interface Transaction {
   timestamp: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
+  startGas: number
+  gasPrice: number
 }
 
 export interface TransactionInput {

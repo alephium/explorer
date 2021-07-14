@@ -57,7 +57,10 @@ const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(GlobalContext).client
   const [addressInfo, setAddressInfo] = useState<APIResp<Address>>()
-  const [loading, setLoading] = useState(true)
+  const [txList, setTxList] = useState<APIResp<Transaction[]>>()
+
+  const [infoLoading, setInfoLoading] = useState(true)
+  const [txLoading, setTxLoading] = useState(true)
   const previousId = useRef(id)
 
   // Default page
@@ -68,25 +71,45 @@ const TransactionInfoSection = () => {
 
     previousId.current = id
 
-    setLoading(true)
+    setInfoLoading(true)
 
+    // Address info
     client
-      .address(id, pageNumber)
+      .address(id)
       .catch((e) => {
         console.log(e)
-        setLoading(false)
+        setInfoLoading(false)
       })
       .then((r) => {
         if (!r) return
         setAddressInfo(r)
-        setLoading(false)
+        setInfoLoading(false)
+      })
+  }, [client, id])
+
+  useEffect(() => {
+    if (!client) return
+
+    setTxLoading(true)
+
+    // Address transactions
+    client
+      .addressTransactions(id, pageNumber)
+      .catch((e) => {
+        console.log(e)
+        setTxLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setTxList(r)
+        setTxLoading(false)
       })
   }, [client, id, pageNumber])
 
   return (
     <Section>
       <SectionTitle title="Address" />
-      {!loading && previousId.current === id ? (
+      {!infoLoading && previousId.current === id ? (
         <>
           {addressInfo && addressInfo.status === 200 && addressInfo.data ? (
             <>
@@ -106,22 +129,28 @@ const TransactionInfoSection = () => {
               </Table>
 
               <SecondaryTitle>History</SecondaryTitle>
-              {addressInfo.data.transactions.length > 0 ? (
-                <Table hasDetails main>
-                  <TableHeader
-                    headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                    columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
-                  />
-                  <TableBody>
-                    {addressInfo.data.transactions
-                      .sort((t1, t2) => t2.timestamp - t1.timestamp)
-                      .map((t, i) => (
-                        <AddressTransactionRow transaction={t} addressId={id} key={i} />
-                      ))}
-                  </TableBody>
-                </Table>
+              {!txLoading && txList && txList.data && txList.status === 200 ? (
+                <>
+                  {txList.data.length > 0 ? (
+                    <Table hasDetails main>
+                      <TableHeader
+                        headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+                        columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
+                      />
+                      <TableBody>
+                        {txList.data
+                          .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                          .map((t, i) => (
+                            <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                          ))}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <NoTxMessage>No transactions yet</NoTxMessage>
+                  )}
+                </>
               ) : (
-                <NoTxMessage>No transactions yet</NoTxMessage>
+                <LoadingSpinner />
               )}
             </>
           ) : (
