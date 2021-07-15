@@ -171,7 +171,9 @@ const BlockInfoSection = () => {
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
           )}
-          {txList && txList.data && <PageSwitch numberOfElementsLoaded={txList && txList.data.length} />}
+          {txList && txList.data && blockInfo?.data?.txNumber && (
+            <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
+          )}
         </>
       ) : (
         <LoadingSpinner />

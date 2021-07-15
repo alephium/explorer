@@ -122,7 +122,7 @@ const TransactionInfoSection = () => {
                   <tr>
                     <td>Balance</td>
                     <td>
-                      <Badge type={'neutralHighlight'} content={addressInfo.data.balance} amount />
+                      <Badge type={'neutralHighlight'} content={addressInfo.data.balance.toString()} amount />
                     </td>
                   </tr>
                 </TableBody>
@@ -156,7 +156,7 @@ const TransactionInfoSection = () => {
           ) : (
             <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
           )}
-          {txList && txList.data && <PageSwitch numberOfElementsLoaded={txList && txList.data.length} />}
+          {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.data?.txNumber} />}
         </>
       ) : (
         <LoadingSpinner />

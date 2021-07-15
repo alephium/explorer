@@ -33,6 +33,6 @@ export interface TransactionOutput {
 }
 
 export interface Address {
-  balance: string
-  transactions: Transaction[]
+  balance: number
+  txNumber: number
 }
