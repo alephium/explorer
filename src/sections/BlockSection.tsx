@@ -18,7 +18,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import styled, { css } from 'styled-components'
 import SectionTitle from '../components/SectionTitle'
-import { Block } from '../types/api'
+import { BlockList } from '../types/api'
 import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -35,7 +35,7 @@ import usePageNumber from '../hooks/usePageNumber'
 dayjs.extend(relativeTime)
 
 const BlockSection = () => {
-  const [blocks, setBlocks] = useState<Block[]>([])
+  const [blockList, setBlockList] = useState<BlockList>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
 
@@ -51,7 +51,7 @@ const BlockSection = () => {
       console.log('Fetching blocks...')
 
       manualFetch ? setManualLoading(true) : setLoading(true)
-      const fetchedBlocks: APIResp<Block[]> = await client.blocks(pageNumber)
+      const fetchedBlocks: APIResp<BlockList> = await client.blocks(pageNumber)
 
       // Check if manual fetching has been set in the meantime (overridign polling fetch)
 
@@ -60,8 +60,8 @@ const BlockSection = () => {
         return
       }
 
-      console.log('Number of block fetched: ' + fetchedBlocks.data?.length)
-      setBlocks(fetchedBlocks.data || [])
+      console.log('Number of block fetched: ' + fetchedBlocks.data?.blocks.length)
+      setBlockList(fetchedBlocks.data)
 
       manualFetch ? setManualLoading(false) : setLoading(false)
     },
@@ -96,7 +96,7 @@ const BlockSection = () => {
               columnWidths={['50px', '25%', '16%', '12%', '20%', '']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
-              {blocks.map((b) => (
+              {blockList?.blocks.map((b) => (
                 <motion.tr
                   key={b.hash}
                   animate={{ opacity: 1 }}
@@ -123,7 +123,7 @@ const BlockSection = () => {
       ) : (
         <LoadingSpinner />
       )}
-      <PageSwitch numberOfElementsLoaded={blocks.length} />
+      <PageSwitch totalNumberOfElements={blockList?.total} />
     </Section>
   )
 }

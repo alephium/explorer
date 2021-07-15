@@ -1,3 +1,8 @@
+export interface BlockList {
+  total: number
+  blocks: Block[]
+}
+
 export interface Block {
   hash: string
   timestamp: number
