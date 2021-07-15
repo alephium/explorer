@@ -66,6 +66,7 @@ const TransactionInfoSection = () => {
   // Default page
   const pageNumber = usePageNumber()
 
+  // Address info
   useEffect(() => {
     if (!client) return
 
@@ -73,7 +74,6 @@ const TransactionInfoSection = () => {
 
     setInfoLoading(true)
 
-    // Address info
     client
       .address(id)
       .catch((e) => {
@@ -87,12 +87,12 @@ const TransactionInfoSection = () => {
       })
   }, [client, id])
 
+  // Address transactions
   useEffect(() => {
     if (!client) return
 
     setTxLoading(true)
 
-    // Address transactions
     client
       .addressTransactions(id, pageNumber)
       .catch((e) => {

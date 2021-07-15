@@ -8,17 +8,6 @@ export interface Block {
   mainChain: boolean
 }
 
-export interface BlockDetail {
-  hash: string
-  height: number
-  chainFrom: number
-  chainTo: number
-  timestamp: number
-  mainChain: boolean
-  deps: string[]
-  transactions: Transaction[]
-}
-
 export interface Transaction {
   hash: string
   blockHash: string

@@ -31,7 +31,7 @@ import {
   Row,
   DetailToggle
 } from '../components/Table'
-import { BlockDetail, Transaction } from '../types/api'
+import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
@@ -52,27 +52,51 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const [blockInfo, setBlockInfo] = useState<APIResp<BlockDetail>>()
   const client = useContext(GlobalContext).client
   const history = useHistory()
-  const [loading, setLoading] = useState(true)
+
+  const [blockInfo, setBlockInfo] = useState<APIResp<Block>>()
+  const [txList, setTxList] = useState<APIResp<Transaction[]>>()
+
+  const [infoLoading, setInfoLoading] = useState(true)
+  const [txLoading, setTxLoading] = useState(true)
 
   const currentPageNumber = usePageNumber()
 
+  // Block info
   useEffect(() => {
     if (!client) return
-    setLoading(true)
+    setInfoLoading(true)
 
     client
-      .block(id, currentPageNumber)
+      .block(id)
       .catch((e) => {
         console.log(e)
-        setLoading(false)
+        setInfoLoading(false)
       })
       .then((r) => {
         if (!r) return
         setBlockInfo(r)
-        setLoading(false)
+        setInfoLoading(false)
+      })
+  }, [client, id])
+
+  // Block transactions
+  useEffect(() => {
+    if (!client) return
+
+    setTxLoading(true)
+
+    client
+      .blockTransactions(id, currentPageNumber)
+      .catch((e) => {
+        console.log(e)
+        setTxLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setTxList(r)
+        setTxLoading(false)
       })
   }, [client, id, currentPageNumber])
 
@@ -94,7 +118,7 @@ const BlockInfoSection = () => {
   return (
     <Section>
       <SectionTitle title="Block" />
-      {!loading ? (
+      {!infoLoading ? (
         <>
           {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
             <>
@@ -116,7 +140,7 @@ const BlockInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Nb. of transactions</td>
-                    <td>{blockInfo.data.transactions.length}</td>
+                    <td>{blockInfo.data.txNumber}</td>
                   </tr>
                   <tr>
                     <td>Timestamp</td>
@@ -126,18 +150,24 @@ const BlockInfoSection = () => {
               </Table>
 
               <SecondaryTitle>Transactions</SecondaryTitle>
-              <Table main hasDetails>
-                <TableHeader
-                  headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-                  columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
-                />
-                <TableBody tdStyles={TXTableBodyCustomStyles}>
-                  {blockInfo.data.transactions.map((t, i) => (
-                    <TransactionRow transaction={t} key={i} />
-                  ))}
-                </TableBody>
-              </Table>
-              <PageSwitch numberOfElementsLoaded={blockInfo.data.transactions.length} />
+              {!txLoading && txList && txList.data && txList.status === 200 ? (
+                <>
+                  <Table main hasDetails>
+                    <TableHeader
+                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+                      columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+                    />
+                    <TableBody tdStyles={TXTableBodyCustomStyles}>
+                      {txList.data.map((t, i) => (
+                        <TransactionRow transaction={t} key={i} />
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <PageSwitch numberOfElementsLoaded={txList.data.length} />
+                </>
+              ) : (
+                <LoadingSpinner />
+              )}
             </>
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
