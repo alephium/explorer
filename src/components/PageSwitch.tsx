@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { ChevronRight, ChevronLeft } from 'react-feather'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
@@ -21,15 +21,32 @@ const PageSwitch = ({
   const history = useHistory()
   const location = history.location
 
-  const locationSearch = new URLSearchParams(location.search)
+  const locationSearch = useMemo(() => new URLSearchParams(location.search), [location.search])
 
   const handlePageSwitch = (direction: 'previous' | 'next') => {
-    locationSearch.set('p', direction === 'previous' ? (currentPage - 1).toString() : (currentPage + 1).toString())
-
-    history.push({ search: locationSearch.toString() })
+    setPageNumber(direction === 'previous' ? currentPage - 1 : currentPage + 1)
   }
 
+  const setPageNumber = useCallback(
+    (pageNumber: number) => {
+      locationSearch.set('p', pageNumber.toString())
+      history.push({ search: locationSearch.toString() })
+    },
+    [history, locationSearch]
+  )
+
   const totalNumberOfPages = totalNumberOfElements && Math.ceil(totalNumberOfElements / elementsPerPage)
+
+  // Redirect if page number is incorrect
+  useEffect(() => {
+    if (currentPage < 1) {
+      setPageNumber(1)
+    } else if (totalNumberOfPages && currentPage > totalNumberOfPages) {
+      setPageNumber(totalNumberOfPages)
+    } else if (isNaN(currentPage)) {
+      setPageNumber(1)
+    }
+  }, [currentPage, setPageNumber, totalNumberOfPages])
 
   return (
     <SwitchContainer>
