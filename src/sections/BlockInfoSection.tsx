@@ -163,7 +163,6 @@ const BlockInfoSection = () => {
                       ))}
                     </TableBody>
                   </Table>
-                  <PageSwitch numberOfElementsLoaded={txList.data.length} />
                 </>
               ) : (
                 <LoadingSpinner />
@@ -172,6 +171,7 @@ const BlockInfoSection = () => {
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
           )}
+          {txList && txList.data && <PageSwitch numberOfElementsLoaded={txList && txList.data.length} />}
         </>
       ) : (
         <LoadingSpinner />

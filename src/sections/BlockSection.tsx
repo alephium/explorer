@@ -119,11 +119,11 @@ const BlockSection = () => {
               ))}
             </TableBody>
           </Table>
-          <PageSwitch numberOfElementsLoaded={blocks.length} />
         </Content>
       ) : (
         <LoadingSpinner />
       )}
+      <PageSwitch numberOfElementsLoaded={blocks.length} />
     </Section>
   )
 }
