@@ -156,7 +156,6 @@ const TableBodyCustomStyles: TDStyle[] = [
       font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
       font-weight: 400;
-      font-size: 95%;
     `
   },
   {
@@ -164,7 +163,6 @@ const TableBodyCustomStyles: TDStyle[] = [
     style: css`
       font-family: 'Roboto Mono', monospace;
       font-weight: 400;
-      font-size: 95%;
     `
   },
   {
@@ -172,7 +170,6 @@ const TableBodyCustomStyles: TDStyle[] = [
     style: css`
       font-family: 'Roboto Mono', monospace;
       font-weight: 400;
-      font-size: 95%;
     `
   },
   {
