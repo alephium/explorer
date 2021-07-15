@@ -190,15 +190,4 @@ const BlockIcon = styled.img`
   width: 25px;
 `
 
-const LoadMore = styled.span`
-  display: flex;
-  align-items: center;
-  margin-top: 25px;
-  height: 20px;
-
-  svg {
-    margin-right: 5px;
-  }
-`
-
 export default BlockSection

@@ -135,7 +135,7 @@ const TransactionInfoSection = () => {
                     <Table hasDetails main>
                       <TableHeader
                         headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                        columnWidths={['10%', '15%', '80px', '30%', '80px', '25px']}
+                        columnWidths={['10%', '100px', '80px', '20%', '80px', '25px']}
                       />
                       <TableBody>
                         {txList.data

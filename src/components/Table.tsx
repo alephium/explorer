@@ -19,7 +19,6 @@ import React, { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
-import MiddleEllipsis from 'react-middle-ellipsis'
 
 interface TableProps {
   main?: boolean
@@ -142,9 +141,7 @@ const DetailToggleWrapper = styled(motion.div)`
 export const HighlightedCell: FC = ({ children }) => {
   return (
     <StyledHighlightedCell>
-      <MiddleEllipsis>
-        <span>{children}</span>
-      </MiddleEllipsis>
+      <span>{children}</span>
     </StyledHighlightedCell>
   )
 }
@@ -256,6 +253,8 @@ export const TableBody = styled.tbody<TableBopyProps>`
 const StyledHighlightedCell = styled.td`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent};
+  word-wrap: break-word;
+  overflow: hidden;
 `
 
 export const AnimatedCellContainer = styled(motion.div)`

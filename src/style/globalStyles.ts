@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   a {
-    color: ${({ theme }) => theme.link};;
+    color: ${({ theme }) => theme.link};
     cursor: pointer;
 
     &:hover {

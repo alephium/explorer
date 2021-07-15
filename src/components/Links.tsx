@@ -20,7 +20,6 @@ import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
 import { smartHash } from '../utils/util'
-import MiddleEllipisis from 'react-middle-ellipsis'
 import JSBI from 'jsbi'
 
 interface TightLinkProps extends LinkProps {
@@ -41,11 +40,9 @@ export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...p
 export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <MiddleEllipisis>
-        <StyledLink {...props} data-tip={text}>
-          {text}
-        </StyledLink>
-      </MiddleEllipisis>
+      <StyledLink {...props} data-tip={text}>
+        {text}
+      </StyledLink>
     </div>
   )
 }
@@ -60,7 +57,7 @@ interface AddressLinkProps {
 export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {
   return (
     <AddressWrapper>
-      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} className="ellipseMe" />
+      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
       {amount !== undefined && (
         <OutputValue>
           (<Amount value={amount} />)
@@ -83,11 +80,13 @@ const OutputValue = styled.span`
 const TxLink = styled(Link)`
   margin-left: 8px;
 `
-
 const StyledLink = styled(Link)`
   white-space: nowrap;
   font-family: 'Inconsolata';
   font-weight: 600;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 const AddressWrapper = styled.div`
