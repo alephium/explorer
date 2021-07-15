@@ -91,7 +91,7 @@ export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfD
     : maxDecimals
 
   if (tier < 0) {
-    return removeTrailingZeros(alephNum.toFixed(8))
+    return removeTrailingZeros(alephNum.toFixed(18)) // Keep full precision for very low numbers (gas etc.)
   } else if (tier === 0) {
     // Small number, low precision is ok
     return removeTrailingZeros(alephNum.toFixed(numberOfDigitsToDisplay).toString())

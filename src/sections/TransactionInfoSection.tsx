@@ -28,6 +28,7 @@ import Section from '../components/Section'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
+import Amount from '../components/Amount'
 
 interface ParamTypes {
   id: string
@@ -104,6 +105,18 @@ const TransactionInfoSection = () => {
                     {txInfo.data.outputs.map((v, i) => (
                       <AddressLink address={v.address} key={i} amount={JSBI.BigInt(v.amount)} txHashRef={v.spent} />
                     ))}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Start Gas</td>
+                  <td>
+                    <Amount value={JSBI.BigInt(txInfo.data.startGas)} />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Gas Price</td>
+                  <td>
+                    <Amount value={JSBI.BigInt(txInfo.data.gasPrice)} />
                   </td>
                 </tr>
                 <tr>
