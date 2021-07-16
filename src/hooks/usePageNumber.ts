@@ -12,7 +12,7 @@ const usePageNumber = () => {
 
   if (pageNumber === 1) {
     locationSearch.delete('p')
-    history.push({ search: locationSearch.toString() })
+    history.replace({ search: locationSearch.toString() })
   }
 
   return pageNumber || 1
