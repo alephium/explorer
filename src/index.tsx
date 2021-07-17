@@ -89,18 +89,22 @@ const App = () => {
   const getContentRef = useCallback(() => contentRef.current, [])
 
   useEffect(() => {
-    let url: string | null | undefined
+    let url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
 
-    if (process.env.REACT_APP_BACKEND_URL && window.location.hostname === 'localhost') {
-      url = process.env.REACT_APP_BACKEND_URL
-    } else {
-      const xs = window.location.hostname.split('.')
-      if (!url && xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
-        url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
+    if (!url) {
+      if (window.location.hostname === 'localhost') {
+        url = 'http://localhost:9090'
+      } else {
+        const xs = window.location.hostname.split('.')
+        if (xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
+          url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
+        } else {
+          url = `${window.location.protocol}//${window.location.host}`
+        }
       }
     }
 
-    setClient(createClient(url || 'http://localhost:9090'))
+    setClient(createClient(url))
   }, [])
 
   // Remove snackbar popup
