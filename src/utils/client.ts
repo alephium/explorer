@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { Block, BlockDetail, Transaction, Address } from '../types/api'
+import { Block, Transaction, Address, BlockList } from '../types/api'
 
 export interface APIData<T> {
   data: T
@@ -58,15 +58,23 @@ export class AlephClient {
   }
 
   async block(id: string) {
-    return await this.fetchAPI<BlockDetail>('/blocks/' + id)
+    return await this.fetchAPI<Block>('/blocks/' + id)
   }
 
-  async blocks(fromTs: number, toTs: number) {
-    return await this.fetchAPI<Block[]>('/blocks?from-ts=' + fromTs + '&to-ts=' + toTs)
+  async blockTransactions(id: string, page: number) {
+    return await this.fetchAPI<Transaction[]>('/blocks/' + id + '/transactions' + '?page=' + page)
+  }
+
+  async blocks(page: number) {
+    return await this.fetchAPI<BlockList>('/blocks?page=' + page)
   }
 
   async address(id: string) {
     return await this.fetchAPI<Address>('/addresses/' + id)
+  }
+
+  async addressTransactions(id: string, page: number) {
+    return await this.fetchAPI<Transaction[]>('/addresses/' + id + '/transactions' + '?page=' + page)
   }
 
   async transaction(id: string) {

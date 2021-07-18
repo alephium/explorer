@@ -1,19 +1,16 @@
-export interface Block {
-  hash: string
-  height: number
-  chainFrom: number
-  chainTo: number
-  timestamp: number
-  txNumber: number
+export interface BlockList {
+  total: number
+  blocks: Block[]
 }
 
-export interface BlockDetail {
+export interface Block {
   hash: string
-  height: number
+  timestamp: number
   chainFrom: number
   chainTo: number
-  timestamp: number
-  transactions: Transaction[]
+  height: number
+  txNumber: number
+  mainChain: boolean
 }
 
 export interface Transaction {
@@ -22,6 +19,8 @@ export interface Transaction {
   timestamp: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
+  startGas: number
+  gasPrice: number
 }
 
 export interface TransactionInput {
@@ -39,6 +38,6 @@ export interface TransactionOutput {
 }
 
 export interface Address {
-  balance: string
-  transactions: Transaction[]
+  balance: number
+  txNumber: number
 }

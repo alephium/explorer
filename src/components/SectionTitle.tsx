@@ -24,7 +24,7 @@ interface PageTitleProps {
   subtitle?: string | JSX.Element
 }
 
-const PageTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
+const SectionTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
     <Title>{title}</Title>
@@ -71,4 +71,4 @@ export const SecondaryTitle = styled.h2`
   margin-top: 40px;
 `
 
-export default PageTitle
+export default SectionTitle

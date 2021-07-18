@@ -24,13 +24,21 @@ export const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ 
 const StyledTextButton = styled.button`
   background: transparent;
   font-size: inherit;
-  color: ${({ theme }) => theme.link};
+  color: ${({ theme, disabled }) => {
+    if (disabled) return theme.textSecondary
+    else return theme.link
+  }};
+
   display: flex;
   align-items: center;
   padding: 0;
   border: 0;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 
   &:hover {
-    color: ${({ theme }) => theme.linkHighlight};
+    color: ${({ theme, disabled }) => {
+      if (disabled) return
+      return theme.linkHighlight
+    }};
   }
 `

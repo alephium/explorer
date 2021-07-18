@@ -19,7 +19,7 @@ import React, { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { GlobalContext } from '..'
-import PageTitle, { SecondaryTitle } from '../components/PageTitle'
+import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import {
   Table,
   TableHeader,
@@ -31,7 +31,7 @@ import {
   Row,
   DetailToggle
 } from '../components/Table'
-import { BlockDetail, Transaction } from '../types/api'
+import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
 import { ArrowRight } from 'react-feather'
@@ -43,6 +43,8 @@ import useTableDetailsState from '../hooks/useTableDetailsState'
 import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
+import PageSwitch from '../components/PageSwitch'
+import usePageNumber from '../hooks/usePageNumber'
 
 interface ParamTypes {
   id: string
@@ -50,27 +52,53 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const [blockInfo, setBlockInfo] = useState<APIResp<BlockDetail>>()
   const client = useContext(GlobalContext).client
   const history = useHistory()
-  const [loading, setLoading] = useState(true)
 
+  const [blockInfo, setBlockInfo] = useState<APIResp<Block>>()
+  const [txList, setTxList] = useState<APIResp<Transaction[]>>()
+
+  const [infoLoading, setInfoLoading] = useState(true)
+  const [txLoading, setTxLoading] = useState(true)
+
+  const currentPageNumber = usePageNumber()
+
+  // Block info
   useEffect(() => {
     if (!client) return
-    setLoading(true)
+    setInfoLoading(true)
 
     client
       .block(id)
       .catch((e) => {
         console.log(e)
-        setLoading(false)
+        setInfoLoading(false)
       })
       .then((r) => {
         if (!r) return
         setBlockInfo(r)
-        setLoading(false)
+        setInfoLoading(false)
       })
   }, [client, id])
+
+  // Block transactions
+  useEffect(() => {
+    if (!client) return
+
+    setTxLoading(true)
+
+    client
+      .blockTransactions(id, currentPageNumber)
+      .catch((e) => {
+        console.log(e)
+        setTxLoading(false)
+      })
+      .then((r) => {
+        if (!r) return
+        setTxList(r)
+        setTxLoading(false)
+      })
+  }, [client, id, currentPageNumber])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
 
@@ -89,8 +117,8 @@ const BlockInfoSection = () => {
 
   return (
     <Section>
-      <PageTitle title="Block" />
-      {!loading ? (
+      <SectionTitle title="Block" />
+      {!infoLoading ? (
         <>
           {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
             <>
@@ -112,7 +140,7 @@ const BlockInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Nb. of transactions</td>
-                    <td>{blockInfo.data.transactions.length}</td>
+                    <td>{blockInfo.data.txNumber}</td>
                   </tr>
                   <tr>
                     <td>Timestamp</td>
@@ -122,20 +150,29 @@ const BlockInfoSection = () => {
               </Table>
 
               <SecondaryTitle>Transactions</SecondaryTitle>
-              <Table main hasDetails>
-                <TableHeader
-                  headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-                  columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
-                />
-                <TableBody tdStyles={TXTableBodyCustomStyles}>
-                  {blockInfo.data.transactions.map((t, i) => (
-                    <TransactionRow transaction={t} key={i} />
-                  ))}
-                </TableBody>
-              </Table>
+              {!txLoading && txList && txList.data && txList.status === 200 ? (
+                <>
+                  <Table main hasDetails>
+                    <TableHeader
+                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+                      columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+                    />
+                    <TableBody tdStyles={TXTableBodyCustomStyles}>
+                      {txList.data.map((t, i) => (
+                        <TransactionRow transaction={t} key={i} />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </>
+              ) : (
+                <LoadingSpinner />
+              )}
             </>
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
+          )}
+          {txList && txList.data && blockInfo?.data?.txNumber && (
+            <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
           )}
         </>
       ) : (
