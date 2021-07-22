@@ -14,9 +14,6 @@ const PageSwitch = ({
   totalNumberOfElements?: number
   numberOfElementsLoaded?: number
 }) => {
-  // NOTA BENE // TODO: numberOfElementsLoaded is a temporary solution to guess if we're at the end of the list.
-  // This will be removed as soon as the backend is ready
-
   const currentPage = parseInt(useQueryParams('p') || '1')
   const history = useHistory()
   const location = history.location
@@ -47,6 +44,8 @@ const PageSwitch = ({
       setPageNumber(1)
     }
   }, [currentPage, setPageNumber, totalNumberOfPages])
+
+  if (totalNumberOfElements === 0) return null
 
   return (
     <SwitchContainer>
