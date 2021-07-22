@@ -192,7 +192,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen}>
+      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
           <TransactionIcon />
         </td>

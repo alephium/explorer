@@ -201,7 +201,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen}>
+      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>

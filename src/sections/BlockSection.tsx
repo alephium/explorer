@@ -25,7 +25,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { GlobalContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
-import { TightLinkStrict } from '../components/Links'
+import { TightLink } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
 import { APIResp } from '../utils/client'
@@ -107,7 +107,7 @@ const BlockSection = () => {
                     <BlockIcon src={blockIcon} alt="Block" />
                   </td>
                   <td>
-                    <TightLinkStrict to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>

@@ -62,6 +62,7 @@ interface RowProps {
 export const Row = styled.tr<RowProps>`
   background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
   border: none;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 `
 
 // == Details Row
