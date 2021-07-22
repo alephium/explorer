@@ -32,6 +32,7 @@ export const Table: FC<TableProps> = ({ children, ...props }) => <StyledTable {.
 interface TableHeaderProps {
   headerTitles: string[]
   columnWidths?: string[]
+  textAlign?: ('left' | 'right')[]
   compact?: boolean
   transparent?: boolean
 }
@@ -39,13 +40,20 @@ interface TableHeaderProps {
 export const TableHeader: React.FC<TableHeaderProps> = ({
   headerTitles,
   columnWidths,
+  textAlign,
   compact = false,
   transparent = false
 }) => (
   <StyledTableHeader compact={compact} transparent={transparent}>
     <tr>
       {headerTitles.map((v, i) => (
-        <th key={i} style={{ width: columnWidths ? columnWidths[i] || 'auto' : 'auto' }}>
+        <th
+          key={i}
+          style={{
+            width: columnWidths ? columnWidths[i] || 'auto' : 'auto',
+            textAlign: textAlign ? textAlign[i] : 'left'
+          }}
+        >
           {v}
         </th>
       ))}
@@ -87,9 +95,10 @@ export const DetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => 
 interface AnimatedCellProps {
   className?: string
   colSpan?: number
+  alignItems?: 'left' | 'right'
 }
 
-export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSpan }) => {
+export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSpan, alignItems = 'left' }) => {
   const condition = useContext(OpenConditionContext)
 
   return (
@@ -103,7 +112,7 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
             transition={{ duration: 0.15 }}
             className={className}
           >
-            <AnimatedCellContainer>{children}</AnimatedCellContainer>
+            <AnimatedCellContainer alignItems={alignItems}>{children}</AnimatedCellContainer>
           </motion.div>
         )}
       </AnimatePresence>
@@ -258,12 +267,12 @@ const StyledHighlightedCell = styled.td`
   overflow: hidden;
 `
 
-export const AnimatedCellContainer = styled(motion.div)`
+export const AnimatedCellContainer = styled(motion.div)<{ alignItems: 'left' | 'right' }>`
   padding: 10px 0;
   text-align: left;
   overflow: hidden;
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: ${({ alignItems }) => (alignItems === 'left' ? 'flex-start' : 'flex-end')};
 `

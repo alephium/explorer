@@ -155,7 +155,8 @@ const BlockInfoSection = () => {
                   <Table main hasDetails>
                     <TableHeader
                       headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-                      columnWidths={['50px', '', '15%', '50px', '', '130px', '50px']}
+                      columnWidths={['50px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                      textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                     />
                     <TableBody tdStyles={TXTableBodyCustomStyles}>
                       {txList.data.map((t, i) => (
@@ -213,6 +214,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
             type={'neutral'}
             content={t.outputs.reduce<JSBI>((acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)), JSBI.BigInt(0))}
             amount
+            floatRight
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
@@ -231,7 +233,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
             <AddressLink address={o.address} key={i} />
           ))}
         </AnimatedCell>
-        <AnimatedCell>
+        <AnimatedCell alignItems="right">
           {t.outputs.map((o, i) => (
             <Amount value={JSBI.BigInt(o.amount)} key={i} />
           ))}
