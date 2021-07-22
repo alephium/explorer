@@ -75,7 +75,7 @@ const BlockSection = () => {
 
   // Polling
   useInterval(() => {
-    if (!loading && !manualLoading) getBlocks(currentPageNumber)
+    if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
   }, 10 * 1000)
 
   return (
