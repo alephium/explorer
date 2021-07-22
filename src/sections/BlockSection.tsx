@@ -25,12 +25,13 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { GlobalContext } from '..'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
-import { TightLinkStrict } from '../components/Links'
+import { TightLink } from '../components/Links'
 import Section from '../components/Section'
 import { motion } from 'framer-motion'
 import { APIResp } from '../utils/client'
 import PageSwitch from '../components/PageSwitch'
 import usePageNumber from '../hooks/usePageNumber'
+import { useHistory } from 'react-router-dom'
 
 dayjs.extend(relativeTime)
 
@@ -38,6 +39,7 @@ const BlockSection = () => {
   const [blockList, setBlockList] = useState<BlockList>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
+  const history = useHistory()
 
   const client = useContext(GlobalContext).client
 
@@ -75,7 +77,7 @@ const BlockSection = () => {
 
   // Polling
   useInterval(() => {
-    if (!loading && !manualLoading) getBlocks(currentPageNumber)
+    if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
   }, 10 * 1000)
 
   return (
@@ -97,17 +99,20 @@ const BlockSection = () => {
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
-                <motion.tr
+                <BlockRow
                   key={b.hash}
                   animate={{ opacity: 1 }}
                   initial={{ opacity: 0 }}
                   transition={{ duration: 0.8 }}
+                  onClick={() => {
+                    history.push(`blocks/${b.hash}`)
+                  }}
                 >
                   <td>
                     <BlockIcon src={blockIcon} alt="Block" />
                   </td>
                   <td>
-                    <TightLinkStrict to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>
@@ -115,7 +120,7 @@ const BlockSection = () => {
                     {b.chainFrom} → {b.chainTo}
                   </td>
                   <td>{dayjs().to(b.timestamp)}</td>
-                </motion.tr>
+                </BlockRow>
               ))}
             </TableBody>
           </Table>
@@ -181,6 +186,10 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const BlockRow = styled(motion.tr)`
+  cursor: pointer;
+`
 
 const BlockIcon = styled.img`
   height: 25px;

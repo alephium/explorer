@@ -40,7 +40,13 @@ export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...p
 export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink {...props} data-tip={text}>
+      <StyledLink
+        {...props}
+        data-tip={text}
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
         {text}
       </StyledLink>
     </div>

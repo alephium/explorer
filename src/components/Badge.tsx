@@ -28,13 +28,15 @@ interface BadgeProps {
   className?: string
   amount?: boolean
   prefix?: string
+  floatRight?: boolean
 }
 
-let Badge: FC<BadgeProps> = ({ content, className, amount, prefix }) => {
+let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, floatRight = false }) => {
   return (
     <div
       className={className}
       data-tip={amount && content ? `${abbreviateAmount(JSBI.BigInt(content), true)} א` : null}
+      style={{ float: floatRight ? 'right' : 'left' }}
     >
       {prefix && <span>{prefix}</span>}
       {amount && content ? <Amount value={JSBI.BigInt(content)} /> : content}

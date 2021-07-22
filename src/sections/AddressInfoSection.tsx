@@ -135,7 +135,8 @@ const TransactionInfoSection = () => {
                     <Table hasDetails main>
                       <TableHeader
                         headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                        columnWidths={['10%', '100px', '80px', '20%', '80px', '25px']}
+                        columnWidths={['10%', '100px', '80px', '25%', '120px', '30px']}
+                        textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
                       />
                       <TableBody>
                         {txList.data
@@ -201,7 +202,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen}>
+      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
@@ -215,6 +216,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
             type={isOut ? 'minus' : 'plus'}
             amount
             prefix={isOut ? '- ' : '+ '}
+            floatRight
             content={
               JSBI.lessThan(amountDelta, JSBI.BigInt(0))
                 ? JSBI.multiply(amountDelta, JSBI.BigInt(-1)).toString()
