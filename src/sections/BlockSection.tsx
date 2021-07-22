@@ -31,6 +31,7 @@ import { motion } from 'framer-motion'
 import { APIResp } from '../utils/client'
 import PageSwitch from '../components/PageSwitch'
 import usePageNumber from '../hooks/usePageNumber'
+import { useHistory } from 'react-router-dom'
 
 dayjs.extend(relativeTime)
 
@@ -38,6 +39,7 @@ const BlockSection = () => {
   const [blockList, setBlockList] = useState<BlockList>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
+  const history = useHistory()
 
   const client = useContext(GlobalContext).client
 
@@ -97,11 +99,14 @@ const BlockSection = () => {
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
-                <motion.tr
+                <BlockRow
                   key={b.hash}
                   animate={{ opacity: 1 }}
                   initial={{ opacity: 0 }}
                   transition={{ duration: 0.8 }}
+                  onClick={() => {
+                    history.push(`blocks/${b.hash}`)
+                  }}
                 >
                   <td>
                     <BlockIcon src={blockIcon} alt="Block" />
@@ -115,7 +120,7 @@ const BlockSection = () => {
                     {b.chainFrom} → {b.chainTo}
                   </td>
                   <td>{dayjs().to(b.timestamp)}</td>
-                </motion.tr>
+                </BlockRow>
               ))}
             </TableBody>
           </Table>
@@ -181,6 +186,10 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const BlockRow = styled(motion.tr)`
+  cursor: pointer;
+`
 
 const BlockIcon = styled.img`
   height: 25px;
