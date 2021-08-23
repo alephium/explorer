@@ -128,21 +128,23 @@ const TransactionInfoSection = () => {
                     <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
                   </tr>
                 )}
-                <tr>
-                  <td>Inputs</td>
-                  <td>
-                    {txInfo.data.inputs && txInfo.data.inputs.length > 0
-                      ? txInfo.data.inputs.map((v, i) => (
-                          <AddressLink
-                            address={v.address}
-                            txHashRef={v.txHashRef}
-                            key={i}
-                            amount={JSBI.BigInt(v.amount)}
-                          />
-                        ))
-                      : 'Block Rewards'}
-                  </td>
-                </tr>
+                {txInfo.data.type === 'confirmed' && (
+                  <tr>
+                    <td>Inputs</td>
+                    <td>
+                      {txInfo.data.inputs && txInfo.data.inputs.length > 0
+                        ? txInfo.data.inputs.map((v, i) => (
+                            <AddressLink
+                              address={v.address}
+                              txHashRef={v.txHashRef}
+                              key={i}
+                              amount={JSBI.BigInt(v.amount)}
+                            />
+                          ))
+                        : 'Block Rewards'}
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <td>Outputs</td>
                   <td>
