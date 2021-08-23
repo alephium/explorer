@@ -55,7 +55,7 @@ const BlockSection = () => {
       manualFetch ? setManualLoading(true) : setLoading(true)
       const fetchedBlocks: APIResp<BlockList> = await client.blocks(pageNumber)
 
-      // Check if manual fetching has been set in the meantime (overridign polling fetch)
+      // Check if manual fetching has been set in the meantime (overriding polling fetch)
 
       if (currentPageNumber !== pageNumber) {
         setLoading(false)

@@ -62,8 +62,12 @@ const SearchBar = () => {
 
   const searching = (str: string) => {
     const word = str.trim()
+    const addressMatch = word.match(/^[1-9A-HJ-NP-Za-km-z]{44,45}/)
+
+    const isAddress = addressMatch && addressMatch[0] === word
+
     //TODO This is a very dummy way do differentiate address and transaction, need improvement
-    if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
+    if (isAddress) {
       redirect(`/addresses/${word}`)
     } else if (word.length === 64 && word.slice(0, 4) === '0000') {
       redirect(`/blocks/${word}`)
