@@ -180,11 +180,11 @@ const StyledTable = styled.table<TableProps>`
 
   tr:not(.details) td,
   th {
-    padding: 10px 5px;
+    padding: 15px 5px;
   }
 
   svg {
-    vertical-align: middle;
+    vertical-align: bottom;
   }
 
   tbody {

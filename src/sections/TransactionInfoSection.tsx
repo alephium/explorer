@@ -29,6 +29,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import Amount from '../components/Amount'
+import { Check } from 'react-feather'
 
 interface ParamTypes {
   id: string
@@ -71,19 +72,51 @@ const TransactionInfoSection = () => {
                   <HighlightedCell>{txInfo.data.hash}</HighlightedCell>
                 </tr>
                 <tr>
-                  <td>Block Hash</td>
-                  <td>
-                    <TightLink
-                      to={`../blocks/${txInfo.data.blockHash || ''}`}
-                      text={txInfo.data.blockHash || ''}
-                      maxWidth="550px"
-                    />
-                  </td>
+                  <td>Status</td>
+                  {txInfo.data.type === 'confirmed' ? (
+                    <td>
+                      <Badge
+                        type="plus"
+                        content={
+                          <span>
+                            <Check style={{ marginRight: 5 }} size={15} />
+                            Validated
+                          </span>
+                        }
+                      />
+                    </td>
+                  ) : (
+                    <td>
+                      <Badge
+                        type="neutral"
+                        content={
+                          <>
+                            <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                            <span>Unconfirmed</span>
+                          </>
+                        }
+                      />
+                    </td>
+                  )}
                 </tr>
-                <tr>
-                  <td>Timestamp</td>
-                  <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
-                </tr>
+                {txInfo.data.blockHash && (
+                  <tr>
+                    <td>Block Hash</td>
+                    <td>
+                      <TightLink
+                        to={`../blocks/${txInfo.data.blockHash || ''}`}
+                        text={txInfo.data.blockHash || ''}
+                        maxWidth="550px"
+                      />
+                    </td>
+                  </tr>
+                )}
+                {txInfo.data.timestamp && (
+                  <tr>
+                    <td>Timestamp</td>
+                    <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                  </tr>
+                )}
                 <tr>
                   <td>Inputs</td>
                   <td>
@@ -123,7 +156,7 @@ const TransactionInfoSection = () => {
                   </td>
                   <td>
                     <Badge
-                      type={'neutral'}
+                      type="neutralHighlight"
                       content={txInfo.data.outputs.reduce<JSBI>(
                         (acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)),
                         JSBI.BigInt(0)

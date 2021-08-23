@@ -155,7 +155,7 @@ const BlockInfoSection = () => {
                   <Table main hasDetails>
                     <TableHeader
                       headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-                      columnWidths={['50px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                      columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                       textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                     />
                     <TableBody tdStyles={TXTableBodyCustomStyles}>
