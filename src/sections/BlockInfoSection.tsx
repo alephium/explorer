@@ -126,7 +126,7 @@ const BlockInfoSection = () => {
                 <TableBody tdStyles={BlockTableBodyCustomStyles}>
                   <tr>
                     <td>Hash</td>
-                    <HighlightedCell>{blockInfo.data.hash}</HighlightedCell>
+                    <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
                   </tr>
                   <tr>
                     <td>Height</td>

@@ -19,6 +19,7 @@ import React, { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
+import ClipboardButton from './ClipboardButton'
 
 interface TableProps {
   main?: boolean
@@ -148,10 +149,11 @@ const DetailToggleWrapper = styled(motion.div)`
 
 // == Highlighted cell (address, hash...)
 
-export const HighlightedCell: FC = ({ children }) => {
+export const HighlightedCell: FC<{ textToCopy: string }> = ({ children, textToCopy }) => {
   return (
     <StyledHighlightedCell>
       <span>{children}</span>
+      <ClipboardButton textToCopy={textToCopy} />
     </StyledHighlightedCell>
   )
 }

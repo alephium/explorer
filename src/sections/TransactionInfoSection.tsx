@@ -80,7 +80,7 @@ const TransactionInfoSection = () => {
               <TableBody>
                 <tr>
                   <td>Hash</td>
-                  <HighlightedCell>{txInfo.data.hash}</HighlightedCell>
+                  <HighlightedCell textToCopy={txInfo.data.hash}>{txInfo.data.hash}</HighlightedCell>
                 </tr>
                 <tr>
                   <td>Status</td>

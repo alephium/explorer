@@ -5,7 +5,8 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
-    'plugin:prettier/recommended'
+    'plugin:prettier/recommended',
+    'plugin:react/jsx-runtime'
   ],
   plugins: ['react', '@typescript-eslint', 'prettier', 'react-hooks'],
   rules: {
