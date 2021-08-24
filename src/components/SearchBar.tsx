@@ -98,7 +98,7 @@ const SearchBar = () => {
 const Container = styled.div`
   flex: 1;
   position: relative;
-  height: 50px;
+  height: 45px;
 
   @media ${deviceBreakPoints.mobile} {
     right: 10px;
@@ -115,6 +115,7 @@ const SearchIcon = styled(Search)`
   right: 20px;
   top: 12px;
   z-index: 11;
+  height: 21px;
   cursor: pointer;
 `
 
@@ -126,12 +127,12 @@ const SearchInput = styled.input`
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
   background: ${({ theme }) => theme.bgSecondary};
-  border: 2px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
   z-index: 10;
 
   &:hover {
-    border: 2px solid ${({ theme }) => theme.borderHighlight};
+    border: 1px solid ${({ theme }) => theme.borderHighlight};
   }
 
   &:focus,
@@ -139,7 +140,7 @@ const SearchInput = styled.input`
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       /*this is your grey background*/ linear-gradient(to right, #6510f7, #f76110) border-box;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     z-index: 10;
   }
 `

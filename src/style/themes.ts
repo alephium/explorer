@@ -38,7 +38,7 @@ export const lightTheme: DefaultTheme = {
   bgSecondary: '#FAFAFA',
   bgHighlight: 'rgba(0, 0, 0, 0.02)',
 
-  borderPrimary: '#F2F2F3',
+  borderPrimary: '#ebebeb',
   borderHighlight: '#D1D1D4',
 
   tooltip: 'black'

@@ -282,6 +282,7 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.textSecondary};
+  font-style: italic;
 `
 
 const NoTxMessage = styled.span`

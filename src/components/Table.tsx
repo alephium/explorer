@@ -180,9 +180,8 @@ const StyledTable = styled.table<TableProps>`
     width: ${({ bodyOnly }) => (bodyOnly ? '30%' : 'auto')};
   }
 
-  tr:not(.details) td,
-  th {
-    padding: 15px 5px;
+  tr td {
+    padding: 14px 5px;
   }
 
   svg {
@@ -192,11 +191,11 @@ const StyledTable = styled.table<TableProps>`
   tbody {
     tr:not(:last-child) {
       border-bottom: ${({ hasDetails, noBorder, theme }) =>
-        !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
+        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderPrimary}`) : ''};
     }
 
     tr.details {
-      border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
+      border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
       background-color: ${({ theme }) => theme.bgHighlight};
 
       td {
@@ -213,17 +212,26 @@ interface StyledTableHeaderProps {
 }
 
 export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
-  font-weight: 400;
   color: ${({ theme }) => theme.textSecondary};
 
   th {
-    position: sticky;
-    top: 0;
+    padding: 0px 5px 14px 5px;
+    font-weight: 500;
+    ${({ compact, theme }) => {
+      if (!compact) {
+        return `
+					position: sticky;
+					top: 0;
+					box-shadow: inset 0 -1px 0 ${theme.borderPrimary};
+					padding: 14px 5px;
+				`
+      }
+    }}
     background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
   }
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '60px')};
+    height: ${({ compact }) => (compact ? '30px' : '55px')};
   }
 `
 

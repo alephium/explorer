@@ -244,7 +244,7 @@ const Content = styled.div`
 const Header = styled.header`
   display: flex;
   align-items: center;
-  margin: 40px;
+  margin: 25px 40px;
   z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {
@@ -269,15 +269,15 @@ const SnackbarManagerContainer = styled.div`
 
 const SnackbarPopup = styled(motion.div)`
   bottom: 10px;
+  left: 25px;
   margin: 10px auto;
   text-align: center;
-  min-width: 300px;
-  width: 50vw;
-  padding: 20px 15px;
+  min-width: 150px;
+  max-width: 50vw;
+  padding: 20px;
   color: white;
   border-radius: 14px;
   z-index: 1000;
-  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
 
   &.alert {
     background-color: rgb(219, 99, 69);
