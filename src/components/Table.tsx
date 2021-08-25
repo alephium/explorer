@@ -169,6 +169,7 @@ const StyledTable = styled.table<TableProps>`
   text-align: left;
   border-collapse: collapse;
   table-layout: fixed;
+  white-space: nowrap;
 
   @media ${deviceBreakPoints.mobile} {
     ${({ scrollable }) => {
@@ -280,6 +281,7 @@ const StyledHighlightedCell = styled.td`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent};
   word-wrap: break-word;
+  white-space: pre-wrap;
   overflow: hidden;
 `
 

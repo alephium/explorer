@@ -24,7 +24,7 @@ import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
 
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
-import Sidebar from './components/Sidebar'
+import Sidebar, { SidebarState } from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
 import { createClient, ScrollToTop } from './utils/util'
@@ -37,10 +37,13 @@ import TransactionsSection from './sections/TransactionsSection'
 import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { Menu } from 'react-feather'
 
 interface GlobalContext {
   client: AlephClient | undefined
   currentTheme: ThemeType
+  sidebarState: 'open' | 'close'
+  setSidebarState: (state: SidebarState) => void
   switchTheme: (arg0: ThemeType) => void
   setSnackbarMessage: (message: SnackbarMessage) => void
 }
@@ -48,6 +51,8 @@ interface GlobalContext {
 export const GlobalContext = React.createContext<GlobalContext>({
   client: undefined,
   currentTheme: 'dark',
+  sidebarState: 'open',
+  setSidebarState: () => null,
   switchTheme: () => null,
   setSnackbarMessage: () => null
 })
@@ -83,6 +88,7 @@ const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
+  const [sidebarState, setSidebarState] = useState<SidebarState>('close')
 
   const contentRef = useRef(null)
 
@@ -123,15 +129,20 @@ const App = () => {
             client,
             currentTheme: theme as ThemeType,
             switchTheme: setTheme as (arg0: ThemeType) => void,
+            sidebarState: 'close',
+            setSidebarState: setSidebarState,
             setSnackbarMessage
           }}
         >
           <MainContainer>
-            <Sidebar />
+            <Sidebar sidebarState={sidebarState} />
             <ContentContainer>
               <ContentWrapper ref={contentRef}>
                 <ScrollToTop getScrollContainer={getContentRef} />
                 <Header>
+                  <HamburgerButton onClick={() => setSidebarState('open')}>
+                    <Menu />
+                  </HamburgerButton>
                   <SearchBar />
                 </Header>
                 <Content>
@@ -256,6 +267,24 @@ const Header = styled.header`
     @media ${deviceBreakPoints.mobile} {
       display: none;
     }
+  }
+`
+
+const HamburgerButton = styled.div`
+  width: 35px;
+  height: 35px;
+  display: none;
+  margin-right: 15px;
+
+  @media ${deviceBreakPoints.tablet} {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    margin-right: 5px;
   }
 `
 

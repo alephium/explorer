@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -24,16 +24,19 @@ import blockIcon from '../images/block-icon.svg'
 import addressIcon from '../images/address-icon.svg'
 import transactionIcon from '../images/transaction-icon.svg'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
-import { Menu, X } from 'react-feather'
+import { X } from 'react-feather'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { AnimatePresence, motion } from 'framer-motion'
 import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
+import { GlobalContext } from '..'
 
-const Sidebar = () => {
+export type SidebarState = 'open' | 'close'
+
+const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const theme = useTheme()
   const windowWidth = useWindowSize().width
   const lastWindowWidth = useRef(windowWidth)
-  const [open, setOpen] = useState(false)
+  const { setSidebarState } = useContext(GlobalContext)
 
   useEffect(() => {
     if (windowWidth) {
@@ -43,39 +46,39 @@ const Sidebar = () => {
         windowWidth < deviceSizes.tablet &&
         open
       ) {
-        setOpen(false)
+        setSidebarState('close')
       }
 
       lastWindowWidth.current = windowWidth
     }
-  }, [open, windowWidth])
+  }, [setSidebarState, windowWidth])
 
   return (
     <>
-      <HamburgerButton onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</HamburgerButton>
-      <SidebarContainer open={open}>
+      <SidebarContainer open={sidebarState === 'open'}>
+        <CloseButton onClick={() => setSidebarState('close')}>{<X />}</CloseButton>
         <Header>
           <Link to="/">
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
           </Link>
         </Header>
         <Tabs>
-          <Tab to="/blocks" onClick={() => setOpen(false)}>
+          <Tab to="/blocks" onClick={() => setSidebarState('close')}>
             <TabIcon src={blockIcon} alt="blocks" /> Blocks
           </Tab>
-          <Tab to="/addresses" onClick={() => setOpen(false)}>
+          <Tab to="/addresses" onClick={() => setSidebarState('close')}>
             <TabIcon src={addressIcon} alt="addresses" /> Addresses
           </Tab>
-          <Tab to="/transactions" onClick={() => setOpen(false)}>
+          <Tab to="/transactions" onClick={() => setSidebarState('close')}>
             <TabIcon src={transactionIcon} alt="transactions" /> Transactions
           </Tab>
         </Tabs>
         <ThemeSwitcher />
       </SidebarContainer>
       <AnimatePresence>
-        {open && (
+        {sidebarState === 'open' && (
           <Backdrop
-            onClick={() => setOpen(false)}
+            onClick={() => setSidebarState('close')}
             animate={{ opacity: 0.4 }}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
@@ -99,15 +102,14 @@ const Logo = styled.img`
   }
 `
 
-const HamburgerButton = styled.div`
+const CloseButton = styled.div`
   position: absolute;
   width: 35px;
   height: 35px;
-  top: 15px;
+  top: 16px;
   left: 20px;
   display: none;
   z-index: 300;
-  background-color: ${({ theme }) => theme.bgPrimary};
   padding: 5px;
   border-radius: 100%;
 

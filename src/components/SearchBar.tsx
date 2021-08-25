@@ -103,7 +103,6 @@ const Container = styled.div`
   @media ${deviceBreakPoints.mobile} {
     right: 10px;
     left: 10px;
-    margin-left: 50px;
     margin-right: 10px;
     z-index: 1;
   }

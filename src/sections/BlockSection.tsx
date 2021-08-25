@@ -92,10 +92,10 @@ const BlockSection = () => {
       </TitleAndLoader>
       {!manualLoading ? (
         <Content>
-          <Table main>
+          <Table main scrollable>
             <TableHeader
               headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']}
-              columnWidths={['50px', '25%', '16%', '12%', '20%', '']}
+              columnWidths={['40px', '10%', '10%', '60px', '60px', '10%']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (

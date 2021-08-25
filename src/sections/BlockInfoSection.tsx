@@ -224,13 +224,13 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td />
         <AnimatedCell>
           {t.inputs.map((input, i) => (
-            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} />
+            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
           ))}
         </AnimatedCell>
         <td />
         <AnimatedCell>
           {t.outputs.map((o, i) => (
-            <AddressLink address={o.address} key={i} />
+            <AddressLink address={o.address} key={i} maxWidth="180px" />
           ))}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
