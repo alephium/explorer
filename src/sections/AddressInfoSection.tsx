@@ -132,7 +132,7 @@ const TransactionInfoSection = () => {
               {!txLoading && txList && txList.data && txList.status === 200 ? (
                 <>
                   {txList.data.length > 0 ? (
-                    <Table hasDetails main>
+                    <Table hasDetails main scrollable>
                       <TableHeader
                         headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
                         columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}

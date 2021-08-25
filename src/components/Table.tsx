@@ -20,12 +20,14 @@ import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
 import ClipboardButton from './ClipboardButton'
+import { deviceBreakPoints } from '../style/globalStyles'
 
 interface TableProps {
   main?: boolean
   hasDetails?: boolean
   noBorder?: boolean
   bodyOnly?: boolean
+  scrollable?: boolean
 }
 
 export const Table: FC<TableProps> = ({ children, ...props }) => <StyledTable {...props}>{children}</StyledTable>
@@ -167,21 +169,25 @@ const StyledTable = styled.table<TableProps>`
   text-align: left;
   border-collapse: collapse;
   table-layout: fixed;
-  vertical-align: middle;
 
-  ${({ bodyOnly, main }) =>
-    !bodyOnly && main
-      ? css`
-          min-width: 550px;
-        `
-      : ''}
+  @media ${deviceBreakPoints.mobile} {
+    ${({ scrollable }) => {
+      if (scrollable) {
+        return `
+					display: block;
+					width: 100%;
+					overflow-x: auto;
+				`
+      }
+    }}
+  }
 
   td:nth-child(1) {
     width: ${({ bodyOnly }) => (bodyOnly ? '30%' : 'auto')};
   }
 
   tr td {
-    padding: 14px 5px;
+    padding: 14px;
   }
 
   svg {
@@ -215,7 +221,7 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   color: ${({ theme }) => theme.textSecondary};
 
   th {
-    padding: 0px 5px 14px 5px;
+    padding: 0px 14px 14px 14px;
     font-weight: 500;
     ${({ compact, theme }) => {
       if (!compact) {
@@ -223,7 +229,7 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
 					position: sticky;
 					top: 0;
 					box-shadow: inset 0 -1px 0 ${theme.borderPrimary};
-					padding: 14px 5px;
+					padding: 14px;
 				`
       }
     }}
@@ -264,8 +270,8 @@ export const TableBody = styled.tbody<TableBopyProps>`
       overflow: hidden;
     }
 
-    &:hover td {
-      background-color: ${({ theme }) => theme.bgHighlight};
+    &:hover {
+      background-color: ${({ theme }) => theme.bgHover};
     }
   }
 `

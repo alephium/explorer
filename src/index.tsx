@@ -217,6 +217,7 @@ const ContentContainer = styled.div`
   justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const ContentWrapper = styled.main`

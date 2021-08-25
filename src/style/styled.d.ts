@@ -18,6 +18,7 @@ declare module 'styled-components' {
     bgPrimary: string
     bgSecondary: string
     bgHighlight: string
+    bgHover: string
 
     borderPrimary: string
     borderHighlight: string

@@ -39,8 +39,8 @@ const Sidebar = () => {
     if (windowWidth) {
       if (
         lastWindowWidth.current &&
-        lastWindowWidth.current >= deviceSizes.mobile &&
-        windowWidth < deviceSizes.mobile &&
+        lastWindowWidth.current >= deviceSizes.tablet &&
+        windowWidth < deviceSizes.tablet &&
         open
       ) {
         setOpen(false)
@@ -94,7 +94,7 @@ const Logo = styled.img`
   width: 155px;
   margin-top: 15px;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     width: 150px;
   }
 `
@@ -111,7 +111,7 @@ const HamburgerButton = styled.div`
   padding: 5px;
   border-radius: 100%;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     display: block;
     cursor: pointer;
   }
@@ -120,7 +120,7 @@ const HamburgerButton = styled.div`
 const Backdrop = styled(motion.div)`
   display: none;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     display: block;
     position: fixed;
     top: 0;
@@ -151,7 +151,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
     bottom: 25px;
   }
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     position: absolute;
     top: 0;
     left: 0;
@@ -168,7 +168,7 @@ const Header = styled.header`
   display: flex;
   align-items: center;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     margin-top: 50px;
   }
 `
@@ -178,7 +178,7 @@ const Tabs = styled.div`
   display: flex;
   flex-direction: column;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     margin-top: 30px;
   }
 `
