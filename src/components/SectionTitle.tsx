@@ -39,13 +39,13 @@ const TitleWrapper = styled.div`
 const Title = styled.h1`
   font-family: 'Inter';
   font-weight: bold;
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
   font-weight: 800;
 
   @media ${deviceBreakPoints.mobile} {
-    font-size: 2.2rem;
+    font-size: 2rem;
     margin-top: 20px;
   }
 `

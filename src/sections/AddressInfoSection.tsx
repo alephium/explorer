@@ -140,7 +140,7 @@ const TransactionInfoSection = () => {
                       />
                       <TableBody>
                         {txList.data
-                          .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                          .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
                           .map((t, i) => (
                             <AddressTransactionRow transaction={t} addressId={id} key={i} />
                           ))}
@@ -206,7 +206,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
-        <td>{dayjs().to(t.timestamp)}</td>
+        <td>{(t.timestamp && dayjs().to(t.timestamp)) || '-'}</td>
         <td>
           <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
         </td>

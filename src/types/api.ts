@@ -17,7 +17,7 @@ export interface Transaction {
   type: 'confirmed' | 'unconfirmed'
   hash: string
   blockHash?: string
-  timestamp: number
+  timestamp?: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
   startGas: number
