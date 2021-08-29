@@ -154,13 +154,21 @@ const TransactionInfoSection = () => {
                   </td>
                 </tr>
                 <tr>
-                  <td>Start Gas</td>
-                  <td>{txInfo.data.startGas || '-'} GAS</td>
+                  <td>Gas Amount</td>
+                  <td>{txInfo.data.gasAmount || '-'} GAS</td>
                 </tr>
                 <tr>
                   <td>Gas Price</td>
                   <td>
                     <Amount value={JSBI.BigInt(txInfo.data.gasPrice)} />
+                  </td>
+                </tr>
+                <tr>
+                  <td>Transaction Fee</td>
+                  <td>
+                    <Amount
+                      value={JSBI.multiply(JSBI.BigInt(txInfo.data.gasPrice), JSBI.BigInt(txInfo.data.gasAmount))}
+                    />
                   </td>
                 </tr>
                 <tr>

@@ -20,7 +20,7 @@ export interface Transaction {
   timestamp?: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
-  startGas: number
+  gasAmount: number
   gasPrice: number
 }
 

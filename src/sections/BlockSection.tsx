@@ -94,8 +94,8 @@ const BlockSection = () => {
         <Content>
           <Table main scrollable>
             <TableHeader
-              headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']}
-              columnWidths={['40px', '10%', '10%', '60px', '60px', '10%']}
+              headerTitles={['', 'Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+              columnWidths={['50px', '15%', '20%', '20%', '20%', '20%']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
@@ -114,12 +114,12 @@ const BlockSection = () => {
                   <td>
                     <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
+                  <td>{dayjs().to(b.timestamp)}</td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>
                   <td>
                     {b.chainFrom} → {b.chainTo}
                   </td>
-                  <td>{dayjs().to(b.timestamp)}</td>
                 </BlockRow>
               ))}
             </TableBody>
@@ -156,7 +156,7 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   },
   {
-    tdPos: 3,
+    tdPos: 4,
     style: css`
       font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
