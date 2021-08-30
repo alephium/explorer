@@ -1,11 +1,10 @@
 import { useEffect, useState, useContext } from 'react'
 import { Clipboard, Check } from 'react-feather'
 import ReactTooltip from 'react-tooltip'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 import { GlobalContext } from '..'
 
 const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
-  const theme = useTheme()
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
   const { setSnackbarMessage } = useContext(GlobalContext)
 
