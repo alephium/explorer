@@ -125,7 +125,7 @@ const TransactionInfoSection = () => {
                 {txInfo.data.timestamp && (
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                    <td>{dayjs(txInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
                   </tr>
                 )}
                 {txInfo.data.type === 'confirmed' && (

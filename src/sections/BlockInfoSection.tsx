@@ -144,7 +144,7 @@ const BlockInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(blockInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                    <td>{dayjs(blockInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
                   </tr>
                 </TableBody>
               </Table>
