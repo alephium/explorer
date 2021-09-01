@@ -91,7 +91,7 @@ const TransactionInfoSection = () => {
                         content={
                           <span>
                             <Check style={{ marginRight: 5 }} size={15} />
-                            Validated
+                            Confirmed
                           </span>
                         }
                       />
