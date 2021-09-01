@@ -27,7 +27,7 @@ import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar, { SidebarState } from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
-import { createClient, ScrollToTop } from './utils/util'
+import { createClient, isElectron, ScrollToTop } from './utils/util'
 import { AlephClient } from './utils/client'
 import BlockInfoSection from './sections/BlockInfoSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
@@ -38,6 +38,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { Menu } from 'react-feather'
+import { ArrowLeft } from 'react-feather'
+import { useHistory } from 'react-router-dom'
 
 interface GlobalContext {
   client: AlephClient | undefined
@@ -93,6 +95,7 @@ const App = () => {
   const contentRef = useRef(null)
 
   const getContentRef = useCallback(() => contentRef.current, [])
+  const history = useHistory()
 
   useEffect(() => {
     let url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
@@ -143,6 +146,11 @@ const App = () => {
                   <HamburgerButton onClick={() => setSidebarState('open')}>
                     <Menu />
                   </HamburgerButton>
+                  {isElectron() && (
+                    <nav>
+                      <BackButton size={20} onClick={() => history.goBack()} color={'black'} />
+                    </nav>
+                  )}
                   <SearchBar />
                 </Header>
                 <Content>
@@ -286,6 +294,12 @@ const HamburgerButton = styled.div`
   @media ${deviceBreakPoints.mobile} {
     margin-right: 5px;
   }
+`
+
+const BackButton = styled(ArrowLeft)`
+  cursor: pointer;
+  margin-right: 25px;
+  margin-top: 2px;
 `
 
 const SnackbarManagerContainer = styled.div`

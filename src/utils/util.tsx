@@ -174,3 +174,10 @@ export function calAmountDelta(t: Transaction, id: string) {
 
   return JSBI.subtract(outputAmount, inputAmount)
 }
+
+// For usage from electron wallet, some UI elements can change.
+
+export const isElectron = () => {
+  const userAgent = navigator.userAgent.toLowerCase()
+  return userAgent.indexOf(' electron/') > -1
+}

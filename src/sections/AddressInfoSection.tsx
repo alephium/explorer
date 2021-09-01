@@ -120,6 +120,10 @@ const TransactionInfoSection = () => {
                     <HighlightedCell textToCopy={id}>{id}</HighlightedCell>
                   </tr>
                   <tr>
+                    <td>Number of Transactions</td>
+                    <td>{addressInfo.data.txNumber}</td>
+                  </tr>
+                  <tr>
                     <td>Balance</td>
                     <td>
                       <Badge type={'neutralHighlight'} content={addressInfo.data.balance.toString()} amount />
