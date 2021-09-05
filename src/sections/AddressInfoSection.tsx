@@ -183,11 +183,16 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
   const isOut = JSBI.lessThan(amountDelta, JSBI.BigInt(0))
 
   const renderOutputAccounts = () => {
-    return _(t.outputs.filter((o) => o.address !== addressId))
-      .map((v) => v.address)
-      .uniq()
-      .value()
-      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    // Check for auto-sent tx
+    if (t.outputs.every((o) => o.address === addressId)) {
+      return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
+    } else {
+      return _(t.outputs.filter((o) => o.address !== addressId))
+        .map((v) => v.address)
+        .uniq()
+        .value()
+        .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    }
   }
 
   const renderInputAccounts = () => {
