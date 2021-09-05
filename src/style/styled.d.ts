@@ -21,6 +21,7 @@ declare module 'styled-components' {
     bgHover: string
 
     borderPrimary: string
+    borderSecondary: string
     borderHighlight: string
 
     tooltip: string

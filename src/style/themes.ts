@@ -19,6 +19,7 @@ export const darkTheme: DefaultTheme = {
   bgHover: 'rgba(0, 0, 0, 0.05)',
 
   borderPrimary: '#34353A',
+  borderSecondary: '#27282d',
   borderHighlight: '#585962',
 
   tooltip: 'black'
@@ -37,10 +38,11 @@ export const lightTheme: DefaultTheme = {
 
   bgPrimary: 'white',
   bgSecondary: '#FAFAFA',
-  bgHighlight: 'rgba(0, 0, 0, 0.02)',
+  bgHighlight: 'rgba(0, 0, 0, 0.012)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
   borderPrimary: '#ebebeb',
+  borderSecondary: '#f2f2f2',
   borderHighlight: '#D1D1D4',
 
   tooltip: 'black'

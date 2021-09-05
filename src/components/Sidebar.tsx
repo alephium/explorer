@@ -94,8 +94,9 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
 
 const Logo = styled.img`
   height: 100px;
-  width: 155px;
-  margin-top: 15px;
+  width: 140px;
+  margin-top: 5px;
+  margin-left: 25px;
 
   @media ${deviceBreakPoints.tablet} {
     width: 150px;
@@ -143,7 +144,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   display: flex;
   flex-direction: column;
   max-width: 250px;
-  padding: 0 20px;
+
   background-color: ${({ theme }) => theme.bgSecondary};
   border-right: 1px solid ${({ theme }) => theme.borderPrimary};
 
@@ -151,6 +152,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
     display: block;
     position: absolute;
     bottom: 25px;
+    left: 25px;
   }
 
   @media ${deviceBreakPoints.tablet} {
@@ -176,9 +178,10 @@ const Header = styled.header`
 `
 
 const Tabs = styled.div`
-  margin-top: 5vh;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
+  border-top: 1px solid ${({ theme }) => theme.borderPrimary};
 
   @media ${deviceBreakPoints.tablet} {
     margin-top: 30px;
@@ -186,32 +189,23 @@ const Tabs = styled.div`
 `
 
 const Tab = styled(NavLink)`
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  margin-bottom: 25px;
   display: flex;
   align-items: center;
   transition: all 0.15s ease;
   position: relative;
+  border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+  padding: 13px 20px;
 
   color: ${({ theme }) => theme.textSecondary};
   &.active {
     color: ${({ theme }) => theme.textPrimary};
+    background-color: ${({ theme }) => theme.bgPrimary};
 
     img {
       filter: none;
-    }
-
-    &::after {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 3px;
-      position: absolute;
-      left: 40px;
-      bottom: -6px;
-      background: linear-gradient(to left, #6510f7, #f76110) border-box;
     }
   }
   &:hover {
@@ -220,8 +214,8 @@ const Tab = styled(NavLink)`
 `
 
 const TabIcon = styled.img`
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
   margin-right: 15px;
   filter: grayscale(100%);
 `

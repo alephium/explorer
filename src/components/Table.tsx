@@ -30,7 +30,11 @@ interface TableProps {
   scrollable?: boolean
 }
 
-export const Table: FC<TableProps> = ({ children, ...props }) => <StyledTable {...props}>{children}</StyledTable>
+export const Table: FC<TableProps> = ({ children, ...props }) => (
+  <TableWrapper {...props}>
+    <StyledTable {...props}>{children}</StyledTable>
+  </TableWrapper>
+)
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -164,6 +168,12 @@ export const HighlightedCell: FC<{ textToCopy: string }> = ({ children, textToCo
 // === Styles ====
 // ===
 
+const TableWrapper = styled.div<TableProps>`
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
+  overflow: hidden;
+  border-radius: 7px;
+`
+
 const StyledTable = styled.table<TableProps>`
   width: 100%;
   text-align: left;
@@ -184,11 +194,15 @@ const StyledTable = styled.table<TableProps>`
   }
 
   td:nth-child(1) {
-    width: ${({ bodyOnly }) => (bodyOnly ? '30%' : 'auto')};
+    width: ${({ bodyOnly }) => (bodyOnly ? '27%' : 'auto')};
   }
 
   tr td {
-    padding: 14px;
+    padding: 12px;
+  }
+
+  tr:not(.details) td {
+    height: 45px;
   }
 
   svg {
@@ -202,7 +216,10 @@ const StyledTable = styled.table<TableProps>`
     }
 
     tr.details {
-      border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+      &:not(:last-child) {
+        border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+      }
+      box-shadow: inset 0 1px 0 ${({ theme }) => theme.borderSecondary};
       background-color: ${({ theme }) => theme.bgHighlight};
 
       td {
@@ -222,7 +239,7 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
   color: ${({ theme }) => theme.textSecondary};
 
   th {
-    padding: 0px 14px 14px 14px;
+    padding: 0px 12px 12px 12px;
     font-weight: 500;
     ${({ compact, theme }) => {
       if (!compact) {
@@ -230,15 +247,15 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
 					position: sticky;
 					top: 0;
 					box-shadow: inset 0 -1px 0 ${theme.borderPrimary};
-					padding: 14px;
+					padding: 12px;
 				`
       }
     }}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgSecondary}`)};
   }
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '55px')};
+    height: ${({ compact }) => (compact ? '30px' : '48px')};
   }
 `
 

@@ -279,7 +279,7 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,
     style: css`
-      font-weight: 600;
+      font-weight: 500;
     `
   }
 ]

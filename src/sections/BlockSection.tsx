@@ -95,7 +95,7 @@ const BlockSection = () => {
           <Table main scrollable>
             <TableHeader
               headerTitles={['', 'Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-              columnWidths={['50px', '15%', '20%', '20%', '20%', '20%']}
+              columnWidths={['50px', '20%', '20%', '20%', '20%', '20%']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
@@ -192,8 +192,8 @@ const BlockRow = styled(motion.tr)`
 `
 
 const BlockIcon = styled.img`
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 `
 
 export default BlockSection

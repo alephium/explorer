@@ -20,6 +20,11 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  // Titles
+  h2 {
+    font-weight: 600;
+  }
+
   // Animations
   @keyframes spin {
     from {

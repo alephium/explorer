@@ -42,7 +42,7 @@ const Title = styled.h1`
   font-size: 2.2rem;
   color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
-  font-weight: 800;
+  font-weight: 600;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2rem;

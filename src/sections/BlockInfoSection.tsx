@@ -250,8 +250,8 @@ const TransactionIcon = styled.div`
   background-image: url(${transactionIcon});
   background-position: center;
   background-repeat: no-repeat;
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 `
 
 const BlockTableBodyCustomStyles: TDStyle[] = [
