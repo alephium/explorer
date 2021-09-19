@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
 import SectionTitle from '../components/SectionTitle'
@@ -29,6 +29,8 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import Amount from '../components/Amount'
+import { Check } from 'react-feather'
+import { useInterval } from '../utils/util'
 
 interface ParamTypes {
   id: string
@@ -40,7 +42,7 @@ const TransactionInfoSection = () => {
   const [txInfo, setTxInfo] = useState<APIResp<Transaction>>()
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const getTxInfo = useCallback(async () => {
     if (!client) return
     setLoading(true)
 
@@ -58,6 +60,16 @@ const TransactionInfoSection = () => {
       })
   }, [client, id])
 
+  // Initial fetch
+  useEffect(() => {
+    getTxInfo()
+  }, [getTxInfo])
+
+  // Polling when TX is unconfirmed
+  useInterval(() => {
+    if (txInfo && txInfo.data && txInfo.data.type === 'unconfirmed') getTxInfo()
+  }, 15 * 1000)
+
   return (
     <Section>
       <SectionTitle title="Transaction" />
@@ -68,37 +80,71 @@ const TransactionInfoSection = () => {
               <TableBody>
                 <tr>
                   <td>Hash</td>
-                  <HighlightedCell>{txInfo.data.hash}</HighlightedCell>
+                  <HighlightedCell textToCopy={txInfo.data.hash}>{txInfo.data.hash}</HighlightedCell>
                 </tr>
                 <tr>
-                  <td>Block Hash</td>
-                  <td>
-                    <TightLink
-                      to={`../blocks/${txInfo.data.blockHash || ''}`}
-                      text={txInfo.data.blockHash || ''}
-                      maxWidth="550px"
-                    />
-                  </td>
+                  <td>Status</td>
+                  {txInfo.data.type === 'confirmed' ? (
+                    <td>
+                      <Badge
+                        type="plus"
+                        content={
+                          <span>
+                            <Check style={{ marginRight: 5 }} size={15} />
+                            Confirmed
+                          </span>
+                        }
+                      />
+                    </td>
+                  ) : (
+                    <td>
+                      <Badge
+                        type="neutral"
+                        content={
+                          <>
+                            <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                            <span>Unconfirmed</span>
+                          </>
+                        }
+                      />
+                    </td>
+                  )}
                 </tr>
-                <tr>
-                  <td>Timestamp</td>
-                  <td>{dayjs(txInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
-                </tr>
-                <tr>
-                  <td>Inputs</td>
-                  <td>
-                    {txInfo.data.inputs && txInfo.data.inputs.length > 0
-                      ? txInfo.data.inputs.map((v, i) => (
-                          <AddressLink
-                            address={v.address}
-                            txHashRef={v.txHashRef}
-                            key={i}
-                            amount={JSBI.BigInt(v.amount)}
-                          />
-                        ))
-                      : 'Block Rewards'}
-                  </td>
-                </tr>
+                {txInfo.data.blockHash && (
+                  <tr>
+                    <td>Block Hash</td>
+                    <td>
+                      <TightLink
+                        to={`../blocks/${txInfo.data.blockHash || ''}`}
+                        text={txInfo.data.blockHash || ''}
+                        maxWidth="550px"
+                      />
+                    </td>
+                  </tr>
+                )}
+                {txInfo.data.timestamp && (
+                  <tr>
+                    <td>Timestamp</td>
+                    <td>{dayjs(txInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
+                  </tr>
+                )}
+                {txInfo.data.type === 'confirmed' && (
+                  <tr>
+                    <td>Inputs</td>
+                    <td>
+                      {txInfo.data.inputs && txInfo.data.inputs.length > 0
+                        ? txInfo.data.inputs.map((v, i) => (
+                            <AddressLink
+                              address={v.address}
+                              txHashRef={v.txHashRef}
+                              key={i}
+                              amount={JSBI.BigInt(v.amount)}
+                            />
+                          ))
+                        : 'Block Rewards'}
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <td>Outputs</td>
                   <td>
@@ -108,8 +154,8 @@ const TransactionInfoSection = () => {
                   </td>
                 </tr>
                 <tr>
-                  <td>Start Gas</td>
-                  <td>{txInfo.data.startGas || '-'} GAS</td>
+                  <td>Gas Amount</td>
+                  <td>{txInfo.data.gasAmount || '-'} GAS</td>
                 </tr>
                 <tr>
                   <td>Gas Price</td>
@@ -118,12 +164,20 @@ const TransactionInfoSection = () => {
                   </td>
                 </tr>
                 <tr>
+                  <td>Transaction Fee</td>
+                  <td>
+                    <Amount
+                      value={JSBI.multiply(JSBI.BigInt(txInfo.data.gasPrice), JSBI.BigInt(txInfo.data.gasAmount))}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <td>
                     <b>Total value</b>
                   </td>
                   <td>
                     <Badge
-                      type={'neutral'}
+                      type="neutralHighlight"
                       content={txInfo.data.outputs.reduce<JSBI>(
                         (acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)),
                         JSBI.BigInt(0)

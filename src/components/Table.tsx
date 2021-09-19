@@ -19,15 +19,22 @@ import React, { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
+import ClipboardButton from './ClipboardButton'
+import { deviceBreakPoints } from '../style/globalStyles'
 
 interface TableProps {
   main?: boolean
   hasDetails?: boolean
   noBorder?: boolean
   bodyOnly?: boolean
+  scrollable?: boolean
 }
 
-export const Table: FC<TableProps> = ({ children, ...props }) => <StyledTable {...props}>{children}</StyledTable>
+export const Table: FC<TableProps> = ({ children, ...props }) => (
+  <TableWrapper {...props}>
+    <StyledTable {...props}>{children}</StyledTable>
+  </TableWrapper>
+)
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -148,10 +155,11 @@ const DetailToggleWrapper = styled(motion.div)`
 
 // == Highlighted cell (address, hash...)
 
-export const HighlightedCell: FC = ({ children }) => {
+export const HighlightedCell: FC<{ textToCopy: string }> = ({ children, textToCopy }) => {
   return (
     <StyledHighlightedCell>
       <span>{children}</span>
+      <ClipboardButton textToCopy={textToCopy} />
     </StyledHighlightedCell>
   )
 }
@@ -160,41 +168,58 @@ export const HighlightedCell: FC = ({ children }) => {
 // === Styles ====
 // ===
 
+const TableWrapper = styled.div<TableProps>`
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
+  overflow: hidden;
+  border-radius: 7px;
+`
+
 const StyledTable = styled.table<TableProps>`
   width: 100%;
   text-align: left;
   border-collapse: collapse;
   table-layout: fixed;
-  vertical-align: middle;
+  white-space: nowrap;
 
-  ${({ bodyOnly, main }) =>
-    !bodyOnly && main
-      ? css`
-          min-width: 550px;
-        `
-      : ''}
-
-  td:nth-child(1) {
-    width: ${({ bodyOnly }) => (bodyOnly ? '30%' : 'auto')};
+  @media ${deviceBreakPoints.mobile} {
+    ${({ scrollable }) => {
+      if (scrollable) {
+        return `
+					display: block;
+					width: 100%;
+					overflow-x: auto;
+				`
+      }
+    }}
   }
 
-  tr:not(.details) td,
-  th {
-    padding: 10px 5px;
+  td:nth-child(1) {
+    width: ${({ bodyOnly }) => (bodyOnly ? '27%' : 'auto')};
+  }
+
+  tr td {
+    padding: 12px;
+  }
+
+  tr:not(.details) td {
+    height: 45px;
   }
 
   svg {
-    vertical-align: middle;
+    vertical-align: bottom;
   }
 
   tbody {
     tr:not(:last-child) {
       border-bottom: ${({ hasDetails, noBorder, theme }) =>
-        !hasDetails ? (noBorder ? 'none' : `2px solid ${theme.borderPrimary}`) : ''};
+        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderPrimary}`) : ''};
     }
 
     tr.details {
-      border-bottom: 2px solid ${({ theme }) => theme.borderPrimary};
+      &:not(:last-child) {
+        border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+      }
+      box-shadow: inset 0 1px 0 ${({ theme }) => theme.borderSecondary};
       background-color: ${({ theme }) => theme.bgHighlight};
 
       td {
@@ -211,17 +236,26 @@ interface StyledTableHeaderProps {
 }
 
 export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
-  font-weight: 400;
   color: ${({ theme }) => theme.textSecondary};
 
   th {
-    position: sticky;
-    top: 0;
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgPrimary}`)};
+    padding: 0px 12px 12px 12px;
+    font-weight: 500;
+    ${({ compact, theme }) => {
+      if (!compact) {
+        return `
+					position: sticky;
+					top: 0;
+					box-shadow: inset 0 -1px 0 ${theme.borderPrimary};
+					padding: 12px;
+				`
+      }
+    }}
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgSecondary}`)};
   }
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '60px')};
+    height: ${({ compact }) => (compact ? '30px' : '48px')};
   }
 `
 
@@ -254,8 +288,8 @@ export const TableBody = styled.tbody<TableBopyProps>`
       overflow: hidden;
     }
 
-    &:hover td {
-      background-color: ${({ theme }) => theme.bgHighlight};
+    &:hover {
+      background-color: ${({ theme }) => theme.bgHover};
     }
   }
 `
@@ -264,6 +298,7 @@ const StyledHighlightedCell = styled.td`
   font-weight: 600 !important;
   color: ${({ theme }) => theme.textAccent};
   word-wrap: break-word;
+  white-space: pre-wrap;
   overflow: hidden;
 `
 

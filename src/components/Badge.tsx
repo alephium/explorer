@@ -24,7 +24,7 @@ type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
 interface BadgeProps {
   type: BadgeType
-  content: string | JSBI | undefined
+  content: JSX.Element | string | JSBI | undefined
   className?: string
   amount?: boolean
   prefix?: string

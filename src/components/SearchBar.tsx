@@ -62,8 +62,12 @@ const SearchBar = () => {
 
   const searching = (str: string) => {
     const word = str.trim()
+    const addressMatch = word.match(/^[1-9A-HJ-NP-Za-km-z]{44,45}/)
+
+    const isAddress = addressMatch && addressMatch[0] === word
+
     //TODO This is a very dummy way do differentiate address and transaction, need improvement
-    if (word.charAt(0) === 'T' || word.charAt(0) === 'M' || word.charAt(0) === 'D') {
+    if (isAddress) {
       redirect(`/addresses/${word}`)
     } else if (word.length === 64 && word.slice(0, 4) === '0000') {
       redirect(`/blocks/${word}`)
@@ -94,12 +98,11 @@ const SearchBar = () => {
 const Container = styled.div`
   flex: 1;
   position: relative;
-  height: 50px;
+  height: 45px;
 
   @media ${deviceBreakPoints.mobile} {
     right: 10px;
     left: 10px;
-    margin-left: 50px;
     margin-right: 10px;
     z-index: 1;
   }
@@ -111,6 +114,7 @@ const SearchIcon = styled(Search)`
   right: 20px;
   top: 12px;
   z-index: 11;
+  height: 21px;
   cursor: pointer;
 `
 
@@ -122,12 +126,12 @@ const SearchInput = styled.input`
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
   background: ${({ theme }) => theme.bgSecondary};
-  border: 2px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
   z-index: 10;
 
   &:hover {
-    border: 2px solid ${({ theme }) => theme.borderHighlight};
+    border: 1px solid ${({ theme }) => theme.borderHighlight};
   }
 
   &:focus,
@@ -135,7 +139,7 @@ const SearchInput = styled.input`
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       /*this is your grey background*/ linear-gradient(to right, #6510f7, #f76110) border-box;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     z-index: 10;
   }
 `

@@ -24,10 +24,10 @@ import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
 
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
-import Sidebar from './components/Sidebar'
+import Sidebar, { SidebarState } from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
-import { createClient, ScrollToTop } from './utils/util'
+import { createClient, isElectron, ScrollToTop } from './utils/util'
 import { AlephClient } from './utils/client'
 import BlockInfoSection from './sections/BlockInfoSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
@@ -37,10 +37,15 @@ import TransactionsSection from './sections/TransactionsSection'
 import { AnimatePresence, motion } from 'framer-motion'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { Menu } from 'react-feather'
+import { ArrowLeft } from 'react-feather'
+import { useHistory } from 'react-router-dom'
 
 interface GlobalContext {
   client: AlephClient | undefined
   currentTheme: ThemeType
+  sidebarState: 'open' | 'close'
+  setSidebarState: (state: SidebarState) => void
   switchTheme: (arg0: ThemeType) => void
   setSnackbarMessage: (message: SnackbarMessage) => void
 }
@@ -48,6 +53,8 @@ interface GlobalContext {
 export const GlobalContext = React.createContext<GlobalContext>({
   client: undefined,
   currentTheme: 'dark',
+  sidebarState: 'open',
+  setSidebarState: () => null,
   switchTheme: () => null,
   setSnackbarMessage: () => null
 })
@@ -83,10 +90,12 @@ const App = () => {
   const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
+  const [sidebarState, setSidebarState] = useState<SidebarState>('close')
 
   const contentRef = useRef(null)
 
   const getContentRef = useCallback(() => contentRef.current, [])
+  const history = useHistory()
 
   useEffect(() => {
     let url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
@@ -123,15 +132,25 @@ const App = () => {
             client,
             currentTheme: theme as ThemeType,
             switchTheme: setTheme as (arg0: ThemeType) => void,
+            sidebarState: 'close',
+            setSidebarState: setSidebarState,
             setSnackbarMessage
           }}
         >
           <MainContainer>
-            <Sidebar />
+            <Sidebar sidebarState={sidebarState} />
             <ContentContainer>
               <ContentWrapper ref={contentRef}>
                 <ScrollToTop getScrollContainer={getContentRef} />
                 <Header>
+                  <HamburgerButton onClick={() => setSidebarState('open')}>
+                    <Menu />
+                  </HamburgerButton>
+                  {isElectron() && (
+                    <nav>
+                      <BackButton size={20} onClick={() => history.goBack()} color={'black'} />
+                    </nav>
+                  )}
                   <SearchBar />
                 </Header>
                 <Content>
@@ -217,6 +236,7 @@ const ContentContainer = styled.div`
   justify-content: center;
   align-items: flex-start;
   overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const ContentWrapper = styled.main`
@@ -244,7 +264,7 @@ const Content = styled.div`
 const Header = styled.header`
   display: flex;
   align-items: center;
-  margin: 40px;
+  margin: 25px 40px;
   z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {
@@ -258,6 +278,30 @@ const Header = styled.header`
   }
 `
 
+const HamburgerButton = styled.div`
+  width: 35px;
+  height: 35px;
+  display: none;
+  margin-right: 15px;
+
+  @media ${deviceBreakPoints.tablet} {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    margin-right: 5px;
+  }
+`
+
+const BackButton = styled(ArrowLeft)`
+  cursor: pointer;
+  margin-right: 25px;
+  margin-top: 2px;
+`
+
 const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
@@ -269,15 +313,15 @@ const SnackbarManagerContainer = styled.div`
 
 const SnackbarPopup = styled(motion.div)`
   bottom: 10px;
+  left: 25px;
   margin: 10px auto;
   text-align: center;
-  min-width: 300px;
-  width: 50vw;
-  padding: 20px 15px;
+  min-width: 150px;
+  max-width: 50vw;
+  padding: 20px;
   color: white;
   border-radius: 14px;
   z-index: 1000;
-  box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
 
   &.alert {
     background-color: rgb(219, 99, 69);

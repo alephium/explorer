@@ -20,9 +20,10 @@ import styled from 'styled-components'
 
 interface LoadingSpinnerProps {
   size?: number
+  style?: React.CSSProperties
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size }) => <Spinner size={size} />
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
 
 const Spinner = styled(Loader)`
   animation: spin 1s infinite;

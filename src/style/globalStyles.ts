@@ -20,6 +20,11 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
+  // Titles
+  h2 {
+    font-weight: 600;
+  }
+
   // Animations
   @keyframes spin {
     from {
@@ -34,12 +39,14 @@ const GlobalStyle = createGlobalStyle`
 // Breakpoints
 
 export const deviceSizes = {
-  mobile: 1024,
-  desktop: 1920
+  mobile: 800,
+  tablet: 1000,
+  desktop: 1600
 }
 
 export const deviceBreakPoints = {
   mobile: `(max-width: ${deviceSizes.mobile}px)`,
+  tablet: `(max-width: ${deviceSizes.tablet}px)`,
   desktop: `(max-width: ${deviceSizes.desktop}px)`
 }
 

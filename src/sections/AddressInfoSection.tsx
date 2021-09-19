@@ -117,7 +117,11 @@ const TransactionInfoSection = () => {
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
                   <tr>
                     <td>Address</td>
-                    <HighlightedCell>{id}</HighlightedCell>
+                    <HighlightedCell textToCopy={id}>{id}</HighlightedCell>
+                  </tr>
+                  <tr>
+                    <td>Number of Transactions</td>
+                    <td>{addressInfo.data.txNumber}</td>
                   </tr>
                   <tr>
                     <td>Balance</td>
@@ -132,15 +136,15 @@ const TransactionInfoSection = () => {
               {!txLoading && txList && txList.data && txList.status === 200 ? (
                 <>
                   {txList.data.length > 0 ? (
-                    <Table hasDetails main>
+                    <Table hasDetails main scrollable>
                       <TableHeader
                         headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                        columnWidths={['10%', '100px', '80px', '25%', '120px', '30px']}
+                        columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}
                         textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
                       />
                       <TableBody>
                         {txList.data
-                          .sort((t1, t2) => t2.timestamp - t1.timestamp)
+                          .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
                           .map((t, i) => (
                             <AddressTransactionRow transaction={t} addressId={id} key={i} />
                           ))}
@@ -179,11 +183,16 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
   const isOut = JSBI.lessThan(amountDelta, JSBI.BigInt(0))
 
   const renderOutputAccounts = () => {
-    return _(t.outputs.filter((o) => o.address !== addressId))
-      .map((v) => v.address)
-      .uniq()
-      .value()
-      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    // Check for auto-sent tx
+    if (t.outputs.every((o) => o.address === addressId)) {
+      return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
+    } else {
+      return _(t.outputs.filter((o) => o.address !== addressId))
+        .map((v) => v.address)
+        .uniq()
+        .value()
+        .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+    }
   }
 
   const renderInputAccounts = () => {
@@ -206,7 +215,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
-        <td>{dayjs().to(t.timestamp)}</td>
+        <td>{(t.timestamp && dayjs().to(t.timestamp)) || '-'}</td>
         <td>
           <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
         </td>
@@ -275,13 +284,14 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,
     style: css`
-      font-weight: 600;
+      font-weight: 500;
     `
   }
 ]
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.textSecondary};
+  font-style: italic;
 `
 
 const NoTxMessage = styled.span`

@@ -126,7 +126,7 @@ const BlockInfoSection = () => {
                 <TableBody tdStyles={BlockTableBodyCustomStyles}>
                   <tr>
                     <td>Hash</td>
-                    <HighlightedCell>{blockInfo.data.hash}</HighlightedCell>
+                    <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
                   </tr>
                   <tr>
                     <td>Height</td>
@@ -144,7 +144,7 @@ const BlockInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(blockInfo.data.timestamp).format('YYYY/MM/DD HH:mm:ss')}</td>
+                    <td>{dayjs(blockInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
                   </tr>
                 </TableBody>
               </Table>
@@ -152,10 +152,10 @@ const BlockInfoSection = () => {
               <SecondaryTitle>Transactions</SecondaryTitle>
               {!txLoading && txList && txList.data && txList.status === 200 ? (
                 <>
-                  <Table main hasDetails>
+                  <Table main hasDetails scrollable>
                     <TableHeader
                       headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
-                      columnWidths={['50px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                      columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                       textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                     />
                     <TableBody tdStyles={TXTableBodyCustomStyles}>
@@ -224,13 +224,13 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td />
         <AnimatedCell>
           {t.inputs.map((input, i) => (
-            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} />
+            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
           ))}
         </AnimatedCell>
         <td />
         <AnimatedCell>
           {t.outputs.map((o, i) => (
-            <AddressLink address={o.address} key={i} />
+            <AddressLink address={o.address} key={i} maxWidth="180px" />
           ))}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
@@ -250,8 +250,8 @@ const TransactionIcon = styled.div`
   background-image: url(${transactionIcon});
   background-position: center;
   background-repeat: no-repeat;
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 `
 
 const BlockTableBodyCustomStyles: TDStyle[] = [

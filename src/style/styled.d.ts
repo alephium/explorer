@@ -18,8 +18,10 @@ declare module 'styled-components' {
     bgPrimary: string
     bgSecondary: string
     bgHighlight: string
+    bgHover: string
 
     borderPrimary: string
+    borderSecondary: string
     borderHighlight: string
 
     tooltip: string

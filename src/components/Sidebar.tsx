@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -24,58 +24,61 @@ import blockIcon from '../images/block-icon.svg'
 import addressIcon from '../images/address-icon.svg'
 import transactionIcon from '../images/transaction-icon.svg'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
-import { Menu, X } from 'react-feather'
+import { X } from 'react-feather'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { AnimatePresence, motion } from 'framer-motion'
 import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
+import { GlobalContext } from '..'
 
-const Sidebar = () => {
+export type SidebarState = 'open' | 'close'
+
+const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const theme = useTheme()
   const windowWidth = useWindowSize().width
   const lastWindowWidth = useRef(windowWidth)
-  const [open, setOpen] = useState(false)
+  const { setSidebarState } = useContext(GlobalContext)
 
   useEffect(() => {
     if (windowWidth) {
       if (
         lastWindowWidth.current &&
-        lastWindowWidth.current >= deviceSizes.mobile &&
-        windowWidth < deviceSizes.mobile &&
+        lastWindowWidth.current >= deviceSizes.tablet &&
+        windowWidth < deviceSizes.tablet &&
         open
       ) {
-        setOpen(false)
+        setSidebarState('close')
       }
 
       lastWindowWidth.current = windowWidth
     }
-  }, [open, windowWidth])
+  }, [setSidebarState, windowWidth])
 
   return (
     <>
-      <HamburgerButton onClick={() => setOpen(!open)}>{open ? <X /> : <Menu />}</HamburgerButton>
-      <SidebarContainer open={open}>
+      <SidebarContainer open={sidebarState === 'open'}>
+        <CloseButton onClick={() => setSidebarState('close')}>{<X />}</CloseButton>
         <Header>
           <Link to="/">
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
           </Link>
         </Header>
         <Tabs>
-          <Tab to="/blocks" onClick={() => setOpen(false)}>
+          <Tab to="/blocks" onClick={() => setSidebarState('close')}>
             <TabIcon src={blockIcon} alt="blocks" /> Blocks
           </Tab>
-          <Tab to="/addresses" onClick={() => setOpen(false)}>
+          <Tab to="/addresses" onClick={() => setSidebarState('close')}>
             <TabIcon src={addressIcon} alt="addresses" /> Addresses
           </Tab>
-          <Tab to="/transactions" onClick={() => setOpen(false)}>
+          <Tab to="/transactions" onClick={() => setSidebarState('close')}>
             <TabIcon src={transactionIcon} alt="transactions" /> Transactions
           </Tab>
         </Tabs>
         <ThemeSwitcher />
       </SidebarContainer>
       <AnimatePresence>
-        {open && (
+        {sidebarState === 'open' && (
           <Backdrop
-            onClick={() => setOpen(false)}
+            onClick={() => setSidebarState('close')}
             animate={{ opacity: 0.4 }}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
@@ -91,27 +94,27 @@ const Sidebar = () => {
 
 const Logo = styled.img`
   height: 100px;
-  width: 160px;
-  margin-top: 15px;
+  width: 140px;
+  margin-top: 5px;
+  margin-left: 25px;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     width: 150px;
   }
 `
 
-const HamburgerButton = styled.div`
+const CloseButton = styled.div`
   position: absolute;
   width: 35px;
   height: 35px;
-  top: 17px;
+  top: 16px;
   left: 20px;
   display: none;
   z-index: 300;
-  background-color: ${({ theme }) => theme.bgPrimary};
   padding: 5px;
   border-radius: 100%;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     display: block;
     cursor: pointer;
   }
@@ -120,7 +123,7 @@ const HamburgerButton = styled.div`
 const Backdrop = styled(motion.div)`
   display: none;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     display: block;
     position: fixed;
     top: 0;
@@ -140,18 +143,19 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   flex: 1;
   display: flex;
   flex-direction: column;
-  max-width: 300px;
-  padding: 0 20px;
+  max-width: 250px;
+
   background-color: ${({ theme }) => theme.bgSecondary};
-  border-right: 2px solid ${({ theme }) => theme.borderPrimary};
+  border-right: 1px solid ${({ theme }) => theme.borderPrimary};
 
   ${StyledThemeSwitcher} {
     display: block;
     position: absolute;
     bottom: 25px;
+    left: 25px;
   }
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     position: absolute;
     top: 0;
     left: 0;
@@ -168,48 +172,40 @@ const Header = styled.header`
   display: flex;
   align-items: center;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     margin-top: 50px;
   }
 `
 
 const Tabs = styled.div`
-  margin-top: 5vh;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
+  border-top: 1px solid ${({ theme }) => theme.borderPrimary};
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     margin-top: 30px;
   }
 `
 
 const Tab = styled(NavLink)`
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  margin-bottom: 25px;
   display: flex;
   align-items: center;
   transition: all 0.15s ease;
   position: relative;
+  border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+  padding: 13px 20px;
 
   color: ${({ theme }) => theme.textSecondary};
   &.active {
     color: ${({ theme }) => theme.textPrimary};
+    background-color: ${({ theme }) => theme.bgPrimary};
 
     img {
       filter: none;
-    }
-
-    &::after {
-      content: '';
-      display: block;
-      width: 20px;
-      height: 3px;
-      position: absolute;
-      left: 40px;
-      bottom: -6px;
-      background: linear-gradient(to left, #6510f7, #f76110) border-box;
     }
   }
   &:hover {
@@ -218,8 +214,8 @@ const Tab = styled(NavLink)`
 `
 
 const TabIcon = styled.img`
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
   margin-right: 15px;
   filter: grayscale(100%);
 `

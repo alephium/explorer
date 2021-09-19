@@ -14,12 +14,13 @@ export interface Block {
 }
 
 export interface Transaction {
+  type: 'confirmed' | 'unconfirmed'
   hash: string
-  blockHash: string
-  timestamp: number
+  blockHash?: string
+  timestamp?: number
   inputs: TransactionInput[]
   outputs: TransactionOutput[]
-  startGas: number
+  gasAmount: number
   gasPrice: number
 }
 

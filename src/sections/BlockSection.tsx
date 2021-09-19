@@ -55,7 +55,7 @@ const BlockSection = () => {
       manualFetch ? setManualLoading(true) : setLoading(true)
       const fetchedBlocks: APIResp<BlockList> = await client.blocks(pageNumber)
 
-      // Check if manual fetching has been set in the meantime (overridign polling fetch)
+      // Check if manual fetching has been set in the meantime (overriding polling fetch)
 
       if (currentPageNumber !== pageNumber) {
         setLoading(false)
@@ -92,10 +92,10 @@ const BlockSection = () => {
       </TitleAndLoader>
       {!manualLoading ? (
         <Content>
-          <Table main>
+          <Table main scrollable>
             <TableHeader
-              headerTitles={['', 'Hash', 'Height', 'Txn', 'Chain index', 'Timestamp']}
-              columnWidths={['50px', '25%', '16%', '12%', '20%', '']}
+              headerTitles={['', 'Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+              columnWidths={['50px', '20%', '20%', '20%', '20%', '20%']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
@@ -114,12 +114,12 @@ const BlockSection = () => {
                   <td>
                     <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
+                  <td>{dayjs().to(b.timestamp)}</td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>
                   <td>
                     {b.chainFrom} → {b.chainTo}
                   </td>
-                  <td>{dayjs().to(b.timestamp)}</td>
                 </BlockRow>
               ))}
             </TableBody>
@@ -156,7 +156,7 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   },
   {
-    tdPos: 3,
+    tdPos: 4,
     style: css`
       font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
@@ -192,8 +192,8 @@ const BlockRow = styled(motion.tr)`
 `
 
 const BlockIcon = styled.img`
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
 `
 
 export default BlockSection

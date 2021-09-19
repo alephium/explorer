@@ -68,8 +68,8 @@ const removeTrailingZeros = (numString: string) => {
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
 
-export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfDecimals?: number) => {
-  const maxDecimals = 6
+export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfDecimalsToShow?: number) => {
+  const minDigits = 3
 
   if (JSBI.lessThanOrEqual(baseNum, JSBI.BigInt(0))) return '0.00'
 
@@ -77,20 +77,12 @@ export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfD
   const alephNum = Number(baseNum) / QUINTILLION
 
   // what tier? (determines SI symbol)
+
   let tier = (Math.log10(alephNum) / 3) | 0
 
-  const numberArray = baseNum.toString().split('')
+  const numberOfDigitsToDisplay = nbOfDecimalsToShow ? nbOfDecimalsToShow : minDigits
 
-  const numberOfZeros = getNumberOfTrailingZeros(numberArray)
-  const numberOfNonZero = numberArray.length - numberOfZeros
-
-  const numberOfDigitsToDisplay = nbOfDecimals
-    ? nbOfDecimals
-    : numberOfNonZero < maxDecimals
-    ? numberOfNonZero
-    : maxDecimals
-
-  if (tier < 0) {
+  if (tier < 0 || showFullPrecision) {
     return removeTrailingZeros(alephNum.toFixed(18)) // Keep full precision for very low numbers (gas etc.)
   } else if (tier === 0) {
     // Small number, low precision is ok
@@ -103,16 +95,9 @@ export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfD
   const suffix = MONEY_SYMBOL[tier]
   const scale = Math.pow(10, tier * 3)
 
-  // scale the bigNum
+  // Scale the bigNum
   // Here we need to be careful of precision issues
   const scaled = alephNum / scale
-
-  if (showFullPrecision) {
-    // Work with string to avoid rounding issues
-    const nonDigitLength = Math.round(scaled).toString().length
-    const numberArrayWithDecimals = [...numberArray.slice(0, nonDigitLength), '.', ...numberArray.slice(nonDigitLength)]
-    return removeTrailingZeros(numberArrayWithDecimals.join().replaceAll(',', '')) + suffix
-  }
 
   return scaled.toFixed(numberOfDigitsToDisplay) + suffix
 }
@@ -173,4 +158,11 @@ export function calAmountDelta(t: Transaction, id: string) {
   }, JSBI.BigInt(0))
 
   return JSBI.subtract(outputAmount, inputAmount)
+}
+
+// For usage from electron wallet, some UI elements can change.
+
+export const isElectron = () => {
+  const userAgent = navigator.userAgent.toLowerCase()
+  return userAgent.indexOf(' electron/') > -1
 }
