@@ -11,6 +11,8 @@ it('abbreviate amount', () => {
     expect(abbreviateAmount(JSBI.BigInt(1))).toEqual('0.000000000000000001'),
     expect(abbreviateAmount(JSBI.BigInt(100000))).toEqual('0.0000000000001'),
     expect(abbreviateAmount(JSBI.BigInt(1000000000))).toEqual('0.000000001'),
+    expect(abbreviateAmount(JSBI.BigInt(2000000000))).toEqual('0.000000002'),
+    expect(abbreviateAmount(JSBI.BigInt(2000000000000000))).toEqual('0.002'),
     expect(abbreviateAmount(alf(JSBI.BigInt(1230)))).toEqual('1.230K'),
     expect(abbreviateAmount(alf(JSBI.BigInt(1230000)))).toEqual('1.230M'),
     expect(abbreviateAmount(alf(JSBI.BigInt(1230000000)))).toEqual('1.230B'),
