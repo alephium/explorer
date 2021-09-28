@@ -168,6 +168,7 @@ const TransactionInfoSection = () => {
                   <td>
                     <Amount
                       value={JSBI.multiply(JSBI.BigInt(txInfo.data.gasPrice), JSBI.BigInt(txInfo.data.gasAmount))}
+                      showFullPrecision
                     />
                   </td>
                 </tr>

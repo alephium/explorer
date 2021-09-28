@@ -20,11 +20,12 @@ import { abbreviateAmount } from '../utils/amounts'
 interface AmountProps {
   value: JSBI | undefined
   className?: string
+  showFullPrecision?: boolean
 }
 
-const Amount: FC<AmountProps> = ({ value, className }) => {
+const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
   if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value).toString()} א</span>
+    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
   } else {
     return <span className={className}>- א</span>
   }
