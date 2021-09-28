@@ -13,21 +13,20 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
-import React, { FC } from 'react'
-import JSBI from 'jsbi'
-import { abbreviateAmount } from '../utils/amounts'
 
-interface AmountProps {
-  value: JSBI | undefined
-  className?: string
+import { FC, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
+
+interface ScrollToTopProps {
+  getScrollContainer: () => HTMLElement | null
 }
 
-const Amount: FC<AmountProps> = ({ value, className }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
-}
+export const ScrollToTop: FC<ScrollToTopProps> = ({ getScrollContainer }) => {
+  const { pathname } = useLocation()
 
-export default Amount
+  useEffect(() => {
+    getScrollContainer()?.scrollTo(0, 0)
+  }, [getScrollContainer, pathname])
+
+  return null
+}

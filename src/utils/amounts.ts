@@ -14,24 +14,8 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { AlephClient } from './client'
-import { useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
-import { FC } from 'react'
-import { Transaction } from '../types/api'
 import JSBI from 'jsbi'
-
-// ==== API
-
-export const createClient = (url: string) => {
-  const client = new AlephClient(url)
-
-  console.log('Connecting to: ' + client.url)
-
-  return client
-}
-
-// ==== MATHS
+import { Transaction } from '../types/api'
 
 const MONEY_SYMBOL = ['', 'K', 'M', 'B', 'T']
 const QUINTILLION = 1000000000000000000
@@ -102,51 +86,6 @@ export const abbreviateAmount = (baseNum: JSBI, showFullPrecision = false, nbOfD
   return scaled.toFixed(numberOfDigitsToDisplay) + suffix
 }
 
-export const createRandomId = () => Math.random().toString(36).substring(7)
-
-// ==== ROUTING
-
-interface ScrollToTopProps {
-  getScrollContainer: () => HTMLElement | null
-}
-
-export const ScrollToTop: FC<ScrollToTopProps> = ({ getScrollContainer }) => {
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    getScrollContainer()?.scrollTo(0, 0)
-  }, [getScrollContainer, pathname])
-
-  return null
-}
-
-// ==== MISC
-
-export function useInterval(callback: () => void, delay: number, shouldPause = false) {
-  const savedCallback = useRef<() => void>(() => null)
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current()
-    }
-    if (delay !== null && !shouldPause) {
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay, shouldPause])
-}
-
-export function smartHash(hash: string) {
-  if (hash.length <= 16) return hash
-  else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
-}
-
 export function calAmountDelta(t: Transaction, id: string) {
   const inputAmount = t.inputs.reduce<JSBI>((acc, input) => {
     const inputAmount = JSBI.BigInt(input.amount)
@@ -158,11 +97,4 @@ export function calAmountDelta(t: Transaction, id: string) {
   }, JSBI.BigInt(0))
 
   return JSBI.subtract(outputAmount, inputAmount)
-}
-
-// For usage from electron wallet, some UI elements can change.
-
-export const isElectron = () => {
-  const userAgent = navigator.userAgent.toLowerCase()
-  return userAgent.indexOf(' electron/') > -1
 }

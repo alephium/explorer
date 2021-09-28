@@ -22,7 +22,6 @@ import { GlobalContext } from '..'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import { Address, Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
-import { calAmountDelta } from '../utils/util'
 import Badge from '../components/Badge'
 import {
   Table,
@@ -46,6 +45,7 @@ import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import usePageNumber from '../hooks/usePageNumber'
 import PageSwitch from '../components/PageSwitch'
+import { calAmountDelta } from '../utils/amounts'
 
 dayjs.extend(relativeTime)
 

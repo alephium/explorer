@@ -30,7 +30,7 @@ import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import Amount from '../components/Amount'
 import { Check } from 'react-feather'
-import { useInterval } from '../utils/util'
+import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {
   id: string

@@ -1,5 +1,6 @@
-import { abbreviateAmount, smartHash } from './util'
+import { smartHash } from './strings'
 import JSBI from 'jsbi'
+import { abbreviateAmount } from './amounts'
 
 function alf(amount: JSBI): JSBI {
   return JSBI.multiply(amount, JSBI.BigInt(1000000000000000000))

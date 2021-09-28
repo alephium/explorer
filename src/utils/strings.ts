@@ -13,21 +13,10 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
-import React, { FC } from 'react'
-import JSBI from 'jsbi'
-import { abbreviateAmount } from '../utils/amounts'
 
-interface AmountProps {
-  value: JSBI | undefined
-  className?: string
+export const createRandomId = () => Math.random().toString(36).substring(7)
+
+export function smartHash(hash: string) {
+  if (hash.length <= 16) return hash
+  else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
-
-const Amount: FC<AmountProps> = ({ value, className }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
-}
-
-export default Amount

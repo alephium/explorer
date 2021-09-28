@@ -81,3 +81,11 @@ export class AlephClient {
     return await this.fetchAPI<Transaction>('/transactions/' + id)
   }
 }
+
+export const createClient = (url: string) => {
+  const client = new AlephClient(url)
+
+  console.log('Connecting to: ' + client.url)
+
+  return client
+}

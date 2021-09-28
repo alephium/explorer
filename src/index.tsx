@@ -27,8 +27,7 @@ import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar, { SidebarState } from './components/Sidebar'
 import SearchBar from './components/SearchBar'
 import BlockSection from './sections/BlockSection'
-import { createClient, isElectron, ScrollToTop } from './utils/util'
-import { AlephClient } from './utils/client'
+import { AlephClient, createClient } from './utils/client'
 import BlockInfoSection from './sections/BlockInfoSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
 import AddressInfoSection from './sections/AddressInfoSection'
@@ -40,6 +39,8 @@ import updateLocale from 'dayjs/plugin/updateLocale'
 import { Menu } from 'react-feather'
 import { ArrowLeft } from 'react-feather'
 import { useHistory } from 'react-router-dom'
+import { isElectron } from './utils/misc'
+import { ScrollToTop } from './utils/routing'
 
 interface GlobalContext {
   client: AlephClient | undefined

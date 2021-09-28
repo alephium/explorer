@@ -19,7 +19,7 @@ import { ExternalLink } from 'react-feather'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'
-import { smartHash } from '../utils/util'
+import { smartHash } from '../utils/strings'
 import JSBI from 'jsbi'
 
 interface TightLinkProps extends LinkProps {

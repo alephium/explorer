@@ -16,9 +16,9 @@
 
 import React, { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
-import { abbreviateAmount } from '../utils/util'
 import Amount from './Amount'
 import JSBI from 'jsbi'
+import { abbreviateAmount } from '../utils/amounts'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
