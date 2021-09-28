@@ -88,7 +88,7 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const [theme, setTheme] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [sidebarState, setSidebarState] = useState<SidebarState>('close')
@@ -126,13 +126,13 @@ const App = () => {
 
   return (
     <Router>
-      <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <ThemeProvider theme={themeName === 'light' ? lightTheme : darkTheme}>
         <GlobalStyle />
         <GlobalContext.Provider
           value={{
             client,
-            currentTheme: theme as ThemeType,
-            switchTheme: setTheme as (arg0: ThemeType) => void,
+            currentTheme: themeName as ThemeType,
+            switchTheme: setThemeName as (arg0: ThemeType) => void,
             sidebarState: 'close',
             setSidebarState: setSidebarState,
             setSnackbarMessage
@@ -149,7 +149,11 @@ const App = () => {
                   </HamburgerButton>
                   {isElectron() && (
                     <nav>
-                      <BackButton size={20} onClick={() => history.goBack()} color={'black'} />
+                      <BackButton
+                        size={20}
+                        onClick={() => history.goBack()}
+                        color={themeName === 'light' ? 'black' : 'white'}
+                      />
                     </nav>
                   )}
                   <SearchBar />
