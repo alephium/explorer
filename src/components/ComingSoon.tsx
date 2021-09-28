@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import logo from '../images/alephium-logo-gradient-stroke.svg'
 
