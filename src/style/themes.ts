@@ -37,11 +37,11 @@ export const lightTheme: DefaultTheme = {
   linkHighlight: '#53A9F5',
 
   bgPrimary: 'white',
-  bgSecondary: '#FAFAFA',
+  bgSecondary: '#f7f7f7',
   bgHighlight: 'rgba(0, 0, 0, 0.012)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
-  borderPrimary: '#ebebeb',
+  borderPrimary: '#e6e6e6',
   borderSecondary: '#f2f2f2',
   borderHighlight: '#D1D1D4',
 
