@@ -16,7 +16,15 @@
 
 export const createRandomId = () => Math.random().toString(36).substring(7)
 
-export function smartHash(hash: string) {
+export const smartHash = (hash: string) => {
   if (hash.length <= 16) return hash
   else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
+}
+
+export const checkAddressValidity = (addressToTest: string) => {
+  return /^[1-9A-HJ-NP-Za-km-z]+$/.test(addressToTest)
+}
+
+export const checkHexStringValidity = (stringToTest: string) => {
+  return /^[a-fA-F0-9]+$/.test(stringToTest)
 }
