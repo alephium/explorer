@@ -182,13 +182,31 @@ const StyledTable = styled.table<TableProps>`
   white-space: nowrap;
 
   @media ${deviceBreakPoints.mobile} {
-    ${({ scrollable }) => {
+    ${({ scrollable, bodyOnly }) => {
       if (scrollable) {
         return `
 					display: block;
 					width: 100%;
 					overflow-x: auto;
 				`
+      } else if (bodyOnly) {
+        /* Change table structure, stack td vertically */
+        return css`
+          tr {
+            display: flex;
+            flex-direction: column;
+
+            td:first-child {
+              height: 25px !important;
+              font-weight: 600;
+            }
+
+            td:not(:first-child) {
+              height: initial !important;
+              font-weight: 500 !important;
+            }
+          }
+        `
       }
     }}
   }

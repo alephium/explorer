@@ -31,7 +31,7 @@ export const lightTheme: DefaultTheme = {
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.50)',
-  textAccent: '#FF7B03',
+  textAccent: '#e69100',
 
   link: '#0E82E7',
   linkHighlight: '#53A9F5',
