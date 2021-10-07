@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { createContext, FC, useContext, useEffect } from 'react'
+import { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
