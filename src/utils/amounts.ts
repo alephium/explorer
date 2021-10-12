@@ -39,7 +39,7 @@ const getNumberOfTrailingZeros = (numberArray: string[]) => {
   return numberOfZeros
 }
 
-const removeTrailingZeros = (numString: string) => {
+export const removeTrailingZeros = (numString: string) => {
   const numberArray = numString.split('')
 
   const numberOfZeros = getNumberOfTrailingZeros(numberArray)
@@ -47,7 +47,7 @@ const removeTrailingZeros = (numString: string) => {
   const numberArrayWithoutTrailingZeros = [...numberArray.slice(0, numberArray.length - numberOfZeros)]
 
   if (numberArrayWithoutTrailingZeros[numberArrayWithoutTrailingZeros.length - 1] === '.')
-    numberArrayWithoutTrailingZeros.push('0')
+    numberArrayWithoutTrailingZeros.push('00')
 
   return numberArrayWithoutTrailingZeros.join().replace(/,/g, '')
 }
