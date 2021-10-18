@@ -13,22 +13,25 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
-import { FC } from 'react'
-import JSBI from 'jsbi'
-import { abbreviateAmount } from '../utils/amounts'
 
-interface AmountProps {
-  value: JSBI | undefined
-  className?: string
-  showFullPrecision?: boolean
+import { useEffect, useRef } from 'react'
+
+export function useInterval(callback: () => void, delay: number, shouldPause = false) {
+  const savedCallback = useRef<() => void>(() => null)
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+    if (delay !== null && !shouldPause) {
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay, shouldPause])
 }
-
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
-}
-
-export default Amount

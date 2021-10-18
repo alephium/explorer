@@ -21,6 +21,7 @@ import styled from 'styled-components'
 import { Search } from 'react-feather'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { GlobalContext } from '..'
+import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
@@ -62,19 +63,27 @@ const SearchBar = () => {
 
   const searching = (str: string) => {
     const word = str.trim()
-    const addressMatch = word.match(/^[1-9A-HJ-NP-Za-km-z]{44,45}/)
 
-    const isAddress = addressMatch && addressMatch[0] === word
+    const isHexString = checkHexStringValidity(word)
 
     //TODO This is a very dummy way do differentiate address and transaction, need improvement
-    if (isAddress) {
-      redirect(`/addresses/${word}`)
-    } else if (word.length === 64 && word.slice(0, 4) === '0000') {
-      redirect(`/blocks/${word}`)
-    } else if (word.length === 64) {
-      redirect(`/transactions/${word}`)
+    if (isHexString) {
+      // Is probably not an address, as an address usually contains at least one non-hex character.
+      if (word.length === 64) {
+        if (word.slice(0, 4) === '0000') {
+          redirect(`/blocks/${word}`)
+        } else {
+          redirect(`/transactions/${word}`)
+        }
+      } else {
+        setSnackbarMessage({ text: 'There seems to be an error in the hash format.', type: 'info' })
+      }
     } else {
-      setSnackbarMessage({ text: 'Please look for a correct address, transaction or block hash', type: 'info' })
+      if (checkAddressValidity(word)) {
+        redirect(`/addresses/${word}`)
+      } else {
+        setSnackbarMessage({ text: 'There seems to be an error in the address format.', type: 'info' })
+      }
     }
   }
 

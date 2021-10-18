@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC } from 'react'
+import { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
-import { abbreviateAmount } from '../utils/util'
 import Amount from './Amount'
 import JSBI from 'jsbi'
+import { abbreviateAmount } from '../utils/amounts'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 

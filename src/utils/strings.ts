@@ -13,22 +13,16 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
-import { FC } from 'react'
-import JSBI from 'jsbi'
-import { abbreviateAmount } from '../utils/amounts'
 
-interface AmountProps {
-  value: JSBI | undefined
-  className?: string
-  showFullPrecision?: boolean
+export const smartHash = (hash: string) => {
+  if (hash.length <= 16) return hash
+  else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
 
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
+export const checkAddressValidity = (addressToTest: string) => {
+  return /^[1-9A-HJ-NP-Za-km-z]+$/.test(addressToTest)
 }
 
-export default Amount
+export const checkHexStringValidity = (stringToTest: string) => {
+  return /^[a-fA-F0-9]+$/.test(stringToTest)
+}

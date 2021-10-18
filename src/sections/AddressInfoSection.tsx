@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useContext, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
@@ -22,7 +22,6 @@ import { GlobalContext } from '..'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import { Address, Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
-import { calAmountDelta } from '../utils/util'
 import Badge from '../components/Badge'
 import {
   Table,
@@ -46,6 +45,7 @@ import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import usePageNumber from '../hooks/usePageNumber'
 import PageSwitch from '../components/PageSwitch'
+import { calAmountDelta } from '../utils/amounts'
 
 dayjs.extend(relativeTime)
 

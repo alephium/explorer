@@ -14,16 +14,16 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React from 'react'
+import { CSSProperties, FC } from 'react'
 import { Loader } from 'react-feather'
 import styled from 'styled-components'
 
 interface LoadingSpinnerProps {
   size?: number
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
+const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
 
 const Spinner = styled(Loader)`
   animation: spin 1s infinite;

@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
 import SectionTitle from '../components/SectionTitle'
@@ -30,7 +30,7 @@ import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import Amount from '../components/Amount'
 import { Check } from 'react-feather'
-import { useInterval } from '../utils/util'
+import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {
   id: string
@@ -168,6 +168,7 @@ const TransactionInfoSection = () => {
                   <td>
                     <Amount
                       value={JSBI.multiply(JSBI.BigInt(txInfo.data.gasPrice), JSBI.BigInt(txInfo.data.gasAmount))}
+                      showFullPrecision
                     />
                   </td>
                 </tr>

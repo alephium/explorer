@@ -13,22 +13,10 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
-import { FC } from 'react'
-import JSBI from 'jsbi'
-import { abbreviateAmount } from '../utils/amounts'
 
-interface AmountProps {
-  value: JSBI | undefined
-  className?: string
-  showFullPrecision?: boolean
+// For usage from electron wallet, some UI elements can change.
+
+export const isElectron = () => {
+  const userAgent = navigator.userAgent.toLowerCase()
+  return userAgent.indexOf(' electron/') > -1
 }
-
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
-}
-
-export default Amount

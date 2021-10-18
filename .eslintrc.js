@@ -13,8 +13,11 @@ module.exports = {
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
-    'no-use-before-define': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-use-before-define': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'no-use-before-define': 'off',
     'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
     'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
     '@typescript-eslint/member-delimiter-style': [
@@ -30,6 +33,11 @@ module.exports = {
         }
       }
     ]
+  },
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    }
   },
   env: {
     browser: true,

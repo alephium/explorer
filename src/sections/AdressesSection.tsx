@@ -1,4 +1,3 @@
-import React from 'react'
 import Section from '../components/Section'
 import ComingSoon from '../components/ComingSoon'
 import styled from 'styled-components'

@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import dayjs from 'dayjs'
 import styled, { css } from 'styled-components'
 import SectionTitle from '../components/SectionTitle'
 import { BlockList } from '../types/api'
-import { useInterval } from '../utils/util'
 import blockIcon from '../images/block-icon.svg'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -32,6 +31,7 @@ import { APIResp } from '../utils/client'
 import PageSwitch from '../components/PageSwitch'
 import usePageNumber from '../hooks/usePageNumber'
 import { useHistory } from 'react-router-dom'
+import { useInterval } from '../utils/hooks'
 
 dayjs.extend(relativeTime)
 

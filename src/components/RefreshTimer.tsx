@@ -16,7 +16,7 @@
 
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { useInterval } from '../utils/util'
+import { useInterval } from '../utils/hooks'
 import LoadingSpinner from './LoadingSpinner'
 
 interface RefreshTimerProps {

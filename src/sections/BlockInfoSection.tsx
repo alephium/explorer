@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
-import React, { FC, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { GlobalContext } from '..'
@@ -258,7 +258,7 @@ const BlockTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,
     style: css`
-      font-weight: 600;
+      font-weight: 500;
     `
   }
 ]

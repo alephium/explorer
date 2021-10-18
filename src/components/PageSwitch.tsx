@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { ChevronRight, ChevronLeft } from 'react-feather'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
