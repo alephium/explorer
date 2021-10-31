@@ -29,6 +29,9 @@ import { useWindowSize } from '../hooks/useWindowSize'
 import { AnimatePresence, motion } from 'framer-motion'
 import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
 import { GlobalContext } from '..'
+import Menu from './Menu'
+
+import { ReactComponent as AlephiumLogo } from '../images/alephium-logo-gradient-stroke.svg'
 
 export type SidebarState = 'open' | 'close'
 
@@ -74,6 +77,15 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
           </Tab>
         </Tabs>
         <ThemeSwitcher />
+        <NetworkMenu
+          label={'Mainnet'}
+          icon={<AlephiumLogoMainnet />}
+          items={[
+            { text: 'Mainnet', onClick: () => null, icon: <AlephiumLogoMainnet /> },
+            { text: 'Testnet', onClick: () => null, icon: <AlephiumLogoTestnet /> }
+          ]}
+          direction={'up'}
+        />
       </SidebarContainer>
       <AnimatePresence>
         {sidebarState === 'open' && (
@@ -140,6 +152,7 @@ interface SidebarContainerProps {
 }
 
 const SidebarContainer = styled.div<SidebarContainerProps>`
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -151,7 +164,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   ${StyledThemeSwitcher} {
     display: block;
     position: absolute;
-    bottom: 25px;
+    bottom: 70px;
     left: 25px;
   }
 
@@ -218,6 +231,28 @@ const TabIcon = styled.img`
   width: 20px;
   margin-right: 15px;
   filter: grayscale(100%);
+`
+
+// Network switch
+
+const NetworkMenu = styled(Menu)`
+  position: absolute !important;
+  bottom: 0;
+  right: 0;
+  left: 0;
+`
+
+const AlephiumLogoMainnet = styled(AlephiumLogo)`
+  path {
+    stroke-width: 18 !important;
+  }
+`
+
+const AlephiumLogoTestnet = styled(AlephiumLogo)`
+  path {
+    stroke-width: 18 !important;
+    stroke: ${({ theme }) => theme.textSecondary} !important;
+  }
 `
 
 export default Sidebar
