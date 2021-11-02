@@ -39,7 +39,7 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const theme = useTheme()
   const windowWidth = useWindowSize().width
   const lastWindowWidth = useRef(windowWidth)
-  const { setSidebarState } = useContext(GlobalContext)
+  const { setSidebarState, networkType } = useContext(GlobalContext)
 
   useEffect(() => {
     if (windowWidth) {
@@ -78,11 +78,23 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
         </Tabs>
         <ThemeSwitcher />
         <NetworkMenu
-          label={'Mainnet'}
-          icon={<AlephiumLogoMainnet />}
+          label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
+          icon={networkType === 'mainnet' ? <AlephiumLogoMainnet /> : <AlephiumLogoTestnet />}
           items={[
-            { text: 'Mainnet', onClick: () => null, icon: <AlephiumLogoMainnet /> },
-            { text: 'Testnet', onClick: () => null, icon: <AlephiumLogoTestnet /> }
+            {
+              text: 'Mainnet',
+              onClick: () => {
+                window.location.assign('https://explorer.alephium.org')
+              },
+              icon: <AlephiumLogoMainnet />
+            },
+            {
+              text: 'Testnet',
+              onClick: () => {
+                window.location.assign('https://testnet.alephium.org')
+              },
+              icon: <AlephiumLogoTestnet />
+            }
           ]}
           direction={'up'}
         />
