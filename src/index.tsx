@@ -42,8 +42,18 @@ import { useHistory } from 'react-router-dom'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
 
+const networkTypes = ['testnet', 'mainnet'] as const
+export type NetworkType = typeof networkTypes[number]
+
+interface SnackbarMessage {
+  text: string
+  type: 'info' | 'alert' | 'success'
+  duration?: number
+}
+
 interface GlobalContext {
   client: AlephClient | undefined
+  networkType: NetworkType | undefined
   currentTheme: ThemeType
   sidebarState: 'open' | 'close'
   setSidebarState: (state: SidebarState) => void
@@ -53,18 +63,13 @@ interface GlobalContext {
 
 export const GlobalContext = React.createContext<GlobalContext>({
   client: undefined,
+  networkType: undefined,
   currentTheme: 'dark',
   sidebarState: 'open',
   setSidebarState: () => null,
   switchTheme: () => null,
   setSnackbarMessage: () => null
 })
-
-interface SnackbarMessage {
-  text: string
-  type: 'info' | 'alert' | 'success'
-  duration?: number
-}
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -90,6 +95,7 @@ dayjs.updateLocale('en', {
 const App = () => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
+  const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [sidebarState, setSidebarState] = useState<SidebarState>('close')
 
@@ -99,22 +105,22 @@ const App = () => {
   const history = useHistory()
 
   useEffect(() => {
-    let url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
+    // Check and apply environment variables
+    const url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
+    const networkType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
 
     if (!url) {
-      if (window.location.hostname === 'localhost') {
-        url = 'http://localhost:9090'
-      } else {
-        const xs = window.location.hostname.split('.')
-        if (xs.length === 3 && xs[1] === 'alephium' && xs[2] === 'org') {
-          url = `${window.location.protocol}//${xs[0]}-backend.${xs[1]}.${xs[2]}`
-        } else {
-          url = `${window.location.protocol}//${window.location.host}`
-        }
-      }
+      throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
+    }
+
+    if (!networkType) {
+      throw new Error('The REACT_APP_NETWORK_TYPE environment variable must be defined')
+    } else if (!networkTypes.includes(networkType)) {
+      throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
     }
 
     setClient(createClient(url))
+    setNetworkType(networkType)
   }, [])
 
   // Remove snackbar popup
@@ -131,6 +137,7 @@ const App = () => {
         <GlobalContext.Provider
           value={{
             client,
+            networkType,
             currentTheme: themeName as ThemeType,
             switchTheme: setThemeName as (arg0: ThemeType) => void,
             sidebarState: 'close',
