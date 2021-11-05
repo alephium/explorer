@@ -50,9 +50,9 @@ const Menu = ({
       <AnimatePresence>
         {visible && (
           <MenuItemsContainer
-            initial={{ y: `${directionSign}50%`, opacity: 0 }}
+            initial={{ y: `${directionSign}95%`, opacity: 0 }}
             animate={{ y: `${directionSign}100%`, opacity: 1 }}
-            exit={{ y: `${directionSign}50%`, opacity: 0 }}
+            exit={{ y: `${directionSign}95%`, opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
             <MenuItemsList
