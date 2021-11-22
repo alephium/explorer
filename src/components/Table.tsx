@@ -19,7 +19,7 @@ import { createContext, FC, useContext, useEffect } from 'react'
 import { ChevronDown } from 'react-feather'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
-import ClipboardButton from './ClipboardButton'
+import ClipboardButton from './Buttons/ClipboardButton'
 import { deviceBreakPoints } from '../style/globalStyles'
 
 interface TableProps {

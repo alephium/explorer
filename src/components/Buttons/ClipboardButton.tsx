@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react'
 import { Clipboard, Check } from 'react-feather'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
-import { GlobalContext } from '..'
+import { GlobalContext } from '../..'
 
 const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
