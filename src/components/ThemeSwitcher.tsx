@@ -16,7 +16,7 @@
 
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { Moon, Sun } from 'react-feather'
+import { Moon, Sun } from 'lucide-react'
 import { ThemeType } from '../style/themes'
 import { motion } from 'framer-motion'
 import { GlobalContext } from '..'

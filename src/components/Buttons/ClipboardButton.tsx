@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react'
-import { Clipboard, Check } from 'react-feather'
+import { Clipboard, Check } from 'lucide-react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 import { GlobalContext } from '../..'

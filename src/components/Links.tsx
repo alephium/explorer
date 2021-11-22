@@ -15,7 +15,7 @@
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import React, { FC } from 'react'
-import { ExternalLink } from 'react-feather'
+import { ExternalLink } from 'lucide-react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 import Amount from './Amount'

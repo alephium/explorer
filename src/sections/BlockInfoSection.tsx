@@ -34,7 +34,7 @@ import {
 import { Block, Transaction } from '../types/api'
 import transactionIcon from '../images/transaction-icon.svg'
 import { AddressLink, TightLink } from '../components/Links'
-import { ArrowRight } from 'react-feather'
+import { ArrowRight } from 'lucide-react'
 import Badge from '../components/Badge'
 import { APIResp } from '../utils/client'
 import Amount from '../components/Amount'

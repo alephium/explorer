@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { MoreVertical } from 'react-feather'
+import { MoreVertical } from 'lucide-react'
 import styled from 'styled-components'
 
 interface MenuItem {

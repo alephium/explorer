@@ -11,6 +11,7 @@
     "framer-motion": "^4.1.17",
     "jsbi": "^3.2.4",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.16.19",
     "prettier": "^2.4.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

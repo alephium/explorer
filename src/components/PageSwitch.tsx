@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react'
-import { ChevronRight, ChevronLeft } from 'react-feather'
+import { ChevronRight, ChevronLeft } from 'lucide-react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 import useQueryParams from '../hooks/useQueryParams'
