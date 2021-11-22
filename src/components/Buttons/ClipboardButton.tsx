@@ -39,13 +39,13 @@ const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
 }
 
 const StyledClipboardIcon = styled(Clipboard)`
-  margin-left: 5px;
+  margin-left: 10px;
   cursor: pointer;
   color: ${({ theme }) => theme.textSecondary};
 `
 
 const StyledCheckIcon = styled(Check)`
-  margin-left: 5px;
+  margin-left: 10px;
   color: ${({ theme }) => theme.textPrimary};
 `
 

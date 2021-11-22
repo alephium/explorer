@@ -21,6 +21,7 @@ import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'sty
 import { SectionContext } from './Section'
 import ClipboardButton from './Buttons/ClipboardButton'
 import { deviceBreakPoints } from '../style/globalStyles'
+import QRCodeButton from './Buttons/QRCodeButton'
 
 interface TableProps {
   main?: boolean
@@ -155,11 +156,16 @@ const DetailToggleWrapper = styled(motion.div)`
 
 // == Highlighted cell (address, hash...)
 
-export const HighlightedCell: FC<{ textToCopy: string }> = ({ children, textToCopy }) => {
+export const HighlightedCell: FC<{ textToCopy?: string; qrCodeContent?: string }> = ({
+  children,
+  textToCopy,
+  qrCodeContent
+}) => {
   return (
     <StyledHighlightedCell>
       <span>{children}</span>
-      <ClipboardButton textToCopy={textToCopy} />
+      {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
+      {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
     </StyledHighlightedCell>
   )
 }

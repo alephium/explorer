@@ -117,7 +117,9 @@ const TransactionInfoSection = () => {
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
                   <tr>
                     <td>Address</td>
-                    <HighlightedCell textToCopy={id}>{id}</HighlightedCell>
+                    <HighlightedCell textToCopy={id} qrCodeContent={id}>
+                      {id}
+                    </HighlightedCell>
                   </tr>
                   <tr>
                     <td>Number of Transactions</td>
