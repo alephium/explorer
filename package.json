@@ -2,6 +2,10 @@
   "name": "alephium-explorer",
   "version": "0.2.1",
   "private": true,
+  "engines": {
+    "node": ">=12.22.7",
+    "npm": ">=7.24.2"
+  },
   "dependencies": {
     "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
