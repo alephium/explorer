@@ -1,7 +1,7 @@
 import { QrCode } from 'lucide-react'
 import styled from 'styled-components'
 import ReactTooltip from 'react-tooltip'
-import QRCode from 'react-qr-code'
+import QRCode from 'qrcode.react'
 
 const QRCodeButton = ({ textToEncode }: { textToEncode: string }) => {
   return (
