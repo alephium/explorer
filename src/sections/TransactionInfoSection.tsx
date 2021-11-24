@@ -29,7 +29,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import JSBI from 'jsbi'
 import Amount from '../components/Amount'
-import { Check } from 'react-feather'
+import { Check } from 'lucide-react'
 import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {

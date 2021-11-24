@@ -16,11 +16,12 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { createContext, FC, useContext, useEffect } from 'react'
-import { ChevronDown } from 'react-feather'
+import { ChevronDown } from 'lucide-react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 import { SectionContext } from './Section'
-import ClipboardButton from './ClipboardButton'
+import ClipboardButton from './Buttons/ClipboardButton'
 import { deviceBreakPoints } from '../style/globalStyles'
+import QRCodeButton from './Buttons/QRCodeButton'
 
 interface TableProps {
   main?: boolean
@@ -155,11 +156,16 @@ const DetailToggleWrapper = styled(motion.div)`
 
 // == Highlighted cell (address, hash...)
 
-export const HighlightedCell: FC<{ textToCopy: string }> = ({ children, textToCopy }) => {
+export const HighlightedCell: FC<{ textToCopy?: string; qrCodeContent?: string }> = ({
+  children,
+  textToCopy,
+  qrCodeContent
+}) => {
   return (
     <StyledHighlightedCell>
       <span>{children}</span>
-      <ClipboardButton textToCopy={textToCopy} />
+      {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
+      {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
     </StyledHighlightedCell>
   )
 }

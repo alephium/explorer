@@ -1,8 +1,8 @@
 import { useEffect, useState, useContext } from 'react'
-import { Clipboard, Check } from 'react-feather'
+import { Clipboard, Check } from 'lucide-react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
-import { GlobalContext } from '..'
+import { GlobalContext } from '../..'
 
 const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
@@ -39,13 +39,13 @@ const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
 }
 
 const StyledClipboardIcon = styled(Clipboard)`
-  margin-left: 5px;
+  margin-left: 10px;
   cursor: pointer;
   color: ${({ theme }) => theme.textSecondary};
 `
 
 const StyledCheckIcon = styled(Check)`
-  margin-left: 5px;
+  margin-left: 10px;
   color: ${({ theme }) => theme.textPrimary};
 `
 

@@ -35,7 +35,7 @@ import {
   TDStyle
 } from '../components/Table'
 import { AddressLink, TightLink } from '../components/Links'
-import { ArrowRight } from 'react-feather'
+import { ArrowRight } from 'lucide-react'
 import Section from '../components/Section'
 import styled, { css } from 'styled-components'
 import _ from 'lodash'
@@ -117,7 +117,9 @@ const TransactionInfoSection = () => {
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
                   <tr>
                     <td>Address</td>
-                    <HighlightedCell textToCopy={id}>{id}</HighlightedCell>
+                    <HighlightedCell textToCopy={id} qrCodeContent={id}>
+                      {id}
+                    </HighlightedCell>
                   </tr>
                   <tr>
                     <td>Number of Transactions</td>

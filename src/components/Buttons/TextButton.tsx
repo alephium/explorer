@@ -17,7 +17,7 @@
 import React, { FC } from 'react'
 import styled from 'styled-components'
 
-export const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, ...props }) => (
+const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ children, ...props }) => (
   <StyledTextButton {...props}>{children}</StyledTextButton>
 )
 
@@ -42,3 +42,5 @@ const StyledTextButton = styled.button`
     }};
   }
 `
+
+export default TextButton
