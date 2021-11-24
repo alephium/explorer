@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/static/css/main.28cdb457.chunk.css",
-    "main.js": "/static/js/main.682f25fd.chunk.js",
-    "main.js.map": "/static/js/main.682f25fd.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.9590e3be.js",
-    "runtime-main.js.map": "/static/js/runtime-main.9590e3be.js.map",
-    "static/js/2.98ce81ae.chunk.js": "/static/js/2.98ce81ae.chunk.js",
-    "static/js/2.98ce81ae.chunk.js.map": "/static/js/2.98ce81ae.chunk.js.map",
+    "main.js": "/static/js/main.4599cfbd.chunk.js",
+    "main.js.map": "/static/js/main.4599cfbd.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e2ff32c0.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e2ff32c0.js.map",
+    "static/js/2.7b93da60.chunk.js": "/static/js/2.7b93da60.chunk.js",
+    "static/js/2.7b93da60.chunk.js.map": "/static/js/2.7b93da60.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.28cdb457.chunk.css.map": "/static/css/main.28cdb457.chunk.css.map",
-    "static/js/2.98ce81ae.chunk.js.LICENSE.txt": "/static/js/2.98ce81ae.chunk.js.LICENSE.txt",
+    "static/js/2.7b93da60.chunk.js.LICENSE.txt": "/static/js/2.7b93da60.chunk.js.LICENSE.txt",
     "static/media/index.css": "/static/media/RobotoMono-Regular.418a8f9f.ttf",
     "static/media/address-icon.143269ad.svg": "/static/media/address-icon.143269ad.svg",
     "static/media/alephium-logo-gradient-stroke.2922636d.svg": "/static/media/alephium-logo-gradient-stroke.2922636d.svg",
@@ -20,9 +20,9 @@
     "static/media/transaction-icon.964bc84e.svg": "/static/media/transaction-icon.964bc84e.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.9590e3be.js",
-    "static/js/2.98ce81ae.chunk.js",
+    "static/js/runtime-main.e2ff32c0.js",
+    "static/js/2.7b93da60.chunk.js",
     "static/css/main.28cdb457.chunk.css",
-    "static/js/main.682f25fd.chunk.js"
+    "static/js/main.4599cfbd.chunk.js"
   ]
 }
