@@ -11,6 +11,8 @@ interface MenuItem {
 
 type Direction = 'up' | 'down'
 
+const menuHeight = '47px'
+
 const Menu = ({
   label,
   icon,
@@ -26,7 +28,8 @@ const Menu = ({
 }) => {
   const [visible, setVisible] = useState(false)
 
-  const directionSign = direction === 'up' ? '-' : '+'
+  const animationOrigin = direction === 'up' ? '-95%' : `calc(${menuHeight} - 10px)`
+  const animationDestination = direction === 'up' ? '-100%' : menuHeight
 
   const handleBlur = () => {
     setVisible(false)
@@ -50,9 +53,9 @@ const Menu = ({
       <AnimatePresence>
         {visible && (
           <MenuItemsContainer
-            initial={{ y: `${directionSign}95%`, opacity: 0 }}
-            animate={{ y: `${directionSign}100%`, opacity: 1 }}
-            exit={{ y: `${directionSign}95%`, opacity: 0 }}
+            initial={{ y: animationOrigin, opacity: 0 }}
+            animate={{ y: animationDestination, opacity: 1 }}
+            exit={{ y: animationOrigin, opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
             <MenuItemsList
@@ -77,8 +80,7 @@ const Menu = ({
 
 const MenuContainer = styled.div`
   position: relative;
-  height: 47px;
-  border-top: 1px solid ${({ theme }) => theme.borderSecondary};
+  height: ${menuHeight};
   display: flex;
 `
 
@@ -112,6 +114,7 @@ const MenuItemsContainer = styled(motion.div)`
   z-index: 10000;
   overflow: hidden;
   border-radius: 7px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 `
 
 const MenuItemsList = styled.div`

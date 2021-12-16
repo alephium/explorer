@@ -64,40 +64,43 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
           <Link to="/">
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
           </Link>
+          <NetworkMenu
+            label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
+            icon={networkType === 'mainnet' ? <AlephiumLogoMainnet /> : <AlephiumLogoTestnet />}
+            items={[
+              {
+                text: 'Mainnet',
+                onClick: () => {
+                  window.location.assign('https://explorer.alephium.org')
+                },
+                icon: <AlephiumLogoMainnet />
+              },
+              {
+                text: 'Testnet',
+                onClick: () => {
+                  window.location.assign('https://testnet.alephium.org')
+                },
+                icon: <AlephiumLogoTestnet />
+              }
+            ]}
+            direction="down"
+          />
         </Header>
-        <Tabs>
-          <Tab to="/blocks" onClick={() => setSidebarState('close')}>
-            <TabIcon src={blockIcon} alt="blocks" /> Blocks
-          </Tab>
-          <Tab to="/addresses" onClick={() => setSidebarState('close')}>
-            <TabIcon src={addressIcon} alt="addresses" /> Addresses
-          </Tab>
-          <Tab to="/transactions" onClick={() => setSidebarState('close')}>
-            <TabIcon src={transactionIcon} alt="transactions" /> Transactions
-          </Tab>
-        </Tabs>
+        <Navigation>
+          <NavigationTitle>MENU</NavigationTitle>
+          <Tabs>
+            <Tab to="/blocks" onClick={() => setSidebarState('close')}>
+              <TabIcon src={blockIcon} alt="blocks" /> Blocks
+            </Tab>
+            <Tab to="/addresses" onClick={() => setSidebarState('close')}>
+              <TabIcon src={addressIcon} alt="addresses" /> Addresses
+            </Tab>
+            <Tab to="/transactions" onClick={() => setSidebarState('close')}>
+              <TabIcon src={transactionIcon} alt="transactions" /> Transactions
+            </Tab>
+          </Tabs>
+        </Navigation>
         <ThemeSwitcher />
-        <NetworkMenu
-          label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
-          icon={networkType === 'mainnet' ? <AlephiumLogoMainnet /> : <AlephiumLogoTestnet />}
-          items={[
-            {
-              text: 'Mainnet',
-              onClick: () => {
-                window.location.assign('https://explorer.alephium.org')
-              },
-              icon: <AlephiumLogoMainnet />
-            },
-            {
-              text: 'Testnet',
-              onClick: () => {
-                window.location.assign('https://testnet.alephium.org')
-              },
-              icon: <AlephiumLogoTestnet />
-            }
-          ]}
-          direction={'up'}
-        />
       </SidebarContainer>
       <AnimatePresence>
         {sidebarState === 'open' && (
@@ -176,7 +179,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   ${StyledThemeSwitcher} {
     display: block;
     position: absolute;
-    bottom: 70px;
+    bottom: 25px;
     left: 25px;
   }
 
@@ -195,7 +198,8 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
 
 const Header = styled.header`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bgHighlight};
 
   @media ${deviceBreakPoints.tablet} {
     margin-top: 50px;
@@ -206,11 +210,21 @@ const Tabs = styled.div`
   margin-top: 12px;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid ${({ theme }) => theme.borderPrimary};
 
   @media ${deviceBreakPoints.tablet} {
     margin-top: 30px;
   }
+`
+
+const Navigation = styled.nav`
+  margin-top: 25px;
+`
+
+const NavigationTitle = styled.div`
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0 25px;
+  color: ${({ theme }) => theme.textSecondary};
 `
 
 const Tab = styled(NavLink)`
@@ -221,13 +235,11 @@ const Tab = styled(NavLink)`
   align-items: center;
   transition: all 0.15s ease;
   position: relative;
-  border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
   padding: 13px 20px;
 
   color: ${({ theme }) => theme.textSecondary};
   &.active {
     color: ${({ theme }) => theme.textPrimary};
-    background-color: ${({ theme }) => theme.bgPrimary};
 
     img {
       filter: none;
@@ -248,10 +260,7 @@ const TabIcon = styled.img`
 // Network switch
 
 const NetworkMenu = styled(Menu)`
-  position: absolute !important;
-  bottom: 0;
-  right: 0;
-  left: 0;
+  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
 `
 
 const AlephiumLogoMainnet = styled(AlephiumLogo)`
