@@ -102,8 +102,6 @@ const Label = styled.span`
 `
 
 const IconContainer = styled.div`
-  width: 23px;
-  height: 23px;
   margin-right: 20px;
 `
 

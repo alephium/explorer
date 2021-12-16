@@ -22,6 +22,8 @@ export const darkTheme: DefaultTheme = {
   borderSecondary: '#27282d',
   borderHighlight: '#585962',
 
+  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
+
   tooltip: 'black'
 }
 
@@ -44,6 +46,8 @@ export const lightTheme: DefaultTheme = {
   borderPrimary: '#e6e6e6',
   borderSecondary: '#e8e8e8',
   borderHighlight: '#D1D1D4',
+
+  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
   tooltip: 'black'
 }

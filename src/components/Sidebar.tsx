@@ -32,6 +32,7 @@ import { GlobalContext } from '..'
 import Menu from './Menu'
 
 import { ReactComponent as AlephiumLogo } from '../images/alephium-logo-gradient-stroke.svg'
+import NetworkLogo from './NetworkLogo'
 
 export type SidebarState = 'open' | 'close'
 
@@ -66,21 +67,21 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
           </Link>
           <NetworkMenu
             label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
-            icon={networkType === 'mainnet' ? <AlephiumLogoMainnet /> : <AlephiumLogoTestnet />}
+            icon={networkType === 'mainnet' ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
             items={[
               {
                 text: 'Mainnet',
                 onClick: () => {
                   window.location.assign('https://explorer.alephium.org')
                 },
-                icon: <AlephiumLogoMainnet />
+                icon: <NetworkLogo network="mainnet" />
               },
               {
                 text: 'Testnet',
                 onClick: () => {
                   window.location.assign('https://testnet.alephium.org')
                 },
-                icon: <AlephiumLogoTestnet />
+                icon: <NetworkLogo network="testnet" />
               }
             ]}
             direction="down"
@@ -260,20 +261,9 @@ const TabIcon = styled.img`
 // Network switch
 
 const NetworkMenu = styled(Menu)`
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-`
-
-const AlephiumLogoMainnet = styled(AlephiumLogo)`
-  path {
-    stroke-width: 18 !important;
-  }
-`
-
-const AlephiumLogoTestnet = styled(AlephiumLogo)`
-  path {
-    stroke-width: 18 !important;
-    stroke: ${({ theme }) => theme.textSecondary} !important;
-  }
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: ${({ theme }) => theme.borderSecondary};
 `
 
 export default Sidebar
