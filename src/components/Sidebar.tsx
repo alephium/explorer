@@ -31,7 +31,6 @@ import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
 import { GlobalContext } from '..'
 import Menu from './Menu'
 
-import { ReactComponent as AlephiumLogo } from '../images/alephium-logo-gradient-stroke.svg'
 import NetworkLogo from './NetworkLogo'
 
 export type SidebarState = 'open' | 'close'
@@ -203,7 +202,7 @@ const Header = styled.header`
   background-color: ${({ theme }) => theme.bgHighlight};
 
   @media ${deviceBreakPoints.tablet} {
-    margin-top: 50px;
+    padding-top: 50px;
   }
 `
 
@@ -211,10 +210,6 @@ const Tabs = styled.div`
   margin-top: 12px;
   display: flex;
   flex-direction: column;
-
-  @media ${deviceBreakPoints.tablet} {
-    margin-top: 30px;
-  }
 `
 
 const Navigation = styled.nav`
