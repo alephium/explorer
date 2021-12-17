@@ -41,6 +41,14 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const lastWindowWidth = useRef(windowWidth)
   const { setSidebarState, networkType } = useContext(GlobalContext)
 
+  const isMainnet = networkType === 'mainnet'
+
+  const switchToNetwork = (network: string) => {
+    if (networkType !== network) {
+      window.location.assign(isMainnet ? 'https://explorer.alephium.org' : `https://testnet.alephium.org`)
+    }
+  }
+
   useEffect(() => {
     if (windowWidth) {
       if (
@@ -65,21 +73,17 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
           </Link>
           <NetworkMenu
-            label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
-            icon={networkType === 'mainnet' ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
+            label={isMainnet ? 'Mainnet' : 'Testnet'}
+            icon={isMainnet ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
             items={[
               {
                 text: 'Mainnet',
-                onClick: () => {
-                  window.location.assign('https://explorer.alephium.org')
-                },
+                onClick: () => switchToNetwork('mainnet'),
                 icon: <NetworkLogo network="mainnet" />
               },
               {
                 text: 'Testnet',
-                onClick: () => {
-                  window.location.assign('https://testnet.alephium.org')
-                },
+                onClick: () => switchToNetwork('testnet'),
                 icon: <NetworkLogo network="testnet" />
               }
             ]}
