@@ -22,6 +22,8 @@ export const darkTheme: DefaultTheme = {
   borderSecondary: '#27282d',
   borderHighlight: '#585962',
 
+  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
+
   tooltip: 'black'
 }
 
@@ -38,12 +40,14 @@ export const lightTheme: DefaultTheme = {
 
   bgPrimary: 'white',
   bgSecondary: '#f7f7f7',
-  bgHighlight: 'rgba(0, 0, 0, 0.012)',
+  bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
   borderPrimary: '#e6e6e6',
-  borderSecondary: '#f2f2f2',
+  borderSecondary: '#e8e8e8',
   borderHighlight: '#D1D1D4',
+
+  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
   tooltip: 'black'
 }

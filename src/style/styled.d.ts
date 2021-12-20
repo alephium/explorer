@@ -24,6 +24,8 @@ declare module 'styled-components' {
     borderSecondary: string
     borderHighlight: string
 
+    accentGradient: string
+
     tooltip: string
   }
 }

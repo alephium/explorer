@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { useContext, useEffect, useRef } from 'react'
+import { useCallback, useContext, useEffect, useRef } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -31,7 +31,7 @@ import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
 import { GlobalContext } from '..'
 import Menu from './Menu'
 
-import { ReactComponent as AlephiumLogo } from '../images/alephium-logo-gradient-stroke.svg'
+import NetworkLogo from './NetworkLogo'
 
 export type SidebarState = 'open' | 'close'
 
@@ -41,6 +41,18 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const lastWindowWidth = useRef(windowWidth)
   const { setSidebarState, networkType } = useContext(GlobalContext)
 
+  const isMainnet = networkType === 'mainnet'
+
+  const switchToNetwork = (network: string) => {
+    if (networkType !== network) {
+      window.location.assign(isMainnet ? 'https://explorer.alephium.org' : `https://testnet.alephium.org`)
+    }
+  }
+
+  const closeSidebar = useCallback(() => {
+    setSidebarState('close')
+  }, [setSidebarState])
+
   useEffect(() => {
     if (windowWidth) {
       if (
@@ -49,60 +61,59 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
         windowWidth < deviceSizes.tablet &&
         open
       ) {
-        setSidebarState('close')
+        closeSidebar()
       }
 
       lastWindowWidth.current = windowWidth
     }
-  }, [setSidebarState, windowWidth])
+  }, [closeSidebar, windowWidth])
 
   return (
     <>
       <SidebarContainer open={sidebarState === 'open'}>
-        <CloseButton onClick={() => setSidebarState('close')}>{<X />}</CloseButton>
+        <CloseButton onClick={closeSidebar}>{<X />}</CloseButton>
         <Header>
           <Link to="/">
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
           </Link>
+          <NetworkMenu
+            label={isMainnet ? 'Mainnet' : 'Testnet'}
+            icon={isMainnet ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
+            items={[
+              {
+                text: 'Mainnet',
+                onClick: () => switchToNetwork('mainnet'),
+                icon: <NetworkLogo network="mainnet" />
+              },
+              {
+                text: 'Testnet',
+                onClick: () => switchToNetwork('testnet'),
+                icon: <NetworkLogo network="testnet" />
+              }
+            ]}
+            direction="down"
+          />
         </Header>
-        <Tabs>
-          <Tab to="/blocks" onClick={() => setSidebarState('close')}>
-            <TabIcon src={blockIcon} alt="blocks" /> Blocks
-          </Tab>
-          <Tab to="/addresses" onClick={() => setSidebarState('close')}>
-            <TabIcon src={addressIcon} alt="addresses" /> Addresses
-          </Tab>
-          <Tab to="/transactions" onClick={() => setSidebarState('close')}>
-            <TabIcon src={transactionIcon} alt="transactions" /> Transactions
-          </Tab>
-        </Tabs>
+        <Navigation>
+          <NavigationTitle>MENU</NavigationTitle>
+          <Tabs>
+            <Tab to="/blocks" onClick={closeSidebar}>
+              <TabIcon src={blockIcon} alt="blocks" /> Blocks
+            </Tab>
+            <Tab to="/addresses" onClick={closeSidebar}>
+              <TabIcon src={addressIcon} alt="addresses" /> Addresses
+            </Tab>
+            <Tab to="/transactions" onClick={closeSidebar}>
+              <TabIcon src={transactionIcon} alt="transactions" /> Transactions
+            </Tab>
+          </Tabs>
+        </Navigation>
         <ThemeSwitcher />
-        <NetworkMenu
-          label={networkType === 'mainnet' ? 'Mainnet' : 'Testnet'}
-          icon={networkType === 'mainnet' ? <AlephiumLogoMainnet /> : <AlephiumLogoTestnet />}
-          items={[
-            {
-              text: 'Mainnet',
-              onClick: () => {
-                window.location.assign('https://explorer.alephium.org')
-              },
-              icon: <AlephiumLogoMainnet />
-            },
-            {
-              text: 'Testnet',
-              onClick: () => {
-                window.location.assign('https://testnet.alephium.org')
-              },
-              icon: <AlephiumLogoTestnet />
-            }
-          ]}
-          direction={'up'}
-        />
       </SidebarContainer>
       <AnimatePresence>
         {sidebarState === 'open' && (
           <Backdrop
-            onClick={() => setSidebarState('close')}
+            onClick={closeSidebar}
             animate={{ opacity: 0.4 }}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
@@ -176,7 +187,7 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
   ${StyledThemeSwitcher} {
     display: block;
     position: absolute;
-    bottom: 70px;
+    bottom: 25px;
     left: 25px;
   }
 
@@ -195,10 +206,11 @@ const SidebarContainer = styled.div<SidebarContainerProps>`
 
 const Header = styled.header`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bgHighlight};
 
   @media ${deviceBreakPoints.tablet} {
-    margin-top: 50px;
+    padding-top: 50px;
   }
 `
 
@@ -206,11 +218,17 @@ const Tabs = styled.div`
   margin-top: 12px;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid ${({ theme }) => theme.borderPrimary};
+`
 
-  @media ${deviceBreakPoints.tablet} {
-    margin-top: 30px;
-  }
+const Navigation = styled.nav`
+  margin-top: 25px;
+`
+
+const NavigationTitle = styled.div`
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0 25px;
+  color: ${({ theme }) => theme.textSecondary};
 `
 
 const Tab = styled(NavLink)`
@@ -221,13 +239,11 @@ const Tab = styled(NavLink)`
   align-items: center;
   transition: all 0.15s ease;
   position: relative;
-  border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
   padding: 13px 20px;
 
   color: ${({ theme }) => theme.textSecondary};
   &.active {
     color: ${({ theme }) => theme.textPrimary};
-    background-color: ${({ theme }) => theme.bgPrimary};
 
     img {
       filter: none;
@@ -248,23 +264,9 @@ const TabIcon = styled.img`
 // Network switch
 
 const NetworkMenu = styled(Menu)`
-  position: absolute !important;
-  bottom: 0;
-  right: 0;
-  left: 0;
-`
-
-const AlephiumLogoMainnet = styled(AlephiumLogo)`
-  path {
-    stroke-width: 18 !important;
-  }
-`
-
-const AlephiumLogoTestnet = styled(AlephiumLogo)`
-  path {
-    stroke-width: 18 !important;
-    stroke: ${({ theme }) => theme.textSecondary} !important;
-  }
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: ${({ theme }) => theme.borderSecondary};
 `
 
 export default Sidebar

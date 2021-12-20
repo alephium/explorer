@@ -147,7 +147,7 @@ const SearchInput = styled.input`
   &:active {
     box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
-      /*this is your grey background*/ linear-gradient(to right, #6510f7, #f76110) border-box;
+      ${({ theme }) => theme.accentGradient};
     border: 1px solid transparent;
     z-index: 10;
   }
