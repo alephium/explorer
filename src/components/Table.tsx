@@ -334,4 +334,8 @@ export const AnimatedCellContainer = styled(motion.div)<{ alignItems: 'left' | '
   display: flex;
   flex-direction: column;
   align-items: ${({ alignItems }) => (alignItems === 'left' ? 'flex-start' : 'flex-end')};
+
+  > * {
+    padding: 3px 0 !important;
+  }
 `

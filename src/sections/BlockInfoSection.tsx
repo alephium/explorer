@@ -154,7 +154,7 @@ const BlockInfoSection = () => {
                 <>
                   <Table main hasDetails scrollable>
                     <TableHeader
-                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Amount', '']}
+                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total amount', '']}
                       columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                       textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                     />
