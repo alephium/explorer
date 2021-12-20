@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with the library. If not, see <http://www.gnu.org/licenses/>.
 
-import { useContext, useEffect, useRef } from 'react'
+import { useCallback, useContext, useEffect, useRef } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
@@ -49,6 +49,10 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
     }
   }
 
+  const closeSidebar = useCallback(() => {
+    setSidebarState('close')
+  }, [setSidebarState])
+
   useEffect(() => {
     if (windowWidth) {
       if (
@@ -57,17 +61,17 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
         windowWidth < deviceSizes.tablet &&
         open
       ) {
-        setSidebarState('close')
+        closeSidebar()
       }
 
       lastWindowWidth.current = windowWidth
     }
-  }, [setSidebarState, windowWidth])
+  }, [closeSidebar, windowWidth])
 
   return (
     <>
       <SidebarContainer open={sidebarState === 'open'}>
-        <CloseButton onClick={() => setSidebarState('close')}>{<X />}</CloseButton>
+        <CloseButton onClick={closeSidebar}>{<X />}</CloseButton>
         <Header>
           <Link to="/">
             <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
@@ -93,13 +97,13 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
         <Navigation>
           <NavigationTitle>MENU</NavigationTitle>
           <Tabs>
-            <Tab to="/blocks" onClick={() => setSidebarState('close')}>
+            <Tab to="/blocks" onClick={closeSidebar}>
               <TabIcon src={blockIcon} alt="blocks" /> Blocks
             </Tab>
-            <Tab to="/addresses" onClick={() => setSidebarState('close')}>
+            <Tab to="/addresses" onClick={closeSidebar}>
               <TabIcon src={addressIcon} alt="addresses" /> Addresses
             </Tab>
-            <Tab to="/transactions" onClick={() => setSidebarState('close')}>
+            <Tab to="/transactions" onClick={closeSidebar}>
               <TabIcon src={transactionIcon} alt="transactions" /> Transactions
             </Tab>
           </Tabs>
@@ -109,7 +113,7 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
       <AnimatePresence>
         {sidebarState === 'open' && (
           <Backdrop
-            onClick={() => setSidebarState('close')}
+            onClick={closeSidebar}
             animate={{ opacity: 0.4 }}
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
