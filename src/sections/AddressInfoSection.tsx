@@ -131,6 +131,14 @@ const TransactionInfoSection = () => {
                       <Badge type={'neutralHighlight'} content={addressInfo.data.balance.toString()} amount />
                     </td>
                   </tr>
+                  {addressInfo.data.lockedBalance > 0 && (
+                    <tr>
+                      <td>Locked Balance</td>
+                      <td>
+                        <Badge type={'neutral'} content={addressInfo.data.lockedBalance.toString()} amount />
+                      </td>
+                    </tr>
+                  )}
                 </TableBody>
               </Table>
 

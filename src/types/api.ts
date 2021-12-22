@@ -40,5 +40,6 @@ export interface TransactionOutput {
 
 export interface Address {
   balance: number
+  lockedBalance: number
   txNumber: number
 }
