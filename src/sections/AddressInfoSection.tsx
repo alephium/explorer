@@ -134,7 +134,7 @@ const TransactionInfoSection = () => {
                     <td>{addressInfo.txNumber}</td>
                   </tr>
                   <tr>
-                    <td>Balance</td>
+                    <td>Total Balance</td>
                     <td>
                       <Badge type={'neutralHighlight'} content={addressInfo.balance} amount />
                     </td>
