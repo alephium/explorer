@@ -16,6 +16,11 @@ RUN npm install serve -g --silent
 # add app
 COPY . ./
 
+ARG backend_url network_type
+
+ENV REACT_APP_BACKEND_URL=${backend_url}
+ENV REACT_APP_NETWORK_TYPE=${network_type}
+
 # create optimized production build
 RUN npm run build
 
