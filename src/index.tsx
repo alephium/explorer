@@ -22,6 +22,7 @@ import styled, { ThemeProvider } from 'styled-components'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import * as serviceWorker from './serviceWorker'
+import { ExplorerClient } from 'alephium-js'
 
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import Sidebar, { SidebarState } from './components/Sidebar'
@@ -53,6 +54,7 @@ interface SnackbarMessage {
 
 interface GlobalContext {
   client: AlephClient | undefined
+  explorerClient: ExplorerClient | undefined
   networkType: NetworkType | undefined
   currentTheme: ThemeType
   sidebarState: 'open' | 'close'
@@ -63,6 +65,7 @@ interface GlobalContext {
 
 export const GlobalContext = React.createContext<GlobalContext>({
   client: undefined,
+  explorerClient: undefined,
   networkType: undefined,
   currentTheme: 'dark',
   sidebarState: 'open',
@@ -95,6 +98,7 @@ dayjs.updateLocale('en', {
 const App = () => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<AlephClient>()
+  const [explorerClient, setExplorerClient] = useState<ExplorerClient>()
   const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [sidebarState, setSidebarState] = useState<SidebarState>('close')
@@ -119,6 +123,12 @@ const App = () => {
       throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
     }
 
+    try {
+      setExplorerClient(new ExplorerClient({ baseUrl: url }))
+    } catch (error) {
+      throw new Error('Could not create explorer client')
+    }
+
     setClient(createClient(url))
     setNetworkType(networkType)
   }, [])
@@ -137,6 +147,7 @@ const App = () => {
         <GlobalContext.Provider
           value={{
             client,
+            explorerClient,
             networkType,
             currentTheme: themeName as ThemeType,
             switchTheme: setThemeName as (arg0: ThemeType) => void,

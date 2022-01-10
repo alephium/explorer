@@ -20,7 +20,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { useParams } from 'react-router-dom'
 import { GlobalContext } from '..'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import { Address, Transaction } from '../types/api'
+import { Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
 import Badge from '../components/Badge'
 import {
@@ -46,6 +46,8 @@ import JSBI from 'jsbi'
 import usePageNumber from '../hooks/usePageNumber'
 import PageSwitch from '../components/PageSwitch'
 import { calAmountDelta } from '../utils/amounts'
+import { AddressInfo } from 'alephium-js/dist/api/api-explorer'
+import { getHumanReadableError } from '../utils/api'
 
 dayjs.extend(relativeTime)
 
@@ -56,7 +58,9 @@ interface ParamTypes {
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const client = useContext(GlobalContext).client
-  const [addressInfo, setAddressInfo] = useState<APIResp<Address>>()
+  const explorerClient = useContext(GlobalContext).explorerClient
+  const [addressInfo, setAddressInfo] = useState<AddressInfo>()
+  const [addressInfoError, setAddressInfoError] = useState('')
   const [txList, setTxList] = useState<APIResp<Transaction[]>>()
 
   const [infoLoading, setInfoLoading] = useState(true)
@@ -68,24 +72,28 @@ const TransactionInfoSection = () => {
 
   // Address info
   useEffect(() => {
-    if (!client) return
+    const fetchAddressInfo = async () => {
+      if (!explorerClient) return
 
-    previousId.current = id
+      previousId.current = id
 
-    setInfoLoading(true)
+      setInfoLoading(true)
 
-    client
-      .address(id)
-      .catch((e) => {
-        console.log(e)
+      try {
+        const response = await explorerClient.getAddressDetails(id)
+        console.log(response.data)
+        if (!response.data) return
+
+        setAddressInfo(response.data)
+      } catch (error) {
         setInfoLoading(false)
-      })
-      .then((r) => {
-        if (!r) return
-        setAddressInfo(r)
-        setInfoLoading(false)
-      })
-  }, [client, id])
+        console.error(error)
+        setAddressInfoError(getHumanReadableError(error, 'Error while fetching address info'))
+      }
+      setInfoLoading(false)
+    }
+    fetchAddressInfo()
+  }, [explorerClient, id])
 
   // Address transactions
   useEffect(() => {
@@ -111,7 +119,7 @@ const TransactionInfoSection = () => {
       <SectionTitle title="Address" />
       {!infoLoading && previousId.current === id ? (
         <>
-          {addressInfo && addressInfo.status === 200 && addressInfo.data ? (
+          {addressInfo ? (
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={AddressTableBodyCustomStyles}>
@@ -123,14 +131,22 @@ const TransactionInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Number of Transactions</td>
-                    <td>{addressInfo.data.txNumber}</td>
+                    <td>{addressInfo.txNumber}</td>
                   </tr>
                   <tr>
-                    <td>Balance</td>
+                    <td>Total Balance</td>
                     <td>
-                      <Badge type={'neutralHighlight'} content={addressInfo.data.balance.toString()} amount />
+                      <Badge type={'neutralHighlight'} content={addressInfo.balance} amount />
                     </td>
                   </tr>
+                  {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
+                    <tr>
+                      <td>Locked Balance</td>
+                      <td>
+                        <Badge type={'neutral'} content={addressInfo.lockedBalance} amount />
+                      </td>
+                    </tr>
+                  )}
                 </TableBody>
               </Table>
 
@@ -161,9 +177,9 @@ const TransactionInfoSection = () => {
               )}
             </>
           ) : (
-            <InlineErrorMessage message={addressInfo?.detail} code={addressInfo?.status} />
+            <InlineErrorMessage message={addressInfoError} />
           )}
-          {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.data?.txNumber} />}
+          {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
         </>
       ) : (
         <LoadingSpinner />
