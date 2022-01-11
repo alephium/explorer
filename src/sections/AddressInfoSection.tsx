@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo } from 'alephium-js/dist/api/api-explorer'
+import { AddressInfo, Transaction } from 'alephium-js/dist/api/api-explorer'
+import { calAmountDelta } from 'alephium-js/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import JSBI from 'jsbi'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { FC, useContext, useEffect, useRef, useState } from 'react'
@@ -47,8 +47,6 @@ import {
 } from '../components/Table'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
-import { Transaction } from '../types/api'
-import { calAmountDelta } from '../utils/amounts'
 import { getHumanReadableError } from '../utils/api'
 import { APIResp } from '../utils/client'
 
@@ -139,14 +137,14 @@ const TransactionInfoSection = () => {
                   <tr>
                     <td>Total Balance</td>
                     <td>
-                      <Badge type={'neutralHighlight'} content={addressInfo.balance} amount />
+                      <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
                     </td>
                   </tr>
                   {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
                     <tr>
                       <td>Locked Balance</td>
                       <td>
-                        <Badge type={'neutral'} content={addressInfo.lockedBalance} amount />
+                        <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
                       </td>
                     </tr>
                   )}
@@ -201,9 +199,10 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   const amountDelta = calAmountDelta(t, addressId)
-  const isOut = JSBI.lessThan(amountDelta, JSBI.BigInt(0))
+  const isOut = amountDelta < BigInt(0)
 
   const renderOutputAccounts = () => {
+    if (!t.outputs) return
     // Check for auto-sent tx
     if (t.outputs.every((o) => o.address === addressId)) {
       return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
@@ -217,6 +216,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
   }
 
   const renderInputAccounts = () => {
+    if (!t.inputs) return
     const inputAccounts = _(t.inputs.filter((o) => o.address !== addressId))
       .map((v) => v.address)
       .uniq()
@@ -244,14 +244,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <td>
           <Badge
             type={isOut ? 'minus' : 'plus'}
-            amount
             prefix={isOut ? '- ' : '+ '}
             floatRight
-            content={
-              JSBI.lessThan(amountDelta, JSBI.BigInt(0))
-                ? JSBI.multiply(amountDelta, JSBI.BigInt(-1)).toString()
-                : amountDelta.toString()
-            }
+            amount={amountDelta < BigInt(0) ? (amountDelta * BigInt(-1)).toString() : amountDelta.toString()}
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
@@ -265,13 +260,13 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
             <TableBody>
               <Row>
                 <td>
-                  {t.inputs.length > 0 ? (
+                  {t.inputs && t.inputs.length > 0 ? (
                     t.inputs.map((input, i) => (
                       <AddressLink
                         key={i}
                         address={input.address}
                         txHashRef={input.txHashRef}
-                        amount={JSBI.BigInt(input.amount)}
+                        amount={BigInt(input.amount)}
                         maxWidth="180px"
                       />
                     ))
@@ -283,14 +278,10 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                   <ArrowRight size={12} />
                 </td>
                 <td>
-                  {t.outputs.map((output, i) => (
-                    <AddressLink
-                      key={i}
-                      address={output.address}
-                      amount={JSBI.BigInt(output.amount)}
-                      maxWidth="180px"
-                    />
-                  ))}
+                  {t.outputs &&
+                    t.outputs.map((output, i) => (
+                      <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
+                    ))}
                 </td>
               </Row>
             </TableBody>

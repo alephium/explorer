@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Transaction } from 'alephium-js/dist/api/api-explorer'
 import dayjs from 'dayjs'
-import JSBI from 'jsbi'
 import { ArrowRight } from 'lucide-react'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -46,7 +46,7 @@ import {
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
-import { Block, Transaction } from '../types/api'
+import { Block } from '../types/api'
 import { APIResp } from '../utils/client'
 
 interface ParamTypes {
@@ -213,19 +213,18 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="150px" />
         </td>
         <td>
-          {t.inputs.length} address{t.inputs.length > 1 ? 'es' : ''}
+          {t.inputs ? t.inputs.length : 0} {t.inputs && t.inputs.length === 1 ? 'address' : 'addresses'}
         </td>
         <td>
           <ArrowRight size={15} />
         </td>
         <td>
-          {t.outputs.length} address{t.outputs.length > 1 ? 'es' : ''}
+          {t.outputs ? t.outputs.length : 0} {t.outputs && t.outputs.length === 1 ? 'address' : 'address'}
         </td>
         <td>
           <Badge
             type={'neutral'}
-            content={t.outputs.reduce<JSBI>((acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)), JSBI.BigInt(0))}
-            amount
+            amount={t.outputs && t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
             floatRight
           />
         </td>
@@ -235,20 +234,17 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td />
         <td />
         <AnimatedCell>
-          {t.inputs.map((input, i) => (
-            <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
-          ))}
+          {t.inputs &&
+            t.inputs.map((input, i) => (
+              <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
+            ))}
         </AnimatedCell>
         <td />
         <AnimatedCell>
-          {t.outputs.map((o, i) => (
-            <AddressLink address={o.address} key={i} maxWidth="180px" />
-          ))}
+          {t.outputs && t.outputs.map((o, i) => <AddressLink address={o.address} key={i} maxWidth="180px" />)}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
-          {t.outputs.map((o, i) => (
-            <Amount value={JSBI.BigInt(o.amount)} key={i} />
-          ))}
+          {t.outputs && t.outputs.map((o, i) => <Amount value={BigInt(o.amount)} key={i} />)}
         </AnimatedCell>
         <td />
       </DetailsRow>

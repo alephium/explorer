@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TransactionLike, Transaction, Output, UOutput } from 'alephium-js/dist/api/api-explorer'
 import dayjs from 'dayjs'
-import JSBI from 'jsbi'
 import { Check } from 'lucide-react'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -31,7 +31,6 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
 import { HighlightedCell, Table, TableBody } from '../components/Table'
-import { Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
@@ -41,16 +40,16 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).client
-  const [txInfo, setTxInfo] = useState<APIResp<Transaction>>()
+  const client = useContext(GlobalContext).explorerClient
+  const [txInfo, setTxInfo] = useState<APIResp<TransactionLike>>()
   const [loading, setLoading] = useState(true)
 
   const getTxInfo = useCallback(async () => {
     if (!client) return
     setLoading(true)
 
-    client
-      .transaction(id)
+    client.transactions
+      .getTransactionsTransactionHash(id)
       .catch((e) => {
         console.log(e)
         setLoading(false)
@@ -70,8 +69,12 @@ const TransactionInfoSection = () => {
 
   // Polling when TX is unconfirmed
   useInterval(() => {
-    if (txInfo && txInfo.data && txInfo.data.type === 'unconfirmed') getTxInfo()
+    if (txInfo && txInfo.data && !isTxConfirmed(txInfo.data)) getTxInfo()
   }, 15 * 1000)
+
+  // https://github.com/microsoft/TypeScript/issues/33591
+  const outputs: Array<Output | UOutput> | undefined =
+    txInfo && txInfo.data && txInfo.data.outputs && txInfo.data.outputs
 
   return (
     <Section>
@@ -87,7 +90,7 @@ const TransactionInfoSection = () => {
                 </tr>
                 <tr>
                   <td>Status</td>
-                  {txInfo.data.type === 'confirmed' ? (
+                  {isTxConfirmed(txInfo.data) ? (
                     <td>
                       <Badge
                         type="plus"
@@ -113,7 +116,7 @@ const TransactionInfoSection = () => {
                     </td>
                   )}
                 </tr>
-                {txInfo.data.blockHash && (
+                {isTxConfirmed(txInfo.data) && txInfo.data.blockHash && (
                   <tr>
                     <td>Block Hash</td>
                     <td>
@@ -125,13 +128,13 @@ const TransactionInfoSection = () => {
                     </td>
                   </tr>
                 )}
-                {txInfo.data.timestamp && (
+                {isTxConfirmed(txInfo.data) && txInfo.data.timestamp && (
                   <tr>
                     <td>Timestamp</td>
                     <td>{dayjs(txInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
                   </tr>
                 )}
-                {txInfo.data.type === 'confirmed' && (
+                {isTxConfirmed(txInfo.data) && (
                   <tr>
                     <td>Inputs</td>
                     <td>
@@ -141,7 +144,7 @@ const TransactionInfoSection = () => {
                               address={v.address}
                               txHashRef={v.txHashRef}
                               key={i}
-                              amount={JSBI.BigInt(v.amount)}
+                              amount={BigInt(v.amount)}
                             />
                           ))
                         : 'Block Rewards'}
@@ -151,9 +154,11 @@ const TransactionInfoSection = () => {
                 <tr>
                   <td>Outputs</td>
                   <td>
-                    {txInfo.data.outputs.map((v, i) => (
-                      <AddressLink address={v.address} key={i} amount={JSBI.BigInt(v.amount)} txHashRef={v.spent} />
-                    ))}
+                    {isTxConfirmed(txInfo.data) &&
+                      txInfo.data.outputs &&
+                      txInfo.data.outputs.map((v, i) => (
+                        <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
+                      ))}
                   </td>
                 </tr>
                 <tr>
@@ -163,16 +168,13 @@ const TransactionInfoSection = () => {
                 <tr>
                   <td>Gas Price</td>
                   <td>
-                    <Amount value={JSBI.BigInt(txInfo.data.gasPrice)} />
+                    <Amount value={BigInt(txInfo.data.gasPrice)} />
                   </td>
                 </tr>
                 <tr>
                   <td>Transaction Fee</td>
                   <td>
-                    <Amount
-                      value={JSBI.multiply(JSBI.BigInt(txInfo.data.gasPrice), JSBI.BigInt(txInfo.data.gasAmount))}
-                      showFullPrecision
-                    />
+                    <Amount value={BigInt(txInfo.data.gasPrice) * BigInt(txInfo.data.gasAmount)} showFullPrecision />
                   </td>
                 </tr>
                 <tr>
@@ -182,11 +184,7 @@ const TransactionInfoSection = () => {
                   <td>
                     <Badge
                       type="neutralHighlight"
-                      content={txInfo.data.outputs.reduce<JSBI>(
-                        (acc, o) => JSBI.add(acc, JSBI.BigInt(o.amount)),
-                        JSBI.BigInt(0)
-                      )}
-                      amount
+                      amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
                     />
                   </td>
                 </tr>
@@ -202,5 +200,7 @@ const TransactionInfoSection = () => {
     </Section>
   )
 }
+
+const isTxConfirmed = (tx: TransactionLike): tx is Transaction => true
 
 export default TransactionInfoSection

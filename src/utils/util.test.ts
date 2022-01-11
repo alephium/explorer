@@ -16,37 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import JSBI from 'jsbi'
-
-import { abbreviateAmount, removeTrailingZeros } from './amounts'
 import { checkAddressValidity, checkHexStringValidity, smartHash } from './strings'
-
-function alf(amount: JSBI): JSBI {
-  return JSBI.multiply(amount, JSBI.BigInt(1000000000000000000))
-}
-
-it('Should abbreviate amount', () => {
-  expect(abbreviateAmount(alf(JSBI.BigInt(-1)))).toEqual('0.00'),
-    expect(abbreviateAmount(JSBI.BigInt(0))).toEqual('0.00'),
-    expect(abbreviateAmount(JSBI.BigInt(1))).toEqual('0.000000000000000001'),
-    expect(abbreviateAmount(JSBI.BigInt(100000))).toEqual('0.0000000000001'),
-    expect(abbreviateAmount(JSBI.BigInt(1000000000))).toEqual('0.000000001'),
-    expect(abbreviateAmount(JSBI.BigInt(2000000000))).toEqual('0.000000002'),
-    expect(abbreviateAmount(JSBI.BigInt(2000000000000000))).toEqual('0.002'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1230)))).toEqual('1.230K'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1230000)))).toEqual('1.230M'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000)))).toEqual('1.230B'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000000)))).toEqual('1.230T'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1230000000000000)))).toEqual('1230.000T'),
-    expect(abbreviateAmount(alf(JSBI.BigInt(1)))).toEqual('1.00')
-})
-
-it('Should remove trailing zeros', () => {
-  expect(removeTrailingZeros('0.00010000')).toEqual('0.0001'),
-    expect(removeTrailingZeros('10000.000')).toEqual('10000.00'),
-    expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
-    expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
-})
 
 it('Should return a "smart hash"', () => {
   expect(smartHash('00002f884288e1f4')).toEqual('00002f884288e1f4'),

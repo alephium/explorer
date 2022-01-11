@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import JSBI from 'jsbi'
 import { FC } from 'react'
 
-import { abbreviateAmount } from '../utils/amounts'
+import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
 
 interface AmountProps {
-  value: JSBI | undefined
+  value: bigint | undefined
   className?: string
   showFullPrecision?: boolean
 }

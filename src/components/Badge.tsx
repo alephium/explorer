@@ -16,20 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import JSBI from 'jsbi'
 import { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 
-import { abbreviateAmount } from '../utils/amounts'
+import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
 import Amount from './Amount'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
 interface BadgeProps {
   type: BadgeType
-  content: JSX.Element | string | JSBI | undefined
+  content?: JSX.Element | string | undefined
   className?: string
-  amount?: boolean
+  amount?: string | bigint | undefined
   prefix?: string
   floatRight?: boolean
 }
@@ -38,11 +37,11 @@ let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, floatRight = 
   return (
     <div
       className={className}
-      data-tip={amount && content ? `${abbreviateAmount(JSBI.BigInt(content), true)} א` : null}
+      data-tip={amount ? `${abbreviateAmount(BigInt(amount), true)} א` : null}
       style={{ float: floatRight ? 'right' : 'left' }}
     >
       {prefix && <span>{prefix}</span>}
-      {amount && content ? <Amount value={JSBI.BigInt(content)} /> : content}
+      {amount ? <Amount value={BigInt(amount)} /> : content}
     </div>
   )
 }
