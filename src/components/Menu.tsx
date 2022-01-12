@@ -37,9 +37,7 @@ const Menu = ({
 
   return (
     <MenuContainer
-      onClick={() => setVisible(true)}
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
+      onClick={() => setVisible(!visible)}
       className={className}
       id="menu-container"
       onBlur={handleBlur}
