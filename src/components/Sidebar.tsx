@@ -45,7 +45,7 @@ const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
 
   const switchToNetwork = (network: string) => {
     if (networkType !== network) {
-      window.location.assign(isMainnet ? 'https://explorer.alephium.org' : `https://testnet.alephium.org`)
+      window.location.assign(isMainnet ? 'https://testnet.alephium.org' : 'https://explorer.alephium.org')
     }
   }
 
