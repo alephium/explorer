@@ -45,6 +45,7 @@ import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import { AlephClient, createClient } from './utils/client'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
+import NotificationBar from './components/NotificationBar'
 
 const networkTypes = ['testnet', 'mainnet'] as const
 export type NetworkType = typeof networkTypes[number]
@@ -362,9 +363,23 @@ const SnackbarPopup = styled(motion.div)`
   }
 `
 
+let browserIsOld = false
+
+try {
+  BigInt(1)
+} catch (e) {
+  browserIsOld = true
+}
+
 ReactDOM.render(
   <Router>
-    <App />
+    {!browserIsOld ? (
+      <App />
+    ) : (
+      <NotificationBar>
+        Your browser version appears to be out of date. To use our app, please update your browser.
+      </NotificationBar>
+    )}
   </Router>,
   document.getElementById('root')
 )
