@@ -149,30 +149,39 @@ const BlockInfoSection = () => {
                 </TableBody>
               </Table>
 
-              <SecondaryTitle>Transactions</SecondaryTitle>
-              {!txLoading && txList && txList.data && txList.status === 200 ? (
+              {blockInfo?.data?.mainChain ? (
                 <>
-                  <Table main hasDetails scrollable>
-                    <TableHeader
-                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total amount', '']}
-                      columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
-                      textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
-                    />
-                    <TableBody tdStyles={TXTableBodyCustomStyles}>
-                      {txList.data.map((t, i) => (
-                        <TransactionRow transaction={t} key={i} />
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <SecondaryTitle>Transactions</SecondaryTitle>
+                  {!txLoading && txList && txList.data && txList.status === 200 ? (
+                    <>
+                      <Table main hasDetails scrollable>
+                        <TableHeader
+                          headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total amount', '']}
+                          columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                          textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
+                        />
+                        <TableBody tdStyles={TXTableBodyCustomStyles}>
+                          {txList.data.map((t, i) => (
+                            <TransactionRow transaction={t} key={i} />
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </>
+                  ) : (
+                    <LoadingSpinner />
+                  )}
                 </>
               ) : (
-                <LoadingSpinner />
+                <>
+                  <SecondaryTitle>Orphan block</SecondaryTitle>
+                  <div>It appears that this block is not part of the main chain.</div>
+                </>
               )}
             </>
           ) : (
             <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
           )}
-          {txList && txList.data && blockInfo?.data?.txNumber && (
+          {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
             <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
           )}
         </>
