@@ -48,7 +48,11 @@ import {
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { getHumanReadableError } from '../utils/api'
+<<<<<<< HEAD
 import { APIResp } from '../utils/client'
+=======
+import Timestamp from '../components/Timestamp'
+>>>>>>> 78c8b2e (Centralise globally used types + add timestampPrecisionMode in GlobalContext)
 
 dayjs.extend(relativeTime)
 
@@ -236,7 +240,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
-        <td>{(t.timestamp && dayjs().to(t.timestamp)) || '-'}</td>
+        <td>{(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}</td>
         <td>
           <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
         </td>

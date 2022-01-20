@@ -30,11 +30,10 @@ import logoDark from '../images/explorer-logo-dark.svg'
 import logoLight from '../images/explorer-logo-light.svg'
 import transactionIcon from '../images/transaction-icon.svg'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
+import { SidebarState } from '../types/ui'
 import Menu from './Menu'
 import NetworkLogo from './NetworkLogo'
 import ThemeSwitcher, { StyledThemeSwitcher } from './ThemeSwitcher'
-
-export type SidebarState = 'open' | 'close'
 
 const Sidebar = ({ sidebarState }: { sidebarState: SidebarState }) => {
   const theme = useTheme()

@@ -220,8 +220,9 @@ const StyledTable = styled.table<TableProps>`
     }}
   }
 
-  td:nth-child(1) {
-    width: ${({ bodyOnly }) => (bodyOnly ? '27%' : 'auto')};
+  td {
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   tr td {

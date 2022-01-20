@@ -42,8 +42,8 @@ export function useStateWithLocalStorage<T extends string>(localStorageKey: stri
   const [value, setValue] = useState(localStorage.getItem(localStorageKey) || defaultValue)
 
   useEffect(() => {
-    localStorage.setItem(localStorageKey, value as T)
+    localStorage.setItem(localStorageKey, value)
   }, [localStorageKey, value])
 
-  return [value, setValue] as const
+  return [value as T, setValue] as const
 }
