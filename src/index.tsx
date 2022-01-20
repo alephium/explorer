@@ -44,6 +44,7 @@ import * as serviceWorker from './serviceWorker'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import { AlephClient, createClient } from './utils/client'
+import { useStateWithLocalStorage } from './utils/hooks'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
 
@@ -230,19 +231,6 @@ const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) 
       </AnimatePresence>
     </SnackbarManagerContainer>
   )
-}
-
-/* Custom hooks */
-// Local storage hook
-
-function useStateWithLocalStorage<T>(localStorageKey: string, defaultValue: T) {
-  const [value, setValue] = React.useState(localStorage.getItem(localStorageKey) || defaultValue)
-
-  React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value as string)
-  }, [localStorageKey, value])
-
-  return [value, setValue]
 }
 
 /* Styles */

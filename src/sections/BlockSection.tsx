@@ -35,6 +35,7 @@ import blockIcon from '../images/block-icon.svg'
 import { BlockList } from '../types/api'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
+import Timestamp from '../components/Timestamp'
 
 dayjs.extend(relativeTime)
 
@@ -117,7 +118,9 @@ const BlockSection = () => {
                   <td>
                     <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
-                  <td>{dayjs().to(b.timestamp)}</td>
+                  <td>
+                    <Timestamp timeInMs={b.timestamp} />
+                  </td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>
                   <td>
