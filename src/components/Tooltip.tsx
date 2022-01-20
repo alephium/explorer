@@ -24,10 +24,14 @@ interface TooltipProps {
   id?: string
 }
 
-const Tooltip: FC<TooltipProps> = ({ id }) => {
+const Tooltip: FC<TooltipProps> = ({ id, children }) => {
   const theme = useTheme()
 
-  return <ReactTooltip backgroundColor={theme.tooltip} id={id} />
+  return (
+    <ReactTooltip backgroundColor={theme.tooltip} id={id}>
+      {children}
+    </ReactTooltip>
+  )
 }
 
 export default Tooltip

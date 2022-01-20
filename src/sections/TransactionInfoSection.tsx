@@ -132,7 +132,7 @@ const TransactionInfoSection = () => {
                   <tr>
                     <td>Timestamp</td>
                     <td>
-                      <Timestamp timeInMs={txInfo.data.timestamp} fullPrecision />
+                      <Timestamp timeInMs={txInfo.data.timestamp} forceHighPrecision />
                     </td>
                   </tr>
                 )}

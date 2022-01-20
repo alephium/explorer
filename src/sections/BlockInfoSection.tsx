@@ -148,7 +148,7 @@ const BlockInfoSection = () => {
                   <tr>
                     <td>Timestamp</td>
                     <td>
-                      <Timestamp timeInMs={blockInfo.data.timestamp} fullPrecision />
+                      <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
                     </td>
                   </tr>
                 </TableBody>
