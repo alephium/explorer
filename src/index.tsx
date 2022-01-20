@@ -72,16 +72,16 @@ dayjs.updateLocale('en', {
   relativeTime: {
     future: 'in %s',
     past: '%s ago',
-    s: 'a few secs',
-    m: 'a min',
+    s: 'A few secs',
+    m: 'A min',
     mm: '%d mins',
-    h: 'an hour',
+    h: 'An hour',
     hh: '%d hours',
-    d: 'a day',
+    d: 'A day',
     dd: '%d days',
-    M: 'a month',
+    M: 'A month',
     MM: '%d months',
-    y: 'a year',
+    y: 'A year',
     yy: '%d years'
   }
 })

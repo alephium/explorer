@@ -17,6 +17,7 @@
 import dayjs from 'dayjs'
 import { MouseEvent, useContext } from 'react'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import ReactTooltip from 'react-tooltip'
 
 import { GlobalContext } from '..'
 
@@ -36,6 +37,7 @@ const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => 
     if (forceHighPrecision) return
     e.stopPropagation()
     setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
+    ReactTooltip.hide()
   }
 
   const highPrecisionTimestamp = dayjs(timeInMs).format('L LTS UTCZ')
@@ -48,7 +50,7 @@ const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => 
         data-tip={`
         ${isHighPrecision ? lowPrecisionTimestamp : highPrecisionTimestamp}
         <br/>
-        (${isHighPrecision ? 'Click for human friendly format' : 'Click for higher precision'})`}
+        (Click to change format)`}
         data-multiline
       >
         {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
