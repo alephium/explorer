@@ -49,8 +49,7 @@ const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => 
         onClick={handleTimestampClick}
         data-tip={`
         ${isHighPrecision ? lowPrecisionTimestamp : highPrecisionTimestamp}
-        <br/>
-        (Click to change format)`}
+        ${!forceHighPrecision ? '<br/>(Click to change format)' : ''}`}
         data-multiline
       >
         {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
