@@ -45,14 +45,11 @@ import {
   TableHeader,
   TDStyle
 } from '../components/Table'
+import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { getHumanReadableError } from '../utils/api'
-<<<<<<< HEAD
 import { APIResp } from '../utils/client'
-=======
-import Timestamp from '../components/Timestamp'
->>>>>>> 78c8b2e (Centralise globally used types + add timestampPrecisionMode in GlobalContext)
 
 dayjs.extend(relativeTime)
 

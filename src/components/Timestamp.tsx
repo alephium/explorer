@@ -7,19 +7,21 @@ dayjs.extend(localizedFormat)
 
 interface TimestampProps {
   timeInMs: number
+  fullPrecision?: boolean
 }
 
-const Timestamp = ({ timeInMs }: TimestampProps) => {
+const Timestamp = ({ timeInMs, fullPrecision = false }: TimestampProps) => {
   const { timestampPrecisionMode, setTimestampPrecisionMode } = useContext(GlobalContext)
 
   const handleTimestampClick = (e: MouseEvent<HTMLSpanElement>) => {
+    if (fullPrecision) return
     e.stopPropagation()
     setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
   }
 
   return (
     <span onClick={handleTimestampClick}>
-      {timestampPrecisionMode === 'on' ? dayjs(timeInMs).format('L LTS UTCZ') : dayjs().to(timeInMs)}
+      {timestampPrecisionMode === 'on' || fullPrecision ? dayjs(timeInMs).format('L LTS UTCZ') : dayjs().to(timeInMs)}
     </span>
   )
 }
