@@ -1,35 +1,38 @@
-// Copyright 2018 The Alephium Authors
-// This file is part of the alephium project.
-//
-// The library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the library. If not, see <http://www.gnu.org/licenses/>.
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
+
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 import dayjs from 'dayjs'
+import JSBI from 'jsbi'
+import { Check } from 'lucide-react'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+
 import { GlobalContext } from '..'
+import Amount from '../components/Amount'
+import Badge from '../components/Badge'
+import InlineErrorMessage from '../components/InlineErrorMessage'
+import { AddressLink, TightLink } from '../components/Links'
+import LoadingSpinner from '../components/LoadingSpinner'
+import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
+import { HighlightedCell, Table, TableBody } from '../components/Table'
 import { Transaction } from '../types/api'
 import { APIResp } from '../utils/client'
-import Badge from '../components/Badge'
-import { Table, TableBody, HighlightedCell } from '../components/Table'
-import { AddressLink, TightLink } from '../components/Links'
-import Section from '../components/Section'
-import LoadingSpinner from '../components/LoadingSpinner'
-import InlineErrorMessage from '../components/InlineErrorMessage'
-import JSBI from 'jsbi'
-import Amount from '../components/Amount'
-import { Check } from 'lucide-react'
 import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {

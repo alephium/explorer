@@ -1,45 +1,48 @@
-// Copyright 2018 The Alephium Authors
-// This file is part of the alephium project.
-//
-// The library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the library. If not, see <http://www.gnu.org/licenses/>.
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
 
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import ReactDOM from 'react-dom'
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import './index.css'
-import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
-import styled, { ThemeProvider } from 'styled-components'
-import { darkTheme, lightTheme, ThemeType } from './style/themes'
-import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
-import * as serviceWorker from './serviceWorker'
-import { ExplorerClient } from 'alephium-js'
 
-import { StyledThemeSwitcher } from './components/ThemeSwitcher'
-import Sidebar, { SidebarState } from './components/Sidebar'
-import SearchBar from './components/SearchBar'
-import BlockSection from './sections/BlockSection'
-import { AlephClient, createClient } from './utils/client'
-import BlockInfoSection from './sections/BlockInfoSection'
-import TransactionInfoSection from './sections/TransactionInfoSection'
-import AddressInfoSection from './sections/AddressInfoSection'
-import AddressesSection from './sections/AdressesSection'
-import TransactionsSection from './sections/TransactionsSection'
-import { AnimatePresence, motion } from 'framer-motion'
+import { ExplorerClient } from 'alephium-js'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Menu } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import ReactDOM from 'react-dom'
+import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
+import styled, { ThemeProvider } from 'styled-components'
+
+import SearchBar from './components/SearchBar'
+import Sidebar, { SidebarState } from './components/Sidebar'
+import { StyledThemeSwitcher } from './components/ThemeSwitcher'
+import AddressInfoSection from './sections/AddressInfoSection'
+import AddressesSection from './sections/AdressesSection'
+import BlockInfoSection from './sections/BlockInfoSection'
+import BlockSection from './sections/BlockSection'
+import TransactionInfoSection from './sections/TransactionInfoSection'
+import TransactionsSection from './sections/TransactionsSection'
+import * as serviceWorker from './serviceWorker'
+import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
+import { darkTheme, lightTheme, ThemeType } from './style/themes'
+import { AlephClient, createClient } from './utils/client'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
 
