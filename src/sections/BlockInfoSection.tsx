@@ -219,7 +219,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           <ArrowRight size={15} />
         </td>
         <td>
-          {t.outputs ? t.outputs.length : 0} {t.outputs && t.outputs.length === 1 ? 'address' : 'address'}
+          {t.outputs ? t.outputs.length : 0} {t.outputs && t.outputs.length === 1 ? 'address' : 'addresses'}
         </td>
         <td>
           <Badge
