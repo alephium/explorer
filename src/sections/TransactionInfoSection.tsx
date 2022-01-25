@@ -201,6 +201,8 @@ const TransactionInfoSection = () => {
   )
 }
 
-const isTxConfirmed = (tx: TransactionLike): tx is Transaction => true
+const isTxConfirmed = (tx: TransactionLike): tx is Transaction => {
+  return (tx as Transaction).blockHash !== undefined
+}
 
 export default TransactionInfoSection
