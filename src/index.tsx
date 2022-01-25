@@ -367,7 +367,7 @@ let browserIsOld = false
 
 try {
   BigInt(1)
-} catch (e) {
+} catch {
   browserIsOld = true
 }
 
