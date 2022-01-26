@@ -44,17 +44,15 @@ const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => 
   const lowPrecisionTimestamp = dayjs().to(timeInMs)
 
   return (
-    <>
-      <span
-        onClick={handleTimestampClick}
-        data-tip={`
+    <span
+      onClick={handleTimestampClick}
+      data-tip={`
         ${isHighPrecision ? lowPrecisionTimestamp : highPrecisionTimestamp}
         ${!forceHighPrecision ? '<br/>(Click to change format)' : ''}`}
-        data-multiline
-      >
-        {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
-      </span>
-    </>
+      data-multiline
+    >
+      {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
+    </span>
   )
 }
 
