@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Transaction } from 'alephium-js/dist/api/api-explorer'
+
 import { Address, Block, BlockList } from '../types/api'
 
 export interface APIData<T> {

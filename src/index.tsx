@@ -30,6 +30,7 @@ import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
+import NotificationBar from './components/NotificationBar'
 import SearchBar from './components/SearchBar'
 import Sidebar, { SidebarState } from './components/Sidebar'
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
@@ -45,7 +46,6 @@ import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import { AlephClient, createClient } from './utils/client'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
-import NotificationBar from './components/NotificationBar'
 
 const networkTypes = ['testnet', 'mainnet'] as const
 export type NetworkType = typeof networkTypes[number]

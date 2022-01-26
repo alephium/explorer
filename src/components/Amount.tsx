@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
-
 import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
+import { FC } from 'react'
 
 interface AmountProps {
   value: bigint | undefined

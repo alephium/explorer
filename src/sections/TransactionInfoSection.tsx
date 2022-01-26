@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TransactionLike, Transaction, Output, UOutput } from 'alephium-js/dist/api/api-explorer'
+import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/dist/api/api-explorer'
 import dayjs from 'dayjs'
 import { Check } from 'lucide-react'
 import { useCallback, useContext, useEffect, useState } from 'react'
