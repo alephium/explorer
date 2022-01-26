@@ -1,26 +1,29 @@
-// Copyright 2018 The Alephium Authors
-// This file is part of the alephium project.
-//
-// The library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the library. If not, see <http://www.gnu.org/licenses/>.
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
 
-import React, { FC } from 'react'
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import JSBI from 'jsbi'
 import { ExternalLink } from 'lucide-react'
+import React, { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
-import Amount from './Amount'
+
 import { smartHash } from '../utils/strings'
-import JSBI from 'jsbi'
+import Amount from './Amount'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string

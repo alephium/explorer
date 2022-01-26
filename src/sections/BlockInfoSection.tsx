@@ -1,50 +1,53 @@
-// Copyright 2018 The Alephium Authors
-// This file is part of the alephium project.
-//
-// The library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the library. If not, see <http://www.gnu.org/licenses/>.
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
+
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
 
 import dayjs from 'dayjs'
+import JSBI from 'jsbi'
+import { ArrowRight } from 'lucide-react'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
+
 import { GlobalContext } from '..'
+import Amount from '../components/Amount'
+import Badge from '../components/Badge'
+import InlineErrorMessage from '../components/InlineErrorMessage'
+import { AddressLink, TightLink } from '../components/Links'
+import LoadingSpinner from '../components/LoadingSpinner'
+import PageSwitch from '../components/PageSwitch'
+import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import {
-  Table,
-  TableHeader,
-  TDStyle,
-  TableBody,
-  HighlightedCell,
   AnimatedCell,
   DetailsRow,
+  DetailToggle,
+  HighlightedCell,
   Row,
-  DetailToggle
+  Table,
+  TableBody,
+  TableHeader,
+  TDStyle
 } from '../components/Table'
-import { Block, Transaction } from '../types/api'
-import transactionIcon from '../images/transaction-icon.svg'
-import { AddressLink, TightLink } from '../components/Links'
-import { ArrowRight } from 'lucide-react'
-import Badge from '../components/Badge'
-import { APIResp } from '../utils/client'
-import Amount from '../components/Amount'
-import Section from '../components/Section'
-import useTableDetailsState from '../hooks/useTableDetailsState'
-import LoadingSpinner from '../components/LoadingSpinner'
-import InlineErrorMessage from '../components/InlineErrorMessage'
-import JSBI from 'jsbi'
-import PageSwitch from '../components/PageSwitch'
 import usePageNumber from '../hooks/usePageNumber'
+import useTableDetailsState from '../hooks/useTableDetailsState'
+import transactionIcon from '../images/transaction-icon.svg'
+import { Block, Transaction } from '../types/api'
+import { APIResp } from '../utils/client'
 
 interface ParamTypes {
   id: string

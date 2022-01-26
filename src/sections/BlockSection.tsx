@@ -1,36 +1,39 @@
-// Copyright 2018 The Alephium Authors
-// This file is part of the alephium project.
-//
-// The library is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// The library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with the library. If not, see <http://www.gnu.org/licenses/>.
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
 
-import { useCallback, useContext, useEffect, useState } from 'react'
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import dayjs from 'dayjs'
-import styled, { css } from 'styled-components'
-import SectionTitle from '../components/SectionTitle'
-import { BlockList } from '../types/api'
-import blockIcon from '../images/block-icon.svg'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import LoadingSpinner from '../components/LoadingSpinner'
-import { GlobalContext } from '..'
-import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
-import { TightLink } from '../components/Links'
-import Section from '../components/Section'
 import { motion } from 'framer-motion'
-import { APIResp } from '../utils/client'
-import PageSwitch from '../components/PageSwitch'
-import usePageNumber from '../hooks/usePageNumber'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import styled, { css } from 'styled-components'
+
+import { GlobalContext } from '..'
+import { TightLink } from '../components/Links'
+import LoadingSpinner from '../components/LoadingSpinner'
+import PageSwitch from '../components/PageSwitch'
+import Section from '../components/Section'
+import SectionTitle from '../components/SectionTitle'
+import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
+import usePageNumber from '../hooks/usePageNumber'
+import blockIcon from '../images/block-icon.svg'
+import { BlockList } from '../types/api'
+import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
 dayjs.extend(relativeTime)
