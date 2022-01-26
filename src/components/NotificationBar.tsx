@@ -16,21 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
 import { FC } from 'react'
+import styled from 'styled-components'
 
-interface AmountProps {
-  value: bigint | undefined
-  className?: string
-  showFullPrecision?: boolean
+let NotificationBar: FC<{ className?: string }> = ({ className, children }) => {
+  return <div className={className}>{children}</div>
 }
 
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
-  if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
-  }
-}
+NotificationBar = styled(NotificationBar)`
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+  padding: 20px;
+`
 
-export default Amount
+export default NotificationBar

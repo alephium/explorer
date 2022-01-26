@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import JSBI from 'jsbi'
 import { ExternalLink } from 'lucide-react'
 import React, { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
@@ -60,7 +59,7 @@ interface AddressLinkProps {
   maxWidth?: string
   address: string
   txHashRef?: string
-  amount?: JSBI
+  amount?: bigint
 }
 
 export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {

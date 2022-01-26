@@ -30,6 +30,7 @@ import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
+import NotificationBar from './components/NotificationBar'
 import SearchBar from './components/SearchBar'
 import Sidebar, { SidebarState } from './components/Sidebar'
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
@@ -362,9 +363,23 @@ const SnackbarPopup = styled(motion.div)`
   }
 `
 
+let browserIsOld = false
+
+try {
+  BigInt(1)
+} catch {
+  browserIsOld = true
+}
+
 ReactDOM.render(
   <Router>
-    <App />
+    {!browserIsOld ? (
+      <App />
+    ) : (
+      <NotificationBar>
+        Your browser version appears to be out of date. To use our app, please update your browser.
+      </NotificationBar>
+    )}
   </Router>,
   document.getElementById('root')
 )
