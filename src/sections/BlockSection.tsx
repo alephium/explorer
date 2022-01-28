@@ -30,12 +30,12 @@ import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
+import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import blockIcon from '../images/block-icon.svg'
 import { BlockList } from '../types/api'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
-import Timestamp from '../components/Timestamp'
 
 dayjs.extend(relativeTime)
 
