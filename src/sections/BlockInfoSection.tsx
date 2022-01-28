@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Transaction } from 'alephium-js/dist/api/api-explorer'
-import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useContext, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -43,6 +42,7 @@ import {
   TableHeader,
   TDStyle
 } from '../components/Table'
+import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
@@ -147,7 +147,9 @@ const BlockInfoSection = () => {
                   </tr>
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(blockInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    <td>
+                      <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
+                    </td>
                   </tr>
                 </TableBody>
               </Table>
@@ -159,7 +161,7 @@ const BlockInfoSection = () => {
                     <>
                       <Table main hasDetails scrollable>
                         <TableHeader
-                          headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total amount', '']}
+                          headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
                           columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                           textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                         />

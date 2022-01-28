@@ -16,22 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
-import ReactTooltip from 'react-tooltip'
-import { useTheme } from 'styled-components'
-
-interface TooltipProps {
-  id?: string
+export interface SnackbarMessage {
+  text: string
+  type: 'info' | 'alert' | 'success'
+  duration?: number
 }
 
-const Tooltip: FC<TooltipProps> = ({ id, children }) => {
-  const theme = useTheme()
-
-  return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id}>
-      {children}
-    </ReactTooltip>
-  )
-}
-
-export default Tooltip
+export type SidebarState = 'open' | 'close'

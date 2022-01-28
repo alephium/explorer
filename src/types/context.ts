@@ -16,22 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
-import ReactTooltip from 'react-tooltip'
-import { useTheme } from 'styled-components'
+import { ExplorerClient } from 'alephium-js'
 
-interface TooltipProps {
-  id?: string
+import { ThemeType } from '../style/themes'
+import { AlephClient } from '../utils/client'
+import { OnOff } from './generics'
+import { NetworkType } from './network'
+import { SidebarState, SnackbarMessage } from './ui'
+
+export interface GlobalContextInterface {
+  client: AlephClient | undefined
+  explorerClient: ExplorerClient | undefined
+  networkType: NetworkType | undefined
+  currentTheme: ThemeType
+  sidebarState: 'open' | 'close'
+  setSidebarState: (state: SidebarState) => void
+  switchTheme: (arg0: ThemeType) => void
+  setSnackbarMessage: (message: SnackbarMessage) => void
+  timestampPrecisionMode: OnOff
+  setTimestampPrecisionMode: (status: OnOff) => void
 }
-
-const Tooltip: FC<TooltipProps> = ({ id, children }) => {
-  const theme = useTheme()
-
-  return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id}>
-      {children}
-    </ReactTooltip>
-  )
-}
-
-export default Tooltip

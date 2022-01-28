@@ -30,6 +30,7 @@ import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
+import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import blockIcon from '../images/block-icon.svg'
 import { BlockList } from '../types/api'
@@ -117,7 +118,9 @@ const BlockSection = () => {
                   <td>
                     <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
-                  <td>{dayjs().to(b.timestamp)}</td>
+                  <td>
+                    <Timestamp timeInMs={b.timestamp} />
+                  </td>
                   <td>{b.height}</td>
                   <td>{b.txNumber}</td>
                   <td>

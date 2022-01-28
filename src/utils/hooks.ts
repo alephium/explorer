@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useInterval(callback: () => void, delay: number, shouldPause = false) {
   const savedCallback = useRef<() => void>(() => null)
@@ -36,4 +36,14 @@ export function useInterval(callback: () => void, delay: number, shouldPause = f
       return () => clearInterval(id)
     }
   }, [delay, shouldPause])
+}
+
+export function useStateWithLocalStorage<T extends string>(localStorageKey: string, defaultValue: T) {
+  const [value, setValue] = useState(localStorage.getItem(localStorageKey) || defaultValue)
+
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, value)
+  }, [localStorageKey, value])
+
+  return [value as T, setValue] as const
 }

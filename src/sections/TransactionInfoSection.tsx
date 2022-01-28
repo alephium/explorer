@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/dist/api/api-explorer'
-import dayjs from 'dayjs'
 import { Check } from 'lucide-react'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -31,6 +30,7 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
 import { HighlightedCell, Table, TableBody } from '../components/Table'
+import Timestamp from '../components/Timestamp'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
@@ -131,7 +131,9 @@ const TransactionInfoSection = () => {
                 {isTxConfirmed(txInfo.data) && txInfo.data.timestamp && (
                   <tr>
                     <td>Timestamp</td>
-                    <td>{dayjs(txInfo.data.timestamp).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    <td>
+                      <Timestamp timeInMs={txInfo.data.timestamp} forceHighPrecision />
+                    </td>
                   </tr>
                 )}
                 {isTxConfirmed(txInfo.data) && (

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import { NetworkType } from '..'
+import { NetworkType } from '../types/network'
 
 interface NetworkLogoProps {
   network: NetworkType

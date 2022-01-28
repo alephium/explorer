@@ -32,7 +32,7 @@ import styled, { ThemeProvider } from 'styled-components'
 
 import NotificationBar from './components/NotificationBar'
 import SearchBar from './components/SearchBar'
-import Sidebar, { SidebarState } from './components/Sidebar'
+import Sidebar from './components/Sidebar'
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
@@ -43,31 +43,16 @@ import TransactionsSection from './sections/TransactionsSection'
 import * as serviceWorker from './serviceWorker'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import { darkTheme, lightTheme, ThemeType } from './style/themes'
+import { GlobalContextInterface } from './types/context'
+import { OnOff } from './types/generics'
+import { NetworkType, networkTypes } from './types/network'
+import { SidebarState, SnackbarMessage } from './types/ui'
 import { AlephClient, createClient } from './utils/client'
+import { useStateWithLocalStorage } from './utils/hooks'
 import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
 
-const networkTypes = ['testnet', 'mainnet'] as const
-export type NetworkType = typeof networkTypes[number]
-
-interface SnackbarMessage {
-  text: string
-  type: 'info' | 'alert' | 'success'
-  duration?: number
-}
-
-interface GlobalContext {
-  client: AlephClient | undefined
-  explorerClient: ExplorerClient | undefined
-  networkType: NetworkType | undefined
-  currentTheme: ThemeType
-  sidebarState: 'open' | 'close'
-  setSidebarState: (state: SidebarState) => void
-  switchTheme: (arg0: ThemeType) => void
-  setSnackbarMessage: (message: SnackbarMessage) => void
-}
-
-export const GlobalContext = React.createContext<GlobalContext>({
+export const GlobalContext = React.createContext<GlobalContextInterface>({
   client: undefined,
   explorerClient: undefined,
   networkType: undefined,
@@ -75,7 +60,9 @@ export const GlobalContext = React.createContext<GlobalContext>({
   sidebarState: 'open',
   setSidebarState: () => null,
   switchTheme: () => null,
-  setSnackbarMessage: () => null
+  setSnackbarMessage: () => null,
+  timestampPrecisionMode: 'off',
+  setTimestampPrecisionMode: () => null
 })
 
 /* Customize data format accross the app */
@@ -85,16 +72,16 @@ dayjs.updateLocale('en', {
   relativeTime: {
     future: 'in %s',
     past: '%s ago',
-    s: 'a few secs',
-    m: 'a min',
+    s: 'A few secs',
+    m: 'A min',
     mm: '%d mins',
-    h: 'an hour',
+    h: 'An hour',
     hh: '%d hours',
-    d: 'a day',
+    d: 'A day',
     dd: '%d days',
-    M: 'a month',
+    M: 'A month',
     MM: '%d months',
-    y: 'a year',
+    y: 'A year',
     yy: '%d years'
   }
 })
@@ -106,6 +93,10 @@ const App = () => {
   const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [sidebarState, setSidebarState] = useState<SidebarState>('close')
+  const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
+    'timestampPrecisionMode',
+    'off'
+  )
 
   const contentRef = useRef(null)
 
@@ -157,7 +148,9 @@ const App = () => {
             switchTheme: setThemeName as (arg0: ThemeType) => void,
             sidebarState: 'close',
             setSidebarState: setSidebarState,
-            setSnackbarMessage
+            setSnackbarMessage,
+            timestampPrecisionMode,
+            setTimestampPrecisionMode
           }}
         >
           <MainContainer>
@@ -230,19 +223,6 @@ const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) 
       </AnimatePresence>
     </SnackbarManagerContainer>
   )
-}
-
-/* Custom hooks */
-// Local storage hook
-
-function useStateWithLocalStorage<T>(localStorageKey: string, defaultValue: T) {
-  const [value, setValue] = React.useState(localStorage.getItem(localStorageKey) || defaultValue)
-
-  React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value as string)
-  }, [localStorageKey, value])
-
-  return [value, setValue]
 }
 
 /* Styles */
