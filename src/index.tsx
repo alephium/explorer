@@ -22,7 +22,6 @@ import { ExplorerClient } from 'alephium-js'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Menu } from 'lucide-react'
 import { ArrowLeft } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
@@ -30,9 +29,8 @@ import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
+import AppHeader from './components/AppHeader'
 import NotificationBar from './components/NotificationBar'
-import SearchBar from './components/SearchBar'
-import Sidebar from './components/Sidebar'
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
@@ -49,7 +47,6 @@ import { NetworkType, networkTypes } from './types/network'
 import { SidebarState, SnackbarMessage } from './types/ui'
 import { AlephClient, createClient } from './utils/client'
 import { useStateWithLocalStorage } from './utils/hooks'
-import { isElectron } from './utils/misc'
 import { ScrollToTop } from './utils/routing'
 
 export const GlobalContext = React.createContext<GlobalContextInterface>({
@@ -154,25 +151,11 @@ const App = () => {
           }}
         >
           <MainContainer>
-            <Sidebar sidebarState={sidebarState} />
+            <AppHeader />
             <ContentContainer>
               <ContentWrapper ref={contentRef}>
                 <ScrollToTop getScrollContainer={getContentRef} />
-                <Header>
-                  <HamburgerButton onClick={() => setSidebarState('open')}>
-                    <Menu />
-                  </HamburgerButton>
-                  {isElectron() && (
-                    <nav>
-                      <BackButton
-                        size={20}
-                        onClick={() => history.goBack()}
-                        color={themeName === 'light' ? 'black' : 'white'}
-                      />
-                    </nav>
-                  )}
-                  <SearchBar />
-                </Header>
+
                 <Content>
                   <Route exact path="/">
                     <Redirect to="/blocks" />
@@ -234,6 +217,7 @@ const MainContainer = styled.div`
   left: 0;
   bottom: 0;
   display: flex;
+  flex-direction: column;
   overflow: hidden;
 `
 
@@ -266,23 +250,6 @@ const Content = styled.div`
   padding: 0 min(5vw, 50px);
   margin-top: 20px;
   margin-bottom: 40px;
-`
-
-const Header = styled.header`
-  display: flex;
-  align-items: center;
-  margin: 25px 40px;
-  z-index: 1;
-
-  @media ${deviceBreakPoints.mobile} {
-    margin: 10px;
-  }
-
-  ${StyledThemeSwitcher} {
-    @media ${deviceBreakPoints.mobile} {
-      display: none;
-    }
-  }
 `
 
 const HamburgerButton = styled.div`

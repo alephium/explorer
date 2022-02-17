@@ -108,9 +108,9 @@ const SearchBar = () => {
 }
 
 const Container = styled.div`
-  flex: 1;
   position: relative;
   height: 45px;
+  width: 50%;
 
   @media ${deviceBreakPoints.mobile} {
     right: 10px;
