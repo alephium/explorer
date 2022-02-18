@@ -22,7 +22,7 @@ export type ThemeType = 'light' | 'dark'
 
 export const darkTheme: DefaultTheme = {
   name: 'dark',
-  body: '#0D0D0E',
+  body: '#141417',
 
   textPrimary: 'rgba(255, 255, 255, 0.8)',
   textSecondary: 'rgba(255, 255, 255, 0.35)',
@@ -31,13 +31,14 @@ export const darkTheme: DefaultTheme = {
   link: '#53A9F5',
   linkHighlight: '#0E82E7',
 
-  bgPrimary: '#212126',
-  bgSecondary: '#131416',
-  bgHighlight: 'rgba(255, 255, 255, 0.08)',
-  bgHover: 'rgba(255, 255, 255, 0.04)',
+  bgPrimary: '#19191E',
+  bgSecondary: '#141417',
+  bgTertiary: '#101012',
+  bgHighlight: 'rgba(255, 255, 255, 0.04)',
+  bgHover: 'rgba(255, 255, 255, 0.01)',
 
-  borderPrimary: '#ffffff1f',
-  borderSecondary: '#27282d',
+  borderPrimary: 'rgba(255, 255, 255, 0.08)',
+  borderSecondary: 'rgba(255, 255, 255, 0.05)',
   borderHighlight: '#585962',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
@@ -58,6 +59,7 @@ export const lightTheme: DefaultTheme = {
 
   bgPrimary: 'white',
   bgSecondary: '#f7f7f7',
+  bgTertiary: '#f7f7f7',
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 

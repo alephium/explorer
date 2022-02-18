@@ -23,7 +23,11 @@ import { GlobalContext } from '..'
 import Menu from './Menu'
 import NetworkLogo from './NetworkLogo'
 
-const NetworkSwitch = () => {
+interface NetworkSwitchProps {
+  className?: string
+}
+
+const NetworkSwitch = ({ className }: NetworkSwitchProps) => {
   const { networkType } = useContext(GlobalContext)
 
   const isMainnet = networkType === 'mainnet'
@@ -51,12 +55,13 @@ const NetworkSwitch = () => {
         }
       ]}
       direction="down"
+      className={className}
     />
   )
 }
 
 export default styled(NetworkSwitch)`
-  border-width: 1px 0;
-  border-style: solid;
-  border-color: ${({ theme }) => theme.borderSecondary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  border-radius: 7px;
+  background-color: ${({ theme }) => theme.bgTertiary};
 `

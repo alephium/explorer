@@ -178,9 +178,11 @@ export const HighlightedCell: FC<{ textToCopy?: string; qrCodeContent?: string }
 // ===
 
 const TableWrapper = styled.div<TableProps>`
-  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderSecondary}`};
   overflow: hidden;
   border-radius: 7px;
+  line-height: initial;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
 `
 
 const StyledTable = styled.table<TableProps>`
@@ -229,6 +231,11 @@ const StyledTable = styled.table<TableProps>`
     padding: 12px;
   }
 
+  th:first-child,
+  td:first-child {
+    padding-left: 20px;
+  }
+
   tr:not(.details) td {
     height: 45px;
   }
@@ -238,14 +245,16 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tbody {
+    background-color: ${({ theme }) => theme.bgPrimary};
+
     tr:not(:last-child) {
       border-bottom: ${({ hasDetails, noBorder, theme }) =>
-        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderPrimary}`) : ''};
+        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderSecondary}`) : ''};
     }
 
     tr.details {
       &:not(:last-child) {
-        border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+        border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
       }
       box-shadow: inset 0 1px 0 ${({ theme }) => theme.borderSecondary};
       background-color: ${({ theme }) => theme.bgHighlight};
@@ -274,12 +283,12 @@ export const StyledTableHeader = styled.thead<StyledTableHeaderProps>`
         return `
 					position: sticky;
 					top: 0;
-					box-shadow: inset 0 -1px 0 ${theme.borderPrimary};
+					box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
 					padding: 12px;
 				`
       }
     }}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgSecondary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
   }
 
   tr {

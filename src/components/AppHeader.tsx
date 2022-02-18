@@ -44,10 +44,7 @@ const AppHeader = ({ className }: AppHeaderProps) => {
 }
 
 const Logo = styled.img`
-  height: 100px;
   width: 140px;
-  margin-top: 5px;
-  margin-left: 25px;
 
   @media ${deviceBreakPoints.tablet} {
     width: 150px;
@@ -55,10 +52,9 @@ const Logo = styled.img`
 `
 
 export default styled(AppHeader)`
-  height: 60px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 20px 0;
+  padding: 15px 30px;
   gap: 5vw;
 `

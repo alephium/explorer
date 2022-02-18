@@ -134,10 +134,10 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 7px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
-  background: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bgTertiary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
   transition: all 0.15s ease-out;
   z-index: 10;

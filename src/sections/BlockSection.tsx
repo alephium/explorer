@@ -32,7 +32,6 @@ import SectionTitle from '../components/SectionTitle'
 import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
 import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
-import blockIcon from '../images/block-icon.svg'
 import { BlockList } from '../types/api'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
@@ -98,8 +97,8 @@ const BlockSection = () => {
         <Content>
           <Table main scrollable>
             <TableHeader
-              headerTitles={['', 'Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-              columnWidths={['50px', '20%', '20%', '20%', '20%', '20%']}
+              headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+              columnWidths={['20%', '20%', '20%', '20%', '20%']}
             />
             <TableBody tdStyles={TableBodyCustomStyles}>
               {blockList?.blocks.map((b) => (
@@ -112,9 +111,6 @@ const BlockSection = () => {
                     history.push(`blocks/${b.hash}`)
                   }}
                 >
-                  <td>
-                    <BlockIcon src={blockIcon} alt="Block" />
-                  </td>
                   <td>
                     <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
                   </td>
@@ -155,17 +151,17 @@ const PollingLoadingSpinner = styled.div`
 
 const TableBodyCustomStyles: TDStyle[] = [
   {
-    tdPos: 1,
-    style: css`
-      text-align: center;
-      text-align: -webkit-center;
-    `
-  },
-  {
-    tdPos: 4,
+    tdPos: 3,
     style: css`
       font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
+      font-weight: 400;
+    `
+  },
+  {
+    tdPos: 3,
+    style: css`
+      font-family: 'Roboto Mono', monospace;
       font-weight: 400;
     `
   },
@@ -179,13 +175,6 @@ const TableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 5,
     style: css`
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 400;
-    `
-  },
-  {
-    tdPos: 6,
-    style: css`
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -195,11 +184,6 @@ const TableBodyCustomStyles: TDStyle[] = [
 
 const BlockRow = styled(motion.tr)`
   cursor: pointer;
-`
-
-const BlockIcon = styled.img`
-  height: 20px;
-  width: 20px;
 `
 
 export default BlockSection

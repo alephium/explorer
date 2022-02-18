@@ -104,8 +104,9 @@ const MenuCurrentContent = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 15px;
   cursor: pointer;
+  gap: 15px;
 
   &:hover {
     background-color: ${({ theme }) => theme.borderSecondary};
@@ -114,17 +115,15 @@ const MenuCurrentContent = styled.div`
 
 const Label = styled.span`
   color: ${({ theme }) => theme.textPrimary};
+  line-height: initial;
   flex: 1;
 `
 
-const IconContainer = styled.div`
-  margin-right: 20px;
-`
+const IconContainer = styled.div``
 
 const MenuItemsContainer = styled(motion.div)`
   position: absolute;
-  width: calc(100% - 10px);
-  margin-left: 5px;
+  width: 100%;
   z-index: 10000;
   overflow: hidden;
   border-radius: 7px;

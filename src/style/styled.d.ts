@@ -35,6 +35,7 @@ declare module 'styled-components' {
 
     bgPrimary: string
     bgSecondary: string
+    bgTertiary: string
     bgHighlight: string
     bgHover: string
 
