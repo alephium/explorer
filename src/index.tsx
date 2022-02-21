@@ -48,6 +48,7 @@ import { SidebarState, SnackbarMessage } from './types/ui'
 import { AlephClient, createClient } from './utils/client'
 import { useStateWithLocalStorage } from './utils/hooks'
 import { ScrollToTop } from './utils/routing'
+import AppFooter from './components/AppFooter'
 
 export const GlobalContext = React.createContext<GlobalContextInterface>({
   client: undefined,
@@ -181,6 +182,7 @@ const App = () => {
                 </Content>
               </ContentWrapper>
             </ContentContainer>
+            <AppFooter />
             <SnackbarManager message={snackbarMessage} />
           </MainContainer>
         </GlobalContext.Provider>
@@ -218,7 +220,6 @@ const MainContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 `
 
 const ContentContainer = styled.div`
@@ -226,8 +227,6 @@ const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  overflow-y: auto;
-  overflow-x: hidden;
 `
 
 const ContentWrapper = styled.main`

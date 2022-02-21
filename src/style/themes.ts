@@ -34,8 +34,8 @@ export const darkTheme: DefaultTheme = {
   bgPrimary: '#19191E',
   bgSecondary: '#141417',
   bgTertiary: '#101012',
-  bgHighlight: 'rgba(255, 255, 255, 0.04)',
-  bgHover: 'rgba(255, 255, 255, 0.01)',
+  bgHighlight: 'rgba(255, 255, 255, 0.01)',
+  bgHover: 'rgb(28 28 33)',
 
   borderPrimary: 'rgba(255, 255, 255, 0.08)',
   borderSecondary: 'rgba(255, 255, 255, 0.05)',

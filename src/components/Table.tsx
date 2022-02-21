@@ -182,7 +182,7 @@ const TableWrapper = styled.div<TableProps>`
   overflow: hidden;
   border-radius: 7px;
   line-height: initial;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 `
 
 const StyledTable = styled.table<TableProps>`

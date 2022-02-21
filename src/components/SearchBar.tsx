@@ -139,6 +139,7 @@ const SearchInput = styled.input`
   color: ${({ theme }) => theme.textPrimary};
   background-color: ${({ theme }) => theme.bgTertiary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
+  box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.25);
   transition: all 0.15s ease-out;
   z-index: 10;
 

@@ -98,6 +98,11 @@ const MenuContainer = styled.div`
   position: relative;
   height: ${menuHeight};
   display: flex;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
+
+  &:hover {
+    background-color: ${({ theme }) => theme.bgHover};
+  }
 `
 
 const MenuCurrentContent = styled.div`
@@ -107,10 +112,6 @@ const MenuCurrentContent = styled.div`
   padding: 0 15px;
   cursor: pointer;
   gap: 15px;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.borderSecondary};
-  }
 `
 
 const Label = styled.span`
@@ -127,7 +128,7 @@ const MenuItemsContainer = styled(motion.div)`
   z-index: 10000;
   overflow: hidden;
   border-radius: 7px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
 `
 
 const MenuItemsList = styled.div`

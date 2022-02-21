@@ -86,7 +86,7 @@ const BlockSection = () => {
   return (
     <Section>
       <TitleAndLoader>
-        <SectionTitle title="Blocks" />
+        <SectionTitle title="Latest Blocks" />
         {loading && !manualLoading && (
           <PollingLoadingSpinner>
             <LoadingSpinner size={12} /> Loading...
