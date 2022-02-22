@@ -156,7 +156,7 @@ const TransactionInfoSection = () => {
           <>
             <TableHeader
               headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-              columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}
+              columnWidths={['15%', '130px', '80px', '25%', '120px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody>
@@ -238,7 +238,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         </td>
         <td>{(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}</td>
         <td>
-          <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
+          <Badge type="neutral" content={isOut ? 'To' : 'From'} floatRight minWidth={60} />
         </td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td>

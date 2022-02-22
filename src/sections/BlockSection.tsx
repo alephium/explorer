@@ -135,25 +135,12 @@ const Content = styled.div`
   margin-top: 30px;
 `
 
-const PollingLoadingSpinner = styled.div`
-  position: absolute;
-  bottom: -25px;
-  color: ${({ theme }) => theme.textSecondary};
-`
-
 const TableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 3,
     style: css`
       font-family: 'Roboto Mono', monospace;
       color: ${({ theme }) => theme.textAccent};
-      font-weight: 400;
-    `
-  },
-  {
-    tdPos: 3,
-    style: css`
-      font-family: 'Roboto Mono', monospace;
       font-weight: 400;
     `
   },

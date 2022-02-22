@@ -31,14 +31,15 @@ interface BadgeProps {
   amount?: string | bigint | undefined
   prefix?: string
   floatRight?: boolean
+  minWidth?: number
 }
 
-let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, floatRight = false }) => {
+let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, minWidth, floatRight = false }) => {
   return (
     <div
       className={className}
       data-tip={amount ? `${abbreviateAmount(BigInt(amount), true)} א` : null}
-      style={{ float: floatRight ? 'right' : 'left' }}
+      style={{ float: floatRight ? 'right' : 'left', minWidth }}
     >
       {prefix && <span>{prefix}</span>}
       {amount ? <Amount value={BigInt(amount)} /> : content}
@@ -60,8 +61,8 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       color = 'rgba(243, 113, 93, 1)'
       break
     case 'neutral':
-      backgroundColor = theme.name === 'dark' ? 'rgba(101, 16, 247, 0.28)' : 'rgba(101, 16, 247, 0.6)'
-      color = theme.name === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 1)'
+      backgroundColor = theme.bgTertiary
+      color = theme.textPrimary
       break
     case 'neutralHighlight':
       backgroundColor = 'rgba(101, 16, 247, 1)'
