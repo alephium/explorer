@@ -41,5 +41,5 @@ const AmountDelta: FC<AmountDeltaProps> = ({ value, showFullPrecision, className
 }
 
 export default styled(AmountDelta)`
-  font-weight: 800;
+  font-weight: 600;
 `

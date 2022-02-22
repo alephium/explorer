@@ -21,10 +21,10 @@ import { calAmountDelta } from 'alephium-js/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
-import { ArrowRight } from 'lucide-react'
+import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
 import { FC, useContext, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import { GlobalContext } from '..'
 import AmountDelta from '../components/AmountDelta'
@@ -156,9 +156,9 @@ const TransactionInfoSection = () => {
         {txList && txList.data && txList.status === 200 && txList.data.length ? (
           <>
             <TableHeader
-              headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-              columnWidths={['15%', '130px', '80px', '25%', '120px', '30px']}
-              textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
+              headerTitles={['', 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+              columnWidths={['20px', '15%', '100px', '80px', '25%', '120px', '30px']}
+              textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
               {txList.data
@@ -186,6 +186,7 @@ interface AddressTransactionRowProps {
 }
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, addressId }) => {
+  const theme = useTheme()
   const t = transaction
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
@@ -231,9 +232,18 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
     }
   }
 
+  const directionIconSize = 18
+
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+        <td>
+          {isOut ? (
+            <ArrowUpCircle size={directionIconSize} />
+          ) : (
+            <ArrowDownCircle size={directionIconSize} color={theme.valid} />
+          )}
+        </td>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
@@ -248,7 +258,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
-        <AnimatedCell colSpan={6}>
+        <AnimatedCell colSpan={7}>
           <Table>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
             <TableBody>
@@ -290,22 +300,16 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,
     style: css`
-      font-weight: 500;
-    `
-  },
-  {
-    tdPos: 5,
-    style: css`
-      float: right;
+      font-weight: 600;
     `
   }
 ]
 
 const TxListCustomStyles: TDStyle[] = [
   {
-    tdPos: 5,
+    tdPos: 6,
     style: css`
-      float: right;
+      text-align: right;
     `
   }
 ]
