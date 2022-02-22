@@ -57,8 +57,9 @@ const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
   min-height: ${({ height }) => height}px;
   width: 100%;
   border-radius: 7px;
+  border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
   background-color: ${({ theme }) => theme.bgPrimary};
-  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2));
+  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
   background-size: 400% 400%;
   animation: gradientAnimation 1.5s ease-in-out infinite;
 
@@ -152,7 +153,6 @@ const StyledTable = styled.table<TableProps>`
       &:not(:last-child) {
         border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
       }
-      box-shadow: inset 0 1px 0 ${({ theme }) => theme.borderSecondary};
       background-color: ${({ theme }) => theme.bgHighlight};
 
       td {

@@ -38,7 +38,7 @@ export const darkTheme: DefaultTheme = {
   bgHover: 'rgb(28 28 33)',
 
   borderPrimary: 'rgba(255, 255, 255, 0.08)',
-  borderSecondary: 'rgba(255, 255, 255, 0.05)',
+  borderSecondary: 'rgba(255, 255, 255, 0.06)',
   borderHighlight: '#585962',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',

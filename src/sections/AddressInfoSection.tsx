@@ -37,7 +37,7 @@ import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
 import HighlightedCell from '../components/Table/HighlightedCell'
 import Table, { TDStyle } from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
-import { AnimatedCell, TableDetailsRow, DetailToggle } from '../components/Table/TableDetailsRow'
+import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
 import TableHeader from '../components/Table/TableHeader'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
@@ -113,74 +113,69 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" />
-      {!infoLoading && previousId.current === id ? (
-        <>
-          {addressInfo ? (
-            <>
-              <Table bodyOnly>
-                <TableBody tdStyles={AddressTableBodyCustomStyles}>
-                  <tr>
-                    <td>Address</td>
-                    <HighlightedCell textToCopy={id} qrCodeContent={id}>
-                      {id}
-                    </HighlightedCell>
-                  </tr>
-                  <tr>
-                    <td>Number of Transactions</td>
-                    <td>{addressInfo.txNumber}</td>
-                  </tr>
-                  <tr>
-                    <td>Total Balance</td>
-                    <td>
-                      <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
-                    </td>
-                  </tr>
-                  {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
-                    <tr>
-                      <td>Locked Balance</td>
-                      <td>
-                        <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
-                      </td>
-                    </tr>
-                  )}
-                </TableBody>
-              </Table>
+      <SectionTitle title="Address" isLoading={infoLoading || txLoading} />
 
-              <SecondaryTitle>History</SecondaryTitle>
-              {!txLoading && txList && txList.data && txList.status === 200 ? (
-                <>
-                  {txList.data.length > 0 ? (
-                    <Table hasDetails main scrollable>
-                      <TableHeader
-                        headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                        columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}
-                        textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
-                      />
-                      <TableBody>
-                        {txList.data
-                          .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                          .map((t, i) => (
-                            <AddressTransactionRow transaction={t} addressId={id} key={i} />
-                          ))}
-                      </TableBody>
-                    </Table>
-                  ) : (
-                    <NoTxMessage>No transactions yet</NoTxMessage>
-                  )}
-                </>
-              ) : (
-                <LoadingSpinner />
-              )}
-            </>
-          ) : (
-            <InlineErrorMessage message={addressInfoError} />
-          )}
-          {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
-        </>
+      {!infoLoading && !addressInfo ? (
+        <InlineErrorMessage message={addressInfoError} />
       ) : (
-        <LoadingSpinner />
+        <Table bodyOnly isLoading={infoLoading} minHeight={250}>
+          {addressInfo && (
+            <TableBody tdStyles={AddressTableBodyCustomStyles}>
+              <tr>
+                <td>Address</td>
+                <HighlightedCell textToCopy={id} qrCodeContent={id}>
+                  {id}
+                </HighlightedCell>
+              </tr>
+              <tr>
+                <td>Number of Transactions</td>
+                <td>{addressInfo.txNumber}</td>
+              </tr>
+              <tr>
+                <td>Total Balance</td>
+                <td>
+                  <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
+                </td>
+              </tr>
+              {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
+                <tr>
+                  <td>Locked Balance</td>
+                  <td>
+                    <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
+                  </td>
+                </tr>
+              )}
+            </TableBody>
+          )}
+        </Table>
       )}
+
+      <SecondaryTitle>Transactions</SecondaryTitle>
+
+      <Table hasDetails main scrollable isLoading={txLoading}>
+        {txList && txList.data && txList.status === 200 && txList.data.length ? (
+          <>
+            <TableHeader
+              headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+              columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}
+              textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
+            />
+            <TableBody>
+              {txList.data
+                .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
+                .map((t, i) => (
+                  <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                ))}
+            </TableBody>
+          </>
+        ) : (
+          <TableBody>
+            <NoTxMessage>No transactions yet</NoTxMessage>
+          </TableBody>
+        )}
+      </Table>
+
+      {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
     </Section>
   )
 }
@@ -302,8 +297,9 @@ const BlockRewardLabel = styled.span`
   font-style: italic;
 `
 
-const NoTxMessage = styled.span`
+const NoTxMessage = styled.td`
   color: ${({ theme }) => theme.textSecondary};
+  padding: 20px;
 `
 
 export default TransactionInfoSection
