@@ -31,6 +31,7 @@ import SectionTitle from '../components/SectionTitle'
 import Table, { TDStyle } from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
 import TableHeader from '../components/Table/TableHeader'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import { BlockList } from '../types/api'
@@ -97,11 +98,8 @@ const BlockSection = () => {
           />
           <TableBody tdStyles={TableBodyCustomStyles}>
             {blockList?.blocks.map((b) => (
-              <BlockRow
+              <TableRow
                 key={b.hash}
-                animate={{ opacity: 1 }}
-                initial={{ opacity: 0 }}
-                transition={{ duration: 0.8 }}
                 onClick={() => {
                   history.push(`blocks/${b.hash}`)
                 }}
@@ -117,7 +115,7 @@ const BlockSection = () => {
                 <td>
                   {b.chainFrom} → {b.chainTo}
                 </td>
-              </BlockRow>
+              </TableRow>
             ))}
           </TableBody>
         </Table>

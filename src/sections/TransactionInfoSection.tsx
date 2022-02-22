@@ -32,6 +32,7 @@ import SectionTitle from '../components/SectionTitle'
 import HighlightedCell from '../components/Table/HighlightedCell'
 import Table from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
@@ -86,11 +87,11 @@ const TransactionInfoSection = () => {
           {txInfo && txInfo.status === 200 && txInfo.data ? (
             <Table bodyOnly>
               <TableBody>
-                <tr>
+                <TableRow>
                   <td>Hash</td>
                   <HighlightedCell textToCopy={txInfo.data.hash}>{txInfo.data.hash}</HighlightedCell>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Status</td>
                   {isTxConfirmed(txInfo.data) ? (
                     <td>
@@ -117,9 +118,9 @@ const TransactionInfoSection = () => {
                       />
                     </td>
                   )}
-                </tr>
+                </TableRow>
                 {isTxConfirmed(txInfo.data) && txInfo.data.blockHash && (
-                  <tr>
+                  <TableRow>
                     <td>Block Hash</td>
                     <td>
                       <TightLink
@@ -128,18 +129,18 @@ const TransactionInfoSection = () => {
                         maxWidth="550px"
                       />
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
                 {isTxConfirmed(txInfo.data) && txInfo.data.timestamp && (
-                  <tr>
+                  <TableRow>
                     <td>Timestamp</td>
                     <td>
                       <Timestamp timeInMs={txInfo.data.timestamp} forceHighPrecision />
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
                 {isTxConfirmed(txInfo.data) && (
-                  <tr>
+                  <TableRow>
                     <td>Inputs</td>
                     <td>
                       {txInfo.data.inputs && txInfo.data.inputs.length > 0
@@ -153,9 +154,9 @@ const TransactionInfoSection = () => {
                           ))
                         : 'Block Rewards'}
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
-                <tr>
+                <TableRow>
                   <td>Outputs</td>
                   <td>
                     {isTxConfirmed(txInfo.data) &&
@@ -164,24 +165,24 @@ const TransactionInfoSection = () => {
                         <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                       ))}
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Gas Amount</td>
                   <td>{txInfo.data.gasAmount || '-'} GAS</td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Gas Price</td>
                   <td>
                     <Amount value={BigInt(txInfo.data.gasPrice)} />
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Transaction Fee</td>
                   <td>
                     <Amount value={BigInt(txInfo.data.gasPrice) * BigInt(txInfo.data.gasAmount)} showFullPrecision />
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>
                     <b>Total value</b>
                   </td>
@@ -191,7 +192,7 @@ const TransactionInfoSection = () => {
                       amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
                     />
                   </td>
-                </tr>
+                </TableRow>
               </TableBody>
             </Table>
           ) : (

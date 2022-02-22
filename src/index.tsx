@@ -225,6 +225,7 @@ const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  padding-top: 25px;
 `
 
 const ContentWrapper = styled.main`

@@ -74,7 +74,7 @@ const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
 `
 
 const TableWrapper = styled.div<TableProps>`
-  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderSecondary}`};
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
   overflow: hidden;
   border-radius: 7px;
   line-height: initial;

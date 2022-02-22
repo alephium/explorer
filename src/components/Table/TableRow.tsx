@@ -16,13 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { motion } from 'framer-motion'
+import { FC } from 'react'
 import styled from 'styled-components'
 
 interface RowProps {
   isActive?: boolean
+  onClick?: React.MouseEventHandler<HTMLTableRowElement>
+  className?: string
 }
 
-export default styled.tr<RowProps>`
+const rowVariants = {
+  hidden: { opacity: 0 },
+  shown: { opacity: 1 }
+}
+
+const TableRow: FC<RowProps> = ({ children, onClick, className }) => (
+  <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onClick={onClick} className={className}>
+    {children}
+  </motion.tr>
+)
+
+export default styled(TableRow)`
   background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};

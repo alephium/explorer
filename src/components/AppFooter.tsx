@@ -18,12 +18,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
+import ThemeSwitcher from './ThemeSwitcher'
+
 interface AppFooterProps {
   className?: string
 }
 
 const AppFooter = ({ className }: AppFooterProps) => {
-  return <footer className={className}></footer>
+  return (
+    <footer className={className}>
+      <ThemeSwitcher />
+      <span>Powered by Alephium | {new Date().getFullYear()}</span>
+    </footer>
+  )
 }
 
 export default styled(AppFooter)`

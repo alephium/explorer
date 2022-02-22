@@ -121,29 +121,29 @@ const TransactionInfoSection = () => {
         <Table bodyOnly isLoading={infoLoading} minHeight={250}>
           {addressInfo && (
             <TableBody tdStyles={AddressTableBodyCustomStyles}>
-              <tr>
+              <TableRow>
                 <td>Address</td>
                 <HighlightedCell textToCopy={id} qrCodeContent={id}>
                   {id}
                 </HighlightedCell>
-              </tr>
-              <tr>
+              </TableRow>
+              <TableRow>
                 <td>Number of Transactions</td>
                 <td>{addressInfo.txNumber}</td>
-              </tr>
-              <tr>
+              </TableRow>
+              <TableRow>
                 <td>Total Balance</td>
                 <td>
                   <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
                 </td>
-              </tr>
+              </TableRow>
               {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
-                <tr>
+                <TableRow>
                   <td>Locked Balance</td>
                   <td>
                     <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
                   </td>
-                </tr>
+                </TableRow>
               )}
             </TableBody>
           )}

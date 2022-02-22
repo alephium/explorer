@@ -16,15 +16,34 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { motion } from 'framer-motion'
+import { FC } from 'react'
 import styled, { css } from 'styled-components'
 
 import { TDStyle } from './Table'
 
-interface TableBopyProps {
+interface TableBodyProps {
   tdStyles?: TDStyle[]
+  className?: string
 }
 
-export default styled.tbody<TableBopyProps>`
+const bodyVariants = {
+  hidden: { opacity: 0 },
+  shown: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.015
+    }
+  }
+}
+
+const TableBody: FC<TableBodyProps> = ({ className, children }) => (
+  <motion.tbody className={className} variants={bodyVariants} initial="hidden" animate="shown">
+    {children}
+  </motion.tbody>
+)
+
+export default styled(TableBody)`
   color: ${({ theme }) => theme.textPrimary};
 
   & > tr {

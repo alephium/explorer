@@ -122,30 +122,30 @@ const BlockInfoSection = () => {
             <>
               <Table bodyOnly>
                 <TableBody tdStyles={BlockTableBodyCustomStyles}>
-                  <tr>
+                  <TableRow>
                     <td>Hash</td>
                     <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
-                  </tr>
-                  <tr>
+                  </TableRow>
+                  <TableRow>
                     <td>Height</td>
                     <td>{blockInfo.data.height}</td>
-                  </tr>
-                  <tr>
+                  </TableRow>
+                  <TableRow>
                     <td>Chain Index</td>
                     <td>
                       {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
                     </td>
-                  </tr>
-                  <tr>
+                  </TableRow>
+                  <TableRow>
                     <td>Nb. of transactions</td>
                     <td>{blockInfo.data.txNumber}</td>
-                  </tr>
-                  <tr>
+                  </TableRow>
+                  <TableRow>
                     <td>Timestamp</td>
                     <td>
                       <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
                     </td>
-                  </tr>
+                  </TableRow>
                 </TableBody>
               </Table>
 

@@ -32,7 +32,7 @@ const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
   return theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
 }
 
-const toggleWidth = 80
+const toggleWidth = 60
 const toggleHeight = toggleWidth / 2
 const toggleIndicatorSize = toggleWidth / 2
 
