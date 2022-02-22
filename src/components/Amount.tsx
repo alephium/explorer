@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
 import { FC } from 'react'
+import styled from 'styled-components'
 
 interface AmountProps {
   value: bigint | undefined
@@ -29,4 +30,6 @@ const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }
   return <span className={className}>{value ? abbreviateAmount(value, showFullPrecision).toString() : '-'} א</span>
 }
 
-export default Amount
+export default styled(Amount)`
+  font-feature-settings: 'tnum';
+`
