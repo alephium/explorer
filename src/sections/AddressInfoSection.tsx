@@ -27,6 +27,7 @@ import { useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { GlobalContext } from '..'
+import AmountDelta from '../components/AmountDelta'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
@@ -159,7 +160,7 @@ const TransactionInfoSection = () => {
               columnWidths={['15%', '130px', '80px', '25%', '120px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
             />
-            <TableBody>
+            <TableBody tdStyles={TxListCustomStyles}>
               {txList.data
                 .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
                 .map((t, i) => (
@@ -242,12 +243,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         </td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td>
-          <Badge
-            type={isOut ? 'minus' : 'plus'}
-            prefix={isOut ? '- ' : '+ '}
-            floatRight
-            amount={amountDelta < BigInt(0) ? (amountDelta * BigInt(-1)).toString() : amountDelta.toString()}
-          />
+          <AmountDelta value={amountDelta} />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </TableRow>
@@ -295,6 +291,21 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
     tdPos: 2,
     style: css`
       font-weight: 500;
+    `
+  },
+  {
+    tdPos: 5,
+    style: css`
+      float: right;
+    `
+  }
+]
+
+const TxListCustomStyles: TDStyle[] = [
+  {
+    tdPos: 5,
+    style: css`
+      float: right;
     `
   }
 ]

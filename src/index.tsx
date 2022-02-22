@@ -210,8 +210,6 @@ const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) 
   )
 }
 
-/* Styles */
-
 const MainContainer = styled.div`
   position: absolute;
   top: 0;
@@ -267,12 +265,6 @@ const HamburgerButton = styled.div`
   @media ${deviceBreakPoints.mobile} {
     margin-right: 5px;
   }
-`
-
-const BackButton = styled(ArrowLeft)`
-  cursor: pointer;
-  margin-right: 25px;
-  margin-top: 2px;
 `
 
 const SnackbarManagerContainer = styled.div`

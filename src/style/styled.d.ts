@@ -46,5 +46,8 @@ declare module 'styled-components' {
     accentGradient: string
 
     tooltip: string
+
+    valid: string
+    alert: string
   }
 }

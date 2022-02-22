@@ -16,17 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
 import { FC } from 'react'
+import styled, { useTheme } from 'styled-components'
 
-interface AmountProps {
+import Amount from './Amount'
+
+interface AmountDeltaProps {
   value: bigint | undefined
   className?: string
   showFullPrecision?: boolean
 }
 
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
-  return <span className={className}>{value ? abbreviateAmount(value, showFullPrecision).toString() : '-'} א</span>
+const AmountDelta: FC<AmountDeltaProps> = ({ value, showFullPrecision, className }) => {
+  const theme = useTheme()
+  const direction = value && value < BigInt(0) ? -1 : 1
+  const absoluteValue = value && value < BigInt(0) ? value * BigInt(-1) : value
+
+  return (
+    <span className={className} style={direction === 1 ? { color: theme.valid } : undefined}>
+      {direction === -1 ? '- ' : '+ '}
+      <Amount value={absoluteValue} showFullPrecision={showFullPrecision} />
+    </span>
+  )
 }
 
-export default Amount
+export default styled(AmountDelta)`
+  font-weight: 800;
+`

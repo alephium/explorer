@@ -43,7 +43,10 @@ export const darkTheme: DefaultTheme = {
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
-  tooltip: 'black'
+  tooltip: 'black',
+
+  valid: 'rgb(93, 203, 126)',
+  alert: 'rgb(243, 113, 93)'
 }
 
 export const lightTheme: DefaultTheme = {
@@ -69,5 +72,8 @@ export const lightTheme: DefaultTheme = {
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
-  tooltip: 'black'
+  tooltip: 'black',
+
+  valid: 'rgb(93, 203, 126)',
+  alert: 'rgb(243, 113, 93)'
 }
