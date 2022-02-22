@@ -50,9 +50,12 @@ const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: Timestam
   return (
     <div
       onClick={handleTimestampClick}
-      data-tip={`
-        ${isHighPrecision ? lowPrecisionTimestamp : highPrecisionTimestamp}
-        ${!forceHighPrecision ? '<br/>(Click to change format)' : ''}`}
+      data-tip={
+        !forceHighPrecision
+          ? `${highPrecisionTimestamp}
+            <br/>Click to change format`
+          : undefined
+      }
       data-multiline
       className={className}
     >
