@@ -20,17 +20,22 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { deviceBreakPoints } from '../style/globalStyles'
+import LoadingSpinner from './LoadingSpinner'
 
 interface PageTitleProps {
   title: string
   surtitle?: string | JSX.Element
   subtitle?: string | JSX.Element
+  isLoading?: boolean
 }
 
-const SectionTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
+const SectionTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle, isLoading }) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
-    <Title>{title}</Title>
+    <Title>
+      {title}
+      {isLoading && <LoadingSpinner style={{ marginLeft: 20 }} />}
+    </Title>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
   </TitleWrapper>
 )

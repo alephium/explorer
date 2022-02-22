@@ -86,50 +86,41 @@ const BlockSection = () => {
   return (
     <Section>
       <TitleAndLoader>
-        <SectionTitle title="Latest Blocks" />
-        {loading && !manualLoading && (
-          <PollingLoadingSpinner>
-            <LoadingSpinner size={12} /> Loading...
-          </PollingLoadingSpinner>
-        )}
+        <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
       </TitleAndLoader>
-      {!manualLoading ? (
-        <Content>
-          <Table main scrollable>
-            <TableHeader
-              headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-              columnWidths={['20%', '20%', '20%', '20%', '20%']}
-            />
-            <TableBody tdStyles={TableBodyCustomStyles}>
-              {blockList?.blocks.map((b) => (
-                <BlockRow
-                  key={b.hash}
-                  animate={{ opacity: 1 }}
-                  initial={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
-                  onClick={() => {
-                    history.push(`blocks/${b.hash}`)
-                  }}
-                >
-                  <td>
-                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
-                  </td>
-                  <td>
-                    <Timestamp timeInMs={b.timestamp} />
-                  </td>
-                  <td>{b.height}</td>
-                  <td>{b.txNumber}</td>
-                  <td>
-                    {b.chainFrom} → {b.chainTo}
-                  </td>
-                </BlockRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Content>
-      ) : (
-        <LoadingSpinner />
-      )}
+      <Content>
+        <Table main scrollable isLoading={manualLoading} minHeight={950}>
+          <TableHeader
+            headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+            columnWidths={['20%', '20%', '20%', '20%', '20%']}
+          />
+          <TableBody tdStyles={TableBodyCustomStyles}>
+            {blockList?.blocks.map((b) => (
+              <BlockRow
+                key={b.hash}
+                animate={{ opacity: 1 }}
+                initial={{ opacity: 0 }}
+                transition={{ duration: 0.8 }}
+                onClick={() => {
+                  history.push(`blocks/${b.hash}`)
+                }}
+              >
+                <td>
+                  <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                </td>
+                <td>
+                  <Timestamp timeInMs={b.timestamp} />
+                </td>
+                <td>{b.height}</td>
+                <td>{b.txNumber}</td>
+                <td>
+                  {b.chainFrom} → {b.chainTo}
+                </td>
+              </BlockRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Content>
       <PageSwitch totalNumberOfElements={blockList?.total} />
     </Section>
   )

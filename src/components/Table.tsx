@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { createContext, FC, useContext, useEffect } from 'react'
+import { createContext, FC, useContext, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 import { deviceBreakPoints } from '../style/globalStyles'
@@ -32,13 +32,52 @@ interface TableProps {
   noBorder?: boolean
   bodyOnly?: boolean
   scrollable?: boolean
+  isLoading?: boolean
+  minHeight?: number
 }
 
-export const Table: FC<TableProps> = ({ children, ...props }) => (
-  <TableWrapper {...props}>
-    <StyledTable {...props}>{children}</StyledTable>
-  </TableWrapper>
-)
+export const Table: FC<TableProps> = ({ children, isLoading, minHeight = 600, ...props }) => {
+  const [height, setHeight] = useState(minHeight)
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const clientHeight = tableRef.current && tableRef.current.clientHeight
+    clientHeight && clientHeight > minHeight && setHeight(clientHeight)
+  }, [minHeight])
+
+  console.log(height)
+
+  return !isLoading ? (
+    <TableWrapper {...props} ref={tableRef}>
+      <StyledTable {...props}>{children}</StyledTable>
+    </TableWrapper>
+  ) : (
+    <TableLoadingPlaceholder height={height} />
+  )
+}
+
+interface TableLoadingPlaceholderProps {
+  height: number
+}
+
+const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
+  min-height: ${({ height }) => height}px;
+  width: 100%;
+  border-radius: 7px;
+  background-color: ${({ theme }) => theme.bgPrimary};
+  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2));
+  background-size: 400% 400%;
+  animation: gradientAnimation 1.5s ease-in-out infinite;
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: -135% 0%;
+    }
+  }
+`
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -48,13 +87,13 @@ interface TableHeaderProps {
   transparent?: boolean
 }
 
-export const TableHeader: React.FC<TableHeaderProps> = ({
+export const TableHeader = ({
   headerTitles,
   columnWidths,
   textAlign,
   compact = false,
   transparent = false
-}) => (
+}: TableHeaderProps) => (
   <StyledTableHeader compact={compact} transparent={transparent}>
     <tr>
       {headerTitles.map((v, i) => (
@@ -182,6 +221,7 @@ const TableWrapper = styled.div<TableProps>`
   overflow: hidden;
   border-radius: 7px;
   line-height: initial;
+  min-height: ${({ minHeight }) => minHeight}px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 `
 
