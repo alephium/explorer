@@ -139,7 +139,7 @@ const TableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 3,
     style: css`
-      font-family: 'Roboto Mono', monospace;
+      font-feature-settings: 'tnum';
       color: ${({ theme }) => theme.textAccent};
       font-weight: 400;
     `
@@ -147,7 +147,7 @@ const TableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 4,
     style: css`
-      font-family: 'Roboto Mono', monospace;
+      font-feature-settings: 'tnum';
       font-weight: 400;
     `
   },

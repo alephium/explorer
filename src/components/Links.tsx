@@ -90,11 +90,11 @@ const TxLink = styled(Link)`
 `
 const StyledLink = styled(Link)`
   white-space: nowrap;
-  font-family: 'Roboto Mono';
   font-size: 13.3px;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.6pt;
 `
 
 const AddressWrapper = styled.div`
