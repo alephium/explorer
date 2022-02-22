@@ -29,6 +29,7 @@ import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
+import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
 import NotificationBar from './components/NotificationBar'
 import { StyledThemeSwitcher } from './components/ThemeSwitcher'
@@ -48,7 +49,6 @@ import { SidebarState, SnackbarMessage } from './types/ui'
 import { AlephClient, createClient } from './utils/client'
 import { useStateWithLocalStorage } from './utils/hooks'
 import { ScrollToTop } from './utils/routing'
-import AppFooter from './components/AppFooter'
 
 export const GlobalContext = React.createContext<GlobalContextInterface>({
   client: undefined,

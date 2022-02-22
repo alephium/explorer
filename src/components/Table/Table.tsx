@@ -119,11 +119,6 @@ const StyledTable = styled.table<TableProps>`
     }}
   }
 
-  td {
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
   tr td {
     padding: 12px;
   }
@@ -158,6 +153,13 @@ const StyledTable = styled.table<TableProps>`
       td {
         padding-top: 0;
         padding-bottom: 0;
+      }
+
+      table {
+        td {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
       }
     }
   }

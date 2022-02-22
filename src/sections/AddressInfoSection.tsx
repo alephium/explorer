@@ -78,7 +78,6 @@ const TransactionInfoSection = () => {
 
       try {
         const response = await explorerClient.getAddressDetails(id)
-        console.log(response.data)
         if (!response.data) return
 
         setAddressInfo(response.data)
@@ -198,24 +197,34 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
     if (t.outputs.every((o) => o.address === addressId)) {
       return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
     } else {
-      return _(t.outputs.filter((o) => o.address !== addressId))
+      const outputs = _(t.outputs.filter((o) => o.address !== addressId))
         .map((v) => v.address)
         .uniq()
         .value()
-        .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+
+      return (
+        <AccountsSummaryContainer>
+          <AddressLink address={outputs[0]} maxWidth="250px" />
+          {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
+        </AccountsSummaryContainer>
+      )
     }
   }
 
   const renderInputAccounts = () => {
     if (!t.inputs) return
-    const inputAccounts = _(t.inputs.filter((o) => o.address !== addressId))
+    const inputs = _(t.inputs.filter((o) => o.address !== addressId))
       .map((v) => v.address)
       .uniq()
       .value()
-      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
 
-    if (inputAccounts.length > 0) {
-      return inputAccounts
+    if (inputs.length > 0) {
+      return (
+        <AccountsSummaryContainer>
+          <AddressLink address={inputs[0]} maxWidth="250px" />
+          {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
+        </AccountsSummaryContainer>
+      )
     } else {
       return <BlockRewardLabel>Block rewards</BlockRewardLabel>
     }
@@ -243,11 +252,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
-        <td />
-        <td />
-        <AnimatedCell colSpan={4}>
-          <Table noBorder>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact transparent />
+        <AnimatedCell colSpan={6}>
+          <Table>
+            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
             <TableBody>
               <TableRow>
                 <td>
@@ -291,6 +298,11 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const AccountsSummaryContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.textSecondary};
