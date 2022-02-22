@@ -34,17 +34,12 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import {
-  AnimatedCell,
-  DetailsRow,
-  DetailToggle,
-  HighlightedCell,
-  Row,
-  Table,
-  TableBody,
-  TableHeader,
-  TDStyle
-} from '../components/Table'
+import HighlightedCell from '../components/Table/HighlightedCell'
+import Table, { TDStyle } from '../components/Table/Table'
+import TableBody from '../components/Table/TableBody'
+import { AnimatedCell, TableDetailsRow, DetailToggle } from '../components/Table/TableDetailsRow'
+import TableHeader from '../components/Table/TableHeader'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
@@ -233,7 +228,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+      <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
@@ -251,15 +246,15 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
-      </Row>
-      <DetailsRow openCondition={detailOpen}>
+      </TableRow>
+      <TableDetailsRow openCondition={detailOpen}>
         <td />
         <td />
         <AnimatedCell colSpan={4}>
           <Table noBorder>
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact transparent />
             <TableBody>
-              <Row>
+              <TableRow>
                 <td>
                   {t.inputs && t.inputs.length > 0 ? (
                     t.inputs.map((input, i) => (
@@ -284,11 +279,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                       <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
                     ))}
                 </td>
-              </Row>
+              </TableRow>
             </TableBody>
           </Table>
         </AnimatedCell>
-      </DetailsRow>
+      </TableDetailsRow>
     </>
   )
 }

@@ -1,0 +1,171 @@
+/*
+Copyright 2018 - 2022 The Alephium Authors
+This file is part of the alephium project.
+
+The library is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+The library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the library. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+import { FC, useEffect, useRef, useState } from 'react'
+import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
+
+import { deviceBreakPoints } from '../../style/globalStyles'
+
+interface TableProps {
+  main?: boolean
+  hasDetails?: boolean
+  noBorder?: boolean
+  bodyOnly?: boolean
+  scrollable?: boolean
+  isLoading?: boolean
+  minHeight?: number
+}
+
+interface TableLoadingPlaceholderProps {
+  height: number
+}
+
+const Table: FC<TableProps> = ({ children, isLoading, minHeight = 600, ...props }) => {
+  const [height, setHeight] = useState(minHeight)
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const clientHeight = tableRef.current && tableRef.current.clientHeight
+    clientHeight && clientHeight > minHeight && setHeight(clientHeight)
+  }, [minHeight])
+
+  return !isLoading ? (
+    <TableWrapper {...props} ref={tableRef}>
+      <StyledTable {...props}>{children}</StyledTable>
+    </TableWrapper>
+  ) : (
+    <TableLoadingPlaceholder height={height} />
+  )
+}
+
+const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
+  min-height: ${({ height }) => height}px;
+  width: 100%;
+  border-radius: 7px;
+  background-color: ${({ theme }) => theme.bgPrimary};
+  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2));
+  background-size: 400% 400%;
+  animation: gradientAnimation 1.5s ease-in-out infinite;
+
+  @keyframes gradientAnimation {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: -135% 0%;
+    }
+  }
+`
+
+const TableWrapper = styled.div<TableProps>`
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderSecondary}`};
+  overflow: hidden;
+  border-radius: 7px;
+  line-height: initial;
+  min-height: ${({ minHeight }) => minHeight}px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+`
+
+const StyledTable = styled.table<TableProps>`
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+  table-layout: fixed;
+  white-space: nowrap;
+
+  @media ${deviceBreakPoints.mobile} {
+    ${({ scrollable, bodyOnly }) => {
+      if (scrollable) {
+        return `
+					display: block;
+					width: 100%;
+					overflow-x: auto;
+				`
+      } else if (bodyOnly) {
+        /* Change table structure, stack td vertically */
+        return css`
+          tr {
+            display: flex;
+            flex-direction: column;
+
+            td:first-child {
+              height: 25px !important;
+              font-weight: 600;
+            }
+
+            td:not(:first-child) {
+              height: initial !important;
+              font-weight: 500 !important;
+            }
+          }
+        `
+      }
+    }}
+  }
+
+  td {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  tr td {
+    padding: 12px;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 20px;
+  }
+
+  tr:not(.details) td {
+    height: 45px;
+  }
+
+  svg {
+    vertical-align: bottom;
+  }
+
+  tbody {
+    background-color: ${({ theme }) => theme.bgPrimary};
+
+    tr:not(:last-child) {
+      border-bottom: ${({ hasDetails, noBorder, theme }) =>
+        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderSecondary}`) : ''};
+    }
+
+    tr.details {
+      &:not(:last-child) {
+        border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+      }
+      box-shadow: inset 0 1px 0 ${({ theme }) => theme.borderSecondary};
+      background-color: ${({ theme }) => theme.bgHighlight};
+
+      td {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+`
+
+export interface TDStyle {
+  tdPos: number
+  style: FlattenInterpolation<ThemeProps<DefaultTheme>>
+}
+
+export default Table
