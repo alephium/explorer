@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { motion } from 'framer-motion'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -158,9 +157,5 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-const BlockRow = styled(motion.tr)`
-  cursor: pointer;
-`
 
 export default BlockSection

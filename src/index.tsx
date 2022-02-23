@@ -22,17 +22,14 @@ import { ExplorerClient } from 'alephium-js'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
-import { useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
 import NotificationBar from './components/NotificationBar'
-import { StyledThemeSwitcher } from './components/ThemeSwitcher'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import BlockInfoSection from './sections/BlockInfoSection'
@@ -45,7 +42,7 @@ import { darkTheme, lightTheme, ThemeType } from './style/themes'
 import { GlobalContextInterface } from './types/context'
 import { OnOff } from './types/generics'
 import { NetworkType, networkTypes } from './types/network'
-import { SidebarState, SnackbarMessage } from './types/ui'
+import { SnackbarMessage } from './types/ui'
 import { AlephClient, createClient } from './utils/client'
 import { useStateWithLocalStorage } from './utils/hooks'
 import { ScrollToTop } from './utils/routing'
@@ -55,8 +52,6 @@ export const GlobalContext = React.createContext<GlobalContextInterface>({
   explorerClient: undefined,
   networkType: undefined,
   currentTheme: 'dark',
-  sidebarState: 'open',
-  setSidebarState: () => null,
   switchTheme: () => null,
   setSnackbarMessage: () => null,
   timestampPrecisionMode: 'off',
@@ -90,7 +85,6 @@ const App = () => {
   const [explorerClient, setExplorerClient] = useState<ExplorerClient>()
   const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
-  const [sidebarState, setSidebarState] = useState<SidebarState>('close')
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
     'off'
@@ -99,7 +93,6 @@ const App = () => {
   const contentRef = useRef(null)
 
   const getContentRef = useCallback(() => contentRef.current, [])
-  const history = useHistory()
 
   useEffect(() => {
     // Check and apply environment variables
@@ -144,8 +137,6 @@ const App = () => {
             networkType,
             currentTheme: themeName as ThemeType,
             switchTheme: setThemeName as (arg0: ThemeType) => void,
-            sidebarState: 'close',
-            setSidebarState: setSidebarState,
             setSnackbarMessage,
             timestampPrecisionMode,
             setTimestampPrecisionMode
