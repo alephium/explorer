@@ -70,12 +70,12 @@ export const lightTheme: DefaultTheme = {
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
-  borderPrimary: '#e6e6e6',
-  borderSecondary: '#e8e8e8',
+  borderPrimary: '#ebebeb',
+  borderSecondary: '#f1f1f1',
   borderHighlight: '#D1D1D4',
 
-  shadowPrimary: '0 2px 5px rgba(0, 0, 0, 0.05)',
-  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.03)',
+  shadowPrimary: '0 2px 5px rgba(0, 0, 0, 0.04)',
+  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.02)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',

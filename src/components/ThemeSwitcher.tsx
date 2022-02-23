@@ -69,7 +69,7 @@ export const StyledThemeSwitcher = styled.div`
   height: ${toggleHeight}px;
   border: 1px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 60px;
-  background-color: ${({ theme }) => theme.bgHighlight};
+  background-color: ${({ theme }) => theme.bgPrimary};
   cursor: pointer;
   box-sizing: content-box;
 

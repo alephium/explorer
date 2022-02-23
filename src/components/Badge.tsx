@@ -77,7 +77,7 @@ Badge = styled(Badge)`
   color: ${({ type, theme }) => getBadgeColor(type, theme).color};
   text-align: center;
   padding: 5px 10px;
-  border-radius: 3px;
+  border-radius: 30px;
   font-weight: 600;
   float: left;
   white-space: nowrap;
