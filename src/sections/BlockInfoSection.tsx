@@ -113,83 +113,81 @@ const BlockInfoSection = () => {
     })()
   }, [blockInfo, id, client, history])
 
-  return (
-    <Section>
-      <SectionTitle title="Block" />
-      {!infoLoading ? (
-        <>
-          {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
-            <>
-              <Table bodyOnly>
-                <TableBody tdStyles={BlockTableBodyCustomStyles}>
-                  <TableRow>
-                    <td>Hash</td>
-                    <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
-                  </TableRow>
-                  <TableRow>
-                    <td>Height</td>
-                    <td>{blockInfo.data.height}</td>
-                  </TableRow>
-                  <TableRow>
-                    <td>Chain Index</td>
-                    <td>
-                      {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
-                    </td>
-                  </TableRow>
-                  <TableRow>
-                    <td>Nb. of transactions</td>
-                    <td>{blockInfo.data.txNumber}</td>
-                  </TableRow>
-                  <TableRow>
-                    <td>Timestamp</td>
-                    <td>
-                      <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
-                    </td>
-                  </TableRow>
-                </TableBody>
-              </Table>
+  if (!infoLoading && (!blockInfo || blockInfo.status !== 200 || !blockInfo.data)) {
+    return <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
+  } else {
+    return (
+      <Section>
+        <SectionTitle title="Block" isLoading={infoLoading || txLoading} />
 
-              {blockInfo?.data?.mainChain ? (
-                <>
-                  <SecondaryTitle>Transactions</SecondaryTitle>
-                  {!txLoading && txList && txList.data && txList.status === 200 ? (
-                    <>
-                      <Table main hasDetails scrollable>
-                        <TableHeader
-                          headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
-                          columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
-                          textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
-                        />
-                        <TableBody tdStyles={TXTableBodyCustomStyles}>
-                          {txList.data.map((t, i) => (
-                            <TransactionRow transaction={t} key={i} />
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </>
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </>
-              ) : (
-                <>
-                  <SecondaryTitle>Orphan block</SecondaryTitle>
-                  <div>It appears that this block is not part of the main chain.</div>
-                </>
-              )}
-            </>
+        <Table bodyOnly isLoading={infoLoading}>
+          {blockInfo && blockInfo.data && (
+            <TableBody tdStyles={BlockTableBodyCustomStyles}>
+              <TableRow>
+                <td>Hash</td>
+                <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
+              </TableRow>
+              <TableRow>
+                <td>Height</td>
+                <td>{blockInfo.data.height}</td>
+              </TableRow>
+              <TableRow>
+                <td>Chain Index</td>
+                <td>
+                  {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
+                </td>
+              </TableRow>
+              <TableRow>
+                <td>Nb. of transactions</td>
+                <td>{blockInfo.data.txNumber}</td>
+              </TableRow>
+              <TableRow>
+                <td>Timestamp</td>
+                <td>
+                  <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
+                </td>
+              </TableRow>
+            </TableBody>
+          )}
+        </Table>
+
+        {blockInfo?.data?.mainChain ? (
+          !txLoading && (!txList || !txList.data || txList.status !== 200) ? (
+            <InlineErrorMessage message="An error occured while fetching transactions" code={txList?.status} />
           ) : (
-            <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
-          )}
-          {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
-            <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
-          )}
-        </>
-      ) : (
-        <LoadingSpinner />
-      )}
-    </Section>
-  )
+            <>
+              <SecondaryTitle>Transactions</SecondaryTitle>
+              <Table main hasDetails scrollable isLoading={txLoading}>
+                {txList && txList.data && (
+                  <>
+                    <TableHeader
+                      headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
+                      columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                      textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
+                    />
+                    <TableBody tdStyles={TXTableBodyCustomStyles}>
+                      {txList.data.map((t, i) => (
+                        <TransactionRow transaction={t} key={i} />
+                      ))}
+                    </TableBody>
+                  </>
+                )}
+              </Table>
+            </>
+          )
+        ) : (
+          <>
+            <SecondaryTitle>Orphan block</SecondaryTitle>
+            <div>It appears that this block is not part of the main chain.</div>
+          </>
+        )}
+
+        {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
+          <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
+        )}
+      </Section>
+    )
+  }
 }
 
 interface TransactionRowProps {

@@ -85,7 +85,7 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'dark')
   const [client, setClient] = useState<AlephClient>()
   const [explorerClient, setExplorerClient] = useState<ExplorerClient>()
   const [networkType, setNetworkType] = useState<NetworkType>()

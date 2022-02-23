@@ -35,7 +35,7 @@ interface TableLoadingPlaceholderProps {
   height: number
 }
 
-const Table: FC<TableProps> = ({ children, isLoading, minHeight = 600, ...props }) => {
+const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props }) => {
   const [height, setHeight] = useState(minHeight)
   const tableRef = useRef<HTMLDivElement>(null)
 
