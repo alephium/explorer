@@ -16,8 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
+import { ReactComponent as DiscordIcon } from '../images/brand-icon-discord.svg'
+import { ReactComponent as RedditIcon } from '../images/brand-icon-reddit.svg'
+import { ReactComponent as TelegramIcon } from '../images/brand-icon-telegram.svg'
+import { ReactComponent as TwitterIcon } from '../images/brand-icon-twitter.svg'
+import ExternalLink from './ExternalLink'
 import ThemeSwitcher from './ThemeSwitcher'
 
 interface AppFooterProps {
@@ -27,15 +32,83 @@ interface AppFooterProps {
 const AppFooter = ({ className }: AppFooterProps) => {
   return (
     <footer className={className}>
-      <ThemeSwitcher />
-      <span>Powered by Alephium | {new Date().getFullYear()}</span>
+      <LeftGroup>
+        <ThemeSwitcher />
+      </LeftGroup>
+      <RightGroup>
+        <SocialMediaIconList>
+          {socialMediaData.map((d) => (
+            <ExternalLink href={d.link} key={d.name}>
+              <d.Icon data-tip={d.name} className="social-media-icon" />
+            </ExternalLink>
+          ))}
+        </SocialMediaIconList>
+        <span>
+          <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
+        </span>
+        <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
+        <span>Powered by Alephium | {new Date().getFullYear()}</span>
+      </RightGroup>
     </footer>
   )
 }
 
-export default styled(AppFooter)`
+const socialMediaData = [
+  {
+    name: 'Discord',
+    link: 'https://discord.gg/JErgRBfRSB',
+    Icon: DiscordIcon
+  },
+  {
+    name: 'Telegram',
+    link: 'https://t.me/alephiumgroup',
+    Icon: TelegramIcon
+  },
+  {
+    name: 'Reddit',
+    link: 'https://www.reddit.com/r/Alephium',
+    Icon: RedditIcon
+  },
+  {
+    name: 'Twitter',
+    link: 'https://twitter.com/alephium',
+    Icon: TwitterIcon
+  }
+]
+
+const FooterGroup = css`
   display: flex;
   align-items: center;
+  gap: 20px;
+`
+
+const LeftGroup = styled.div`
+  ${FooterGroup}
+  justify-self: flex-start;
+`
+
+const RightGroup = styled.div`
+  ${FooterGroup}
+  justify-self: flex-end;
+
+  .social-media-icon {
+    fill: ${({ theme }) => theme.textPrimary};
+    height: 25px;
+    width: 25px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+`
+
+const SocialMediaIconList = styled.div`
+  display: flex;
+  gap: 20px;
+  margin-right: 20px;
+`
+
+export default styled(AppFooter)`
+  display: flex;
   justify-content: space-between;
   background-color: ${({ theme }) => theme.bgTertiary};
   padding: 15px 30px;
