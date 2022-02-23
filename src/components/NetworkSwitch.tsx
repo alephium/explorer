@@ -16,18 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useContext } from 'react'
+import { ComponentPropsWithoutRef, useContext } from 'react'
 import styled from 'styled-components'
 
 import { GlobalContext } from '..'
 import Menu from './Menu'
 import NetworkLogo from './NetworkLogo'
 
-interface NetworkSwitchProps {
-  className?: string
-}
-
-const NetworkSwitch = ({ className }: NetworkSwitchProps) => {
+const NetworkSwitch = ({
+  direction = 'down',
+  className
+}: Pick<ComponentPropsWithoutRef<typeof Menu>, 'direction' | 'className'>) => {
   const { networkType } = useContext(GlobalContext)
 
   const isMainnet = networkType === 'mainnet'
@@ -54,7 +53,7 @@ const NetworkSwitch = ({ className }: NetworkSwitchProps) => {
           icon: <NetworkLogo network="testnet" />
         }
       ]}
-      direction="down"
+      direction={direction}
       className={className}
     />
   )

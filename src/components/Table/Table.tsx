@@ -126,6 +126,10 @@ const StyledTable = styled.table<TableProps>`
   th:first-child,
   td:first-child {
     padding-left: 20px;
+
+    @media ${deviceBreakPoints.mobile} {
+      padding-left: 12px;
+    }
   }
 
   tr:not(.details) td {

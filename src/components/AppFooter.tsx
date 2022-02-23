@@ -22,7 +22,9 @@ import { ReactComponent as DiscordIcon } from '../images/brand-icon-discord.svg'
 import { ReactComponent as RedditIcon } from '../images/brand-icon-reddit.svg'
 import { ReactComponent as TelegramIcon } from '../images/brand-icon-telegram.svg'
 import { ReactComponent as TwitterIcon } from '../images/brand-icon-twitter.svg'
+import { deviceBreakPoints } from '../style/globalStyles'
 import ExternalLink from './ExternalLink'
+import NetworkSwitch from './NetworkSwitch'
 import ThemeSwitcher from './ThemeSwitcher'
 
 interface AppFooterProps {
@@ -33,6 +35,7 @@ const AppFooter = ({ className }: AppFooterProps) => {
   return (
     <footer className={className}>
       <LeftGroup>
+        <StyledNetworkSwitch direction="up" />
         <ThemeSwitcher />
       </LeftGroup>
       <RightGroup>
@@ -47,7 +50,7 @@ const AppFooter = ({ className }: AppFooterProps) => {
           <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
         </span>
         <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
-        <span>Powered by Alephium | {new Date().getFullYear()}</span>
+        <span>Powered by Alephium - {new Date().getFullYear()}</span>
       </RightGroup>
     </footer>
   )
@@ -80,6 +83,10 @@ const FooterGroup = css`
   display: flex;
   align-items: center;
   gap: 20px;
+
+  @media ${deviceBreakPoints.mobile} {
+    flex-direction: column;
+  }
 `
 
 const LeftGroup = styled.div`
@@ -92,11 +99,12 @@ const RightGroup = styled.div`
   justify-self: flex-end;
 
   .social-media-icon {
-    fill: ${({ theme }) => theme.textPrimary};
+    fill: ${({ theme }) => theme.textSecondary};
     height: 25px;
     width: 25px;
     &:hover {
       cursor: pointer;
+      fill: ${({ theme }) => theme.textPrimary};
     }
   }
 `
@@ -107,9 +115,21 @@ const SocialMediaIconList = styled.div`
   margin-right: 20px;
 `
 
+const StyledNetworkSwitch = styled(NetworkSwitch)`
+  display: none;
+  @media ${deviceBreakPoints.mobile} {
+    display: inherit;
+  }
+`
+
 export default styled(AppFooter)`
   display: flex;
   justify-content: space-between;
   background-color: ${({ theme }) => theme.bgTertiary};
   padding: 15px 30px;
+
+  @media ${deviceBreakPoints.mobile} {
+    flex-direction: column;
+    gap: 30px;
+  }
 `

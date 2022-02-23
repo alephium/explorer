@@ -225,7 +225,11 @@ const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 25px;
+  padding-top: 35px;
+
+  @media ${deviceBreakPoints.mobile} {
+    padding-top: 0px;
+  }
 `
 
 const ContentWrapper = styled.main`
@@ -246,26 +250,7 @@ const Content = styled.div`
   flex: 1;
   display: flex;
   padding: 0 min(5vw, 50px);
-  margin-top: 20px;
   margin-bottom: 40px;
-`
-
-const HamburgerButton = styled.div`
-  width: 35px;
-  height: 35px;
-  display: none;
-  margin-right: 15px;
-
-  @media ${deviceBreakPoints.tablet} {
-    display: flex;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @media ${deviceBreakPoints.mobile} {
-    margin-right: 5px;
-  }
 `
 
 const SnackbarManagerContainer = styled.div`

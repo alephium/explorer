@@ -99,6 +99,7 @@ const MenuContainer = styled.div`
   height: ${menuHeight};
   display: flex;
   box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
+  outline: none;
 
   &:hover {
     background-color: ${({ theme }) => theme.bgHover};
@@ -126,9 +127,6 @@ const MenuItemsContainer = styled(motion.div)`
   position: absolute;
   width: 100%;
   z-index: 10000;
-  overflow: hidden;
-  border-radius: 7px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
 `
 
 const MenuItemsList = styled.div`
@@ -136,6 +134,7 @@ const MenuItemsList = styled.div`
   border-radius: 7px;
   background-color: ${({ theme }) => theme.bgPrimary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
 `
 
 const ItemIcon = styled.div`

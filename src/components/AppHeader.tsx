@@ -34,20 +34,33 @@ const AppHeader = ({ className }: AppHeaderProps) => {
 
   return (
     <header className={className}>
-      <Link to="/">
+      <StyledLogoLink to="/">
         <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
-      </Link>
+      </StyledLogoLink>
       <SearchBar />
-      <NetworkSwitch />
+      <StyledNetworkSwitch direction="down" />
     </header>
   )
 }
 
-const Logo = styled.img`
-  width: 140px;
+const StyledLogoLink = styled(Link)`
+  @media ${deviceBreakPoints.mobile} {
+    width: 30px;
+    overflow: hidden;
+  }
+`
 
-  @media ${deviceBreakPoints.tablet} {
-    width: 150px;
+const Logo = styled.img`
+  width: 130px;
+
+  @media ${deviceBreakPoints.mobile} {
+    width: 100px;
+  }
+`
+
+const StyledNetworkSwitch = styled(NetworkSwitch)`
+  @media ${deviceBreakPoints.mobile} {
+    display: none;
   }
 `
 
@@ -55,7 +68,7 @@ export default styled(AppHeader)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 30px;
+  padding: 15px min(5vw, 50px);
   gap: 5vw;
   border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
   box-shadow: 0 0px 10px rgba(0, 0, 0, 0.1);

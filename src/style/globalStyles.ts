@@ -18,14 +18,38 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createGlobalStyle } from 'styled-components'
 import normalize from 'styled-normalize'
 
+// Breakpoints
+
+export const deviceSizes = {
+  mobile: 800,
+  tablet: 1000,
+  desktop: 1600
+}
+
+export const deviceBreakPoints = {
+  mobile: `(max-width: ${deviceSizes.mobile}px)`,
+  tablet: `(max-width: ${deviceSizes.tablet}px)`,
+  desktop: `(max-width: ${deviceSizes.desktop}px)`
+}
+
 const GlobalStyle = createGlobalStyle`
   ${normalize}
+
+  :root {
+    font-size: 13.5px;
+
+    @media ${deviceBreakPoints.mobile} {
+      font-size: 12px;
+    }
+  }
 
   body {
     background-color: ${({ theme }) => theme.body};
     transition: background-color 0.2s ease;
 
     color: ${({ theme }) => theme.textPrimary};
+
+    font-size: 1rem;
   }
 
   a {
@@ -52,19 +76,5 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 `
-
-// Breakpoints
-
-export const deviceSizes = {
-  mobile: 800,
-  tablet: 1000,
-  desktop: 1600
-}
-
-export const deviceBreakPoints = {
-  mobile: `(max-width: ${deviceSizes.mobile}px)`,
-  tablet: `(max-width: ${deviceSizes.tablet}px)`,
-  desktop: `(max-width: ${deviceSizes.desktop}px)`
-}
 
 export default GlobalStyle
