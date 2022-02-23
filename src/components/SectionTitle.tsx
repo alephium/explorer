@@ -34,7 +34,7 @@ const SectionTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle, isL
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
     <Title>
       {title}
-      {isLoading && <LoadingSpinner style={{ marginLeft: 20 }} />}
+      {isLoading && <LoadingSpinner style={{ marginLeft: 20 }} size={18} />}
     </Title>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
   </TitleWrapper>

@@ -79,7 +79,7 @@ const TableWrapper = styled.div<TableProps>`
   border-radius: 7px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: ${({ theme }) => theme.shadowPrimary};
 `
 
 const StyledTable = styled.table<TableProps>`

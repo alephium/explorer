@@ -43,6 +43,10 @@ declare module 'styled-components' {
     borderSecondary: string
     borderHighlight: string
 
+    shadowPrimary: string
+    shadowSecondary: string
+    shadowTertiary: string
+
     accentGradient: string
 
     tooltip: string

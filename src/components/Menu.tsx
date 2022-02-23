@@ -98,7 +98,7 @@ const MenuContainer = styled.div`
   position: relative;
   height: ${menuHeight};
   display: flex;
-  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
+  box-shadow: ${({ theme }) => theme.shadowSecondary};
   outline: none;
 
   &:hover {
@@ -134,7 +134,7 @@ const MenuItemsList = styled.div`
   border-radius: 7px;
   background-color: ${({ theme }) => theme.bgPrimary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: ${({ theme }) => theme.shadowSecondary};
 `
 
 const ItemIcon = styled.div`

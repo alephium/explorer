@@ -36,7 +36,7 @@ const GlobalStyle = createGlobalStyle`
   ${normalize}
 
   :root {
-    font-size: 13.5px;
+    font-size: 13px;
 
     @media ${deviceBreakPoints.mobile} {
       font-size: 12px;

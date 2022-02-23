@@ -127,6 +127,7 @@ export default styled(AppFooter)`
   justify-content: space-between;
   background-color: ${({ theme }) => theme.bgTertiary};
   padding: 15px 30px;
+  border-top: 1px solid ${({ theme }) => theme.borderSecondary};
 
   @media ${deviceBreakPoints.mobile} {
     flex-direction: column;

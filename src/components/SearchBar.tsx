@@ -136,7 +136,7 @@ const SearchInput = styled.input`
   color: ${({ theme }) => theme.textPrimary};
   background-color: ${({ theme }) => theme.bgTertiary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
-  box-shadow: inset 0 5px 5px rgba(0, 0, 0, 0.25);
+  box-shadow: inset ${({ theme }) => theme.shadowPrimary};
   transition: all 0.15s ease-out;
   z-index: 10;
 
@@ -146,7 +146,7 @@ const SearchInput = styled.input`
 
   &:focus,
   &:active {
-    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: ${({ theme }) => theme.shadowTertiary};
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       ${({ theme }) => theme.accentGradient};
     border: 1px solid transparent;
