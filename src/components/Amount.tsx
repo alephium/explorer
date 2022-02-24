@@ -37,7 +37,7 @@ const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: A
   }
 
   return (
-    <span className={className}>
+    <span className={className} data-tip={value ? `${formatAmountForDisplay(BigInt(value), true)} א` : null}>
       {value !== undefined ? (
         fadeDecimals ? (
           <>
