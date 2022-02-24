@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
+import { formatAmountForDisplay } from 'alephium-js'
 import styled, { DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
@@ -33,18 +33,16 @@ interface BadgeProps {
   minWidth?: number
 }
 
-let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false }: BadgeProps) => {
-  return (
-    <div
-      className={className}
-      data-tip={amount ? `${abbreviateAmount(BigInt(amount), true)} א` : null}
-      style={{ float: floatRight ? 'right' : 'left', minWidth }}
-    >
-      {prefix && <span>{prefix}</span>}
-      {amount ? <Amount value={BigInt(amount)} /> : content}
-    </div>
-  )
-}
+let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false }: BadgeProps) => (
+  <div
+    className={className}
+    data-tip={amount ? `${formatAmountForDisplay(BigInt(amount), true)} א` : null}
+    style={{ float: floatRight ? 'right' : 'left', minWidth }}
+  >
+    {prefix && <span>{prefix}</span>}
+    {amount ? <Amount value={BigInt(amount)} /> : content}
+  </div>
+)
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   let backgroundColor
