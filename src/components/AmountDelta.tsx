@@ -34,7 +34,7 @@ const AmountDelta = ({ value, showFullPrecision, className }: AmountDeltaProps) 
   return (
     <span className={className} style={direction === 1 ? { color: theme.valid } : undefined}>
       {direction === -1 ? '- ' : '+ '}
-      <Amount value={absoluteValue} showFullPrecision={showFullPrecision} />
+      <Amount value={absoluteValue} showFullPrecision={showFullPrecision} fadeDecimals />
     </span>
   )
 }

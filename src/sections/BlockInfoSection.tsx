@@ -174,10 +174,12 @@ const BlockInfoSection = () => {
           </>
         )
       ) : (
-        <>
-          <SecondaryTitle>Orphan block</SecondaryTitle>
-          <div>It appears that this block is not part of the main chain.</div>
-        </>
+        !txLoading && (
+          <>
+            <SecondaryTitle>Orphan block</SecondaryTitle>
+            <div>It appears that this block is not part of the main chain.</div>
+          </>
+        )
       )}
 
       {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (

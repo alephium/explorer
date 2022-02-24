@@ -17,20 +17,47 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { formatAmountForDisplay } from 'alephium-js'
-import { FC } from 'react'
 import styled from 'styled-components'
 
 interface AmountProps {
   value: bigint | undefined
   className?: string
+  fadeDecimals?: boolean
   showFullPrecision?: boolean
 }
 
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
+const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: AmountProps) => {
+  let integralPart = ''
+  let fractionalPart = ''
+
+  if (value !== undefined) {
+    const amountParts = formatAmountForDisplay(value, showFullPrecision).split('.')
+    integralPart = amountParts[0]
+    fractionalPart = amountParts[1]
+  }
+
   return (
-    <span className={className}>{value ? formatAmountForDisplay(value, showFullPrecision).toString() : '-'} א</span>
+    <span className={className}>
+      {value !== undefined ? (
+        fadeDecimals ? (
+          <>
+            <span>{integralPart}</span>
+            <Decimals>.{fractionalPart}</Decimals>
+          </>
+        ) : (
+          `${integralPart}.${fractionalPart}`
+        )
+      ) : (
+        '-'
+      )}
+      {' ℵ'}
+    </span>
   )
 }
+
+const Decimals = styled.span`
+  opacity: 0.7;
+`
 
 export default styled(Amount)`
   font-feature-settings: 'tnum';
