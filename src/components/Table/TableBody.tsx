@@ -47,9 +47,9 @@ export default styled(TableBody)`
   color: ${({ theme }) => theme.textPrimary};
 
   & > tr {
-    ${(props) =>
-      props.tdStyles
-        ? props.tdStyles.map(
+    ${({ tdStyles }) =>
+      tdStyles
+        ? tdStyles.map(
             (s) =>
               css`
                 & > td:nth-child(${s.tdPos}) {

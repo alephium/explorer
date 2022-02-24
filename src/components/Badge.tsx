@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
-import { FC } from 'react'
 import styled, { DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
@@ -34,7 +33,7 @@ interface BadgeProps {
   minWidth?: number
 }
 
-let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, minWidth, floatRight = false }) => {
+let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false }: BadgeProps) => {
   return (
     <div
       className={className}
@@ -77,7 +76,7 @@ Badge = styled(Badge)`
   color: ${({ type, theme }) => getBadgeColor(type, theme).color};
   text-align: center;
   padding: 5px 10px;
-  border-radius: 30px;
+  border-radius: 4px;
   font-weight: 600;
   float: left;
   white-space: nowrap;

@@ -48,8 +48,6 @@ const GlobalStyle = createGlobalStyle`
     transition: background-color 0.2s ease;
 
     color: ${({ theme }) => theme.textPrimary};
-
-    font-size: 1rem;
   }
 
   a {

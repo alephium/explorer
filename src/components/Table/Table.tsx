@@ -35,6 +35,11 @@ interface TableLoadingPlaceholderProps {
   height: number
 }
 
+export interface TDStyle {
+  tdPos: number
+  style: FlattenInterpolation<ThemeProps<DefaultTheme>>
+}
+
 const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props }) => {
   const [height, setHeight] = useState(minHeight)
   const tableRef = useRef<HTMLDivElement>(null)
@@ -90,33 +95,30 @@ const StyledTable = styled.table<TableProps>`
   white-space: nowrap;
 
   @media ${deviceBreakPoints.mobile} {
-    ${({ scrollable, bodyOnly }) => {
-      if (scrollable) {
-        return `
-					display: block;
-					width: 100%;
-					overflow-x: auto;
-				`
-      } else if (bodyOnly) {
-        /* Change table structure, stack td vertically */
-        return css`
-          tr {
-            display: flex;
-            flex-direction: column;
-
-            td:first-child {
-              height: 25px !important;
-              font-weight: 600;
+    ${({ scrollable, bodyOnly }) =>
+      scrollable
+        ? css`
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+          `
+        : bodyOnly
+        ? /* Change table structure, stack td vertically */
+          css`
+            tr {
+              display: flex;
+              flex-direction: column;
+              td:first-child {
+                height: 25px !important;
+                font-weight: 600;
+              }
+              td:not(:first-child) {
+                height: initial !important;
+                font-weight: 500 !important;
+              }
             }
-
-            td:not(:first-child) {
-              height: initial !important;
-              font-weight: 500 !important;
-            }
-          }
-        `
-      }
-    }}
+          `
+        : null}
   }
 
   tr td {
@@ -168,10 +170,5 @@ const StyledTable = styled.table<TableProps>`
     }
   }
 `
-
-export interface TDStyle {
-  tdPos: number
-  style: FlattenInterpolation<ThemeProps<DefaultTheme>>
-}
 
 export default Table

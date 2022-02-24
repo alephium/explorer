@@ -219,16 +219,14 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
       .uniq()
       .value()
 
-    if (inputs.length > 0) {
-      return (
-        <AccountsSummaryContainer>
-          <AddressLink address={inputs[0]} maxWidth="250px" />
-          {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
-        </AccountsSummaryContainer>
-      )
-    } else {
-      return <BlockRewardLabel>Block rewards</BlockRewardLabel>
-    }
+    return inputs.length > 0 ? (
+      <AccountsSummaryContainer>
+        <AddressLink address={inputs[0]} maxWidth="250px" />
+        {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
+      </AccountsSummaryContainer>
+    ) : (
+      <BlockRewardLabel>Block rewards</BlockRewardLabel>
+    )
   }
 
   const directionIconSize = 18

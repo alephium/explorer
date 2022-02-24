@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Link } from 'react-router-dom'
 import styled, { useTheme } from 'styled-components'
 
-import logoDark from '../images/explorer-logo-dark.svg'
-import logoLight from '../images/explorer-logo-light.svg'
+import logoDarkSrc from '../images/explorer-logo-dark.svg'
+import logoLightSrc from '../images/explorer-logo-light.svg'
 import { deviceBreakPoints } from '../style/globalStyles'
 import NetworkSwitch from './NetworkSwitch'
 import SearchBar from './SearchBar'
@@ -35,13 +35,23 @@ const AppHeader = ({ className }: AppHeaderProps) => {
   return (
     <header className={className}>
       <StyledLogoLink to="/">
-        <Logo alt="alephium" src={theme.name === 'light' ? logoLight : logoDark} />
+        <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
       </StyledLogoLink>
       <SearchBar />
       <StyledNetworkSwitch direction="down" />
     </header>
   )
 }
+
+export default styled(AppHeader)`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px min(5vw, 50px);
+  gap: 5vw;
+  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+  box-shadow: ${({ theme }) => theme.shadowTertiary};
+`
 
 const StyledLogoLink = styled(Link)`
   @media ${deviceBreakPoints.mobile} {
@@ -62,14 +72,4 @@ const StyledNetworkSwitch = styled(NetworkSwitch)`
   @media ${deviceBreakPoints.mobile} {
     display: none;
   }
-`
-
-export default styled(AppHeader)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px min(5vw, 50px);
-  gap: 5vw;
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-  box-shadow: ${({ theme }) => theme.shadowTertiary};
 `

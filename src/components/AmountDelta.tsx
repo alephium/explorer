@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from './Amount'
@@ -27,7 +26,7 @@ interface AmountDeltaProps {
   showFullPrecision?: boolean
 }
 
-const AmountDelta: FC<AmountDeltaProps> = ({ value, showFullPrecision, className }) => {
+const AmountDelta = ({ value, showFullPrecision, className }: AmountDeltaProps) => {
   const theme = useTheme()
   const direction = value && value < BigInt(0) ? -1 : 1
   const absoluteValue = value && value < BigInt(0) ? value * BigInt(-1) : value

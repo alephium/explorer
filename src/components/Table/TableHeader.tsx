@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 interface TableHeaderProps {
   headerTitles: string[]
@@ -51,16 +51,14 @@ export default styled(TableHeader)`
   th {
     padding: 0px 12px 12px 12px;
     font-weight: 500;
-    ${({ compact, theme }) => {
-      if (!compact) {
-        return `
+    ${({ compact, theme }) =>
+      !compact &&
+      css`
         position: sticky;
         top: 0;
         box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
         padding: 12px;
-      `
-      }
-    }}
+      `}
     background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
   }
 

@@ -31,30 +31,28 @@ interface AppFooterProps {
   className?: string
 }
 
-const AppFooter = ({ className }: AppFooterProps) => {
-  return (
-    <footer className={className}>
-      <LeftGroup>
-        <StyledNetworkSwitch direction="up" />
-        <ThemeSwitcher />
-      </LeftGroup>
-      <RightGroup>
-        <SocialMediaIconList>
-          {socialMediaData.map((d) => (
-            <ExternalLink href={d.link} key={d.name}>
-              <d.Icon data-tip={d.name} className="social-media-icon" />
-            </ExternalLink>
-          ))}
-        </SocialMediaIconList>
-        <span>
-          <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
-        </span>
-        <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
-        <span>Powered by Alephium - {new Date().getFullYear()}</span>
-      </RightGroup>
-    </footer>
-  )
-}
+const AppFooter = ({ className }: AppFooterProps) => (
+  <footer className={className}>
+    <LeftGroup>
+      <StyledNetworkSwitch direction="up" />
+      <ThemeSwitcher />
+    </LeftGroup>
+    <RightGroup>
+      <SocialMediaIconList>
+        {socialMediaData.map((d) => (
+          <ExternalLink href={d.link} key={d.name}>
+            <d.Icon data-tip={d.name} className="social-media-icon" />
+          </ExternalLink>
+        ))}
+      </SocialMediaIconList>
+      <span>
+        <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
+      </span>
+      <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
+      <span>Powered by Alephium - {new Date().getFullYear()}</span>
+    </RightGroup>
+  </footer>
+)
 
 const socialMediaData = [
   {
@@ -79,6 +77,19 @@ const socialMediaData = [
   }
 ]
 
+export default styled(AppFooter)`
+  display: flex;
+  justify-content: space-between;
+  background-color: ${({ theme }) => theme.bgTertiary};
+  padding: 15px 30px;
+  border-top: 1px solid ${({ theme }) => theme.borderSecondary};
+
+  @media ${deviceBreakPoints.mobile} {
+    flex-direction: column;
+    gap: 30px;
+  }
+`
+
 const FooterGroup = css`
   display: flex;
   align-items: center;
@@ -102,6 +113,7 @@ const RightGroup = styled.div`
     fill: ${({ theme }) => theme.textSecondary};
     height: 25px;
     width: 25px;
+
     &:hover {
       cursor: pointer;
       fill: ${({ theme }) => theme.textPrimary};
@@ -117,20 +129,8 @@ const SocialMediaIconList = styled.div`
 
 const StyledNetworkSwitch = styled(NetworkSwitch)`
   display: none;
+
   @media ${deviceBreakPoints.mobile} {
     display: inherit;
-  }
-`
-
-export default styled(AppFooter)`
-  display: flex;
-  justify-content: space-between;
-  background-color: ${({ theme }) => theme.bgTertiary};
-  padding: 15px 30px;
-  border-top: 1px solid ${({ theme }) => theme.borderSecondary};
-
-  @media ${deviceBreakPoints.mobile} {
-    flex-direction: column;
-    gap: 30px;
   }
 `
