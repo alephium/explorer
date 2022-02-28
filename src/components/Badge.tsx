@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { DefaultTheme } from 'styled-components'
+import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
 
@@ -42,6 +42,7 @@ let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   let backgroundColor
   let color
+  let borderColor = 'transparent'
 
   switch (badgeType) {
     case 'plus':
@@ -54,19 +55,28 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       break
     case 'neutral':
       backgroundColor = theme.bgTertiary
-      color = theme.textPrimary
+      color = theme.textSecondary
       break
     case 'neutralHighlight':
-      backgroundColor = 'rgba(101, 16, 247, 1)'
-      color = 'rgba(255, 255, 255, 1)'
+      backgroundColor = theme.bgSecondary
+      color = theme.textPrimary
+      borderColor = theme.borderPrimary
   }
 
-  return { backgroundColor, color }
+  return { backgroundColor, color, borderColor }
 }
 
 Badge = styled(Badge)`
-  background-color: ${({ type, theme }) => getBadgeColor(type, theme).backgroundColor};
-  color: ${({ type, theme }) => getBadgeColor(type, theme).color};
+  ${({ type, theme }) => {
+    const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
+
+    return css`
+      color: ${color};
+      background-color: ${backgroundColor};
+      border: 1px solid ${borderColor};
+    `
+  }}
+
   text-align: center;
   padding: 5px 10px;
   border-radius: 4px;
