@@ -35,6 +35,10 @@ export const deviceBreakPoints = {
 const GlobalStyle = createGlobalStyle`
   ${normalize}
 
+  * {
+    box-sizing: border-box;
+  }
+
   :root {
     font-size: 13px;
 
@@ -48,6 +52,7 @@ const GlobalStyle = createGlobalStyle`
     transition: background-color 0.2s ease;
 
     color: ${({ theme }) => theme.textPrimary};
+    margin: 0;
   }
 
   a {
@@ -72,6 +77,25 @@ const GlobalStyle = createGlobalStyle`
     to {
         transform:rotate(360deg);
     }
+  }
+
+  /* Additional resets */
+
+  button {
+    outline: none;
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  input {
+    outline: none;
+  }
+
+  th {
+    font-weight: normal;
   }
 `
 

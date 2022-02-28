@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import './index.css'
+import './fonts/index.css'
 
 import { ExplorerClient } from 'alephium-js'
 import dayjs from 'dayjs'
