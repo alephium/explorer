@@ -63,7 +63,7 @@ const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
   width: 100%;
   border-radius: 7px;
   border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
-  background-color: ${({ theme }) => theme.bgPrimary};
+  background: ${({ theme }) => theme.bgPrimary};
   background: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
   background-size: 400% 400%;
   animation: gradientAnimation 1.5s ease-in-out infinite;
