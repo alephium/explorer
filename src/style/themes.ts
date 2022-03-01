@@ -74,7 +74,7 @@ export const lightTheme: DefaultTheme = {
   borderSecondary: '#f1f1f1',
   borderHighlight: '#D1D1D4',
 
-  shadowPrimary: '0 2px 5px rgba(0, 0, 0, 0.04)',
+  shadowPrimary: '0 2px 2px rgba(0, 0, 0, 0.03)',
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.02)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 

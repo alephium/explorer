@@ -173,7 +173,7 @@ const TransactionInfoSection = () => {
                 <TableRow>
                   <td>Gas Price</td>
                   <td>
-                    <Amount value={BigInt(txInfo.data.gasPrice)} />
+                    <Amount value={BigInt(txInfo.data.gasPrice)} showFullPrecision />
                   </td>
                 </TableRow>
                 <TableRow>

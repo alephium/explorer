@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { ReactComponent as DiscordIcon } from '../images/brand-icon-discord.svg'
 import { ReactComponent as RedditIcon } from '../images/brand-icon-reddit.svg'

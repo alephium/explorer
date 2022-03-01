@@ -184,9 +184,8 @@ interface AddressTransactionRowProps {
   addressId: string
 }
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, addressId }) => {
+const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressId }) => {
   const theme = useTheme()
-  const t = transaction
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   const amountDelta = calAmountDelta(t, addressId)
