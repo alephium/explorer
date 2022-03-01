@@ -90,7 +90,7 @@ export default styled(AppFooter)`
   }
 `
 
-const FooterGroup = css`
+const FooterGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
@@ -100,13 +100,11 @@ const FooterGroup = css`
   }
 `
 
-const LeftGroup = styled.div`
-  ${FooterGroup}
+const LeftGroup = styled(FooterGroup)`
   justify-self: flex-start;
 `
 
-const RightGroup = styled.div`
-  ${FooterGroup}
+const RightGroup = styled(FooterGroup)`
   justify-self: flex-end;
 
   .social-media-icon {
