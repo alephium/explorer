@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/dist/api/api-explorer'
+import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -34,7 +34,7 @@ import TableBody from '../components/Table/TableBody'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
-import { APIResp } from '../utils/client'
+import { APIError } from '../utils/api'
 import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {
@@ -43,27 +43,31 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const { explorerClient } = useGlobalContext()
-  const [txInfo, setTxInfo] = useState<APIResp<TransactionLike>>()
+  const { client } = useGlobalContext()
+  const [txInfo, setTxInfo] = useState<TransactionLike>()
+  const [txInfoStatus, setTxInfoStatus] = useState<number>()
+  const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
 
   const getTxInfo = useCallback(async () => {
-    if (!explorerClient) return
-    setLoading(true)
+    const fetchTransactionInfo = async () => {
+      if (!client) return
+      setLoading(true)
+      try {
+        const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
+        if (data) setTxInfo(data)
+        setTxInfoStatus(status)
+      } catch (e) {
+        console.error(e)
+        const { error } = e as APIError
+        setTxInfoStatus(error.status)
+        setTxInfoError(error.detail)
+      }
+      setLoading(false)
+    }
 
-    explorerClient.transactions
-      .getTransactionsTransactionHash(id)
-      .catch((e) => {
-        console.log(e)
-        setLoading(false)
-      })
-      .then((r) => {
-        if (!r) return
-
-        setTxInfo(r)
-        setLoading(false)
-      })
-  }, [explorerClient, id])
+    fetchTransactionInfo()
+  }, [client, id])
 
   // Initial fetch
   useEffect(() => {
@@ -72,28 +76,27 @@ const TransactionInfoSection = () => {
 
   // Polling when TX is unconfirmed
   useInterval(() => {
-    if (txInfo && txInfo.data && !isTxConfirmed(txInfo.data)) getTxInfo()
+    if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
   }, 15 * 1000)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<Output | UOutput> | undefined =
-    txInfo && txInfo.data && txInfo.data.outputs && txInfo.data.outputs
+  const outputs: Array<Output | UOutput> | undefined = txInfo && txInfo.outputs && txInfo.outputs
 
   return (
     <Section>
       <SectionTitle title="Transaction" />
       {!loading ? (
         <>
-          {txInfo && txInfo.status === 200 && txInfo.data ? (
+          {txInfo && txInfoStatus === 200 && txInfo ? (
             <Table bodyOnly>
               <TableBody>
                 <TableRow>
                   <td>Hash</td>
-                  <HighlightedCell textToCopy={txInfo.data.hash}>{txInfo.data.hash}</HighlightedCell>
+                  <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
                 </TableRow>
                 <TableRow>
                   <td>Status</td>
-                  {isTxConfirmed(txInfo.data) ? (
+                  {isTxConfirmed(txInfo) ? (
                     <td>
                       <Badge
                         type="plus"
@@ -119,32 +122,32 @@ const TransactionInfoSection = () => {
                     </td>
                   )}
                 </TableRow>
-                {isTxConfirmed(txInfo.data) && txInfo.data.blockHash && (
+                {isTxConfirmed(txInfo) && txInfo.blockHash && (
                   <TableRow>
                     <td>Block Hash</td>
                     <td>
                       <TightLink
-                        to={`../blocks/${txInfo.data.blockHash || ''}`}
-                        text={txInfo.data.blockHash || ''}
+                        to={`../blocks/${txInfo.blockHash || ''}`}
+                        text={txInfo.blockHash || ''}
                         maxWidth="550px"
                       />
                     </td>
                   </TableRow>
                 )}
-                {isTxConfirmed(txInfo.data) && txInfo.data.timestamp && (
+                {isTxConfirmed(txInfo) && txInfo.timestamp && (
                   <TableRow>
                     <td>Timestamp</td>
                     <td>
-                      <Timestamp timeInMs={txInfo.data.timestamp} forceHighPrecision />
+                      <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
                     </td>
                   </TableRow>
                 )}
-                {isTxConfirmed(txInfo.data) && (
+                {isTxConfirmed(txInfo) && (
                   <TableRow>
                     <td>Inputs</td>
                     <td>
-                      {txInfo.data.inputs && txInfo.data.inputs.length > 0
-                        ? txInfo.data.inputs.map((v, i) => (
+                      {txInfo.inputs && txInfo.inputs.length > 0
+                        ? txInfo.inputs.map((v, i) => (
                             <AddressLink
                               address={v.address}
                               txHashRef={v.txHashRef}
@@ -159,27 +162,27 @@ const TransactionInfoSection = () => {
                 <TableRow>
                   <td>Outputs</td>
                   <td>
-                    {isTxConfirmed(txInfo.data) &&
-                      txInfo.data.outputs &&
-                      txInfo.data.outputs.map((v, i) => (
+                    {isTxConfirmed(txInfo) &&
+                      txInfo.outputs &&
+                      txInfo.outputs.map((v, i) => (
                         <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                       ))}
                   </td>
                 </TableRow>
                 <TableRow>
                   <td>Gas Amount</td>
-                  <td>{txInfo.data.gasAmount || '-'} GAS</td>
+                  <td>{txInfo.gasAmount || '-'} GAS</td>
                 </TableRow>
                 <TableRow>
                   <td>Gas Price</td>
                   <td>
-                    <Amount value={BigInt(txInfo.data.gasPrice)} showFullPrecision />
+                    <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
                   </td>
                 </TableRow>
                 <TableRow>
                   <td>Transaction Fee</td>
                   <td>
-                    <Amount value={BigInt(txInfo.data.gasPrice) * BigInt(txInfo.data.gasAmount)} showFullPrecision />
+                    <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
                   </td>
                 </TableRow>
                 <TableRow>
@@ -196,7 +199,7 @@ const TransactionInfoSection = () => {
               </TableBody>
             </Table>
           ) : (
-            <InlineErrorMessage message={txInfo?.detail} code={txInfo?.status} />
+            <InlineErrorMessage message={txInfoError} code={txInfoStatus} />
           )}
         </>
       ) : (

@@ -23,12 +23,10 @@ import { ThemeType } from '../style/themes'
 import { OnOff } from '../types/generics'
 import { NetworkType, networkTypes } from '../types/network'
 import { SnackbarMessage } from '../types/ui'
-import { AlephClient, createClient } from '../utils/client'
 import { useStateWithLocalStorage } from '../utils/hooks'
 
 interface GlobalContextInterface {
-  client: AlephClient | undefined
-  explorerClient: ExplorerClient | undefined
+  client: ExplorerClient | undefined
   networkType: NetworkType | undefined
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
@@ -40,7 +38,6 @@ interface GlobalContextInterface {
 
 export const GlobalContext = createContext<GlobalContextInterface>({
   client: undefined,
-  explorerClient: undefined,
   networkType: undefined,
   currentTheme: 'dark',
   switchTheme: () => null,
@@ -52,8 +49,7 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'dark')
-  const [client, setClient] = useState<AlephClient>()
-  const [explorerClient, setExplorerClient] = useState<ExplorerClient>()
+  const [client, setClient] = useState<ExplorerClient>()
   const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
@@ -77,12 +73,11 @@ export const GlobalContextProvider: FC = ({ children }) => {
     }
 
     try {
-      setExplorerClient(new ExplorerClient({ baseUrl: url }))
+      setClient(new ExplorerClient({ baseUrl: url }))
     } catch (error) {
       throw new Error('Could not create explorer client')
     }
 
-    setClient(createClient(url))
     setNetworkType(networkType)
   }, [])
 
@@ -97,7 +92,6 @@ export const GlobalContextProvider: FC = ({ children }) => {
     <GlobalContext.Provider
       value={{
         client,
-        explorerClient,
         networkType,
         currentTheme: themeName as ThemeType,
         switchTheme: setThemeName as (arg0: ThemeType) => void,

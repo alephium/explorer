@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ListBlocks } from 'alephium-js/api/explorer'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { useCallback, useEffect, useState } from 'react'
@@ -33,14 +34,12 @@ import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
-import { BlockList } from '../types/api'
-import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
 dayjs.extend(relativeTime)
 
 const BlockSection = () => {
-  const [blockList, setBlockList] = useState<BlockList>()
+  const [blockList, setBlockList] = useState<ListBlocks>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
   const history = useHistory()
@@ -57,7 +56,7 @@ const BlockSection = () => {
       console.log('Fetching blocks...')
 
       manualFetch ? setManualLoading(true) : setLoading(true)
-      const fetchedBlocks: APIResp<BlockList> = await client.blocks(pageNumber)
+      const { data } = await client.blocks.getBlocks({ page: pageNumber })
 
       // Check if manual fetching has been set in the meantime (overriding polling fetch)
 
@@ -66,8 +65,10 @@ const BlockSection = () => {
         return
       }
 
-      console.log('Number of block fetched: ' + fetchedBlocks.data?.blocks.length)
-      setBlockList(fetchedBlocks.data)
+      if (data) {
+        console.log('Number of block fetched: ' + data.blocks?.length)
+        setBlockList(data)
+      }
 
       manualFetch ? setManualLoading(false) : setLoading(false)
     },
@@ -96,26 +97,27 @@ const BlockSection = () => {
             columnWidths={['20%', '20%', '20%', '20%', '20%']}
           />
           <TableBody tdStyles={TableBodyCustomStyles}>
-            {blockList?.blocks.map((b) => (
-              <TableRow
-                key={b.hash}
-                onClick={() => {
-                  history.push(`blocks/${b.hash}`)
-                }}
-              >
-                <td>
-                  <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
-                </td>
-                <td>
-                  <Timestamp timeInMs={b.timestamp} />
-                </td>
-                <td>{b.height}</td>
-                <td>{b.txNumber}</td>
-                <td>
-                  {b.chainFrom} → {b.chainTo}
-                </td>
-              </TableRow>
-            ))}
+            {blockList &&
+              blockList.blocks?.map((b) => (
+                <TableRow
+                  key={b.hash}
+                  onClick={() => {
+                    history.push(`blocks/${b.hash}`)
+                  }}
+                >
+                  <td>
+                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                  </td>
+                  <td>
+                    <Timestamp timeInMs={b.timestamp} />
+                  </td>
+                  <td>{b.height}</td>
+                  <td>{b.txNumber}</td>
+                  <td>
+                    {b.chainFrom} → {b.chainTo}
+                  </td>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </Content>
