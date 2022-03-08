@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/dist/api/api-explorer'
 import { Check } from 'lucide-react'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { GlobalContext } from '..'
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
@@ -34,6 +33,7 @@ import Table from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
@@ -43,15 +43,15 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).explorerClient
+  const { explorerClient } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<APIResp<TransactionLike>>()
   const [loading, setLoading] = useState(true)
 
   const getTxInfo = useCallback(async () => {
-    if (!client) return
+    if (!explorerClient) return
     setLoading(true)
 
-    client.transactions
+    explorerClient.transactions
       .getTransactionsTransactionHash(id)
       .catch((e) => {
         console.log(e)
@@ -63,7 +63,7 @@ const TransactionInfoSection = () => {
         setTxInfo(r)
         setLoading(false)
       })
-  }, [client, id])
+  }, [explorerClient, id])
 
   // Initial fetch
   useEffect(() => {

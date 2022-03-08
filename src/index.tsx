@@ -18,24 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import './fonts/index.css'
 
-import React from 'react'
 import ReactDOM from 'react-dom'
 import { HashRouter as Router } from 'react-router-dom'
 
 import NotificationBar from './components/NotificationBar'
+import { GlobalContextProvider } from './contexts/global'
 import * as serviceWorker from './serviceWorker'
-import { GlobalContextInterface } from './types/context'
-
-export const GlobalContext = React.createContext<GlobalContextInterface>({
-  client: undefined,
-  explorerClient: undefined,
-  networkType: undefined,
-  currentTheme: 'dark',
-  switchTheme: () => null,
-  setSnackbarMessage: () => null,
-  timestampPrecisionMode: 'off',
-  setTimestampPrecisionMode: () => null
-})
 
 let browserIsOld = false
 
@@ -56,7 +44,9 @@ if (browserIsOld) {
   import('./App').then(({ default: App }) => {
     ReactDOM.render(
       <Router>
-        <App />
+        <GlobalContextProvider>
+          <App />
+        </GlobalContextProvider>
       </Router>,
       document.getElementById('root')
     )

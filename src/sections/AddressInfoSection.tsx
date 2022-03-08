@@ -22,11 +22,10 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
 import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { GlobalContext } from '..'
 import AmountDelta from '../components/AmountDelta'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
@@ -41,6 +40,7 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table
 import TableHeader from '../components/Table/TableHeader'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { getHumanReadableError } from '../utils/api'
@@ -54,8 +54,7 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).client
-  const explorerClient = useContext(GlobalContext).explorerClient
+  const { client, explorerClient } = useGlobalContext()
   const [addressInfo, setAddressInfo] = useState<AddressInfo>()
   const [addressInfoError, setAddressInfoError] = useState('')
   const [txList, setTxList] = useState<APIResp<Transaction[]>>()

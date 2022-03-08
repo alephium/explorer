@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
-import { MouseEvent, useContext } from 'react'
+import { MouseEvent } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { GlobalContext } from '..'
+import { useGlobalContext } from '../contexts/global'
 
 dayjs.extend(localizedFormat)
 
@@ -33,7 +33,7 @@ interface TimestampProps {
 }
 
 const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: TimestampProps) => {
-  const { timestampPrecisionMode, setTimestampPrecisionMode } = useContext(GlobalContext)
+  const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
 
   const isHighPrecision = timestampPrecisionMode === 'on' || forceHighPrecision
 

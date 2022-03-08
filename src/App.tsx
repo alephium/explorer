@@ -16,17 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerClient } from 'alephium-js'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
+import { useCallback, useRef } from 'react'
+import { Redirect, Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
-import { GlobalContext } from '.'
 import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
+import { useGlobalContext } from './contexts/global'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import BlockInfoSection from './sections/BlockInfoSection'
@@ -34,12 +33,8 @@ import BlockSection from './sections/BlockSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
 import TransactionsSection from './sections/TransactionsSection'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
-import { darkTheme, lightTheme, ThemeType } from './style/themes'
-import { OnOff } from './types/generics'
-import { NetworkType, networkTypes } from './types/network'
+import { darkTheme, lightTheme } from './style/themes'
 import { SnackbarMessage } from './types/ui'
-import { AlephClient, createClient } from './utils/client'
-import { useStateWithLocalStorage } from './utils/hooks'
 import { ScrollToTop } from './utils/routing'
 
 /* Customize data format accross the app */
@@ -64,105 +59,49 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'dark')
-  const [client, setClient] = useState<AlephClient>()
-  const [explorerClient, setExplorerClient] = useState<ExplorerClient>()
-  const [networkType, setNetworkType] = useState<NetworkType>()
-  const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
-  const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
-    'timestampPrecisionMode',
-    'off'
-  )
-
+  const { snackbarMessage, currentTheme } = useGlobalContext()
   const contentRef = useRef(null)
 
   const getContentRef = useCallback(() => contentRef.current, [])
 
-  useEffect(() => {
-    // Check and apply environment variables
-    const url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
-    const networkType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
-
-    if (!url) {
-      throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
-    }
-
-    if (!networkType) {
-      throw new Error('The REACT_APP_NETWORK_TYPE environment variable must be defined')
-    } else if (!networkTypes.includes(networkType)) {
-      throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
-    }
-
-    try {
-      setExplorerClient(new ExplorerClient({ baseUrl: url }))
-    } catch (error) {
-      throw new Error('Could not create explorer client')
-    }
-
-    setClient(createClient(url))
-    setNetworkType(networkType)
-  }, [])
-
-  // Remove snackbar popup
-  useEffect(() => {
-    if (snackbarMessage) {
-      setTimeout(() => setSnackbarMessage(undefined), snackbarMessage.duration || 3000)
-    }
-  }, [snackbarMessage])
-
   return (
-    <Router>
-      <ThemeProvider theme={themeName === 'light' ? lightTheme : darkTheme}>
-        <GlobalStyle />
-        <GlobalContext.Provider
-          value={{
-            client,
-            explorerClient,
-            networkType,
-            currentTheme: themeName as ThemeType,
-            switchTheme: setThemeName as (arg0: ThemeType) => void,
-            setSnackbarMessage,
-            timestampPrecisionMode,
-            setTimestampPrecisionMode
-          }}
-        >
-          <MainContainer>
-            <AppHeader />
-            <ContentContainer>
-              <ContentWrapper ref={contentRef}>
-                <ScrollToTop getScrollContainer={getContentRef} />
+    <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
+      <GlobalStyle />
+      <MainContainer>
+        <AppHeader />
+        <ContentContainer>
+          <ContentWrapper ref={contentRef}>
+            <ScrollToTop getScrollContainer={getContentRef} />
 
-                <Content>
-                  <Route exact path="/">
-                    <Redirect to="/blocks" />
-                  </Route>
-                  <Route exact path="/blocks">
-                    <BlockSection />
-                  </Route>
-                  <Route path="/blocks/:id">
-                    <BlockInfoSection />
-                  </Route>
-                  <Route exact path="/addresses">
-                    <AddressesSection />
-                  </Route>
-                  <Route path="/addresses/:id">
-                    <AddressInfoSection />
-                  </Route>
-                  <Route exact path="/transactions">
-                    <TransactionsSection />
-                  </Route>
-                  <Route path="/transactions/:id">
-                    <TransactionInfoSection />
-                  </Route>
-                </Content>
-              </ContentWrapper>
-            </ContentContainer>
-            <AppFooter />
-            <SnackbarManager message={snackbarMessage} />
-          </MainContainer>
-        </GlobalContext.Provider>
-      </ThemeProvider>
-    </Router>
+            <Content>
+              <Route exact path="/">
+                <Redirect to="/blocks" />
+              </Route>
+              <Route exact path="/blocks">
+                <BlockSection />
+              </Route>
+              <Route path="/blocks/:id">
+                <BlockInfoSection />
+              </Route>
+              <Route exact path="/addresses">
+                <AddressesSection />
+              </Route>
+              <Route path="/addresses/:id">
+                <AddressInfoSection />
+              </Route>
+              <Route exact path="/transactions">
+                <TransactionsSection />
+              </Route>
+              <Route path="/transactions/:id">
+                <TransactionInfoSection />
+              </Route>
+            </Content>
+          </ContentWrapper>
+        </ContentContainer>
+        <AppFooter />
+        <SnackbarManager message={snackbarMessage} />
+      </MainContainer>
+    </ThemeProvider>
   )
 }
 

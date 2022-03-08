@@ -18,11 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { GlobalContext } from '..'
 import { TightLink } from '../components/Links'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
@@ -32,6 +31,7 @@ import TableBody from '../components/Table/TableBody'
 import TableHeader from '../components/Table/TableHeader'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import { BlockList } from '../types/api'
 import { APIResp } from '../utils/client'
@@ -45,7 +45,7 @@ const BlockSection = () => {
   const [manualLoading, setManualLoading] = useState(false)
   const history = useHistory()
 
-  const client = useContext(GlobalContext).client
+  const { client } = useGlobalContext()
 
   // Default page
   const currentPageNumber = usePageNumber()

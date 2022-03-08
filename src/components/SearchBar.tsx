@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { GlobalContext } from '..'
+import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
-  const { setSnackbarMessage } = useContext(GlobalContext)
+  const { setSnackbarMessage } = useGlobalContext()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const history = useHistory()
