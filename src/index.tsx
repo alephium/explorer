@@ -24,8 +24,9 @@ import { HashRouter as Router } from 'react-router-dom'
 import NotificationBar from './components/NotificationBar'
 import { GlobalContextProvider } from './contexts/global'
 import * as serviceWorker from './serviceWorker'
+import { isFlexGapSupported } from './utils/browserSupport'
 
-let browserIsOld = false
+let browserIsOld = !isFlexGapSupported()
 
 try {
   BigInt(1)
