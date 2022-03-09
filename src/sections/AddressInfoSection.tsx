@@ -21,31 +21,26 @@ import { calAmountDelta } from 'alephium-js/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
-import { ArrowRight } from 'lucide-react'
-import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
-import { GlobalContext } from '..'
+import AmountDelta from '../components/AmountDelta'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
-import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import {
-  AnimatedCell,
-  DetailsRow,
-  DetailToggle,
-  HighlightedCell,
-  Row,
-  Table,
-  TableBody,
-  TableHeader,
-  TDStyle
-} from '../components/Table'
+import HighlightedCell from '../components/Table/HighlightedCell'
+import Table, { TDStyle } from '../components/Table/Table'
+import TableBody from '../components/Table/TableBody'
+import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
+import TableHeader from '../components/Table/TableHeader'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { getHumanReadableError } from '../utils/api'
@@ -59,8 +54,7 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).client
-  const explorerClient = useContext(GlobalContext).explorerClient
+  const { client, explorerClient } = useGlobalContext()
   const [addressInfo, setAddressInfo] = useState<AddressInfo>()
   const [addressInfoError, setAddressInfoError] = useState('')
   const [txList, setTxList] = useState<APIResp<Transaction[]>>()
@@ -83,7 +77,6 @@ const TransactionInfoSection = () => {
 
       try {
         const response = await explorerClient.getAddressDetails(id)
-        console.log(response.data)
         if (!response.data) return
 
         setAddressInfo(response.data)
@@ -118,74 +111,69 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" />
-      {!infoLoading && previousId.current === id ? (
-        <>
-          {addressInfo ? (
-            <>
-              <Table bodyOnly>
-                <TableBody tdStyles={AddressTableBodyCustomStyles}>
-                  <tr>
-                    <td>Address</td>
-                    <HighlightedCell textToCopy={id} qrCodeContent={id}>
-                      {id}
-                    </HighlightedCell>
-                  </tr>
-                  <tr>
-                    <td>Number of Transactions</td>
-                    <td>{addressInfo.txNumber}</td>
-                  </tr>
-                  <tr>
-                    <td>Total Balance</td>
-                    <td>
-                      <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
-                    </td>
-                  </tr>
-                  {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
-                    <tr>
-                      <td>Locked Balance</td>
-                      <td>
-                        <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
-                      </td>
-                    </tr>
-                  )}
-                </TableBody>
-              </Table>
+      <SectionTitle title="Address" isLoading={infoLoading || txLoading} />
 
-              <SecondaryTitle>History</SecondaryTitle>
-              {!txLoading && txList && txList.data && txList.status === 200 ? (
-                <>
-                  {txList.data.length > 0 ? (
-                    <Table hasDetails main scrollable>
-                      <TableHeader
-                        headerTitles={['Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
-                        columnWidths={['15%', '100px', '80px', '25%', '120px', '30px']}
-                        textAlign={['left', 'left', 'left', 'left', 'right', 'left']}
-                      />
-                      <TableBody>
-                        {txList.data
-                          .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                          .map((t, i) => (
-                            <AddressTransactionRow transaction={t} addressId={id} key={i} />
-                          ))}
-                      </TableBody>
-                    </Table>
-                  ) : (
-                    <NoTxMessage>No transactions yet</NoTxMessage>
-                  )}
-                </>
-              ) : (
-                <LoadingSpinner />
-              )}
-            </>
-          ) : (
-            <InlineErrorMessage message={addressInfoError} />
-          )}
-          {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
-        </>
+      {!infoLoading && !addressInfo ? (
+        <InlineErrorMessage message={addressInfoError} />
       ) : (
-        <LoadingSpinner />
+        <Table bodyOnly isLoading={infoLoading} minHeight={250}>
+          {addressInfo && (
+            <TableBody tdStyles={AddressTableBodyCustomStyles}>
+              <TableRow>
+                <td>Address</td>
+                <HighlightedCell textToCopy={id} qrCodeContent={id}>
+                  {id}
+                </HighlightedCell>
+              </TableRow>
+              <TableRow>
+                <td>Number of Transactions</td>
+                <td>{addressInfo.txNumber}</td>
+              </TableRow>
+              <TableRow>
+                <td>Total Balance</td>
+                <td>
+                  <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
+                </td>
+              </TableRow>
+              {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
+                <TableRow>
+                  <td>Locked Balance</td>
+                  <td>
+                    <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
+                  </td>
+                </TableRow>
+              )}
+            </TableBody>
+          )}
+        </Table>
       )}
+
+      <SecondaryTitle>Transactions</SecondaryTitle>
+
+      <Table hasDetails main scrollable isLoading={txLoading}>
+        {txList && txList.data && txList.status === 200 && txList.data.length ? (
+          <>
+            <TableHeader
+              headerTitles={['', 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+              columnWidths={['20px', '15%', '100px', '80px', '25%', '120px', '30px']}
+              textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
+            />
+            <TableBody tdStyles={TxListCustomStyles}>
+              {txList.data
+                .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
+                .map((t, i) => (
+                  <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                ))}
+            </TableBody>
+          </>
+        ) : (
+          <TableBody>
+            <NoTxMessage>No transactions yet</NoTxMessage>
+          </TableBody>
+        )}
+      </Table>
+
+      {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
     </Section>
   )
 }
@@ -195,8 +183,8 @@ interface AddressTransactionRowProps {
   addressId: string
 }
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, addressId }) => {
-  const t = transaction
+const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressId }) => {
+  const theme = useTheme()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   const amountDelta = calAmountDelta(t, addressId)
@@ -208,58 +196,68 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
     if (t.outputs.every((o) => o.address === addressId)) {
       return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
     } else {
-      return _(t.outputs.filter((o) => o.address !== addressId))
+      const outputs = _(t.outputs.filter((o) => o.address !== addressId))
         .map((v) => v.address)
         .uniq()
         .value()
-        .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
+
+      return (
+        <AccountsSummaryContainer>
+          <AddressLink address={outputs[0]} maxWidth="250px" />
+          {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
+        </AccountsSummaryContainer>
+      )
     }
   }
 
   const renderInputAccounts = () => {
     if (!t.inputs) return
-    const inputAccounts = _(t.inputs.filter((o) => o.address !== addressId))
+    const inputs = _(t.inputs.filter((o) => o.address !== addressId))
       .map((v) => v.address)
       .uniq()
       .value()
-      .map((v, i) => <AddressLink key={i} address={v} maxWidth="250px" />)
 
-    if (inputAccounts.length > 0) {
-      return inputAccounts
-    } else {
-      return <BlockRewardLabel>Block rewards</BlockRewardLabel>
-    }
+    return inputs.length > 0 ? (
+      <AccountsSummaryContainer>
+        <AddressLink address={inputs[0]} maxWidth="250px" />
+        {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
+      </AccountsSummaryContainer>
+    ) : (
+      <BlockRewardLabel>Block rewards</BlockRewardLabel>
+    )
   }
+
+  const directionIconSize = 18
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+      <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+        <td>
+          {isOut ? (
+            <ArrowUpCircle size={directionIconSize} />
+          ) : (
+            <ArrowDownCircle size={directionIconSize} color={theme.valid} />
+          )}
+        </td>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
         <td>{(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}</td>
         <td>
-          <Badge type={isOut ? 'minus' : 'plus'} content={isOut ? 'To' : 'From'} />
+          <Badge type="neutral" content={isOut ? 'To' : 'From'} floatRight minWidth={60} />
         </td>
         <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
         <td>
-          <Badge
-            type={isOut ? 'minus' : 'plus'}
-            prefix={isOut ? '- ' : '+ '}
-            floatRight
-            amount={amountDelta < BigInt(0) ? (amountDelta * BigInt(-1)).toString() : amountDelta.toString()}
-          />
+          <AmountDelta value={amountDelta} />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
-      </Row>
-      <DetailsRow openCondition={detailOpen}>
-        <td />
-        <td />
-        <AnimatedCell colSpan={4}>
-          <Table noBorder>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact transparent />
+      </TableRow>
+      <TableDetailsRow openCondition={detailOpen}>
+        <AnimatedCell colSpan={7}>
+          <Table>
+            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
             <TableBody>
-              <Row>
+              <TableRow>
                 <td>
                   {t.inputs && t.inputs.length > 0 ? (
                     t.inputs.map((input, i) => (
@@ -284,11 +282,11 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction, ad
                       <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
                     ))}
                 </td>
-              </Row>
+              </TableRow>
             </TableBody>
           </Table>
         </AnimatedCell>
-      </DetailsRow>
+      </TableDetailsRow>
     </>
   )
 }
@@ -297,18 +295,33 @@ const AddressTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,
     style: css`
-      font-weight: 500;
+      font-weight: 600;
     `
   }
 ]
+
+const TxListCustomStyles: TDStyle[] = [
+  {
+    tdPos: 6,
+    style: css`
+      text-align: right;
+    `
+  }
+]
+
+const AccountsSummaryContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.textSecondary};
   font-style: italic;
 `
 
-const NoTxMessage = styled.span`
+const NoTxMessage = styled.td`
   color: ${({ theme }) => theme.textSecondary};
+  padding: 20px;
 `
 
 export default TransactionInfoSection

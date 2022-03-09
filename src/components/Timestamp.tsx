@@ -18,20 +18,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
-import { MouseEvent, useContext } from 'react'
+import { MouseEvent } from 'react'
 import ReactTooltip from 'react-tooltip'
+import styled from 'styled-components'
 
-import { GlobalContext } from '..'
+import { useGlobalContext } from '../contexts/global'
 
 dayjs.extend(localizedFormat)
 
 interface TimestampProps {
   timeInMs: number
   forceHighPrecision?: boolean
+  className?: string
 }
 
-const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => {
-  const { timestampPrecisionMode, setTimestampPrecisionMode } = useContext(GlobalContext)
+const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: TimestampProps) => {
+  const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
 
   const isHighPrecision = timestampPrecisionMode === 'on' || forceHighPrecision
 
@@ -46,16 +48,23 @@ const Timestamp = ({ timeInMs, forceHighPrecision = false }: TimestampProps) => 
   const lowPrecisionTimestamp = dayjs().to(timeInMs)
 
   return (
-    <span
+    <div
       onClick={handleTimestampClick}
-      data-tip={`
-        ${isHighPrecision ? lowPrecisionTimestamp : highPrecisionTimestamp}
-        ${!forceHighPrecision ? '<br/>(Click to change format)' : ''}`}
+      data-tip={
+        !forceHighPrecision
+          ? `${highPrecisionTimestamp}
+            <br/>Click to change format`
+          : undefined
+      }
       data-multiline
+      className={className}
     >
       {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
-    </span>
+    </div>
   )
 }
 
-export default Timestamp
+export default styled(Timestamp)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`

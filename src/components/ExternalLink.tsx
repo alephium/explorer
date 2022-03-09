@@ -16,42 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import 'styled-components'
+import { ComponentPropsWithoutRef, FC } from 'react'
 
-import { ThemeType } from './themes'
+const ExternalLink: FC<ComponentPropsWithoutRef<'a'>> = ({ children, ...props }) => (
+  <a {...props} rel="nofollow noopener noreferrer" target="_blank">
+    {children}
+  </a>
+)
 
-// and extend them!
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    name: ThemeType
-    body: string
-
-    textPrimary: string
-    textSecondary: string
-    textAccent: string
-
-    link: string
-    linkHighlight: string
-
-    bgPrimary: string
-    bgSecondary: string
-    bgTertiary: string
-    bgHighlight: string
-    bgHover: string
-
-    borderPrimary: string
-    borderSecondary: string
-    borderHighlight: string
-
-    shadowPrimary: string
-    shadowSecondary: string
-    shadowTertiary: string
-
-    accentGradient: string
-
-    tooltip: string
-
-    valid: string
-    alert: string
-  }
-}
+export default ExternalLink

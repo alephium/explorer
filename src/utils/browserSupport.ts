@@ -16,42 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import 'styled-components'
+export const isFlexGapSupported = () => {
+  const flex = document.createElement('div')
+  flex.style.display = 'flex'
+  flex.style.flexDirection = 'column'
+  flex.style.rowGap = '1px'
+  flex.appendChild(document.createElement('div'))
+  flex.appendChild(document.createElement('div'))
+  document.body.appendChild(flex)
 
-import { ThemeType } from './themes'
+  const isSupported = flex.scrollHeight === 1
 
-// and extend them!
-declare module 'styled-components' {
-  export interface DefaultTheme {
-    name: ThemeType
-    body: string
-
-    textPrimary: string
-    textSecondary: string
-    textAccent: string
-
-    link: string
-    linkHighlight: string
-
-    bgPrimary: string
-    bgSecondary: string
-    bgTertiary: string
-    bgHighlight: string
-    bgHover: string
-
-    borderPrimary: string
-    borderSecondary: string
-    borderHighlight: string
-
-    shadowPrimary: string
-    shadowSecondary: string
-    shadowTertiary: string
-
-    accentGradient: string
-
-    tooltip: string
-
-    valid: string
-    alert: string
+  if (flex.parentNode) {
+    flex.parentNode.removeChild(flex)
   }
+
+  return isSupported
 }

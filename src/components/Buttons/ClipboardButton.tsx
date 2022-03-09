@@ -17,15 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Check, Clipboard } from 'lucide-react'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { GlobalContext } from '../..'
+import { useGlobalContext } from '../../contexts/global'
 
 const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
-  const { setSnackbarMessage } = useContext(GlobalContext)
+  const { setSnackbarMessage } = useGlobalContext()
 
   const handleClick = () => {
     navigator.clipboard

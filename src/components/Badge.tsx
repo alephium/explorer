@@ -16,9 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
-import { FC } from 'react'
-import styled, { DefaultTheme } from 'styled-components'
+import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
 
@@ -31,52 +29,57 @@ interface BadgeProps {
   amount?: string | bigint | undefined
   prefix?: string
   floatRight?: boolean
+  minWidth?: number
 }
 
-let Badge: FC<BadgeProps> = ({ content, className, amount, prefix, floatRight = false }) => {
-  return (
-    <div
-      className={className}
-      data-tip={amount ? `${abbreviateAmount(BigInt(amount), true)} א` : null}
-      style={{ float: floatRight ? 'right' : 'left' }}
-    >
-      {prefix && <span>{prefix}</span>}
-      {amount ? <Amount value={BigInt(amount)} /> : content}
-    </div>
-  )
-}
+let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false }: BadgeProps) => (
+  <div className={className} style={{ float: floatRight ? 'right' : 'left', minWidth }}>
+    {prefix && <span>{prefix}</span>}
+    {amount ? <Amount value={BigInt(amount)} /> : content}
+  </div>
+)
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   let backgroundColor
   let color
+  let borderColor = 'transparent'
 
   switch (badgeType) {
     case 'plus':
       backgroundColor = 'rgba(93, 203, 126, 0.12)'
-      color = 'rgba(93, 203, 126, 1)'
+      color = theme.valid
       break
     case 'minus':
       backgroundColor = 'rgba(243, 113, 93, 0.1)'
-      color = 'rgba(243, 113, 93, 1)'
+      color = theme.alert
       break
     case 'neutral':
-      backgroundColor = theme.name === 'dark' ? 'rgba(101, 16, 247, 0.28)' : 'rgba(101, 16, 247, 0.6)'
-      color = theme.name === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 1)'
+      backgroundColor = theme.bgTertiary
+      color = theme.textSecondary
       break
     case 'neutralHighlight':
-      backgroundColor = 'rgba(101, 16, 247, 1)'
-      color = 'rgba(255, 255, 255, 1)'
+      backgroundColor = theme.bgSecondary
+      color = theme.textPrimary
+      borderColor = theme.borderPrimary
   }
 
-  return { backgroundColor, color }
+  return { backgroundColor, color, borderColor }
 }
 
 Badge = styled(Badge)`
-  background-color: ${({ type, theme }) => getBadgeColor(type, theme).backgroundColor};
-  color: ${({ type, theme }) => getBadgeColor(type, theme).color};
+  ${({ type, theme }) => {
+    const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
+
+    return css`
+      color: ${color};
+      background-color: ${backgroundColor};
+      border: 1px solid ${borderColor};
+    `
+  }}
+
   text-align: center;
   padding: 5px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-weight: 600;
   float: left;
   white-space: nowrap;

@@ -18,31 +18,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Transaction } from 'alephium-js/dist/api/api-explorer'
 import { ArrowRight } from 'lucide-react'
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { GlobalContext } from '..'
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
-import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import {
-  AnimatedCell,
-  DetailsRow,
-  DetailToggle,
-  HighlightedCell,
-  Row,
-  Table,
-  TableBody,
-  TableHeader,
-  TDStyle
-} from '../components/Table'
+import HighlightedCell from '../components/Table/HighlightedCell'
+import Table, { TDStyle } from '../components/Table/Table'
+import TableBody from '../components/Table/TableBody'
+import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
+import TableHeader from '../components/Table/TableHeader'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
@@ -55,7 +49,7 @@ interface ParamTypes {
 
 const BlockInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).client
+  const { client } = useGlobalContext()
   const history = useHistory()
 
   const [blockInfo, setBlockInfo] = useState<APIResp<Block>>()
@@ -118,80 +112,78 @@ const BlockInfoSection = () => {
     })()
   }, [blockInfo, id, client, history])
 
-  return (
+  return !infoLoading && (!blockInfo || blockInfo.status !== 200 || !blockInfo.data) ? (
+    <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
+  ) : (
     <Section>
-      <SectionTitle title="Block" />
-      {!infoLoading ? (
-        <>
-          {blockInfo && blockInfo.status === 200 && blockInfo.data ? (
-            <>
-              <Table bodyOnly>
-                <TableBody tdStyles={BlockTableBodyCustomStyles}>
-                  <tr>
-                    <td>Hash</td>
-                    <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
-                  </tr>
-                  <tr>
-                    <td>Height</td>
-                    <td>{blockInfo.data.height}</td>
-                  </tr>
-                  <tr>
-                    <td>Chain Index</td>
-                    <td>
-                      {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>Nb. of transactions</td>
-                    <td>{blockInfo.data.txNumber}</td>
-                  </tr>
-                  <tr>
-                    <td>Timestamp</td>
-                    <td>
-                      <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
-                    </td>
-                  </tr>
-                </TableBody>
-              </Table>
+      <SectionTitle title="Block" isLoading={infoLoading || txLoading} />
 
-              {blockInfo?.data?.mainChain ? (
+      <Table bodyOnly isLoading={infoLoading}>
+        {blockInfo && blockInfo.data && (
+          <TableBody tdStyles={BlockTableBodyCustomStyles}>
+            <TableRow>
+              <td>Hash</td>
+              <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
+            </TableRow>
+            <TableRow>
+              <td>Height</td>
+              <td>{blockInfo.data.height}</td>
+            </TableRow>
+            <TableRow>
+              <td>Chain Index</td>
+              <td>
+                {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
+              </td>
+            </TableRow>
+            <TableRow>
+              <td>Nb. of transactions</td>
+              <td>{blockInfo.data.txNumber}</td>
+            </TableRow>
+            <TableRow>
+              <td>Timestamp</td>
+              <td>
+                <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
+              </td>
+            </TableRow>
+          </TableBody>
+        )}
+      </Table>
+
+      {blockInfo?.data?.mainChain ? (
+        !txLoading && (!txList || !txList.data || txList.status !== 200) ? (
+          <InlineErrorMessage message="An error occured while fetching transactions" code={txList?.status} />
+        ) : (
+          <>
+            <SecondaryTitle>Transactions</SecondaryTitle>
+            <Table main hasDetails scrollable isLoading={txLoading}>
+              {txList && txList.data && (
                 <>
-                  <SecondaryTitle>Transactions</SecondaryTitle>
-                  {!txLoading && txList && txList.data && txList.status === 200 ? (
-                    <>
-                      <Table main hasDetails scrollable>
-                        <TableHeader
-                          headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
-                          columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
-                          textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
-                        />
-                        <TableBody tdStyles={TXTableBodyCustomStyles}>
-                          {txList.data.map((t, i) => (
-                            <TransactionRow transaction={t} key={i} />
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </>
-                  ) : (
-                    <LoadingSpinner />
-                  )}
-                </>
-              ) : (
-                <>
-                  <SecondaryTitle>Orphan block</SecondaryTitle>
-                  <div>It appears that this block is not part of the main chain.</div>
+                  <TableHeader
+                    headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
+                    columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                    textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
+                  />
+                  <TableBody tdStyles={TXTableBodyCustomStyles}>
+                    {txList.data.map((t, i) => (
+                      <TransactionRow transaction={t} key={i} />
+                    ))}
+                  </TableBody>
                 </>
               )}
-            </>
-          ) : (
-            <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
-          )}
-          {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
-            <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
-          )}
-        </>
+            </Table>
+          </>
+        )
       ) : (
-        <LoadingSpinner />
+        !txLoading && (
+          <>
+            <SecondaryTitle>Orphan block</SecondaryTitle>
+            <div>It appears that this block is not part of the main chain.</div>
+          </>
+        )
+      )}
+
+      {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
+        <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
       )}
     </Section>
   )
@@ -207,7 +199,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
 
   return (
     <>
-      <Row key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+      <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
           <TransactionIcon />
         </td>
@@ -231,8 +223,8 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           />
         </td>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
-      </Row>
-      <DetailsRow openCondition={detailOpen}>
+      </TableRow>
+      <TableDetailsRow openCondition={detailOpen}>
         <td />
         <td />
         <AnimatedCell>
@@ -249,7 +241,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs && t.outputs.map((o, i) => <Amount value={BigInt(o.amount)} key={i} />)}
         </AnimatedCell>
         <td />
-      </DetailsRow>
+      </TableDetailsRow>
     </>
   )
 }

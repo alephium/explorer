@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
-import { GlobalContext } from '..'
+import { useGlobalContext } from '../contexts/global'
 import { ThemeType } from '../style/themes'
 
 interface ThemeSwitcherProps {
@@ -32,7 +32,7 @@ const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
   return theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
 }
 
-const toggleWidth = 80
+const toggleWidth = 60
 const toggleHeight = toggleWidth / 2
 const toggleIndicatorSize = toggleWidth / 2
 
@@ -42,7 +42,7 @@ const toggleVariants = {
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
-  const { currentTheme, switchTheme } = useContext(GlobalContext)
+  const { currentTheme, switchTheme } = useGlobalContext()
 
   return (
     <StyledThemeSwitcher onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')} className={className}>
@@ -69,7 +69,7 @@ export const StyledThemeSwitcher = styled.div`
   height: ${toggleHeight}px;
   border: 1px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 60px;
-  background-color: ${({ theme }) => theme.bgHighlight};
+  background-color: ${({ theme }) => theme.bgPrimary};
   cursor: pointer;
   box-sizing: content-box;
 

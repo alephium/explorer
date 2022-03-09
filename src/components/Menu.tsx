@@ -98,37 +98,35 @@ const MenuContainer = styled.div`
   position: relative;
   height: ${menuHeight};
   display: flex;
+  box-shadow: ${({ theme }) => theme.shadowSecondary};
+  outline: none;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.bgHover};
+  }
 `
 
 const MenuCurrentContent = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 15px;
   cursor: pointer;
-
-  &:hover {
-    background-color: ${({ theme }) => theme.borderSecondary};
-  }
+  gap: 15px;
 `
 
 const Label = styled.span`
   color: ${({ theme }) => theme.textPrimary};
+  line-height: initial;
   flex: 1;
 `
 
-const IconContainer = styled.div`
-  margin-right: 20px;
-`
+const IconContainer = styled.div``
 
 const MenuItemsContainer = styled(motion.div)`
   position: absolute;
-  width: calc(100% - 10px);
-  margin-left: 5px;
+  width: 100%;
   z-index: 10000;
-  overflow: hidden;
-  border-radius: 7px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
 `
 
 const MenuItemsList = styled.div`
@@ -136,6 +134,7 @@ const MenuItemsList = styled.div`
   border-radius: 7px;
   background-color: ${({ theme }) => theme.bgPrimary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
+  box-shadow: ${({ theme }) => theme.shadowSecondary};
 `
 
 const ItemIcon = styled.div`

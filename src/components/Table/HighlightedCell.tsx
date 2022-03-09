@@ -16,20 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 
-interface LoadingSpinnerProps {
-  size?: number
-  style?: CSSProperties
+import ClipboardButton from '../Buttons/ClipboardButton'
+import QRCodeButton from '../Buttons/QRCodeButton'
+
+interface HighlightedCellProps {
+  textToCopy?: string
+  qrCodeContent?: string
+  className?: string
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
+const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCodeContent, className }) => {
+  return (
+    <td className={className}>
+      <span>{children}</span>
+      {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
+      {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
+    </td>
+  )
+}
 
-const Spinner = styled(Loader)`
-  animation: spin 1s infinite;
-  color: ${({ theme }) => theme.textSecondary};
+export default styled(HighlightedCell)`
+  font-weight: 600 !important;
+  color: ${({ theme }) => theme.textAccent};
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  overflow: hidden;
 `
-
-export default LoadingSpinner

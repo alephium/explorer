@@ -16,21 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React from 'react'
 import styled from 'styled-components'
 
 import { deviceBreakPoints } from '../style/globalStyles'
+import LoadingSpinner from './LoadingSpinner'
 
 interface PageTitleProps {
   title: string
   surtitle?: string | JSX.Element
   subtitle?: string | JSX.Element
+  isLoading?: boolean
 }
 
-const SectionTitle: React.FC<PageTitleProps> = ({ title, surtitle, subtitle }) => (
+const SectionTitle = ({ title, surtitle, subtitle, isLoading }: PageTitleProps) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
-    <Title>{title}</Title>
+    <Title>
+      {title}
+      {isLoading && <LoadingSpinner style={{ marginLeft: 20 }} size={18} />}
+    </Title>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
   </TitleWrapper>
 )
@@ -42,7 +46,7 @@ const TitleWrapper = styled.div`
 const Title = styled.h1`
   font-family: 'Inter';
   font-weight: bold;
-  font-size: 2.2rem;
+  font-size: 2.1rem;
   color: ${({ theme }) => theme.textPrimary};
   margin: 0 0 5px 0;
   font-weight: 600;

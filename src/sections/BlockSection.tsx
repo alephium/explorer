@@ -18,21 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { motion } from 'framer-motion'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { GlobalContext } from '..'
 import { TightLink } from '../components/Links'
-import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
-import { Table, TableBody, TableHeader, TDStyle } from '../components/Table'
+import Table, { TDStyle } from '../components/Table/Table'
+import TableBody from '../components/Table/TableBody'
+import TableHeader from '../components/Table/TableHeader'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
-import blockIcon from '../images/block-icon.svg'
 import { BlockList } from '../types/api'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
@@ -45,7 +45,7 @@ const BlockSection = () => {
   const [manualLoading, setManualLoading] = useState(false)
   const history = useHistory()
 
-  const client = useContext(GlobalContext).client
+  const { client } = useGlobalContext()
 
   // Default page
   const currentPageNumber = usePageNumber()
@@ -87,53 +87,38 @@ const BlockSection = () => {
   return (
     <Section>
       <TitleAndLoader>
-        <SectionTitle title="Blocks" />
-        {loading && !manualLoading && (
-          <PollingLoadingSpinner>
-            <LoadingSpinner size={12} /> Loading...
-          </PollingLoadingSpinner>
-        )}
+        <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
       </TitleAndLoader>
-      {!manualLoading ? (
-        <Content>
-          <Table main scrollable>
-            <TableHeader
-              headerTitles={['', 'Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-              columnWidths={['50px', '20%', '20%', '20%', '20%', '20%']}
-            />
-            <TableBody tdStyles={TableBodyCustomStyles}>
-              {blockList?.blocks.map((b) => (
-                <BlockRow
-                  key={b.hash}
-                  animate={{ opacity: 1 }}
-                  initial={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
-                  onClick={() => {
-                    history.push(`blocks/${b.hash}`)
-                  }}
-                >
-                  <td>
-                    <BlockIcon src={blockIcon} alt="Block" />
-                  </td>
-                  <td>
-                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
-                  </td>
-                  <td>
-                    <Timestamp timeInMs={b.timestamp} />
-                  </td>
-                  <td>{b.height}</td>
-                  <td>{b.txNumber}</td>
-                  <td>
-                    {b.chainFrom} → {b.chainTo}
-                  </td>
-                </BlockRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Content>
-      ) : (
-        <LoadingSpinner />
-      )}
+      <Content>
+        <Table main scrollable isLoading={manualLoading} minHeight={950}>
+          <TableHeader
+            headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+            columnWidths={['20%', '20%', '20%', '20%', '20%']}
+          />
+          <TableBody tdStyles={TableBodyCustomStyles}>
+            {blockList?.blocks.map((b) => (
+              <TableRow
+                key={b.hash}
+                onClick={() => {
+                  history.push(`blocks/${b.hash}`)
+                }}
+              >
+                <td>
+                  <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                </td>
+                <td>
+                  <Timestamp timeInMs={b.timestamp} />
+                </td>
+                <td>{b.height}</td>
+                <td>{b.txNumber}</td>
+                <td>
+                  {b.chainFrom} → {b.chainTo}
+                </td>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Content>
       <PageSwitch totalNumberOfElements={blockList?.total} />
     </Section>
   )
@@ -147,24 +132,11 @@ const Content = styled.div`
   margin-top: 30px;
 `
 
-const PollingLoadingSpinner = styled.div`
-  position: absolute;
-  bottom: -25px;
-  color: ${({ theme }) => theme.textSecondary};
-`
-
 const TableBodyCustomStyles: TDStyle[] = [
   {
-    tdPos: 1,
+    tdPos: 3,
     style: css`
-      text-align: center;
-      text-align: -webkit-center;
-    `
-  },
-  {
-    tdPos: 4,
-    style: css`
-      font-family: 'Roboto Mono', monospace;
+      font-feature-settings: 'tnum';
       color: ${({ theme }) => theme.textAccent};
       font-weight: 400;
     `
@@ -172,19 +144,12 @@ const TableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 4,
     style: css`
-      font-family: 'Roboto Mono', monospace;
+      font-feature-settings: 'tnum';
       font-weight: 400;
     `
   },
   {
     tdPos: 5,
-    style: css`
-      font-family: 'Roboto Mono', monospace;
-      font-weight: 400;
-    `
-  },
-  {
-    tdPos: 6,
     style: css`
       white-space: nowrap;
       overflow: hidden;
@@ -192,14 +157,5 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-const BlockRow = styled(motion.tr)`
-  cursor: pointer;
-`
-
-const BlockIcon = styled.img`
-  height: 20px;
-  width: 20px;
-`
 
 export default BlockSection

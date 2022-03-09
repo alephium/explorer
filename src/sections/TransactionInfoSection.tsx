@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/dist/api/api-explorer'
 import { Check } from 'lucide-react'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { GlobalContext } from '..'
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
@@ -29,8 +28,12 @@ import { AddressLink, TightLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
-import { HighlightedCell, Table, TableBody } from '../components/Table'
+import HighlightedCell from '../components/Table/HighlightedCell'
+import Table from '../components/Table/Table'
+import TableBody from '../components/Table/TableBody'
+import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import { useGlobalContext } from '../contexts/global'
 import { APIResp } from '../utils/client'
 import { useInterval } from '../utils/hooks'
 
@@ -40,15 +43,15 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const client = useContext(GlobalContext).explorerClient
+  const { explorerClient } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<APIResp<TransactionLike>>()
   const [loading, setLoading] = useState(true)
 
   const getTxInfo = useCallback(async () => {
-    if (!client) return
+    if (!explorerClient) return
     setLoading(true)
 
-    client.transactions
+    explorerClient.transactions
       .getTransactionsTransactionHash(id)
       .catch((e) => {
         console.log(e)
@@ -60,7 +63,7 @@ const TransactionInfoSection = () => {
         setTxInfo(r)
         setLoading(false)
       })
-  }, [client, id])
+  }, [explorerClient, id])
 
   // Initial fetch
   useEffect(() => {
@@ -84,11 +87,11 @@ const TransactionInfoSection = () => {
           {txInfo && txInfo.status === 200 && txInfo.data ? (
             <Table bodyOnly>
               <TableBody>
-                <tr>
+                <TableRow>
                   <td>Hash</td>
                   <HighlightedCell textToCopy={txInfo.data.hash}>{txInfo.data.hash}</HighlightedCell>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Status</td>
                   {isTxConfirmed(txInfo.data) ? (
                     <td>
@@ -115,9 +118,9 @@ const TransactionInfoSection = () => {
                       />
                     </td>
                   )}
-                </tr>
+                </TableRow>
                 {isTxConfirmed(txInfo.data) && txInfo.data.blockHash && (
-                  <tr>
+                  <TableRow>
                     <td>Block Hash</td>
                     <td>
                       <TightLink
@@ -126,18 +129,18 @@ const TransactionInfoSection = () => {
                         maxWidth="550px"
                       />
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
                 {isTxConfirmed(txInfo.data) && txInfo.data.timestamp && (
-                  <tr>
+                  <TableRow>
                     <td>Timestamp</td>
                     <td>
                       <Timestamp timeInMs={txInfo.data.timestamp} forceHighPrecision />
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
                 {isTxConfirmed(txInfo.data) && (
-                  <tr>
+                  <TableRow>
                     <td>Inputs</td>
                     <td>
                       {txInfo.data.inputs && txInfo.data.inputs.length > 0
@@ -151,9 +154,9 @@ const TransactionInfoSection = () => {
                           ))
                         : 'Block Rewards'}
                     </td>
-                  </tr>
+                  </TableRow>
                 )}
-                <tr>
+                <TableRow>
                   <td>Outputs</td>
                   <td>
                     {isTxConfirmed(txInfo.data) &&
@@ -162,24 +165,24 @@ const TransactionInfoSection = () => {
                         <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
                       ))}
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Gas Amount</td>
                   <td>{txInfo.data.gasAmount || '-'} GAS</td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Gas Price</td>
                   <td>
-                    <Amount value={BigInt(txInfo.data.gasPrice)} />
+                    <Amount value={BigInt(txInfo.data.gasPrice)} showFullPrecision />
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>Transaction Fee</td>
                   <td>
                     <Amount value={BigInt(txInfo.data.gasPrice) * BigInt(txInfo.data.gasAmount)} showFullPrecision />
                   </td>
-                </tr>
-                <tr>
+                </TableRow>
+                <TableRow>
                   <td>
                     <b>Total value</b>
                   </td>
@@ -189,7 +192,7 @@ const TransactionInfoSection = () => {
                       amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
                     />
                   </td>
-                </tr>
+                </TableRow>
               </TableBody>
             </Table>
           ) : (

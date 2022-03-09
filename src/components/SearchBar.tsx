@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { GlobalContext } from '..'
+import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 const SearchBar = () => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
-  const { setSnackbarMessage } = useContext(GlobalContext)
+  const { setSnackbarMessage } = useGlobalContext()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const history = useHistory()
@@ -108,15 +108,12 @@ const SearchBar = () => {
 }
 
 const Container = styled.div`
-  flex: 1;
   position: relative;
   height: 45px;
+  width: 50%;
 
   @media ${deviceBreakPoints.mobile} {
-    right: 10px;
-    left: 10px;
-    margin-right: 10px;
-    z-index: 1;
+    flex: 1;
   }
 `
 
@@ -134,11 +131,12 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 30px;
+  border-radius: 7px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
-  background: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bgTertiary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
+  box-shadow: inset ${({ theme }) => theme.shadowPrimary};
   transition: all 0.15s ease-out;
   z-index: 10;
 
@@ -148,7 +146,7 @@ const SearchInput = styled.input`
 
   &:focus,
   &:active {
-    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: ${({ theme }) => theme.shadowTertiary};
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       ${({ theme }) => theme.accentGradient};
     border: 1px solid transparent;

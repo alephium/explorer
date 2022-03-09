@@ -22,32 +22,40 @@ export type ThemeType = 'light' | 'dark'
 
 export const darkTheme: DefaultTheme = {
   name: 'dark',
-  body: '#212126',
+  body: '#141417',
 
   textPrimary: 'rgba(255, 255, 255, 0.8)',
-  textSecondary: 'rgba(255, 255, 255, 0.35)',
+  textSecondary: 'rgba(255, 255, 255, 0.45)',
   textAccent: '#FFD036',
 
   link: '#53A9F5',
   linkHighlight: '#0E82E7',
 
-  bgPrimary: '#212126',
-  bgSecondary: '#18191C',
-  bgHighlight: 'rgba(0, 0, 0, 0.1)',
-  bgHover: 'rgba(0, 0, 0, 0.05)',
+  bgPrimary: '#19191E',
+  bgSecondary: '#141417',
+  bgTertiary: '#101012',
+  bgHighlight: 'rgba(255, 255, 255, 0.03)',
+  bgHover: 'rgb(28, 28, 33)',
 
-  borderPrimary: '#34353A',
-  borderSecondary: '#27282d',
+  borderPrimary: 'rgb(43, 43, 48)',
+  borderSecondary: 'rgb(34, 34, 38)',
   borderHighlight: '#585962',
+
+  shadowPrimary: '0 3px 5px rgba(0, 0, 0, 0.2)',
+  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.15)',
+  shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.1)',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
-  tooltip: 'black'
+  tooltip: 'black',
+
+  valid: 'rgb(93, 203, 126)',
+  alert: 'rgb(243, 113, 93)'
 }
 
 export const lightTheme: DefaultTheme = {
   name: 'light',
-  body: 'white',
+  body: '#fbfbfb',
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.50)',
@@ -57,15 +65,23 @@ export const lightTheme: DefaultTheme = {
   linkHighlight: '#53A9F5',
 
   bgPrimary: 'white',
-  bgSecondary: '#f7f7f7',
+  bgSecondary: '#fbfbfb',
+  bgTertiary: '#f7f7f7',
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
-  borderPrimary: '#e6e6e6',
-  borderSecondary: '#e8e8e8',
+  borderPrimary: '#ebebeb',
+  borderSecondary: '#f1f1f1',
   borderHighlight: '#D1D1D4',
+
+  shadowPrimary: '0 2px 2px rgba(0, 0, 0, 0.03)',
+  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.02)',
+  shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
 
-  tooltip: 'black'
+  tooltip: 'black',
+
+  valid: 'rgb(93, 203, 126)',
+  alert: 'rgb(243, 113, 93)'
 }

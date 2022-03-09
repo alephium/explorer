@@ -16,21 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { abbreviateAmount } from 'alephium-js/dist/lib/numbers'
-import { FC } from 'react'
+import { formatAmountForDisplay } from 'alephium-js'
+import styled from 'styled-components'
 
 interface AmountProps {
   value: bigint | undefined
   className?: string
+  fadeDecimals?: boolean
   showFullPrecision?: boolean
 }
 
-const Amount: FC<AmountProps> = ({ value, className, showFullPrecision = false }) => {
+const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: AmountProps) => {
+  let integralPart = ''
+  let fractionalPart = ''
+
   if (value !== undefined) {
-    return <span className={className}>{abbreviateAmount(value, showFullPrecision).toString()} א</span>
-  } else {
-    return <span className={className}>- א</span>
+    const amountParts = formatAmountForDisplay(value, showFullPrecision).split('.')
+    integralPart = amountParts[0]
+    fractionalPart = amountParts[1]
   }
+
+  return (
+    <span className={className} data-tip={value ? `${formatAmountForDisplay(BigInt(value), true)} א` : null}>
+      {value !== undefined ? (
+        fadeDecimals ? (
+          <>
+            <span>{integralPart}</span>
+            <Decimals>.{fractionalPart}</Decimals>
+          </>
+        ) : (
+          `${integralPart}.${fractionalPart}`
+        )
+      ) : (
+        '-'
+      )}
+      {' ℵ'}
+    </span>
+  )
 }
 
-export default Amount
+const Decimals = styled.span`
+  opacity: 0.7;
+`
+
+export default styled(Amount)`
+  font-feature-settings: 'tnum';
+`

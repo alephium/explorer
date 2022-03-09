@@ -16,23 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerClient } from 'alephium-js'
+import { motion } from 'framer-motion'
+import { FC } from 'react'
+import styled from 'styled-components'
 
-import { ThemeType } from '../style/themes'
-import { AlephClient } from '../utils/client'
-import { OnOff } from './generics'
-import { NetworkType } from './network'
-import { SidebarState, SnackbarMessage } from './ui'
-
-export interface GlobalContextInterface {
-  client: AlephClient | undefined
-  explorerClient: ExplorerClient | undefined
-  networkType: NetworkType | undefined
-  currentTheme: ThemeType
-  sidebarState: 'open' | 'close'
-  setSidebarState: (state: SidebarState) => void
-  switchTheme: (arg0: ThemeType) => void
-  setSnackbarMessage: (message: SnackbarMessage) => void
-  timestampPrecisionMode: OnOff
-  setTimestampPrecisionMode: (status: OnOff) => void
+interface RowProps {
+  isActive?: boolean
+  onClick?: React.MouseEventHandler<HTMLTableRowElement>
+  className?: string
 }
+
+const rowVariants = {
+  hidden: { opacity: 0 },
+  shown: { opacity: 1 }
+}
+
+const TableRow: FC<RowProps> = ({ children, onClick, className }) => (
+  <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onClick={onClick} className={className}>
+    {children}
+  </motion.tr>
+)
+
+export default styled(TableRow)`
+  background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
+  border: none;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
+`
