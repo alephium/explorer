@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction } from 'alephium-js/dist/api/api-explorer'
+import { AddressInfo, Transaction } from 'alephium-js/api/explorer'
 import { calAmountDelta } from 'alephium-js/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -44,7 +44,6 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { getHumanReadableError } from '../utils/api'
-import { APIResp } from '../utils/client'
 
 dayjs.extend(relativeTime)
 
@@ -54,10 +53,10 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const { client, explorerClient } = useGlobalContext()
+  const { client } = useGlobalContext()
   const [addressInfo, setAddressInfo] = useState<AddressInfo>()
   const [addressInfoError, setAddressInfoError] = useState('')
-  const [txList, setTxList] = useState<APIResp<Transaction[]>>()
+  const [txList, setTxList] = useState<Transaction[]>()
 
   const [infoLoading, setInfoLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
@@ -69,14 +68,14 @@ const TransactionInfoSection = () => {
   // Address info
   useEffect(() => {
     const fetchAddressInfo = async () => {
-      if (!explorerClient) return
+      if (!client) return
 
       previousId.current = id
 
       setInfoLoading(true)
 
       try {
-        const response = await explorerClient.getAddressDetails(id)
+        const response = await client.getAddressDetails(id)
         if (!response.data) return
 
         setAddressInfo(response.data)
@@ -88,25 +87,26 @@ const TransactionInfoSection = () => {
       setInfoLoading(false)
     }
     fetchAddressInfo()
-  }, [explorerClient, id])
+  }, [client, id])
 
   // Address transactions
   useEffect(() => {
-    if (!client) return
+    const fetchTransactions = async () => {
+      if (!client) return
 
-    setTxLoading(true)
+      setTxLoading(true)
 
-    client
-      .addressTransactions(id, pageNumber)
-      .catch((e) => {
-        console.log(e)
-        setTxLoading(false)
-      })
-      .then((r) => {
-        if (!r) return
-        setTxList(r)
-        setTxLoading(false)
-      })
+      try {
+        const { data } = await client.getAddressTransactions(id, pageNumber)
+        if (data) setTxList(data)
+      } catch (error) {
+        console.error(error)
+      }
+
+      setTxLoading(false)
+    }
+
+    fetchTransactions()
   }, [client, id, pageNumber])
 
   return (
@@ -151,7 +151,7 @@ const TransactionInfoSection = () => {
       <SecondaryTitle>Transactions</SecondaryTitle>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
-        {txList && txList.data && txList.status === 200 && txList.data.length ? (
+        {txList && txList.length ? (
           <>
             <TableHeader
               headerTitles={['', 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
@@ -159,7 +159,7 @@ const TransactionInfoSection = () => {
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
-              {txList.data
+              {txList
                 .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
                 .map((t, i) => (
                   <AddressTransactionRow transaction={t} addressId={id} key={i} />
@@ -173,7 +173,7 @@ const TransactionInfoSection = () => {
         )}
       </Table>
 
-      {txList && txList.data && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
+      {txList && txList.length && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
     </Section>
   )
 }

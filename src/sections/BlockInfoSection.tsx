@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from 'alephium-js/dist/api/api-explorer'
+import { Lite, Transaction } from 'alephium-js/api/explorer'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -40,8 +40,7 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
-import { Block } from '../types/api'
-import { APIResp } from '../utils/client'
+import { APIError } from '../utils/api'
 
 interface ParamTypes {
   id: string
@@ -52,8 +51,11 @@ const BlockInfoSection = () => {
   const { client } = useGlobalContext()
   const history = useHistory()
 
-  const [blockInfo, setBlockInfo] = useState<APIResp<Block>>()
-  const [txList, setTxList] = useState<APIResp<Transaction[]>>()
+  const [blockInfo, setBlockInfo] = useState<Lite>()
+  const [blockInfoError, setBlockInfoError] = useState('')
+  const [blockInfoStatus, setBlockInfoStatus] = useState<number>()
+  const [txList, setTxList] = useState<Transaction[]>()
+  const [txListStatus, setTxListStatus] = useState<number>()
 
   const [infoLoading, setInfoLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
@@ -62,101 +64,108 @@ const BlockInfoSection = () => {
 
   // Block info
   useEffect(() => {
-    if (!client) return
-    setInfoLoading(true)
+    const fetchBlockInfo = async () => {
+      if (!client) return
+      setInfoLoading(true)
+      try {
+        const { data, status } = await client.blocks.getBlocksBlockHash(id)
+        if (data) setBlockInfo(data)
+        setBlockInfoStatus(status)
+      } catch (e) {
+        console.error(e)
+        const { error } = e as APIError
+        setBlockInfoError(error.detail)
+        setBlockInfoStatus(error.status)
+      }
+      setInfoLoading(false)
+    }
 
-    client
-      .block(id)
-      .catch((e) => {
-        console.log(e)
-        setInfoLoading(false)
-      })
-      .then((r) => {
-        if (!r) return
-        setBlockInfo(r)
-        setInfoLoading(false)
-      })
+    fetchBlockInfo()
   }, [client, id])
 
   // Block transactions
   useEffect(() => {
-    if (!client) return
+    const fetchTransactions = async () => {
+      if (!client) return
+      setTxLoading(true)
+      try {
+        const { data, status } = await client.blocks.getBlocksBlockHashTransactions(id, {
+          page: currentPageNumber
+        })
+        if (data) setTxList(data)
+        setTxListStatus(status)
+      } catch (e) {
+        console.error(e)
+        const { error } = e as APIError
+        setTxListStatus(error.status)
+      }
+      setTxLoading(false)
+    }
 
-    setTxLoading(true)
-
-    client
-      .blockTransactions(id, currentPageNumber)
-      .catch((e) => {
-        console.log(e)
-        setTxLoading(false)
-      })
-      .then((r) => {
-        if (!r) return
-        setTxList(r)
-        setTxLoading(false)
-      })
-  }, [client, id, currentPageNumber])
+    fetchTransactions()
+  }, [id, currentPageNumber, client])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
-
   useEffect(() => {
-    if (!client) return
-    ;(async () => {
-      if (blockInfo?.detail) {
-        const res = await client.transaction(id)
-        if (!res?.detail) {
-          // A transaction exists, redirect automatically
-          history.push(`/transactions/${id}`)
-        }
-      }
-    })()
-  }, [blockInfo, id, client, history])
+    if (!client || !blockInfoError) return
 
-  return !infoLoading && (!blockInfo || blockInfo.status !== 200 || !blockInfo.data) ? (
-    <InlineErrorMessage message={blockInfo?.detail} code={blockInfo?.status} />
+    const redirectToTransactionIfExists = async () => {
+      try {
+        const { data } = await client.transactions.getTransactionsTransactionHash(id)
+        if (data) history.push(`/transactions/${id}`)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    redirectToTransactionIfExists()
+  }, [blockInfo, id, history, client, blockInfoError])
+
+  return !infoLoading && (!blockInfo || blockInfoStatus !== 200) ? (
+    <InlineErrorMessage message={blockInfoError} code={blockInfoStatus} />
   ) : (
     <Section>
       <SectionTitle title="Block" isLoading={infoLoading || txLoading} />
 
       <Table bodyOnly isLoading={infoLoading}>
-        {blockInfo && blockInfo.data && (
+        {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
               <td>Hash</td>
-              <HighlightedCell textToCopy={blockInfo.data.hash}>{blockInfo.data.hash}</HighlightedCell>
+              <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
             <TableRow>
               <td>Height</td>
-              <td>{blockInfo.data.height}</td>
+              <td>{blockInfo.height}</td>
             </TableRow>
             <TableRow>
               <td>Chain Index</td>
               <td>
-                {blockInfo.data.chainFrom} → {blockInfo.data.chainTo}
+                {blockInfo.chainFrom} → {blockInfo.chainTo}
               </td>
             </TableRow>
             <TableRow>
               <td>Nb. of transactions</td>
-              <td>{blockInfo.data.txNumber}</td>
+              <td>{blockInfo.txNumber}</td>
             </TableRow>
             <TableRow>
               <td>Timestamp</td>
               <td>
-                <Timestamp timeInMs={blockInfo.data.timestamp} forceHighPrecision />
+                <Timestamp timeInMs={blockInfo.timestamp} forceHighPrecision />
               </td>
             </TableRow>
           </TableBody>
         )}
       </Table>
 
-      {blockInfo?.data?.mainChain ? (
-        !txLoading && (!txList || !txList.data || txList.status !== 200) ? (
-          <InlineErrorMessage message="An error occured while fetching transactions" code={txList?.status} />
+      {blockInfo?.mainChain ? (
+        !txLoading && (!txList || txListStatus !== 200) ? (
+          <InlineErrorMessage message="An error occured while fetching transactions" code={txListStatus} />
         ) : (
           <>
             <SecondaryTitle>Transactions</SecondaryTitle>
             <Table main hasDetails scrollable isLoading={txLoading}>
-              {txList && txList.data && (
+              {txList && txList && (
                 <>
                   <TableHeader
                     headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
@@ -164,7 +173,7 @@ const BlockInfoSection = () => {
                     textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                   />
                   <TableBody tdStyles={TXTableBodyCustomStyles}>
-                    {txList.data.map((t, i) => (
+                    {txList.map((t, i) => (
                       <TransactionRow transaction={t} key={i} />
                     ))}
                   </TableBody>
@@ -182,8 +191,8 @@ const BlockInfoSection = () => {
         )
       )}
 
-      {txList && txList.data && blockInfo?.data?.txNumber !== undefined && blockInfo.data.txNumber > 0 && (
-        <PageSwitch totalNumberOfElements={blockInfo.data.txNumber} />
+      {txList && blockInfo?.txNumber !== undefined && blockInfo.txNumber > 0 && (
+        <PageSwitch totalNumberOfElements={blockInfo.txNumber} />
       )}
     </Section>
   )

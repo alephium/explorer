@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { tryGetString } from './types'
 
-interface APIError {
-  error: { detail: string }
+export interface APIError {
+  error: { detail: string; status: number }
 }
 
 export const isHTTPError = (e: unknown): e is APIError => {
