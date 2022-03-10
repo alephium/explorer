@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/static/css/main.10bc7ae9.chunk.css",
-    "main.js": "/static/js/main.29784d99.chunk.js",
-    "main.js.map": "/static/js/main.29784d99.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.d6dc86d6.js",
-    "runtime-main.js.map": "/static/js/runtime-main.d6dc86d6.js.map",
-    "static/js/2.106199d2.chunk.js": "/static/js/2.106199d2.chunk.js",
-    "static/js/2.106199d2.chunk.js.map": "/static/js/2.106199d2.chunk.js.map",
-    "static/js/3.3ad6f521.chunk.js": "/static/js/3.3ad6f521.chunk.js",
-    "static/js/3.3ad6f521.chunk.js.map": "/static/js/3.3ad6f521.chunk.js.map",
-    "static/js/4.4a8fdda8.chunk.js": "/static/js/4.4a8fdda8.chunk.js",
-    "static/js/4.4a8fdda8.chunk.js.map": "/static/js/4.4a8fdda8.chunk.js.map",
+    "main.js": "/static/js/main.5acdf61c.chunk.js",
+    "main.js.map": "/static/js/main.5acdf61c.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.8978920e.js",
+    "runtime-main.js.map": "/static/js/runtime-main.8978920e.js.map",
+    "static/js/2.ec3316ab.chunk.js": "/static/js/2.ec3316ab.chunk.js",
+    "static/js/2.ec3316ab.chunk.js.map": "/static/js/2.ec3316ab.chunk.js.map",
+    "static/js/3.85a917dd.chunk.js": "/static/js/3.85a917dd.chunk.js",
+    "static/js/3.85a917dd.chunk.js.map": "/static/js/3.85a917dd.chunk.js.map",
+    "static/js/4.285edec4.chunk.js": "/static/js/4.285edec4.chunk.js",
+    "static/js/4.285edec4.chunk.js.map": "/static/js/4.285edec4.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.10bc7ae9.chunk.css.map": "/static/css/main.10bc7ae9.chunk.css.map",
-    "static/js/2.106199d2.chunk.js.LICENSE.txt": "/static/js/2.106199d2.chunk.js.LICENSE.txt",
-    "static/js/3.3ad6f521.chunk.js.LICENSE.txt": "/static/js/3.3ad6f521.chunk.js.LICENSE.txt",
+    "static/js/2.ec3316ab.chunk.js.LICENSE.txt": "/static/js/2.ec3316ab.chunk.js.LICENSE.txt",
+    "static/js/3.85a917dd.chunk.js.LICENSE.txt": "/static/js/3.85a917dd.chunk.js.LICENSE.txt",
     "static/media/index.css": "/static/media/Inter-SemiBold.cca62d21.woff",
     "static/media/alephium-logo-gradient-stroke.2922636d.svg": "/static/media/alephium-logo-gradient-stroke.2922636d.svg",
     "static/media/alephium-not-found.356bba05.svg": "/static/media/alephium-not-found.356bba05.svg",
@@ -27,9 +27,9 @@
     "static/media/transaction-icon.964bc84e.svg": "/static/media/transaction-icon.964bc84e.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.d6dc86d6.js",
-    "static/js/2.106199d2.chunk.js",
+    "static/js/runtime-main.8978920e.js",
+    "static/js/2.ec3316ab.chunk.js",
     "static/css/main.10bc7ae9.chunk.css",
-    "static/js/main.29784d99.chunk.js"
+    "static/js/main.5acdf61c.chunk.js"
   ]
 }
