@@ -24,3 +24,9 @@ Everything is managed with NPM.
 * Lint and fix: `npm run lint:fix`
 
 See `package.json`'s `script` property for more options.
+
+## Notes
+
+This project uses [alephium-js](https://github.com/alephium/alephium-js).
+It's suggested to download `alephium-js` to refer to it as documentation on
+the network requests (`api/api-explorer.ts`).
