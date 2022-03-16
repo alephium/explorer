@@ -27,6 +27,7 @@ import { TightLink } from '../components/Links'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
+import Statistics from '../components/Statistics'
 import Table, { TDStyle } from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
 import TableHeader from '../components/Table/TableHeader'
@@ -87,6 +88,7 @@ const BlockSection = () => {
 
   return (
     <Section>
+      <Statistics />
       <TitleAndLoader>
         <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
       </TitleAndLoader>

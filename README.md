@@ -12,18 +12,23 @@ A blockchain explorer front-end for Alephium.
   * Hash, status, block hash, timestamp, inputs, outputs, gas, TX fee
 * Address view
   * Address, number of transactions, total balance, locked balance, history
+* Statistics
+  * Hashrate, supply, transactions, blocks, number of chains
 
 ## Development
 
 Everything is managed with NPM.
 
 * Install dependencies: `npm install`
-* Starting the project: `npm run start`
+* Starting the project: `env $(cat .env.placeholder | xargs) npm run start`
 * Building the project: `npm run build`
 * Run the tests: `npm run test`
 * Lint and fix: `npm run lint:fix`
 
 See `package.json`'s `script` property for more options.
+
+**Note**: You will probably want to change the variables in `.env.placeholder`
+to use your local `explorer-backend`.
 
 ## Notes
 
