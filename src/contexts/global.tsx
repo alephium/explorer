@@ -39,7 +39,7 @@ interface GlobalContextInterface {
 export const GlobalContext = createContext<GlobalContextInterface>({
   client: undefined,
   networkType: undefined,
-  currentTheme: 'dark',
+  currentTheme: 'light',
   switchTheme: () => null,
   snackbarMessage: undefined,
   setSnackbarMessage: () => null,
@@ -48,7 +48,7 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 })
 
 export const GlobalContextProvider: FC = ({ children }) => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'dark')
+  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<ExplorerClient>()
   const [networkType, setNetworkType] = useState<NetworkType>()
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
