@@ -88,7 +88,7 @@ const BlockSection = () => {
 
   return (
     <Section>
-      <Statistics />
+      <Statistics refresh={loading} />
       <TitleAndLoader>
         <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
       </TitleAndLoader>

@@ -16,13 +16,126 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC, useEffect, useState } from 'react'
+import { PerChainValue } from 'alephium-js/dist/api/api-explorer'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { abbreviateValue, SUFFICES_QUANTITY, SUFFICES_TIME, thousandsSeparation } from '../utils/strings'
 import StatisticBlock from './StatisticBlock'
 
 const ONE_DAY = 1000 * 60 * 60 * 24
+
+interface Props {
+  refresh: boolean
+}
+
+const Statistics = ({ refresh }: Props) => {
+  const { client } = useGlobalContext()
+  const [hashrate, setHashrate] = useState('')
+  const [totalSupply, setTotalSupply] = useState('')
+  const [circulating, setCirculating] = useState('')
+  const [transactions, setTransactions] = useState('')
+  const [blocks, setBlocks] = useState('')
+  const [avgBlockTime, setAvgBlockTime] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  const currentSupplyPercentage = ((parseFloat(circulating) / parseFloat(totalSupply)) * 100).toPrecision(3)
+  const hashrateInteger = thousandsSeparation(parseInt(hashrate))
+  const hashrateDecimal = parseFloat(hashrate).toFixed(2).split('.')[1]
+
+  useEffect(() => {
+    Promise.all([
+      client?.charts
+        .getChartsHashrates({
+          fromTs: new Date().getTime() - ONE_DAY,
+          toTs: new Date().getTime(),
+          'interval-type': 'hourly'
+        })
+        .then((res) => res.data)
+        .then((values) => setHashrate(values[0]?.value || '-')),
+      client?.infos
+        .getInfosHeights()
+        .then((res) => res.data)
+        .then((values: PerChainValue[]) =>
+          setBlocks(values.reduce((acc: number, { value }) => acc + value, 0).toString())
+        ),
+      client?.infos
+        .getInfosSupplyTotalAlph()
+        .then((res) => res.text())
+        .then((value) => setTotalSupply(parseInt(value).toString())),
+      client?.infos
+        .getInfosSupplyCirculatingAlph()
+        .then((res) => res.text())
+        .then((value) => setCirculating(parseInt(value).toString())),
+      client?.infos
+        .getInfosTotalTransactions()
+        .then((res) => res.text())
+        .then((value) => setTransactions(value)),
+      client?.infos
+        .getInfosAverageBlockTimes()
+        .then((res) => res.data)
+        .then((values) =>
+          setAvgBlockTime(
+            abbreviateValue(values.reduce((acc: number, { value }) => acc + value, 0.0) / values.length, SUFFICES_TIME)
+          )
+        )
+    ]).then(() => setIsLoading(false))
+  }, [refresh, client])
+
+  return (
+    <Block>
+      <StatisticBlock
+        title="Hashrate"
+        primary={
+          hashrate !== '-' ? (
+            <span>
+              {hashrateInteger}.<TextSecondary>{hashrateDecimal}</TextSecondary>
+            </span>
+          ) : (
+            '-'
+          )
+        }
+        secondary="GH/s"
+        isLoading={isLoading}
+      />
+      <StatisticBlock
+        title="Supply"
+        primary={
+          <>
+            <span>{abbreviateValue(parseInt(circulating), SUFFICES_QUANTITY)}</span>
+            <TextSecondary> / </TextSecondary>
+            <TextSecondary>{abbreviateValue(parseInt(totalSupply), SUFFICES_QUANTITY)}</TextSecondary>
+          </>
+        }
+        secondary={
+          <>
+            <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+          </>
+        }
+        isLoading={isLoading}
+      />
+      <StatisticBlock
+        title="Transactions"
+        primary={abbreviateValue(parseInt(transactions), SUFFICES_QUANTITY)}
+        secondary="Total"
+        isLoading={isLoading}
+      />
+      <StatisticBlock
+        title="Blocks"
+        primary={thousandsSeparation(parseInt(blocks))}
+        secondary="Total"
+        isLoading={isLoading}
+      />
+      <StatisticBlock
+        title="Avg. block time"
+        primary={avgBlockTime}
+        secondary="Of all chains combined"
+        isLoading={isLoading}
+      />
+    </Block>
+  )
+}
 
 const Block = styled.div`
   width: 100%;
@@ -33,86 +146,12 @@ const Block = styled.div`
   gap: 2%;
 `
 
-const Statistics: FC<Record<string, never>> = () => {
-  const { client } = useGlobalContext()
-  const [hashrate, setHashrate] = useState('')
-  const [supply, setSupply] = useState('')
-  const [circulating, setCirculating] = useState('')
-  const [transactions, setTransactions] = useState('')
-  const [blocks, setBlocks] = useState('')
-  const [chains, setChains] = useState('')
+const TextPrimary = styled.span`
+  color: ${({ theme }) => theme.textPrimary};
+`
 
-  useEffect(() => {
-    client?.charts
-      .getChartsHashrates({
-        fromTs: new Date().getTime() - ONE_DAY,
-        toTs: new Date().getTime(),
-        interval: 'hourly'
-      })
-      .then((res) => res.json())
-      .then((hashrates) => setHashrate(hashrates[0] || ''))
-
-    client?.infos
-      .getInfosHeights()
-      .then((res) => res.json())
-      .then((value) => setBlocks(value[0] || ''))
-
-    client?.infos
-      .getInfosSupplyTotalAlph()
-      .then((res) => res.text())
-      .then((value) => setSupply(value))
-
-    client?.infos
-      .getInfosSupplyCirculatingAlph()
-      .then((res) => res.text())
-      .then((value) => setCirculating(value))
-
-    client?.infos
-      .getInfosTotalTransactions()
-      .then((res) => res.text())
-      .then((value) => setTransactions(value))
-    setTransactions('')
-
-    client?.infos
-      .getInfosChains()
-      .then((res) => res.text())
-      .then((value) => setChains(value))
-  }, [client, hashrate, supply, circulating, transactions, blocks, chains])
-
-  return (
-    <Block>
-      <StatisticBlock
-        title={'Hashrate'}
-        primary={<div>{hashrate}</div>}
-        secondary={<div>GH/s</div>}
-        isLoading={false}
-      />
-      <StatisticBlock
-        title={'Supply'}
-        primary={<div>230.7B / 520B</div>}
-        secondary={<div>44% is circulating</div>}
-        isLoading={false}
-      />
-      <StatisticBlock
-        title={'Transactions'}
-        primary={<div>341.8B</div>}
-        secondary={<div>Total</div>}
-        isLoading={false}
-      />
-      <StatisticBlock
-        title={'Blocks'}
-        primary={<div>123&apos;923</div>}
-        secondary={<div>Total</div>}
-        isLoading={false}
-      />
-      <StatisticBlock
-        title={'Active chains'}
-        primary={<div>4</div>}
-        secondary={<div>Out of 16</div>}
-        isLoading={false}
-      />
-    </Block>
-  )
-}
+const TextSecondary = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+`
 
 export default Statistics

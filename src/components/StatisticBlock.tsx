@@ -16,10 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import LoadingSpinner from './LoadingSpinner'
+
+interface Props {
+  title: string
+  primary: ReactNode
+  secondary: ReactNode
+  isLoading: boolean
+}
+
+const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
+  isLoading ? (
+    <BlockCenteredContent>
+      <LoadingSpinner />
+    </BlockCenteredContent>
+  ) : (
+    <Block>
+      <Title>{title}</Title>
+      <Primary>{primary}</Primary>
+      <Secondary>{secondary}</Secondary>
+    </Block>
+  )
 
 const Block = styled.div`
   background-color: ${({ theme }) => theme.bgTertiary};
@@ -30,6 +50,10 @@ const Block = styled.div`
   width: 100%;
   flex-direction: column;
   padding: 2rem;
+`
+
+const BlockCenteredContent = styled(Block)`
+  align-items: center;
 `
 
 const Title = styled.div`
@@ -46,27 +70,5 @@ const Primary = styled.div`
 const Secondary = styled.div`
   color: ${({ theme }) => theme.textSecondary};
 `
-
-interface Props {
-  title: string
-  primary: ReactNode
-  secondary: ReactNode
-  isLoading: boolean
-}
-
-const StatisticBlock: FC<Props> = ({ title, primary, secondary, isLoading }) => {
-  return (
-    <Block>
-      {isLoading && <LoadingSpinner />}
-      {!isLoading && (
-        <>
-          <Title>{title}</Title>
-          <Primary>{primary}</Primary>
-          <Secondary>{secondary}</Secondary>
-        </>
-      )}
-    </Block>
-  )
-}
 
 export default StatisticBlock
