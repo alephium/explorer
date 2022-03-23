@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Link } from 'react-router-dom'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import logoDarkSrc from '../images/explorer-logo-dark.svg'
 import logoLightSrc from '../images/explorer-logo-light.svg'
@@ -34,11 +34,15 @@ const AppHeader = ({ className }: AppHeaderProps) => {
 
   return (
     <header className={className}>
-      <StyledLogoLink to="/">
-        <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
-      </StyledLogoLink>
-      <SearchBar />
-      <StyledNetworkSwitch direction="down" />
+      <HeaderSideContainer justifyContent="flex-start">
+        <StyledLogoLink to="/">
+          <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
+        </StyledLogoLink>
+      </HeaderSideContainer>
+      <StyledSearchBar />
+      <HeaderSideContainer justifyContent="flex-end" hideOnMobile>
+        <NetworkSwitch direction="down" />
+      </HeaderSideContainer>
     </header>
   )
 }
@@ -53,6 +57,27 @@ export default styled(AppHeader)`
   box-shadow: ${({ theme }) => theme.shadowTertiary};
 `
 
+const HeaderSideContainer = styled.div<{ justifyContent: 'flex-start' | 'flex-end'; hideOnMobile?: boolean }>`
+  flex: 1;
+  display: flex;
+  justify-content: ${({ justifyContent }) => justifyContent};
+
+  @media ${deviceBreakPoints.mobile} {
+    flex: 0;
+
+    ${({ hideOnMobile }) =>
+      hideOnMobile &&
+      css`
+        display: none;
+      `};
+  }
+`
+
+const StyledSearchBar = styled(SearchBar)`
+  flex: 3;
+  max-width: 1100px;
+`
+
 const StyledLogoLink = styled(Link)`
   @media ${deviceBreakPoints.mobile} {
     width: 30px;
@@ -65,11 +90,5 @@ const Logo = styled.img`
 
   @media ${deviceBreakPoints.mobile} {
     width: 100px;
-  }
-`
-
-const StyledNetworkSwitch = styled(NetworkSwitch)`
-  @media ${deviceBreakPoints.mobile} {
-    display: none;
   }
 `

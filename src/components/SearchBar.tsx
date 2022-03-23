@@ -26,7 +26,11 @@ import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
-const SearchBar = () => {
+interface SearchBarProps {
+  className?: string
+}
+
+const SearchBar = ({ className }: SearchBarProps) => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
   const { setSnackbarMessage } = useGlobalContext()
@@ -91,7 +95,7 @@ const SearchBar = () => {
   }
 
   return (
-    <Container>
+    <div className={className}>
       <SearchInput
         ref={inputRef}
         onBlur={handleRemoveFocus}
@@ -103,18 +107,13 @@ const SearchBar = () => {
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
-    </Container>
+    </div>
   )
 }
 
-const Container = styled.div`
+export default styled(SearchBar)`
   position: relative;
   height: 45px;
-  width: 50%;
-
-  @media ${deviceBreakPoints.mobile} {
-    flex: 1;
-  }
 `
 
 const SearchIcon = styled(Search)`
@@ -164,5 +163,3 @@ const Backdrop = styled(motion.div)`
   z-index: 9;
   opacity: 0;
 `
-
-export default SearchBar
