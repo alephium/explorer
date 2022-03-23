@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Output, Transaction, TransactionLike, UOutput } from 'alephium-js/api/explorer'
+import { Output, Transaction, UOutput } from 'alephium-js/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -44,7 +44,7 @@ interface ParamTypes {
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
-  const [txInfo, setTxInfo] = useState<TransactionLike>()
+  const [txInfo, setTxInfo] = useState<Transaction>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -55,7 +55,7 @@ const TransactionInfoSection = () => {
       setLoading(true)
       try {
         const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
-        if (data) setTxInfo(data)
+        if (data) setTxInfo(data as Transaction)
         setTxInfoStatus(status)
       } catch (e) {
         console.error(e)
@@ -209,7 +209,7 @@ const TransactionInfoSection = () => {
   )
 }
 
-const isTxConfirmed = (tx: TransactionLike): tx is Transaction => {
+const isTxConfirmed = (tx: Transaction): tx is Transaction => {
   return (tx as Transaction).blockHash !== undefined
 }
 
