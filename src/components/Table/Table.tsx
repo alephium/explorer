@@ -132,6 +132,12 @@ const StyledTable = styled.table<TableProps>`
     @media ${deviceBreakPoints.mobile} {
       padding-left: 12px;
     }
+
+    ${({ bodyOnly }) =>
+      bodyOnly &&
+      css`
+        width: 27%;
+      `}
   }
 
   tr:not(.details) td {
