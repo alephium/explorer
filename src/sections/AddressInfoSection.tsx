@@ -56,6 +56,7 @@ const TransactionInfoSection = () => {
   const { client } = useGlobalContext()
   const [addressInfo, setAddressInfo] = useState<AddressInfo>()
   const [addressInfoError, setAddressInfoError] = useState('')
+  const [txListError, setTxListError] = useState('')
   const [txList, setTxList] = useState<Transaction[]>()
 
   const [infoLoading, setInfoLoading] = useState(true)
@@ -101,6 +102,7 @@ const TransactionInfoSection = () => {
         if (data) setTxList(data)
       } catch (error) {
         console.error(error)
+        setTxListError(getHumanReadableError(error, 'Error while fetching transaction list'))
       }
 
       setTxLoading(false)
@@ -168,7 +170,7 @@ const TransactionInfoSection = () => {
           </>
         ) : (
           <TableBody>
-            <NoTxMessage>No transactions yet</NoTxMessage>
+            <NoTxMessage>{txListError ?? 'No transactions yet'}</NoTxMessage>
           </TableBody>
         )}
       </Table>

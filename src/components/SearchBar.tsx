@@ -23,7 +23,6 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
-import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 interface SearchBarProps {
