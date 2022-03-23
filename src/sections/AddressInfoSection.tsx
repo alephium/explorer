@@ -170,12 +170,12 @@ const TransactionInfoSection = () => {
           </>
         ) : (
           <TableBody>
-            <NoTxMessage>{txListError ?? 'No transactions yet'}</NoTxMessage>
+            <NoTxMessage>{txListError || 'No transactions yet'}</NoTxMessage>
           </TableBody>
         )}
       </Table>
 
-      {txList && txList.length && <PageSwitch totalNumberOfElements={addressInfo?.txNumber} />}
+      {addressInfo?.txNumber ? <PageSwitch totalNumberOfElements={addressInfo.txNumber} /> : null}
     </Section>
   )
 }
