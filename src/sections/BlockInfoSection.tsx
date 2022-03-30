@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BlockEntryLite, Transaction } from 'alephium-js/api/explorer'
+import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'

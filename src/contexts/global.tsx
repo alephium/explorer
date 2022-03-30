@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerClient } from 'alephium-js'
+import { ExplorerClient } from '@alephium/sdk'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
 import { ThemeType } from '../style/themes'

@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction } from 'alephium-js/api/explorer'
-import { calAmountDelta } from 'alephium-js/dist/lib/numbers'
+import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
+import { calAmountDelta } from '@alephium/sdk/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
