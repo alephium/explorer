@@ -32,6 +32,6 @@ to use your local `explorer-backend`.
 
 ## Notes
 
-This project uses [alephium-js](https://github.com/alephium/alephium-js).
-It's suggested to download `alephium-js` to refer to it as documentation on
-the network requests (`api/api-explorer.ts`).
+This project uses [@alephium/sdk](https://github.com/alephium/js-sdk).
+Please down the package to refer to it as documentation for the network request
+methods (`api/api-explorer.ts`).
