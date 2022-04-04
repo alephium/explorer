@@ -1,13 +1,13 @@
 {
   "name": "alephium-explorer",
-  "version": "0.2.1",
+  "version": "1.1.0",
   "private": true,
   "engines": {
-    "node": ">=12.22.7",
+    "node": ">=14",
     "npm": ">=7.24.2"
   },
   "dependencies": {
-    "alephium-js": "1.2.0-rc0",
+    "@alephium/sdk": "0.0.3",
     "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
     "lodash": "^4.17.21",

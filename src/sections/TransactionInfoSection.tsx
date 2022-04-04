@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Output, Transaction, UOutput } from 'alephium-js/api/explorer'
+import { Output, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
