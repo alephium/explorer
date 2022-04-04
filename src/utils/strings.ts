@@ -28,3 +28,33 @@ export const checkAddressValidity = (addressToTest: string) => {
 export const checkHexStringValidity = (stringToTest: string) => {
   return /^[a-fA-F0-9]+$/.test(stringToTest)
 }
+
+export const thousandsSeparation = (input: number): string =>
+  input
+    .toString()
+    .split('')
+    .reduce(
+      (str, char, index, list) => (index > 0 && index < list.length - 1 && index % 2 === 0 ? '’' : '') + char + str,
+      ''
+    )
+
+type Suffices = [number, string][]
+
+export const SUFFICES_QUANTITY: Suffices = [
+  [1000000000, 'B'],
+  [1000000, 'M'],
+  [1000, 'K']
+]
+
+export const SUFFICES_TIME: Suffices = [
+  [1000 * 60 * 60, 'h'],
+  [1000 * 60, 'm'],
+  [1000, 's']
+]
+
+export const abbreviateValue = (n: number, suffices: Suffices, precision = 3): string =>
+  suffices.reduce((cur: string | undefined, [magnitude, suffix]) => {
+    if (cur !== undefined) return cur.toString()
+    if (n / magnitude < 1.0) return cur
+    return (n / magnitude).toPrecision(precision) + suffix
+  }, undefined) || n.toString()
