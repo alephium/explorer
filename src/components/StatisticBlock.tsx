@@ -49,7 +49,7 @@ const Block = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  padding: 2rem;
+  padding: 20px 20px 34px;
 `
 
 const BlockCenteredContent = styled(Block)`
@@ -58,14 +58,14 @@ const BlockCenteredContent = styled(Block)`
 
 const Title = styled.div`
   color: ${({ theme }) => theme.textSecondary};
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  font-size: 14px;
+  margin-bottom: 18px;
 `
 
 const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
-  font-size: 2rem;
-  margin-bottom: 0.3rem;
+  font-size: 23px;
+  font-weight: 500;
 `
 const Secondary = styled.div`
   color: ${({ theme }) => theme.textSecondary};
