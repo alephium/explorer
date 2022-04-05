@@ -51,30 +51,36 @@ const Statistics = ({ refresh }: Props) => {
       const now = new Date().getTime()
       const yesterday = now - ONE_DAY
 
-      const hashrateResult = await client.charts
+      await client.charts
         .getChartsHashrates({ fromTs: yesterday, toTs: now, 'interval-type': 'hourly' })
-        .then(({ data }) => data)
-      setHashrate(hashrateResult.length > 0 ? hashrateResult[0].value : '-')
+        .then(({ data }) => setHashrate(data.length > 0 ? data[0].value : '-'))
 
-      const blocksInfoResult = await client.infos.getInfosHeights().then(({ data }) => data)
-      setBlocks(blocksInfoResult.reduce((acc: number, { value }) => acc + value, 0).toString())
+      await client.infos
+        .getInfosHeights()
+        .then(({ data }) => setBlocks(data.reduce((acc: number, { value }) => acc + value, 0).toString()))
 
-      const totalSupplyResult = await client.infos.getInfosSupplyTotalAlph().then((res) => res.text())
-      setTotalSupply(totalSupplyResult)
+      await client.infos
+        .getInfosSupplyTotalAlph()
+        .then((res) => res.text())
+        .then((text) => setTotalSupply(text))
 
-      const circulatingSupplyResult = await client.infos.getInfosSupplyCirculatingAlph().then((res) => res.text())
-      setCirculating(circulatingSupplyResult)
+      await client.infos
+        .getInfosSupplyCirculatingAlph()
+        .then((res) => res.text())
+        .then((text) => setCirculating(text))
 
-      const totalTransactionsResult = await client.infos.getInfosTotalTransactions().then((res) => res.text())
-      setTransactions(totalTransactionsResult)
+      await client.infos
+        .getInfosTotalTransactions()
+        .then((res) => res.text())
+        .then((text) => setTransactions(text))
 
-      const avgBlockTimeResult = await client.infos.getInfosAverageBlockTimes().then(({ data }) => data)
-      setAvgBlockTime(
-        abbreviateValue(
-          avgBlockTimeResult.reduce((acc: number, { value }) => acc + value, 0.0) / avgBlockTimeResult.length,
-          SUFFICES_TIME
+      await client.infos
+        .getInfosAverageBlockTimes()
+        .then(({ data }) =>
+          setAvgBlockTime(
+            abbreviateValue(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length, SUFFICES_TIME)
+          )
         )
-      )
 
       setIsLoading(false)
     }
