@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PerChainValue } from '@alephium/sdk/dist/api/api-explorer'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { deviceBreakPoints } from '../style/globalStyles'
 import { abbreviateValue, SUFFICES_QUANTITY, SUFFICES_TIME, thousandsSeparation } from '../utils/strings'
 import StatisticBlock from './StatisticBlock'
 
@@ -45,46 +45,51 @@ const Statistics = ({ refresh }: Props) => {
   const hashrateDecimal = parseFloat(hashrate).toFixed(2).split('.')[1]
 
   useEffect(() => {
-    Promise.all([
-      client?.charts
-        .getChartsHashrates({
-          fromTs: new Date().getTime() - ONE_DAY,
-          toTs: new Date().getTime(),
-          'interval-type': 'hourly'
-        })
-        .then((res) => res.data)
-        .then((values) => setHashrate(values[0]?.value || '-')),
-      client?.infos
+    if (!client) return
+
+    const fetchData = async () => {
+      const now = new Date().getTime()
+      const yesterday = now - ONE_DAY
+
+      await client.charts
+        .getChartsHashrates({ fromTs: yesterday, toTs: now, 'interval-type': 'hourly' })
+        .then(({ data }) => setHashrate(data.length > 0 ? data[0].value : '-'))
+
+      await client.infos
         .getInfosHeights()
-        .then((res) => res.data)
-        .then((values: PerChainValue[]) =>
-          setBlocks(values.reduce((acc: number, { value }) => acc + value, 0).toString())
-        ),
-      client?.infos
+        .then(({ data }) => setBlocks(data.reduce((acc: number, { value }) => acc + value, 0).toString()))
+
+      await client.infos
         .getInfosSupplyTotalAlph()
         .then((res) => res.text())
-        .then((value) => setTotalSupply(parseInt(value).toString())),
-      client?.infos
+        .then((text) => setTotalSupply(text))
+
+      await client.infos
         .getInfosSupplyCirculatingAlph()
         .then((res) => res.text())
-        .then((value) => setCirculating(parseInt(value).toString())),
-      client?.infos
+        .then((text) => setCirculating(text))
+
+      await client.infos
         .getInfosTotalTransactions()
         .then((res) => res.text())
-        .then((value) => setTransactions(value)),
-      client?.infos
+        .then((text) => setTransactions(text))
+
+      await client.infos
         .getInfosAverageBlockTimes()
-        .then((res) => res.data)
-        .then((values) =>
+        .then(({ data }) =>
           setAvgBlockTime(
-            abbreviateValue(values.reduce((acc: number, { value }) => acc + value, 0.0) / values.length, SUFFICES_TIME)
+            abbreviateValue(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length, SUFFICES_TIME)
           )
         )
-    ]).then(() => setIsLoading(false))
+
+      setIsLoading(false)
+    }
+
+    fetchData()
   }, [refresh, client])
 
   return (
-    <Block>
+    <Blocks>
       <StatisticBlock
         title="Hashrate"
         primary={
@@ -133,17 +138,30 @@ const Statistics = ({ refresh }: Props) => {
         secondary="Of all chains combined"
         isLoading={isLoading}
       />
-    </Block>
+    </Blocks>
   )
 }
 
-const Block = styled.div`
-  width: 100%;
+const Blocks = styled.div`
   display: flex;
   justify-content: space-between;
-  flex-direction: row;
   margin-bottom: 62px;
-  gap: 2%;
+  gap: 27px;
+
+  @media ${deviceBreakPoints.tablet} {
+    justify-content: center;
+    flex-wrap: wrap;
+
+    > * {
+      width: 200px;
+    }
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    > * {
+      width: 100%;
+    }
+  }
 `
 
 const TextPrimary = styled.span`
