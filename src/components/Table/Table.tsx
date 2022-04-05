@@ -20,6 +20,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 import { deviceBreakPoints } from '../../style/globalStyles'
+import SkeletonLoader from '../SkeletonLoader'
 
 interface TableProps {
   main?: boolean
@@ -29,10 +30,6 @@ interface TableProps {
   scrollable?: boolean
   isLoading?: boolean
   minHeight?: number
-}
-
-interface TableLoadingPlaceholderProps {
-  height: number
 }
 
 export interface TDStyle {
@@ -54,29 +51,9 @@ const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props 
       <StyledTable {...props}>{children}</StyledTable>
     </TableWrapper>
   ) : (
-    <TableLoadingPlaceholder height={height} />
+    <SkeletonLoader heightInPx={height} />
   )
 }
-
-const TableLoadingPlaceholder = styled.div<TableLoadingPlaceholderProps>`
-  min-height: ${({ height }) => height}px;
-  width: 100%;
-  border-radius: 7px;
-  border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
-  background: ${({ theme }) => theme.bgPrimary};
-  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
-  background-size: 400% 400%;
-  animation: gradientAnimation 1.5s ease-in-out infinite;
-
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 0%;
-    }
-    100% {
-      background-position: -135% 0%;
-    }
-  }
-`
 
 const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};

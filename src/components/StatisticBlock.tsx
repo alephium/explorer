@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import LoadingSpinner from './LoadingSpinner'
+import SkeletonLoader from './SkeletonLoader'
 
 interface Props {
   title: string
@@ -30,9 +30,7 @@ interface Props {
 
 const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
   isLoading ? (
-    <BlockCenteredContent>
-      <LoadingSpinner />
-    </BlockCenteredContent>
+    <SkeletonLoader heightInPx={136} />
   ) : (
     <Block>
       <Title>{title}</Title>
@@ -52,10 +50,6 @@ const Block = styled.div`
   padding: 20px 20px 34px;
 `
 
-const BlockCenteredContent = styled(Block)`
-  align-items: center;
-`
-
 const Title = styled.div`
   color: ${({ theme }) => theme.textSecondary};
   font-size: 14px;
@@ -66,6 +60,7 @@ const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
   font-size: 23px;
   font-weight: 500;
+  margin-bottom: 5px;
 `
 const Secondary = styled.div`
   color: ${({ theme }) => theme.textSecondary};
