@@ -24,7 +24,7 @@ import styled from 'styled-components'
 
 import { smartHash } from '../utils/strings'
 import Amount from './Amount'
-import LockTime from './LockTime'
+import LockTimeIcon from './LockTimeIcon'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string
@@ -76,7 +76,7 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
           <span>
             (<Amount value={amount} />)
           </span>
-          {isLocked && <LockTime timestamp={lockTime} />}
+          {isLocked && <LockTimeIcon timestamp={lockTime} />}
         </OutputValue>
       )}
       {txHashRef && (

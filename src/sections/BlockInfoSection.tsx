@@ -27,7 +27,7 @@ import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
-import LockTime from '../components/LockTime'
+import LockTimeIcon from '../components/LockTimeIcon'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
@@ -253,7 +253,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
             t.outputs.map((o, i) => (
               <OutputAmount key={o.key}>
                 <Amount value={BigInt(o.amount)} key={i} />
-                {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeStyled timestamp={o.lockTime} />}
+                {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeIconStyled timestamp={o.lockTime} />}
               </OutputAmount>
             ))}
         </AnimatedCell>
@@ -288,7 +288,7 @@ const OutputAmount = styled.span`
   align-items: center;
 `
 
-const LockTimeStyled = styled(LockTime)`
+const LockTimeIconStyled = styled(LockTimeIcon)`
   position: absolute;
   right: -20px;
 `
