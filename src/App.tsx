@@ -141,11 +141,7 @@ const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 35px;
-
-  @media ${deviceBreakPoints.mobile} {
-    padding-top: 0px;
-  }
+  padding: 35px min(5vw, 50px) 0;
 `
 
 const ContentWrapper = styled.main`
@@ -165,7 +161,6 @@ const ContentWrapper = styled.main`
 const Content = styled.div`
   flex: 1;
   display: flex;
-  padding: 0 min(5vw, 50px);
   margin-bottom: 40px;
 `
 
