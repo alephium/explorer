@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PerChainValue } from '@alephium/sdk/dist/api/api-explorer'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -45,42 +44,41 @@ const Statistics = ({ refresh }: Props) => {
   const hashrateDecimal = parseFloat(hashrate).toFixed(2).split('.')[1]
 
   useEffect(() => {
-    Promise.all([
-      client?.charts
-        .getChartsHashrates({
-          fromTs: new Date().getTime() - ONE_DAY,
-          toTs: new Date().getTime(),
-          'interval-type': 'hourly'
-        })
-        .then((res) => res.data)
-        .then((values) => setHashrate(values[0]?.value || '-')),
-      client?.infos
-        .getInfosHeights()
-        .then((res) => res.data)
-        .then((values: PerChainValue[]) =>
-          setBlocks(values.reduce((acc: number, { value }) => acc + value, 0).toString())
-        ),
-      client?.infos
-        .getInfosSupplyTotalAlph()
-        .then((res) => res.text())
-        .then((value) => setTotalSupply(parseInt(value).toString())),
-      client?.infos
-        .getInfosSupplyCirculatingAlph()
-        .then((res) => res.text())
-        .then((value) => setCirculating(parseInt(value).toString())),
-      client?.infos
-        .getInfosTotalTransactions()
-        .then((res) => res.text())
-        .then((value) => setTransactions(value)),
-      client?.infos
-        .getInfosAverageBlockTimes()
-        .then((res) => res.data)
-        .then((values) =>
-          setAvgBlockTime(
-            abbreviateValue(values.reduce((acc: number, { value }) => acc + value, 0.0) / values.length, SUFFICES_TIME)
-          )
+    if (!client) return
+
+    const fetchData = async () => {
+      const now = new Date().getTime()
+      const yesterday = now - ONE_DAY
+
+      const hashrateResult = await client.charts
+        .getChartsHashrates({ fromTs: yesterday, toTs: now, 'interval-type': 'hourly' })
+        .then(({ data }) => data)
+      setHashrate(hashrateResult.length > 0 ? hashrateResult[0].value : '-')
+
+      const blocksInfoResult = await client.infos.getInfosHeights().then(({ data }) => data)
+      setBlocks(blocksInfoResult.reduce((acc: number, { value }) => acc + value, 0).toString())
+
+      const totalSupplyResult = await client.infos.getInfosSupplyTotalAlph().then((res) => res.text())
+      setTotalSupply(totalSupplyResult)
+
+      const circulatingSupplyResult = await client.infos.getInfosSupplyCirculatingAlph().then((res) => res.text())
+      setCirculating(circulatingSupplyResult)
+
+      const totalTransactionsResult = await client.infos.getInfosTotalTransactions().then((res) => res.text())
+      setTransactions(totalTransactionsResult)
+
+      const avgBlockTimeResult = await client.infos.getInfosAverageBlockTimes().then(({ data }) => data)
+      setAvgBlockTime(
+        abbreviateValue(
+          avgBlockTimeResult.reduce((acc: number, { value }) => acc + value, 0.0) / avgBlockTimeResult.length,
+          SUFFICES_TIME
         )
-    ]).then(() => setIsLoading(false))
+      )
+
+      setIsLoading(false)
+    }
+
+    fetchData()
   }, [refresh, client])
 
   return (
