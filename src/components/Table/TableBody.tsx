@@ -60,7 +60,7 @@ export default styled(TableBody)`
         : ''}
 
     &.details div {
-      overflow: hidden;
+      /* overflow: hidden; */
     }
 
     &:hover {

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
+import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -26,6 +27,7 @@ import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
+import LockTime from '../components/LockTime'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
@@ -247,7 +249,13 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs && t.outputs.map((o, i) => <AddressLink address={o.address} key={i} maxWidth="180px" />)}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
-          {t.outputs && t.outputs.map((o, i) => <Amount value={BigInt(o.amount)} key={i} />)}
+          {t.outputs &&
+            t.outputs.map((o, i) => (
+              <OutputAmount key={o.key}>
+                <Amount value={BigInt(o.amount)} key={i} />
+                {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeStyled timestamp={o.lockTime} />}
+              </OutputAmount>
+            ))}
         </AnimatedCell>
         <td />
       </TableDetailsRow>
@@ -273,6 +281,17 @@ const BlockTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const OutputAmount = styled.span`
+  position: relative;
+  display: flex;
+  align-items: center;
+`
+
+const LockTimeStyled = styled(LockTime)`
+  position: absolute;
+  right: -20px;
+`
 
 const TXTableBodyCustomStyles: TDStyle[] = [
   {
