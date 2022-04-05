@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { deviceBreakPoints } from '../style/globalStyles'
 import { abbreviateValue, SUFFICES_QUANTITY, SUFFICES_TIME, thousandsSeparation } from '../utils/strings'
 import StatisticBlock from './StatisticBlock'
 
@@ -82,7 +83,7 @@ const Statistics = ({ refresh }: Props) => {
   }, [refresh, client])
 
   return (
-    <Block>
+    <Blocks>
       <StatisticBlock
         title="Hashrate"
         primary={
@@ -131,17 +132,30 @@ const Statistics = ({ refresh }: Props) => {
         secondary="Of all chains combined"
         isLoading={isLoading}
       />
-    </Block>
+    </Blocks>
   )
 }
 
-const Block = styled.div`
-  width: 100%;
+const Blocks = styled.div`
   display: flex;
   justify-content: space-between;
-  flex-direction: row;
   margin-bottom: 62px;
-  gap: 2%;
+  gap: 27px;
+
+  @media ${deviceBreakPoints.tablet} {
+    justify-content: center;
+    flex-wrap: wrap;
+
+    > * {
+      width: 200px;
+    }
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    > * {
+      width: 100%;
+    }
+  }
 `
 
 const TextPrimary = styled.span`
