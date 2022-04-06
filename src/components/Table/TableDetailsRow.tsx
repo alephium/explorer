@@ -93,7 +93,7 @@ const DetailToggleWrapper = styled(motion.div)`
 const AnimatedCellContainer = styled(motion.div)<{ alignItems: 'left' | 'right' }>`
   padding: 10px 0;
   text-align: left;
-  /* overflow: hidden; */
+  overflow: hidden;
 
   display: flex;
   flex-direction: column;
