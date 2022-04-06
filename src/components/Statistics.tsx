@@ -93,7 +93,7 @@ const Statistics = ({ refresh }: Props) => {
     <Blocks>
       <StatisticBlock
         title="Hashrate"
-        primary={hashrateInteger ? addApostrophes(hashrateInteger) + hashrateDecimal : '-'}
+        primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
         secondary={`${hashrateSuffix}H/s`}
         isLoading={isLoading}
       />
