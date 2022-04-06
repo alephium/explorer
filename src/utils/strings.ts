@@ -29,22 +29,6 @@ export const checkHexStringValidity = (stringToTest: string) => {
   return /^[a-fA-F0-9]+$/.test(stringToTest)
 }
 
-export const formatTimeForDisplay = (n: number): string => {
-  const timeSuffices: [number, string][] = [
-    [1000 * 60 * 60, 'h'],
-    [1000 * 60, 'min'],
-    [1000, 'sec']
-  ]
-
-  return (
-    timeSuffices.reduce((cur: string | undefined, [magnitude, suffix]) => {
-      if (cur !== undefined) return cur.toString()
-      if (n / magnitude < 1.0) return cur
-      return (n / magnitude).toPrecision(3) + suffix
-    }, undefined) || n.toString()
-  )
-}
-
 export const formatNumberForDisplay = (
   number: number,
   numberType: 'quantity' | 'hash' = 'quantity',

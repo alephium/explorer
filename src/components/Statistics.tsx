@@ -17,13 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addApostrophes } from '@alephium/sdk'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
-import { formatNumberForDisplay, formatTimeForDisplay } from '../utils/strings'
+import { formatNumberForDisplay } from '../utils/strings'
 import StatisticBlock from './StatisticBlock'
+
+dayjs.extend(duration)
 
 const ONE_DAY = 1000 * 60 * 60 * 24
 
@@ -73,9 +77,9 @@ const Statistics = ({ refresh }: Props) => {
         .then((res) => res.text())
         .then((text) => setTransactions(parseInt(text)))
 
-      await client.infos
-        .getInfosAverageBlockTimes()
-        .then(({ data }) => setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length))
+      await client.infos.getInfosAverageBlockTimes().then(({ data }) => {
+        setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
+      })
 
       setIsLoading(false)
     }
@@ -89,16 +93,7 @@ const Statistics = ({ refresh }: Props) => {
     <Blocks>
       <StatisticBlock
         title="Hashrate"
-        primary={
-          hashrate ? (
-            <span>
-              {hashrateInteger ? addApostrophes(hashrateInteger) : '-'}
-              {hashrateDecimal ? <TextSecondary>{hashrateDecimal}</TextSecondary> : '-'}
-            </span>
-          ) : (
-            '-'
-          )
-        }
+        primary={hashrateInteger ? addApostrophes(hashrateInteger) + hashrateDecimal : '-'}
         secondary={`${hashrateSuffix}H/s`}
         isLoading={isLoading}
       />
@@ -134,7 +129,7 @@ const Statistics = ({ refresh }: Props) => {
       />
       <StatisticBlock
         title="Avg. block time"
-        primary={avgBlockTime ? formatTimeForDisplay(avgBlockTime) : '-'}
+        primary={avgBlockTime ? dayjs.duration(avgBlockTime).format('m[m] s[s]') : '-'}
         secondary="of all shards"
         isLoading={isLoading}
       />
