@@ -78,7 +78,7 @@ const Statistics = ({ refresh }: Props) => {
         .then((text) => setTransactions(parseInt(text)))
 
       await client.infos.getInfosAverageBlockTimes().then(({ data }) => {
-        setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
+        if (data.length > 0) setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
       })
 
       setIsLoading(false)
