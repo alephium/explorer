@@ -40,7 +40,7 @@ const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
   )
 
 const Block = styled.div`
-  background-color: ${({ theme }) => theme.bgTertiary};
+  background-color: ${({ theme }) => theme.bgPrimary};
   border: 1px solid ${({ theme }) => theme.borderSecondary};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
   border-radius: 7px;

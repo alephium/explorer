@@ -16,13 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { addApostrophes } from '@alephium/sdk'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
-import { abbreviateValue, SUFFICES_QUANTITY, SUFFICES_TIME, thousandsSeparation } from '../utils/strings'
+import { formatNumberForDisplay } from '../utils/strings'
 import StatisticBlock from './StatisticBlock'
+
+dayjs.extend(duration)
 
 const ONE_DAY = 1000 * 60 * 60 * 24
 
@@ -33,16 +38,14 @@ interface Props {
 const Statistics = ({ refresh }: Props) => {
   const { client } = useGlobalContext()
   const [hashrate, setHashrate] = useState('')
-  const [totalSupply, setTotalSupply] = useState('')
-  const [circulating, setCirculating] = useState('')
-  const [transactions, setTransactions] = useState('')
-  const [blocks, setBlocks] = useState('')
-  const [avgBlockTime, setAvgBlockTime] = useState('')
+  const [totalSupply, setTotalSupply] = useState<number>()
+  const [circulating, setCirculating] = useState<number>()
+  const [transactions, setTransactions] = useState<number>()
+  const [blocks, setBlocks] = useState<number>()
+  const [avgBlockTime, setAvgBlockTime] = useState<number>()
   const [isLoading, setIsLoading] = useState(true)
 
-  const currentSupplyPercentage = ((parseFloat(circulating) / parseFloat(totalSupply)) * 100).toPrecision(3)
-  const hashrateInteger = thousandsSeparation(parseInt(hashrate))
-  const hashrateDecimal = parseFloat(hashrate).toFixed(2).split('.')[1]
+  const currentSupplyPercentage = circulating && totalSupply && ((circulating / totalSupply) * 100).toPrecision(3)
 
   useEffect(() => {
     if (!client) return
@@ -53,34 +56,30 @@ const Statistics = ({ refresh }: Props) => {
 
       await client.charts
         .getChartsHashrates({ fromTs: yesterday, toTs: now, 'interval-type': 'hourly' })
-        .then(({ data }) => setHashrate(data.length > 0 ? data[0].value : '-'))
+        .then(({ data }) => setHashrate(data.length > 0 ? data[0].value : ''))
 
       await client.infos
         .getInfosHeights()
-        .then(({ data }) => setBlocks(data.reduce((acc: number, { value }) => acc + value, 0).toString()))
+        .then(({ data }) => setBlocks(data.reduce((acc: number, { value }) => acc + value, 0)))
 
       await client.infos
         .getInfosSupplyTotalAlph()
         .then((res) => res.text())
-        .then((text) => setTotalSupply(text))
+        .then((text) => setTotalSupply(parseInt(text)))
 
       await client.infos
         .getInfosSupplyCirculatingAlph()
         .then((res) => res.text())
-        .then((text) => setCirculating(text))
+        .then((text) => setCirculating(parseInt(text)))
 
       await client.infos
         .getInfosTotalTransactions()
         .then((res) => res.text())
-        .then((text) => setTransactions(text))
+        .then((text) => setTransactions(parseInt(text)))
 
-      await client.infos
-        .getInfosAverageBlockTimes()
-        .then(({ data }) =>
-          setAvgBlockTime(
-            abbreviateValue(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length, SUFFICES_TIME)
-          )
-        )
+      await client.infos.getInfosAverageBlockTimes().then(({ data }) => {
+        if (data.length > 0) setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
+      })
 
       setIsLoading(false)
     }
@@ -88,54 +87,50 @@ const Statistics = ({ refresh }: Props) => {
     fetchData()
   }, [refresh, client])
 
+  const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(Number(hashrate), 'hash')
+
   return (
     <Blocks>
       <StatisticBlock
         title="Hashrate"
-        primary={
-          hashrate !== '-' ? (
-            <span>
-              {hashrateInteger}.<TextSecondary>{hashrateDecimal}</TextSecondary>
-            </span>
-          ) : (
-            '-'
-          )
-        }
-        secondary="GH/s"
+        primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
+        secondary={`${hashrateSuffix}H/s`}
         isLoading={isLoading}
       />
       <StatisticBlock
         title="Supply"
         primary={
           <>
-            <span>{abbreviateValue(parseInt(circulating), SUFFICES_QUANTITY)}</span>
+            <span>{circulating ? formatNumberForDisplay(circulating) : '-'}</span>
             <TextSecondary> / </TextSecondary>
-            <TextSecondary>{abbreviateValue(parseInt(totalSupply), SUFFICES_QUANTITY)}</TextSecondary>
+            <TextSecondary>{totalSupply ? formatNumberForDisplay(totalSupply) : '-'}</TextSecondary>
           </>
         }
         secondary={
-          <>
-            <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
-          </>
+          currentSupplyPercentage ? (
+            <>
+              <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+            </>
+          ) : null
         }
         isLoading={isLoading}
       />
       <StatisticBlock
         title="Transactions"
-        primary={abbreviateValue(parseInt(transactions), SUFFICES_QUANTITY)}
+        primary={transactions ? formatNumberForDisplay(transactions) : '-'}
         secondary="Total"
         isLoading={isLoading}
       />
       <StatisticBlock
         title="Blocks"
-        primary={thousandsSeparation(parseInt(blocks))}
+        primary={blocks ? addApostrophes(blocks.toString()) : '-'}
         secondary="Total"
         isLoading={isLoading}
       />
       <StatisticBlock
         title="Avg. block time"
-        primary={avgBlockTime}
-        secondary="Of all chains combined"
+        primary={avgBlockTime ? dayjs.duration(avgBlockTime).format('m[m] s[s]') : '-'}
+        secondary="of all shards"
         isLoading={isLoading}
       />
     </Blocks>

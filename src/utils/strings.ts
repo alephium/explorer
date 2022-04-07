@@ -29,32 +29,28 @@ export const checkHexStringValidity = (stringToTest: string) => {
   return /^[a-fA-F0-9]+$/.test(stringToTest)
 }
 
-export const thousandsSeparation = (input: number): string =>
-  input
-    .toString()
-    .split('')
-    .reduce(
-      (str, char, index, list) => (index > 0 && index < list.length - 1 && index % 2 === 0 ? '’' : '') + char + str,
-      ''
-    )
+export const formatNumberForDisplay = (
+  number: number,
+  numberType: 'quantity' | 'hash' = 'quantity',
+  maxDecimals: 1 | 2 = 1
+) => {
+  const suffixes = {
+    quantity: ['', 'K', 'M', 'B', 'T'],
+    hash: ['', 'K', 'M', 'G', 'T', 'P']
+  }[numberType]
 
-type Suffices = [number, string][]
+  let formatedNumber = number
+  let suffixIndex = 0
+  while (formatedNumber >= 1000 && suffixIndex < suffixes.length - 1) {
+    formatedNumber /= 1000
+    suffixIndex++
+  }
 
-export const SUFFICES_QUANTITY: Suffices = [
-  [1000000000, 'B'],
-  [1000000, 'M'],
-  [1000, 'K']
-]
+  const denominator = maxDecimals === 1 ? 10 : 100
+  const preciseNumber = (Math.round((formatedNumber + Number.EPSILON) * denominator) / denominator).toString()
+  const numberParts = preciseNumber.split('.')
+  const numberInteger = numberParts[0]
+  const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || undefined
 
-export const SUFFICES_TIME: Suffices = [
-  [1000 * 60 * 60, 'h'],
-  [1000 * 60, 'm'],
-  [1000, 's']
-]
-
-export const abbreviateValue = (n: number, suffices: Suffices, precision = 3): string =>
-  suffices.reduce((cur: string | undefined, [magnitude, suffix]) => {
-    if (cur !== undefined) return cur.toString()
-    if (n / magnitude < 1.0) return cur
-    return (n / magnitude).toPrecision(precision) + suffix
-  }, undefined) || n.toString()
+  return [numberInteger, numberDecimal, suffixes[suffixIndex]]
+}
