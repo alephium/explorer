@@ -59,9 +59,9 @@ const TransactionInfoSection = () => {
         setTxInfoStatus(status)
       } catch (e) {
         console.error(e)
-        const { error } = e as APIError
-        setTxInfoStatus(error.status)
-        setTxInfoError(error.detail)
+        const { error, status } = e as APIError
+        setTxInfoStatus(status)
+        setTxInfoError(error.detail || error.message || 'Unknown error')
       }
       setLoading(false)
     }

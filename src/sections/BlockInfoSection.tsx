@@ -75,9 +75,9 @@ const BlockInfoSection = () => {
         setBlockInfoStatus(status)
       } catch (e) {
         console.error(e)
-        const { error } = e as APIError
-        setBlockInfoError(error.detail)
-        setBlockInfoStatus(error.status)
+        const { error, status } = e as APIError
+        setBlockInfoError(error.detail || error.message || 'Unknown error')
+        setBlockInfoStatus(status)
       }
       setInfoLoading(false)
     }
@@ -98,8 +98,8 @@ const BlockInfoSection = () => {
         setTxListStatus(status)
       } catch (e) {
         console.error(e)
-        const { error } = e as APIError
-        setTxListStatus(error.status)
+        const { status } = e as APIError
+        setTxListStatus(status)
       }
       setTxLoading(false)
     }
