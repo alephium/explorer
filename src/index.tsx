@@ -22,7 +22,6 @@ import ReactDOM from 'react-dom'
 import { HashRouter as Router } from 'react-router-dom'
 
 import NotificationBar from './components/NotificationBar'
-import { GlobalContextProvider } from './contexts/global'
 import * as serviceWorker from './serviceWorker'
 import { isFlexGapSupported } from './utils/browserSupport'
 
@@ -43,14 +42,16 @@ if (browserIsOld) {
   )
 } else {
   import('./App').then(({ default: App }) => {
-    ReactDOM.render(
-      <Router>
-        <GlobalContextProvider>
-          <App />
-        </GlobalContextProvider>
-      </Router>,
-      document.getElementById('root')
-    )
+    import('./contexts/global').then(({ GlobalContextProvider }) => {
+      ReactDOM.render(
+        <Router>
+          <GlobalContextProvider>
+            <App />
+          </GlobalContextProvider>
+        </Router>,
+        document.getElementById('root')
+      )
+    })
   })
 }
 
