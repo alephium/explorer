@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError } from '@alephium/sdk'
 import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
@@ -42,7 +43,6 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
-import { APIError } from '../utils/api'
 
 interface ParamTypes {
   id: string
@@ -75,9 +75,9 @@ const BlockInfoSection = () => {
         setBlockInfoStatus(status)
       } catch (e) {
         console.error(e)
-        const { error } = e as APIError
-        setBlockInfoError(error.detail)
-        setBlockInfoStatus(error.status)
+        const { error, status } = e as APIError
+        setBlockInfoError(error.detail || error.message || 'Unknown error')
+        setBlockInfoStatus(status)
       }
       setInfoLoading(false)
     }
@@ -98,8 +98,8 @@ const BlockInfoSection = () => {
         setTxListStatus(status)
       } catch (e) {
         console.error(e)
-        const { error } = e as APIError
-        setTxListStatus(error.status)
+        const { status } = e as APIError
+        setTxListStatus(status)
       }
       setTxLoading(false)
     }

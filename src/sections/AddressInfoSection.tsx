@@ -16,20 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
-import { calAmountDelta } from '@alephium/sdk/dist/lib/numbers'
+import { calAmountDelta, getHumanReadableError } from '@alephium/sdk'
+import { AddressBalance, Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
 import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import AmountDelta from '../components/AmountDelta'
 import Badge from '../components/Badge'
-import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
+import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
@@ -43,7 +43,6 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
-import { getHumanReadableError } from '../utils/api'
 
 dayjs.extend(relativeTime)
 
@@ -53,48 +52,68 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
-  const [addressInfo, setAddressInfo] = useState<AddressInfo>()
-  const [addressInfoError, setAddressInfoError] = useState('')
+  const { client, setSnackbarMessage } = useGlobalContext()
+  const [txNumber, setTxNumber] = useState<number>()
+  const [totalBalance, setTotalBalance] = useState<AddressBalance>()
   const [txListError, setTxListError] = useState('')
   const [txList, setTxList] = useState<Transaction[]>()
 
-  const [infoLoading, setInfoLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
-  const previousId = useRef(id)
+  const [txNumberLoading, setTxNumberLoading] = useState(true)
+  const [totalBalanceLoading, setTotalBalanceLoading] = useState(true)
 
   // Default page
   const pageNumber = usePageNumber()
 
   // Address info
   useEffect(() => {
-    const fetchAddressInfo = async () => {
-      if (!client) return
+    if (!client) return
 
-      previousId.current = id
-
-      setInfoLoading(true)
+    const fetchTxNumber = async () => {
+      setTxNumberLoading(true)
+      setTxNumber(undefined)
 
       try {
-        const response = await client.getAddressDetails(id)
-        if (!response.data) return
-
-        setAddressInfo(response.data)
+        const { data } = await client.addresses.getAddressesAddressTotalTransactions(id)
+        setTxNumber(data)
       } catch (error) {
-        setInfoLoading(false)
         console.error(error)
-        setAddressInfoError(getHumanReadableError(error, 'Error while fetching address info'))
+        setSnackbarMessage({
+          text: getHumanReadableError(error, 'Error while fetching total transactions number'),
+          type: 'alert'
+        })
       }
-      setInfoLoading(false)
+
+      setTxNumberLoading(false)
     }
-    fetchAddressInfo()
-  }, [client, id])
+
+    const fetchTotalBalance = async () => {
+      setTotalBalanceLoading(true)
+      setTotalBalance(undefined)
+
+      try {
+        const { data } = await client.addresses.getAddressesAddressBalance(id)
+        setTotalBalance(data)
+      } catch (error) {
+        console.error(error)
+        setSnackbarMessage({
+          text: getHumanReadableError(error, 'Error while fetching total balance'),
+          type: 'alert'
+        })
+      }
+
+      setTotalBalanceLoading(false)
+    }
+
+    fetchTxNumber()
+    fetchTotalBalance()
+  }, [client, id, setSnackbarMessage])
 
   // Address transactions
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!client) return
+    if (!client) return
 
+    const fetchTransactions = async () => {
       setTxLoading(true)
 
       try {
@@ -113,42 +132,48 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" isLoading={infoLoading || txLoading} />
+      <SectionTitle title="Address" />
 
-      {!infoLoading && !addressInfo ? (
-        <InlineErrorMessage message={addressInfoError} />
-      ) : (
-        <Table bodyOnly isLoading={infoLoading} minHeight={250}>
-          {addressInfo && (
-            <TableBody tdStyles={AddressTableBodyCustomStyles}>
-              <TableRow>
-                <td>Address</td>
-                <HighlightedCell textToCopy={id} qrCodeContent={id}>
-                  {id}
-                </HighlightedCell>
-              </TableRow>
-              <TableRow>
-                <td>Number of Transactions</td>
-                <td>{addressInfo.txNumber}</td>
-              </TableRow>
-              <TableRow>
-                <td>Total Balance</td>
-                <td>
-                  <Badge type={'neutralHighlight'} amount={addressInfo.balance} />
-                </td>
-              </TableRow>
-              {addressInfo.lockedBalance && parseInt(addressInfo.lockedBalance) > 0 && (
-                <TableRow>
-                  <td>Locked Balance</td>
-                  <td>
-                    <Badge type={'neutral'} amount={addressInfo.lockedBalance} />
-                  </td>
-                </TableRow>
+      <Table bodyOnly minHeight={250}>
+        <TableBody tdStyles={AddressTableBodyCustomStyles}>
+          <TableRow>
+            <td>Address</td>
+            <HighlightedCell textToCopy={id} qrCodeContent={id}>
+              {id}
+            </HighlightedCell>
+          </TableRow>
+          <TableRow>
+            <td>Number of Transactions</td>
+            <td>
+              {txNumberLoading ? (
+                <LoadingSpinner size={14} />
+              ) : (
+                txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
               )}
-            </TableBody>
+            </td>
+          </TableRow>
+          <TableRow>
+            <td>Total Balance</td>
+            <td>
+              {totalBalanceLoading ? (
+                <LoadingSpinner size={14} />
+              ) : totalBalance ? (
+                <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
+              ) : (
+                <ErrorMessage>Could not get balance</ErrorMessage>
+              )}
+            </td>
+          </TableRow>
+          {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
+            <TableRow>
+              <td>Locked Balance</td>
+              <td>
+                <Badge type={'neutral'} amount={totalBalance.lockedBalance} />
+              </td>
+            </TableRow>
           )}
-        </Table>
-      )}
+        </TableBody>
+      </Table>
 
       <SecondaryTitle>Transactions</SecondaryTitle>
 
@@ -175,7 +200,7 @@ const TransactionInfoSection = () => {
         )}
       </Table>
 
-      {addressInfo?.txNumber ? <PageSwitch totalNumberOfElements={addressInfo.txNumber} /> : null}
+      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
     </Section>
   )
 }
@@ -330,6 +355,12 @@ const BlockRewardLabel = styled.span`
 const NoTxMessage = styled.td`
   color: ${({ theme }) => theme.textSecondary};
   padding: 20px;
+`
+
+const ErrorMessage = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+  font-style: italic;
+  font-weight: 400;
 `
 
 export default TransactionInfoSection
