@@ -28,7 +28,6 @@ import styled, { css, useTheme } from 'styled-components'
 
 import AmountDelta from '../components/AmountDelta'
 import Badge from '../components/Badge'
-import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
@@ -54,10 +53,9 @@ interface ParamTypes {
 
 const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
+  const { client, setSnackbarMessage } = useGlobalContext()
   const [txNumber, setTxNumber] = useState<number>()
   const [totalBalance, setTotalBalance] = useState<AddressBalance>()
-  const [addressInfoError, setAddressInfoError] = useState('')
   const [txListError, setTxListError] = useState('')
   const [txList, setTxList] = useState<Transaction[]>()
 
@@ -77,7 +75,10 @@ const TransactionInfoSection = () => {
         setTxNumber(data)
       } catch (error) {
         console.error(error)
-        setAddressInfoError(getHumanReadableError(error, 'Error while fetching total transactions number'))
+        setSnackbarMessage({
+          text: getHumanReadableError(error, 'Error while fetching total transactions number'),
+          type: 'alert'
+        })
       }
 
       setInfoLoading(false)
@@ -89,7 +90,10 @@ const TransactionInfoSection = () => {
         setTotalBalance(data)
       } catch (error) {
         console.error(error)
-        setAddressInfoError(getHumanReadableError(error, 'Error while fetching total balance'))
+        setSnackbarMessage({
+          text: getHumanReadableError(error, 'Error while fetching total balance'),
+          type: 'alert'
+        })
       }
 
       setInfoLoading(false)
@@ -99,7 +103,7 @@ const TransactionInfoSection = () => {
 
     fetchTxNumber()
     fetchTotalBalance()
-  }, [client, id])
+  }, [client, id, setSnackbarMessage])
 
   // Address transactions
   useEffect(() => {
@@ -122,50 +126,42 @@ const TransactionInfoSection = () => {
     fetchTransactions()
   }, [client, id, pageNumber])
 
-  const someInfoWasFetched = txNumber || totalBalance
-
   return (
     <Section>
       <SectionTitle title="Address" isLoading={infoLoading || txLoading} />
 
-      {!infoLoading && !someInfoWasFetched ? (
-        <InlineErrorMessage message={addressInfoError} />
-      ) : (
-        <Table bodyOnly isLoading={infoLoading} minHeight={250}>
-          {someInfoWasFetched && (
-            <TableBody tdStyles={AddressTableBodyCustomStyles}>
-              <TableRow>
-                <td>Address</td>
-                <HighlightedCell textToCopy={id} qrCodeContent={id}>
-                  {id}
-                </HighlightedCell>
-              </TableRow>
-              <TableRow>
-                <td>Number of Transactions</td>
-                <td>{txNumber ?? <LoadingSpinner size={14} />}</td>
-              </TableRow>
-              <TableRow>
-                <td>Total Balance</td>
-                <td>
-                  {totalBalance ? (
-                    <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
-                  ) : (
-                    <LoadingSpinner size={14} />
-                  )}
-                </td>
-              </TableRow>
-              {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
-                <TableRow>
-                  <td>Locked Balance</td>
-                  <td>
-                    <Badge type={'neutral'} amount={totalBalance.lockedBalance} />
-                  </td>
-                </TableRow>
+      <Table bodyOnly minHeight={250}>
+        <TableBody tdStyles={AddressTableBodyCustomStyles}>
+          <TableRow>
+            <td>Address</td>
+            <HighlightedCell textToCopy={id} qrCodeContent={id}>
+              {id}
+            </HighlightedCell>
+          </TableRow>
+          <TableRow>
+            <td>Number of Transactions</td>
+            <td>{txNumber ?? <LoadingSpinner size={14} />}</td>
+          </TableRow>
+          <TableRow>
+            <td>Total Balance</td>
+            <td>
+              {totalBalance ? (
+                <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
+              ) : (
+                <LoadingSpinner size={14} />
               )}
-            </TableBody>
+            </td>
+          </TableRow>
+          {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
+            <TableRow>
+              <td>Locked Balance</td>
+              <td>
+                <Badge type={'neutral'} amount={totalBalance.lockedBalance} />
+              </td>
+            </TableRow>
           )}
-        </Table>
-      )}
+        </TableBody>
+      </Table>
 
       <SecondaryTitle>Transactions</SecondaryTitle>
 
