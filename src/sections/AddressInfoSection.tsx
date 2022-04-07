@@ -59,8 +59,9 @@ const TransactionInfoSection = () => {
   const [txListError, setTxListError] = useState('')
   const [txList, setTxList] = useState<Transaction[]>()
 
-  const [infoLoading, setInfoLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
+  const [txNumberLoading, setTxNumberLoading] = useState(true)
+  const [totalBalanceLoading, setTotalBalanceLoading] = useState(true)
 
   // Default page
   const pageNumber = usePageNumber()
@@ -70,6 +71,7 @@ const TransactionInfoSection = () => {
     if (!client) return
 
     const fetchTxNumber = async () => {
+      setTxNumberLoading(true)
       setTxNumber(undefined)
 
       try {
@@ -83,10 +85,11 @@ const TransactionInfoSection = () => {
         })
       }
 
-      setInfoLoading(false)
+      setTxNumberLoading(false)
     }
 
     const fetchTotalBalance = async () => {
+      setTotalBalanceLoading(true)
       setTotalBalance(undefined)
 
       try {
@@ -100,10 +103,8 @@ const TransactionInfoSection = () => {
         })
       }
 
-      setInfoLoading(false)
+      setTotalBalanceLoading(false)
     }
-
-    setInfoLoading(true)
 
     fetchTxNumber()
     fetchTotalBalance()
@@ -111,9 +112,9 @@ const TransactionInfoSection = () => {
 
   // Address transactions
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!client) return
+    if (!client) return
 
+    const fetchTransactions = async () => {
       setTxLoading(true)
 
       try {
@@ -132,7 +133,7 @@ const TransactionInfoSection = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" isLoading={infoLoading || txLoading} />
+      <SectionTitle title="Address" />
 
       <Table bodyOnly minHeight={250}>
         <TableBody tdStyles={AddressTableBodyCustomStyles}>
@@ -144,15 +145,23 @@ const TransactionInfoSection = () => {
           </TableRow>
           <TableRow>
             <td>Number of Transactions</td>
-            <td>{txNumber ?? <LoadingSpinner size={14} />}</td>
+            <td>
+              {txNumberLoading ? (
+                <LoadingSpinner size={14} />
+              ) : (
+                txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
+              )}
+            </td>
           </TableRow>
           <TableRow>
             <td>Total Balance</td>
             <td>
-              {totalBalance ? (
+              {totalBalanceLoading ? (
+                <LoadingSpinner size={14} />
+              ) : totalBalance ? (
                 <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
               ) : (
-                <LoadingSpinner size={14} />
+                <ErrorMessage>Could not get balance</ErrorMessage>
               )}
             </td>
           </TableRow>
@@ -347,6 +356,12 @@ const BlockRewardLabel = styled.span`
 const NoTxMessage = styled.td`
   color: ${({ theme }) => theme.textSecondary};
   padding: 20px;
+`
+
+const ErrorMessage = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+  font-style: italic;
+  font-weight: 400;
 `
 
 export default TransactionInfoSection
