@@ -7,7 +7,7 @@
     "npm": ">=7.24.2"
   },
   "dependencies": {
-    "@alephium/sdk": "0.0.4-rc.0",
+    "@alephium/sdk": "0.0.4",
     "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
     "lodash": "^4.17.21",
