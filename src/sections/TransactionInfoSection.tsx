@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError } from '@alephium/sdk'
 import { Output, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -34,7 +35,6 @@ import TableBody from '../components/Table/TableBody'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
-import { APIError } from '../utils/api'
 import { useInterval } from '../utils/hooks'
 
 interface ParamTypes {

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError } from '@alephium/sdk'
 import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
@@ -42,7 +43,6 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
-import { APIError } from '../utils/api'
 
 interface ParamTypes {
   id: string

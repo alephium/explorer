@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { calAmountDelta, getHumanReadableError } from '@alephium/sdk'
 import { AddressBalance, Transaction } from '@alephium/sdk/api/explorer'
-import { calAmountDelta } from '@alephium/sdk/dist/lib/numbers'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
@@ -43,7 +43,6 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
-import { getHumanReadableError } from '../utils/api'
 
 dayjs.extend(relativeTime)
 
