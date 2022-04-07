@@ -17,8 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ListBlocks } from '@alephium/sdk/api/explorer'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { useCallback, useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -36,8 +34,6 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import { useInterval } from '../utils/hooks'
-
-dayjs.extend(relativeTime)
 
 const BlockSection = () => {
   const [blockList, setBlockList] = useState<ListBlocks>()
