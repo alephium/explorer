@@ -70,6 +70,8 @@ const TransactionInfoSection = () => {
     if (!client) return
 
     const fetchTxNumber = async () => {
+      setTxNumber(undefined)
+
       try {
         const { data } = await client.addresses.getAddressesAddressTotalTransactions(id)
         setTxNumber(data)
@@ -85,6 +87,8 @@ const TransactionInfoSection = () => {
     }
 
     const fetchTotalBalance = async () => {
+      setTotalBalance(undefined)
+
       try {
         const { data } = await client.addresses.getAddressesAddressBalance(id)
         setTotalBalance(data)
