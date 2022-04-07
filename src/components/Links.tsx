@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
 import React, { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
@@ -23,6 +24,7 @@ import styled from 'styled-components'
 
 import { smartHash } from '../utils/strings'
 import Amount from './Amount'
+import LockTimeIcon from './LockTimeIcon'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string
@@ -60,15 +62,21 @@ interface AddressLinkProps {
   address: string
   txHashRef?: string
   amount?: bigint
+  lockTime?: number
 }
 
-export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount }) => {
+export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount, lockTime }) => {
+  const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
+
   return (
     <AddressWrapper>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
       {amount !== undefined && (
         <OutputValue>
-          (<Amount value={amount} />)
+          <span>
+            (<Amount value={amount} />)
+          </span>
+          {isLocked && <LockTimeIcon timestamp={lockTime} />}
         </OutputValue>
       )}
       {txHashRef && (
@@ -83,6 +91,9 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
 const OutputValue = styled.span`
   color: ${({ theme }) => theme.textSecondary};
   margin-left: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 `
 
 const TxLink = styled(Link)`

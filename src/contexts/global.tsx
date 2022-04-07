@@ -60,15 +60,15 @@ export const GlobalContextProvider: FC = ({ children }) => {
   useEffect(() => {
     // Check and apply environment variables
     const url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
-    const networkType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
+    const netType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
 
     if (!url) {
       throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
     }
 
-    if (!networkType) {
+    if (!netType) {
       throw new Error('The REACT_APP_NETWORK_TYPE environment variable must be defined')
-    } else if (!networkTypes.includes(networkType)) {
+    } else if (!networkTypes.includes(netType)) {
       throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
     }
 
@@ -78,7 +78,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
       throw new Error('Could not create explorer client')
     }
 
-    setNetworkType(networkType)
+    setNetworkType(netType)
   }, [])
 
   // Remove snackbar popup

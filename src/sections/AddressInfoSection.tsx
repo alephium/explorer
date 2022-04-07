@@ -281,7 +281,13 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 <td>
                   {t.outputs &&
                     t.outputs.map((output, i) => (
-                      <AddressLink key={i} address={output.address} amount={BigInt(output.amount)} maxWidth="180px" />
+                      <AddressLink
+                        key={i}
+                        address={output.address}
+                        amount={BigInt(output.amount)}
+                        maxWidth="180px"
+                        lockTime={output.lockTime}
+                      />
                     ))}
                 </td>
               </TableRow>

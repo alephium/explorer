@@ -53,8 +53,6 @@ export default styled(AppHeader)`
   justify-content: space-between;
   padding: 15px min(5vw, 50px);
   gap: 5vw;
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-  box-shadow: ${({ theme }) => theme.shadowTertiary};
 `
 
 const HeaderSideContainer = styled.div<{ justifyContent: 'flex-start' | 'flex-end'; hideOnMobile?: boolean }>`

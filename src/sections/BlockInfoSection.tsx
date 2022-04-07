@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
+import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
@@ -26,6 +27,7 @@ import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
+import LockTimeIcon from '../components/LockTimeIcon'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
@@ -205,6 +207,7 @@ interface TransactionRowProps {
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
+  const containsLockedOutputs = t.outputs && t.outputs.some((o) => o.lockTime && dayjs(o.lockTime).isAfter(dayjs()))
 
   return (
     <>
@@ -247,7 +250,13 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           {t.outputs && t.outputs.map((o, i) => <AddressLink address={o.address} key={i} maxWidth="180px" />)}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
-          {t.outputs && t.outputs.map((o, i) => <Amount value={BigInt(o.amount)} key={i} />)}
+          {t.outputs &&
+            t.outputs.map((o, i) => (
+              <OutputAmount key={o.key} hasRightPadding={containsLockedOutputs}>
+                <Amount value={BigInt(o.amount)} key={i} />
+                {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeIconStyled timestamp={o.lockTime} />}
+              </OutputAmount>
+            ))}
         </AnimatedCell>
         <td />
       </TableDetailsRow>
@@ -273,6 +282,19 @@ const BlockTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+const OutputAmount = styled.span<{ hasRightPadding?: boolean }>`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding-right: ${({ hasRightPadding }) => (hasRightPadding ? '20px' : '0')};
+`
+
+const LockTimeIconStyled = styled(LockTimeIcon)`
+  position: absolute;
+  right: 0;
+`
 
 const TXTableBodyCustomStyles: TDStyle[] = [
   {
