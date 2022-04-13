@@ -19,13 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import { Lock } from 'lucide-react'
 
+import { DATE_TIME_FORMAT } from '../utils/strings'
+
 interface LockTimeIconProps {
   timestamp: number
   className?: string
 }
 
 const LockTimeIcon = ({ timestamp, className }: LockTimeIconProps) => {
-  return <Lock data-tip={`Unlocks on ${dayjs(timestamp).format('L LTS UTCZ')}`} size="13px" className={className} />
+  const unlocksOn = dayjs(timestamp).format(DATE_TIME_FORMAT)
+
+  return <Lock data-tip={`Unlocks on ${unlocksOn}`} size="13px" className={className} />
 }
 
 export default LockTimeIcon

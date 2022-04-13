@@ -54,3 +54,5 @@ export const formatNumberForDisplay = (
 
   return [numberInteger, numberDecimal, suffixes[suffixIndex]]
 }
+
+export const DATE_TIME_FORMAT = 'DD/MM/YYYY HH:mm:ss [UTC]Z'

@@ -18,8 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calAmountDelta, getHumanReadableError } from '@alephium/sdk'
 import { AddressBalance, Transaction } from '@alephium/sdk/api/explorer'
-import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import _ from 'lodash'
 import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
@@ -43,8 +41,6 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
-
-dayjs.extend(relativeTime)
 
 interface ParamTypes {
   id: string

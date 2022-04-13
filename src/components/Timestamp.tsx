@@ -18,13 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { MouseEvent } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { DATE_TIME_FORMAT } from '../utils/strings'
 
 dayjs.extend(localizedFormat)
+dayjs.extend(relativeTime)
 
 interface TimestampProps {
   timeInMs: number
@@ -44,7 +47,7 @@ const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: Timestam
     ReactTooltip.hide()
   }
 
-  const highPrecisionTimestamp = dayjs(timeInMs).format('L LTS UTCZ')
+  const highPrecisionTimestamp = dayjs(timeInMs).format(DATE_TIME_FORMAT)
   const lowPrecisionTimestamp = dayjs().to(timeInMs)
 
   return (
