@@ -30,7 +30,7 @@ interface Props {
 
 const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
   isLoading ? (
-    <SkeletonLoader heightInPx={136} />
+    <SkeletonLoaderStyled heightInPx={136} />
   ) : (
     <Block>
       <Title>{title}</Title>
@@ -47,6 +47,10 @@ const Block = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
+  padding: 20px 20px 34px;
+`
+
+const SkeletonLoaderStyled = styled(SkeletonLoader)`
   padding: 20px 20px 34px;
 `
 
