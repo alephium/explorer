@@ -38,19 +38,24 @@ interface Props {
 const Statistics = ({ refresh }: Props) => {
   const { client } = useGlobalContext()
   const [hashrate, setHashrate] = useState('')
+  const [isHashrateLoading, setIsHashrateLoading] = useState(true)
   const [totalSupply, setTotalSupply] = useState<number>()
+  const [isTotalSupplyLoading, setIsTotalSupplyLoading] = useState(true)
   const [circulating, setCirculating] = useState<number>()
+  const [isCirculatingLoading, setIsCirculatingLoading] = useState(true)
   const [transactions, setTransactions] = useState<number>()
+  const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
   const [blocks, setBlocks] = useState<number>()
+  const [isBlocksLoading, setIsBlocksLoading] = useState(true)
   const [avgBlockTime, setAvgBlockTime] = useState<number>()
-  const [isLoading, setIsLoading] = useState(true)
+  const [isAvgBlockTimeLoading, setIsAvgBlockTimeLoading] = useState(true)
 
   const currentSupplyPercentage = circulating && totalSupply && ((circulating / totalSupply) * 100).toPrecision(3)
 
   useEffect(() => {
     if (!client) return
 
-    const fetchData = async () => {
+    const fetchHashrateData = async () => {
       const now = new Date().getTime()
       const yesterday = now - ONE_DAY
 
@@ -58,33 +63,58 @@ const Statistics = ({ refresh }: Props) => {
         .getChartsHashrates({ fromTs: yesterday, toTs: now, 'interval-type': 'hourly' })
         .then(({ data }) => setHashrate(data.length > 0 ? data[0].value : ''))
 
+      setIsHashrateLoading(false)
+    }
+
+    const fetchBlocksData = async () => {
       await client.infos
         .getInfosHeights()
         .then(({ data }) => setBlocks(data.reduce((acc: number, { value }) => acc + value, 0)))
 
+      setIsBlocksLoading(false)
+    }
+
+    const fetchTotalSupplyData = async () => {
       await client.infos
         .getInfosSupplyTotalAlph()
         .then((res) => res.text())
         .then((text) => setTotalSupply(parseInt(text)))
 
+      setIsTotalSupplyLoading(false)
+    }
+
+    const fetchCirculatingData = async () => {
       await client.infos
         .getInfosSupplyCirculatingAlph()
         .then((res) => res.text())
         .then((text) => setCirculating(parseInt(text)))
 
+      setIsCirculatingLoading(false)
+    }
+
+    const fetchTransactionsData = async () => {
       await client.infos
         .getInfosTotalTransactions()
         .then((res) => res.text())
         .then((text) => setTransactions(parseInt(text)))
 
+      setIsTransactionsLoading(false)
+    }
+
+    const fetchAvgBlockTimeData = async () => {
       await client.infos.getInfosAverageBlockTimes().then(({ data }) => {
         if (data.length > 0) setAvgBlockTime(data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
       })
 
-      setIsLoading(false)
+      setIsAvgBlockTimeLoading(false)
     }
 
-    fetchData()
+    fetchHashrateData()
+    fetchBlocksData()
+    fetchTotalSupplyData()
+    fetchCirculatingData()
+    fetchTransactionsData()
+    fetchAvgBlockTimeData()
   }, [refresh, client])
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(Number(hashrate), 'hash')
@@ -95,7 +125,7 @@ const Statistics = ({ refresh }: Props) => {
         title="Hashrate"
         primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
         secondary={`${hashrateSuffix}H/s`}
-        isLoading={isLoading}
+        isLoading={isHashrateLoading}
       />
       <StatisticBlock
         title="Supply"
@@ -113,25 +143,25 @@ const Statistics = ({ refresh }: Props) => {
             </>
           ) : null
         }
-        isLoading={isLoading}
+        isLoading={isCirculatingLoading || isTotalSupplyLoading}
       />
       <StatisticBlock
         title="Transactions"
         primary={transactions ? formatNumberForDisplay(transactions) : '-'}
         secondary="Total"
-        isLoading={isLoading}
+        isLoading={isTransactionsLoading}
       />
       <StatisticBlock
         title="Blocks"
         primary={blocks ? addApostrophes(blocks.toString()) : '-'}
         secondary="Total"
-        isLoading={isLoading}
+        isLoading={isBlocksLoading}
       />
       <StatisticBlock
         title="Avg. block time"
         primary={avgBlockTime ? dayjs.duration(avgBlockTime).format('m[m] s[s]') : '-'}
         secondary="of all shards"
-        isLoading={isLoading}
+        isLoading={isAvgBlockTimeLoading}
       />
     </Blocks>
   )
