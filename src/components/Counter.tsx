@@ -26,7 +26,7 @@ interface CounterProps {
 }
 
 const Counter = ({ from, to }: CounterProps) => {
-  const nodeRef = useRef<HTMLParagraphElement>(null)
+  const nodeRef = useRef<HTMLSpanElement>(null)
   const previousTargetValue = useRef(0)
 
   useEffect(() => {

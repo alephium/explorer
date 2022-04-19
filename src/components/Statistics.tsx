@@ -54,8 +54,6 @@ const Statistics = ({ refresh }: Props) => {
     avgBlockTime: statInitData
   })
 
-  console.log(statsData.totalTransactions)
-
   const updateStats = (key: StatKeys, value: number) => {
     setStatsData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
   }
