@@ -11,6 +11,7 @@ env:
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
   REACT_APP_BACKEND_URL: https://testnet-backend.alephium.org
   REACT_APP_NETWORK_TYPE: testnet
+  NODE_OPTIONS=--openssl-legacy-provider
 
 jobs:
   build:
