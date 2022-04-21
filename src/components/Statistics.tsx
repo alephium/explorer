@@ -26,6 +26,7 @@ import styled from 'styled-components'
 import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { formatNumberForDisplay } from '../utils/strings'
+import Counter from './Counter'
 import StatisticBlock from './StatisticBlock'
 
 dayjs.extend(duration)
@@ -138,13 +139,13 @@ const Statistics = ({ refresh }: Props) => {
       />
       <StatisticBlock
         title="Transactions"
-        primary={totalTransactions.value ? formatNumberForDisplay(totalTransactions.value) : '-'}
+        primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
         secondary="Total"
         isLoading={totalTransactions.isLoading}
       />
       <StatisticBlock
         title="Blocks"
-        primary={totalBlocks.value ? addApostrophes(totalBlocks.value.toString()) : '-'}
+        primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
         secondary="Total"
         isLoading={totalBlocks.isLoading}
       />
