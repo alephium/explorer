@@ -11,7 +11,6 @@ env:
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
   REACT_APP_BACKEND_URL: https://testnet-backend.alephium.org
   REACT_APP_NETWORK_TYPE: testnet
-  NODE_OPTIONS: --openssl-legacy-provider
 
 jobs:
   build:
@@ -22,7 +21,7 @@ jobs:
     - name: Setup node.js
       uses: actions/setup-node@v1
       with:
-        node-version: 17
+        node-version: 16
 
     - name: Build frontend
       run: npm install && npm run build
