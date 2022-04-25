@@ -77,23 +77,22 @@ const Statistics = ({ refresh }: Props) => {
         'interval-type': 'hourly'
       })
 
-      updateStats('hashrate', data.length > 0 ? Number(data[0].value) : 0)
+      if (data && data.length > 0) updateStats('hashrate', Number(data[0].value))
     }
 
     const fetchBlocksData = async () => {
       const { data } = await client.infos.getInfosHeights()
-      updateStats(
-        'totalBlocks',
-        data.reduce((acc: number, { value }) => acc + value, 0)
-      )
+      if (data && data.length > 0)
+        updateStats(
+          'totalBlocks',
+          data.reduce((acc: number, { value }) => acc + value, 0)
+        )
     }
 
     const fetchAvgBlockTimeData = async () => {
       const { data } = await client.infos.getInfosAverageBlockTimes()
-      updateStats(
-        'avgBlockTime',
-        data.length > 0 ? data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length : 0
-      )
+      if (data && data.length > 0)
+        updateStats('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
     }
 
     fetchHashrateData()
