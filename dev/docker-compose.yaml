@@ -1,0 +1,84 @@
+version: "3.3"
+services:
+
+  init:
+    image: busybox
+    command: >
+      sh -c "mkdir -p /mnt/alephium-data /mnt/alephium-wallets; chmod 777 /mnt/alephium-data /mnt/alephium-wallets"
+    volumes:
+      - ./:/mnt
+
+  alephium:
+    image: alephium/alephium:v1.3.2
+    restart: unless-stopped
+    ports:
+      - 9973:9973/tcp
+      - 9973:9973/udp
+      - 10973:10973
+      - 12973:12973
+    networks:
+      alephium-explorer:
+        ipv4_address: 198.19.254.2
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./alephium-data:/alephium-home/.alephium
+      - ./user.conf:/alephium-home/.alephium/user.conf
+      - ./alephium-wallets:/alephium-home/.alephium-wallets
+    healthcheck:
+      test: [ "CMD", "curl", "http://127.0.0.1:12973/infos/self-clique" ]
+      timeout: 45s
+
+  db:
+    image: postgres:12
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "postgres" ]
+      timeout: 45s
+      interval: 10s
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=explorer
+    ports:
+      - '5432'
+    networks:
+      - alephium-explorer
+
+  backend:
+    image: alephium/explorer-backend:1.6.2
+    environment:
+      EXPLORER_HOST: 0.0.0.0
+      BLOCKFLOW_HOST: 'alephium'
+      DB_HOST: 'db'
+      BLOCKFLOW_NETWORK_ID: '1'
+    ports:
+      - 9090:9090
+    networks:
+      - alephium-explorer
+    depends_on:
+      db:
+          condition: service_healthy
+      alephium:
+          condition: service_healthy
+
+  frontend:
+    image: alephium-explorer-frontend
+    build:
+      context: frontend
+      args:
+        FRONTEND_VERSION: master
+    ports:
+      - 8080:80
+    networks:
+      - alephium-explorer
+
+networks:
+  alephium-explorer:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 198.19.254.0/24
+         gateway: 198.19.254.1
