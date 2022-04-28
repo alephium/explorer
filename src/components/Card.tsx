@@ -16,58 +16,52 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { FC } from 'react'
 import styled from 'styled-components'
 
-import SkeletonLoader from './SkeletonLoader'
-
 interface Props {
-  title: string
-  primary: ReactNode
-  secondary: ReactNode
-  isLoading: boolean
+  label: string
 }
 
-const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
-  isLoading ? (
-    <SkeletonLoaderStyled heightInPx={136} />
-  ) : (
-    <Block>
-      <Title>{title}</Title>
-      <Primary>{primary}</Primary>
-      <Secondary>{secondary}</Secondary>
-    </Block>
-  )
+const Card: FC<Props> = ({ label, children }) => (
+  <Container>
+    <Label>
+      <LabelText>{label}</LabelText>
+    </Label>
+    <Content>{children}</Content>
+  </Container>
+)
 
-const Block = styled.div`
+const Container = styled.div`
   background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
-  border-radius: 7px;
+  border-radius: 9px;
   display: flex;
   width: 100%;
   flex-direction: column;
-  padding: 20px 20px 34px;
+  padding-bottom: 25px;
 `
 
-const SkeletonLoaderStyled = styled(SkeletonLoader)`
-  padding: 20px 20px 34px;
-`
-
-const Title = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+const LabelText = styled.span`
+  height: 31px;
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
   font-size: 14px;
-  margin-bottom: 18px;
+  line-height: 17px;
+  display: flex;
+  align-items: center;
 `
 
-const Primary = styled.div`
+const Label = styled.div`
   color: ${({ theme }) => theme.textPrimary};
-  font-size: 23px;
-  font-weight: 500;
-  margin-bottom: 5px;
-`
-const Secondary = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+  background-color: ${({ theme }) => theme.borderSecondary};
+  padding: 9px 22px 7px 20px;
 `
 
-export default StatisticBlock
+const Content = styled.div``
+
+export default Card

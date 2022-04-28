@@ -26,8 +26,9 @@ import styled from 'styled-components'
 import { useGlobalContext } from '../contexts/global'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { formatNumberForDisplay } from '../utils/strings'
+import Card from './Card'
 import Counter from './Counter'
-import StatisticBlock from './StatisticBlock'
+import StatisticTextual from './StatisticTextual'
 
 dayjs.extend(duration)
 
@@ -112,48 +113,53 @@ const Statistics = ({ refresh }: Props) => {
 
   return (
     <Blocks>
-      <StatisticBlock
-        title="Hashrate"
-        primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
-        secondary={`${hashrateSuffix}H/s`}
-        isLoading={hashrate.isLoading}
-      />
-      <StatisticBlock
-        title="Supply"
-        primary={
-          <>
-            <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
-            <TextSecondary> / </TextSecondary>
-            <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
-          </>
-        }
-        secondary={
-          currentSupplyPercentage ? (
+      <Card label="Hashrate">
+        <StatisticTextual
+          primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
+          secondary={`${hashrateSuffix}H/s`}
+          isLoading={hashrate.isLoading}
+        />
+      </Card>
+      <Card label="Supply">
+        <StatisticTextual
+          primary={
             <>
-              <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+              <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
+              <TextSecondary> / </TextSecondary>
+              <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
             </>
-          ) : null
-        }
-        isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
-      />
-      <StatisticBlock
-        title="Transactions"
-        primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
-        secondary="Total"
-        isLoading={totalTransactions.isLoading}
-      />
-      <StatisticBlock
-        title="Blocks"
-        primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
-        secondary="Total"
-        isLoading={totalBlocks.isLoading}
-      />
-      <StatisticBlock
-        title="Avg. block time"
-        primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
-        secondary="of all shards"
-        isLoading={avgBlockTime.isLoading}
-      />
+          }
+          secondary={
+            currentSupplyPercentage ? (
+              <>
+                <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+              </>
+            ) : null
+          }
+          isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
+        />
+      </Card>
+      <Card label="Transactions">
+        <StatisticTextual
+          primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
+          secondary="Total"
+          isLoading={totalTransactions.isLoading}
+        />
+      </Card>
+      <Card label="Blocks">
+        <StatisticTextual
+          primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
+          secondary="Total"
+          isLoading={totalBlocks.isLoading}
+        />
+      </Card>
+      <Card label="Avg. block time">
+        <StatisticTextual
+          primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
+          secondary="of all shards"
+          isLoading={avgBlockTime.isLoading}
+        />
+      </Card>
     </Blocks>
   )
 }
