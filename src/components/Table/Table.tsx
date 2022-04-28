@@ -129,8 +129,7 @@ const StyledTable = styled.table<TableProps>`
     background-color: ${({ theme }) => theme.bgPrimary};
 
     tr:not(:last-child) {
-      border-bottom: ${({ hasDetails, noBorder, theme }) =>
-        !hasDetails ? (noBorder ? 'none' : `1px solid ${theme.borderSecondary}`) : ''};
+      border-bottom: ${({ hasDetails, theme }) => (!hasDetails ? `1px solid ${theme.borderSecondary}` : '')};
     }
 
     tr.details {
