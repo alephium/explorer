@@ -28,6 +28,7 @@ import { deviceBreakPoints } from '../style/globalStyles'
 import { formatNumberForDisplay } from '../utils/strings'
 import Card from './Card'
 import Counter from './Counter'
+import LineAreaGraph from './LineAreaGraph'
 import StatisticTextual from './StatisticTextual'
 
 dayjs.extend(duration)
@@ -38,34 +39,62 @@ interface Props {
   refresh: boolean
 }
 
-type Stat = { value: number; isLoading: boolean }
-type StatKeys = 'hashrate' | 'totalSupply' | 'circulatingSupply' | 'totalTransactions' | 'totalBlocks' | 'avgBlockTime'
-type StatsData = { [key in StatKeys]: Stat }
+interface Stat<T> {
+  value: T
+  isLoading: boolean
+}
 
-const statInitData = { value: 0, isLoading: true }
+type StatScalar = Stat<number>
+type StatScalarKeys =
+  | 'hashrate'
+  | 'totalSupply'
+  | 'circulatingSupply'
+  | 'totalTransactions'
+  | 'totalBlocks'
+  | 'avgBlockTime'
+
+type StatVector = Stat<{ categories: number[]; series: number[] }>
+type StatVectorKeys = 'txPerDay'
+
+type StatsScalarData = { [key in StatScalarKeys]: StatScalar }
+type StatsVectorData = { [key in StatVectorKeys]: StatVector }
+
+const statScalarDefault = { value: 0, isLoading: true }
+const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
 const Statistics = ({ refresh }: Props) => {
   const { client } = useGlobalContext()
-  const [statsData, setStatsData] = useState<StatsData>({
-    hashrate: statInitData,
-    totalSupply: statInitData,
-    circulatingSupply: statInitData,
-    totalTransactions: statInitData,
-    totalBlocks: statInitData,
-    avgBlockTime: statInitData
+  const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
+    hashrate: statScalarDefault,
+    totalSupply: statScalarDefault,
+    circulatingSupply: statScalarDefault,
+    totalTransactions: statScalarDefault,
+    totalBlocks: statScalarDefault,
+    avgBlockTime: statScalarDefault
   })
 
-  const updateStats = (key: StatKeys, value: number) => {
-    setStatsData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
+  const [statsVectorData, setStatsVectorData] = useState<StatsVectorData>({
+    txPerDay: statVectorDefault
+  })
+
+  const updateStatsScalar = (key: StatScalarKeys, value: StatScalar['value']) => {
+    setStatsScalarData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
+  }
+
+  const updateStatsVector = (key: StatVectorKeys, value: StatVector['value']) => {
+    setStatsVectorData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
   }
 
   useEffect(() => {
     if (!client) return
 
-    const fetchAndUpdateStats = async (key: StatKeys, fetchCall: () => Promise<HttpResponse<string | number>>) => {
+    const fetchAndUpdateStatsScalar = async (
+      key: StatScalarKeys,
+      fetchCall: () => Promise<HttpResponse<string | number>>
+    ) => {
       await fetchCall()
         .then((res) => res.text())
-        .then((text) => updateStats(key, parseInt(text)))
+        .then((text) => updateStatsScalar(key, parseInt(text)))
     }
 
     const fetchHashrateData = async () => {
@@ -78,13 +107,13 @@ const Statistics = ({ refresh }: Props) => {
         'interval-type': 'hourly'
       })
 
-      if (data && data.length > 0) updateStats('hashrate', Number(data[0].value))
+      if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[0].value))
     }
 
     const fetchBlocksData = async () => {
       const { data } = await client.infos.getInfosHeights()
       if (data && data.length > 0)
-        updateStats(
+        updateStatsScalar(
           'totalBlocks',
           data.reduce((acc: number, { value }) => acc + value, 0)
         )
@@ -93,18 +122,53 @@ const Statistics = ({ refresh }: Props) => {
     const fetchAvgBlockTimeData = async () => {
       const { data } = await client.infos.getInfosAverageBlockTimes()
       if (data && data.length > 0)
-        updateStats('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
+        updateStatsScalar('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
+    }
+
+    const fetchTxPerDayData = async () => {
+      // TODO: Replace with a real call.
+      const { data } = await Promise.resolve({
+        data: [
+          { x: 1, y: 1 },
+          { x: 2, y: 2 },
+          { x: 3, y: 4 },
+          { x: 4, y: 6 },
+          { x: 5, y: 8 },
+          { x: 6, y: 3 },
+          { x: 7, y: 4 },
+          { x: 8, y: 2 },
+          { x: 9, y: 1 }
+        ]
+      })
+
+      if (data && data.length > 0)
+        updateStatsVector(
+          'txPerDay',
+          data.reduce(
+            (acc, { x, y }) => {
+              acc.categories.push(x)
+              acc.series.push(y)
+              return acc
+            },
+            {
+              series: [],
+              categories: []
+            } as { series: number[]; categories: number[] }
+          )
+        )
     }
 
     fetchHashrateData()
     fetchBlocksData()
     fetchAvgBlockTimeData()
-    fetchAndUpdateStats('totalSupply', client.infos.getInfosSupplyTotalAlph)
-    fetchAndUpdateStats('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
-    fetchAndUpdateStats('totalTransactions', client.infos.getInfosTotalTransactions)
+    fetchTxPerDayData()
+    fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
+    fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
+    fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
   }, [refresh, client])
 
-  const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsData
+  const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
+  const { txPerDay } = statsVectorData
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
 
@@ -112,59 +176,74 @@ const Statistics = ({ refresh }: Props) => {
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   return (
-    <Blocks>
-      <Card label="Hashrate">
-        <StatisticTextual
-          primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
-          secondary={`${hashrateSuffix}H/s`}
-          isLoading={hashrate.isLoading}
-        />
-      </Card>
-      <Card label="Supply">
-        <StatisticTextual
-          primary={
-            <>
-              <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
-              <TextSecondary> / </TextSecondary>
-              <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
-            </>
-          }
-          secondary={
-            currentSupplyPercentage ? (
+    <Container>
+      <SectionStatisticsTextual>
+        <Card label="Hashrate">
+          <StatisticTextual
+            primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
+            secondary={`${hashrateSuffix}H/s`}
+            isLoading={hashrate.isLoading}
+          />
+        </Card>
+        <Card label="Supply">
+          <StatisticTextual
+            primary={
               <>
-                <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+                <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
+                <TextSecondary> / </TextSecondary>
+                <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
               </>
-            ) : null
-          }
-          isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
-        />
-      </Card>
-      <Card label="Transactions">
-        <StatisticTextual
-          primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
-          secondary="Total"
-          isLoading={totalTransactions.isLoading}
-        />
-      </Card>
-      <Card label="Blocks">
-        <StatisticTextual
-          primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
-          secondary="Total"
-          isLoading={totalBlocks.isLoading}
-        />
-      </Card>
-      <Card label="Avg. block time">
-        <StatisticTextual
-          primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
-          secondary="of all shards"
-          isLoading={avgBlockTime.isLoading}
-        />
-      </Card>
-    </Blocks>
+            }
+            secondary={
+              currentSupplyPercentage ? (
+                <>
+                  <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+                </>
+              ) : null
+            }
+            isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
+          />
+        </Card>
+        <Card label="Transactions">
+          <StatisticTextual
+            primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
+            secondary="Total"
+            isLoading={totalTransactions.isLoading}
+          />
+        </Card>
+        <Card label="Blocks">
+          <StatisticTextual
+            primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
+            secondary="Total"
+            isLoading={totalBlocks.isLoading}
+          />
+        </Card>
+        <Card label="Avg. block time">
+          <StatisticTextual
+            primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
+            secondary="of all shards"
+            isLoading={avgBlockTime.isLoading}
+          />
+        </Card>
+      </SectionStatisticsTextual>
+      <SectionStatisticGraph>
+        <Card label="Transactions per day">
+          <LineAreaGraph
+            categories={txPerDay.value.categories}
+            series={txPerDay.value.series}
+            isLoading={txPerDay.isLoading}
+          />
+        </Card>
+      </SectionStatisticGraph>
+    </Container>
   )
 }
 
-const Blocks = styled.div`
+const Container = styled.div`
+  display: flex;
+`
+
+const SectionStatisticsTextual = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 62px;
@@ -184,6 +263,10 @@ const Blocks = styled.div`
       width: 100%;
     }
   }
+`
+
+const SectionStatisticGraph = styled.div`
+  display: flex;
 `
 
 const TextPrimary = styled.span`
