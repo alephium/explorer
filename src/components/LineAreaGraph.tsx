@@ -24,10 +24,11 @@ import SkeletonLoader from './SkeletonLoader'
 interface Props {
   series: number[]
   categories: number[]
+  type: 'datetime' | 'numeric' | 'category'
   isLoading: boolean
 }
 
-const LineAreaGraph = ({ series, categories, isLoading }: Props) => {
+const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
   const options = {
     chart: {
       toolbar: {
@@ -38,12 +39,14 @@ const LineAreaGraph = ({ series, categories, isLoading }: Props) => {
       }
     },
     xaxis: {
+      type,
       categories,
+      tickPlacement: 'between',
       axisTicks: {
         color: 'rgba(255, 255, 255, 0.09)'
       },
       axisBorder: {
-        color: 'rgba(255, 255, 255, 0.09)'
+        show: false
       },
       labels: {
         style: {
@@ -52,12 +55,16 @@ const LineAreaGraph = ({ series, categories, isLoading }: Props) => {
       }
     },
     yaxis: {
-      labels: {
-        show: false
-      }
+      show: false
     },
     grid: {
-      borderColor: 'rgba(255, 255, 255, 0.09)'
+      borderColor: 'rgba(255, 255, 255, 0.09)',
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 4
+      }
     },
     dataLabels: {
       enabled: false
@@ -82,7 +89,7 @@ const LineAreaGraph = ({ series, categories, isLoading }: Props) => {
                 opacity: 1
               },
               {
-                offset: 66,
+                offset: 80,
                 color: '#FFAC2F',
                 opacity: 1
               },
@@ -128,7 +135,7 @@ const LineAreaGraph = ({ series, categories, isLoading }: Props) => {
   return isLoading ? (
     <SkeletonLoaderStyled heightInPx={136} />
   ) : (
-    <Chart options={options} series={_series} type="area" />
+    <Chart options={options} series={_series} type="area" width="710" />
   )
 }
 

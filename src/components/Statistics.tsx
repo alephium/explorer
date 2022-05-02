@@ -129,15 +129,15 @@ const Statistics = ({ refresh }: Props) => {
       // TODO: Replace with a real call.
       const { data } = await Promise.resolve({
         data: [
-          { x: 1, y: 1 },
-          { x: 2, y: 2 },
-          { x: 3, y: 4 },
-          { x: 4, y: 6 },
-          { x: 5, y: 8 },
-          { x: 6, y: 3 },
-          { x: 7, y: 4 },
-          { x: 8, y: 2 },
-          { x: 9, y: 1 }
+          { x: new Date().getTime(), y: 1 },
+          { x: new Date().getTime() + 10000, y: 2 },
+          { x: new Date().getTime() + 20000, y: 4 },
+          { x: new Date().getTime() + 30000, y: 6 },
+          { x: new Date().getTime() + 40000, y: 8 },
+          { x: new Date().getTime() + 50000, y: 3 },
+          { x: new Date().getTime() + 60000, y: 4 },
+          { x: new Date().getTime() + 70000, y: 2 },
+          { x: new Date().getTime() + 80000, y: 1 }
         ]
       })
 
@@ -229,6 +229,7 @@ const Statistics = ({ refresh }: Props) => {
       <SectionStatisticGraph>
         <Card label="Transactions per day">
           <LineAreaGraph
+            type="datetime"
             categories={txPerDay.value.categories}
             series={txPerDay.value.series}
             isLoading={txPerDay.isLoading}
@@ -241,6 +242,7 @@ const Statistics = ({ refresh }: Props) => {
 
 const Container = styled.div`
   display: flex;
+  gap: 39px;
 `
 
 const SectionStatisticsTextual = styled.div`
@@ -248,10 +250,13 @@ const SectionStatisticsTextual = styled.div`
   justify-content: space-between;
   margin-bottom: 62px;
   gap: 27px;
+  flex-wrap: wrap;
+  > * {
+    width: 200px;
+  }
 
   @media ${deviceBreakPoints.tablet} {
     justify-content: center;
-    flex-wrap: wrap;
 
     > * {
       width: 200px;
@@ -267,6 +272,7 @@ const SectionStatisticsTextual = styled.div`
 
 const SectionStatisticGraph = styled.div`
   display: flex;
+  height: fit-content;
 `
 
 const TextPrimary = styled.span`
