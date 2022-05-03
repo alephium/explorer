@@ -19,23 +19,57 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
+import { formatNumberForDisplay } from '../utils/strings'
 import SkeletonLoader from './SkeletonLoader'
 
 type TooltipStyleArgs = {
-  series: any[]
+  series: number[][]
   seriesIndex: number
   dataPointIndex: number
-  w: any
 }
 
 interface Props {
   series: number[]
   categories: (number | string)[]
-  type: 'datetime' | 'numeric' | 'category'
+  yAxisType: 'plain' | 'tx'
+  xAxisType: 'datetime' | 'numeric' | 'category'
   isLoading: boolean
 }
 
-const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
+const formatYAxis =
+  (type: Props['yAxisType']) =>
+  (value: number): string => {
+    if (type === 'tx') {
+      const formattedParts = formatNumberForDisplay(value, 'quantity')
+      const integer = formattedParts[0]
+      const suffix = formattedParts[2]
+      return (integer && integer + suffix) || ''
+    }
+    return value.toString()
+  }
+
+const formatXAxis =
+  (type: Props['xAxisType']) =>
+  (value: string | string[]): string => {
+    const _value = Array.isArray(value) ? value[0] : value
+    if (type === 'datetime') {
+      return formatToMonthDay(new Date(_value))
+    }
+    return _value
+  }
+
+function formatToMonthDay(dt: Date): string {
+  const month = dt.getMonth().toString().padStart(2, '0')
+  const day = dt.getDay().toString().padStart(2, '0')
+  return month + '/' + day
+}
+
+function formatToYearMonthDay(dt: Date): string {
+  const year = dt.getFullYear()
+  return year + '/' + formatToMonthDay(dt)
+}
+
+const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: Props) => {
   const theme = useTheme()
   const options = {
     chart: {
@@ -44,7 +78,7 @@ const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
       }
     },
     xaxis: {
-      type,
+      type: xAxisType,
       categories,
       axisTicks: {
         color: theme.borderSecondary
@@ -56,15 +90,7 @@ const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
         style: {
           colors: theme.textSecondary
         },
-        formatter(value: any) {
-          if (type === 'datetime') {
-            const datetime = new Date(value)
-            const month = datetime.getMonth().toString().padStart(2, '0')
-            const day = datetime.getDay().toString().padStart(2, '0')
-            return month + '/' + day
-          }
-          return value
-        }
+        formatter: formatXAxis(xAxisType)
       },
       tooltip: {
         enabled: false
@@ -77,7 +103,8 @@ const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
           colors: theme.textSecondary
         },
         offsetY: -8,
-        offsetX: 12
+        offsetX: 32,
+        formatter: formatYAxis(yAxisType)
       }
     },
     grid: {

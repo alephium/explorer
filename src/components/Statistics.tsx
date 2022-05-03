@@ -229,7 +229,8 @@ const Statistics = ({ refresh }: Props) => {
       <SectionStatisticGraph>
         <Card label="Transactions per day">
           <LineAreaGraph
-            type="datetime"
+            yAxisType="tx"
+            xAxisType="datetime"
             categories={txPerDay.value.categories}
             series={txPerDay.value.series}
             isLoading={txPerDay.isLoading}
