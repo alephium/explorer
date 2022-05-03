@@ -11,6 +11,8 @@ docker build \
        -t $IMAGE_NAME \
        $DIR
 
+docker tag $IMAGE_NAME alephium/explorer:latest
+
 if [ ! -z $CURRENT_TAG ]
 then
     docker tag $IMAGE_NAME alephium/explorer:${CURRENT_TAG}
