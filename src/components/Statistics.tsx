@@ -134,10 +134,10 @@ const Statistics = ({ refresh }: Props) => {
           { x: new Date('2022-05-02').getTime(), y: 40 },
           { x: new Date('2022-05-02').getTime(), y: 60 },
           { x: new Date('2022-05-04').getTime(), y: 80 },
-          { x: new Date('2022-05-05').getTime(), y: 300 },
-          { x: new Date('2022-05-06').getTime(), y: 400 },
-          { x: new Date('2022-05-06').getTime(), y: 200000 },
-          { x: new Date('2022-05-08').getTime(), y: 10000000 }
+          { x: new Date('2022-05-05').getTime(), y: 30 },
+          { x: new Date('2022-05-06').getTime(), y: 40 },
+          { x: new Date('2022-05-07').getTime(), y: 200 },
+          { x: new Date('2022-05-08').getTime(), y: 600 }
         ]
       })
 
@@ -243,17 +243,21 @@ const Statistics = ({ refresh }: Props) => {
 
 const Container = styled.div`
   display: flex;
-  gap: 39px;
+
+  @media ${deviceBreakPoints.tablet} {
+    flex-direction: column;
+  }
 `
 
 const SectionStatisticsTextual = styled.div`
   display: flex;
-  justify-content: space-between;
   margin-bottom: 62px;
+  justify-content: center;
   gap: 27px;
   flex-wrap: wrap;
   > * {
     width: 200px;
+    padding-bottom: 25px;
   }
 
   @media ${deviceBreakPoints.tablet} {
@@ -274,6 +278,8 @@ const SectionStatisticsTextual = styled.div`
 const SectionStatisticGraph = styled.div`
   display: flex;
   height: fit-content;
+  margin-bottom: 62px;
+  width: 100%;
 `
 
 const TextPrimary = styled.span`

@@ -58,6 +58,14 @@ const formatXAxis =
     return _value
   }
 
+function formatSeriesNumber(type: Props['yAxisType'], value: number): string {
+  // TODO: Special formatting (TX/s, etc)
+  if (type === 'tx') {
+    return value.toString()
+  }
+  return value.toString()
+}
+
 const fontSizeInPx = 12
 
 function getOffsetXYAxisLabel(series: number[], type: Props['yAxisType']): number {
@@ -125,6 +133,9 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
         left: 2
       }
     },
+    markers: {
+      colors: ['#FFFFFF']
+    },
     tooltip: {
       theme: false as unknown as string,
       custom: function ({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
@@ -152,7 +163,7 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
               border-bottom-left-radius: 9px;
               border-bottom-right-radius: 9px;
             ">
-              ${series[seriesIndex][dataPointIndex]}
+              ${formatSeriesNumber(yAxisType, series[seriesIndex][dataPointIndex])}
             </div>
           </div>
         </div>`
@@ -227,7 +238,7 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
   return isLoading ? (
     <SkeletonLoaderStyled heightInPx={136} />
   ) : (
-    <Chart options={options} series={_series} type="area" width="710" />
+    <Chart options={options} series={_series} type="area" />
   )
 }
 

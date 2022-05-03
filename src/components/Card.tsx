@@ -39,7 +39,6 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-  padding-bottom: 25px;
 `
 
 const LabelText = styled.span`
