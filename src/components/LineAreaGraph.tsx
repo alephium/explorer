@@ -58,6 +58,14 @@ const formatXAxis =
     return _value
   }
 
+const fontSizeInPx = 12
+
+function getOffsetXYAxisLabel(series: number[], type: Props['yAxisType']): number {
+  const largestNumber = series.reduce((l, c) => Math.max(l, c), 0)
+  const formatted = formatYAxis(type)(largestNumber)
+  return formatted.length * fontSizeInPx
+}
+
 function formatToMonthDay(dt: Date): string {
   const month = dt.getMonth().toString().padStart(2, '0')
   const day = dt.getDay().toString().padStart(2, '0')
@@ -100,10 +108,11 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
       floating: true,
       labels: {
         style: {
-          colors: theme.textSecondary
+          colors: theme.textSecondary,
+          fontSize: fontSizeInPx + 'px'
         },
         offsetY: -8,
-        offsetX: 32,
+        offsetX: getOffsetXYAxisLabel(series, yAxisType),
         formatter: formatYAxis(yAxisType)
       }
     },

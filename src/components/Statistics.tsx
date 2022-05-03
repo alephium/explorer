@@ -136,8 +136,8 @@ const Statistics = ({ refresh }: Props) => {
           { x: new Date('2022-05-04').getTime(), y: 80 },
           { x: new Date('2022-05-05').getTime(), y: 300 },
           { x: new Date('2022-05-06').getTime(), y: 400 },
-          { x: new Date('2022-05-06').getTime(), y: 2000 },
-          { x: new Date('2022-05-08').getTime(), y: 10000 }
+          { x: new Date('2022-05-06').getTime(), y: 200000 },
+          { x: new Date('2022-05-08').getTime(), y: 10000000 }
         ]
       })
 
