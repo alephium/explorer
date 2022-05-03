@@ -17,53 +17,88 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import Chart from 'react-apexcharts'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import SkeletonLoader from './SkeletonLoader'
 
+type TooltipStyleArgs = {
+  series: any[]
+  seriesIndex: number
+  dataPointIndex: number
+  w: any
+}
+
 interface Props {
   series: number[]
-  categories: number[]
+  categories: (number | string)[]
   type: 'datetime' | 'numeric' | 'category'
   isLoading: boolean
 }
 
 const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
+  const theme = useTheme()
   const options = {
     chart: {
       toolbar: {
         show: false
-      },
-      dropShadow: {
-        enabled: true
       }
     },
     xaxis: {
       type,
       categories,
-      tickPlacement: 'between',
       axisTicks: {
-        color: 'rgba(255, 255, 255, 0.09)'
+        color: theme.borderSecondary
       },
       axisBorder: {
         show: false
       },
       labels: {
         style: {
-          colors: 'rgba(255, 255, 255, 0.65)'
+          colors: theme.textSecondary
+        },
+        formatter(value: any) {
+          if (type === 'datetime') {
+            const datetime = new Date(value)
+            const month = datetime.getMonth().toString().padStart(2, '0')
+            const day = datetime.getDay().toString().padStart(2, '0')
+            return month + '/' + day
+          }
+          return value
         }
+      },
+      tooltip: {
+        enabled: false
       }
     },
     yaxis: {
-      show: false
+      floating: true,
+      labels: {
+        style: {
+          colors: theme.textSecondary
+        },
+        offsetY: -8,
+        offsetX: 12
+      }
     },
     grid: {
-      borderColor: 'rgba(255, 255, 255, 0.09)',
+      borderColor: theme.borderPrimary,
       padding: {
         top: 0,
         right: 0,
         bottom: 0,
-        left: 4
+        left: 2
+      }
+    },
+    tooltip: {
+      custom: function ({ series, seriesIndex, dataPointIndex, w }: TooltipStyleArgs) {
+        return `<div style="
+          color: ${theme.textPrimary};
+          background-color: ${theme.bgPrimary};
+          border: 1px solid ${theme.borderSecondary};
+          box-shadow: ${theme.shadowPrimary};
+        ">
+          ${series[seriesIndex][dataPointIndex]}
+        </div>`
       }
     },
     dataLabels: {

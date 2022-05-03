@@ -129,15 +129,15 @@ const Statistics = ({ refresh }: Props) => {
       // TODO: Replace with a real call.
       const { data } = await Promise.resolve({
         data: [
-          { x: new Date().getTime(), y: 1 },
-          { x: new Date().getTime() + 10000, y: 2 },
-          { x: new Date().getTime() + 20000, y: 4 },
-          { x: new Date().getTime() + 30000, y: 6 },
-          { x: new Date().getTime() + 40000, y: 8 },
-          { x: new Date().getTime() + 50000, y: 3 },
-          { x: new Date().getTime() + 60000, y: 4 },
-          { x: new Date().getTime() + 70000, y: 2 },
-          { x: new Date().getTime() + 80000, y: 1 }
+          { x: new Date('2022-05-01').getTime(), y: 1 },
+          { x: new Date('2022-05-01').getTime(), y: 2 },
+          { x: new Date('2022-05-02').getTime(), y: 40 },
+          { x: new Date('2022-05-02').getTime(), y: 60 },
+          { x: new Date('2022-05-04').getTime(), y: 80 },
+          { x: new Date('2022-05-05').getTime(), y: 300 },
+          { x: new Date('2022-05-06').getTime(), y: 400 },
+          { x: new Date('2022-05-06').getTime(), y: 2000 },
+          { x: new Date('2022-05-08').getTime(), y: 10000 }
         ]
       })
 
