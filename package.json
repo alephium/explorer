@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@alephium/sdk": "0.0.5",
-    "apexcharts": "file:../external/apexcharts.js/apexcharts-3.35.0.tgz",
+    "apexcharts": "^3.35.0",
     "dayjs": "^1.10.7",
     "framer-motion": "^4.1.17",
     "lodash": "^4.17.21",
