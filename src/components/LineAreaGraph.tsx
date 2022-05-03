@@ -90,14 +90,35 @@ const LineAreaGraph = ({ series, categories, type, isLoading }: Props) => {
       }
     },
     tooltip: {
-      custom: function ({ series, seriesIndex, dataPointIndex, w }: TooltipStyleArgs) {
+      theme: false as unknown as string,
+      custom: function ({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
         return `<div style="
           color: ${theme.textPrimary};
-          background-color: ${theme.bgPrimary};
           border: 1px solid ${theme.borderSecondary};
+          border-radius: 9px;
           box-shadow: ${theme.shadowPrimary};
+          min-width: 121px;
         ">
-          ${series[seriesIndex][dataPointIndex]}
+          <div style="display: flex; flex-direction: column;">
+            <div style="
+              background-color: ${theme.bgSecondary};
+              padding: 9px 0px 5px 11px;
+              border-bottom: 1px solid ${theme.borderSecondary};
+              border-top-left-radius: 9px;
+              border-top-right-radius: 9px;
+            ">
+              ${formatToYearMonthDay(new Date(categories[dataPointIndex]))}
+            </div>
+            <div style="
+              background-color: ${theme.bgPrimary};
+              padding: 10px 0px 11px 11px;
+              font-weight: 700;
+              border-bottom-left-radius: 9px;
+              border-bottom-right-radius: 9px;
+            ">
+              ${series[seriesIndex][dataPointIndex]}
+            </div>
+          </div>
         </div>`
       }
     },
