@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { Output, Transaction, UOutput } from '@alephium/sdk/api/explorer'
-import { Check } from 'lucide-react'
+import { Output, PerChainValue, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -45,6 +44,7 @@ const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
+  const [confirmations, setConfirmations] = useState<number>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -55,8 +55,25 @@ const TransactionInfoSection = () => {
       setLoading(true)
       try {
         const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
-        if (data) setTxInfo(data as Transaction)
+        const tx = data as Transaction
+        if (tx) setTxInfo(tx)
         setTxInfoStatus(status)
+
+        if (!isTxConfirmed(tx)) {
+          return
+        }
+
+        const { data: block } = await client.blocks.getBlocksBlockHash(tx.blockHash)
+        const { data: chainHeights } = await client.infos.getInfosHeights()
+        if (block && chainHeights) {
+          const chain = chainHeights.find(
+            (c: PerChainValue) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
+          )
+          if (chain) {
+            const chainHeight = chain.value
+            setConfirmations(chainHeight - block.height + 1)
+          }
+        }
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
@@ -98,15 +115,7 @@ const TransactionInfoSection = () => {
                   <td>Status</td>
                   {isTxConfirmed(txInfo) ? (
                     <td>
-                      <Badge
-                        type="plus"
-                        content={
-                          <span>
-                            <Check style={{ marginRight: 5 }} size={15} />
-                            Confirmed
-                          </span>
-                        }
-                      />
+                      <Badge type="plus" content={<span> {confirmations} Confirmations </span>} />
                     </td>
                   ) : (
                     <td>
