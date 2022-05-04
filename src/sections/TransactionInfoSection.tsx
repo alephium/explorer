@@ -20,6 +20,7 @@ import { APIError } from '@alephium/sdk'
 import { BlockEntryLite, Output, PerChainValue, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
+import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 
 import Amount from '../components/Amount'
@@ -50,6 +51,7 @@ const TransactionInfoSection = () => {
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
+  const isAppVisible = usePageVisibility()
 
   const getTxInfo = useCallback(async () => {
     const fetchTransactionInfo = async () => {
@@ -96,9 +98,13 @@ const TransactionInfoSection = () => {
   }, [getTxInfo])
 
   // Polling when TX is unconfirmed
-  useInterval(() => {
-    if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
-  }, 15 * 1000)
+  useInterval(
+    () => {
+      if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
+    },
+    15 * 1000,
+    !isAppVisible
+  )
 
   // Compute confirmations
   const confirmations = computeConfirmations(txBlock, txChain)
