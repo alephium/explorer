@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ListBlocks } from '@alephium/sdk/api/explorer'
 import { useCallback, useEffect, useState } from 'react'
+import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
@@ -40,6 +41,7 @@ const BlockSection = () => {
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
   const history = useHistory()
+  const isAppVisible = usePageVisibility()
 
   const { client } = useGlobalContext()
 
@@ -78,9 +80,13 @@ const BlockSection = () => {
   }, [getBlocks, currentPageNumber])
 
   // Polling
-  useInterval(() => {
-    if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
-  }, 10 * 1000)
+  useInterval(
+    () => {
+      if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
+    },
+    10 * 1000,
+    !isAppVisible
+  )
 
   return (
     <Section>
