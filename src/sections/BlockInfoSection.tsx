@@ -229,7 +229,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </td>
         <td>
           <Badge
-            type={'neutral'}
+            type="neutralHighlight"
             amount={t.outputs && t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
             floatRight
           />

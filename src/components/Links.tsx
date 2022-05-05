@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -31,17 +31,9 @@ interface TightLinkProps extends LinkProps {
   text: string
 }
 
-export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
-  return (
-    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink {...props} data-tip={text}>
-        {smartHash(text)}
-      </StyledLink>
-    </div>
-  )
-}
+export const SimpleLink: FC<LinkProps> = ({ children, ...props }) => <StyledLink {...props}>{children}</StyledLink>
 
-export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
+export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
     <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
       <StyledLink
@@ -52,6 +44,16 @@ export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }
         }}
       >
         {text}
+      </StyledLink>
+    </div>
+  )
+}
+
+export const TightLinkStrict: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
+  return (
+    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
+      <StyledLink {...props} data-tip={text}>
+        {smartHash(text)}
       </StyledLink>
     </div>
   )
