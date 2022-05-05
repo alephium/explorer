@@ -96,18 +96,7 @@ const TransactionInfoSection = () => {
   }, 15 * 1000)
 
   // Compute confirmations
-  let confirmations
-
-  if (txBlock && chainHeights) {
-    const chain = chainHeights.find(
-      (c: PerChainValue) => c.chainFrom === txBlock.chainFrom && c.chainTo === txBlock.chainTo
-    )
-
-    if (chain) {
-      const chainHeight = chain.value
-      confirmations = chainHeight - txBlock.height + 1
-    }
-  }
+  const confirmations = computeConfirmations(txBlock, chainHeights)
 
   // https://github.com/microsoft/TypeScript/issues/33591
   const outputs: Array<Output | UOutput> | undefined = txInfo && txInfo.outputs && txInfo.outputs
@@ -163,7 +152,7 @@ const TransactionInfoSection = () => {
                           type="neutral"
                           content={
                             <span>
-                              {confirmations ?? '0'} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                              {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
                             </span>
                           }
                           inline
@@ -249,6 +238,23 @@ const TransactionInfoSection = () => {
 
 const isTxConfirmed = (tx: Transaction): tx is Transaction => {
   return (tx as Transaction).blockHash !== undefined
+}
+
+const computeConfirmations = (txBlock?: BlockEntryLite, chainHeights?: PerChainValue[]): number => {
+  let confirmations = 0
+
+  if (txBlock && chainHeights) {
+    const chain = chainHeights.find(
+      (c: PerChainValue) => c.chainFrom === txBlock.chainFrom && c.chainTo === txBlock.chainTo
+    )
+
+    if (chain) {
+      const chainHeight = chain.value
+      confirmations = chainHeight - txBlock.height + 1
+    }
+  }
+
+  return confirmations
 }
 
 export default TransactionInfoSection
