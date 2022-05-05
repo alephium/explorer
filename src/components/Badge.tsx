@@ -33,11 +33,8 @@ interface BadgeProps {
   minWidth?: number
 }
 
-let Badge = ({ content, className, amount, prefix, minWidth, inline = false, floatRight = false }: BadgeProps) => (
-  <div
-    className={className}
-    style={{ display: inline ? 'inline' : 'block', float: inline ? 'none' : floatRight ? 'right' : 'left', minWidth }}
-  >
+let Badge = ({ content, className, amount, prefix }: BadgeProps) => (
+  <div className={className}>
     {prefix && <span>{prefix}</span>}
     {amount ? <Amount value={BigInt(amount)} /> : content}
   </div>
@@ -71,13 +68,16 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
 }
 
 Badge = styled(Badge)`
-  ${({ type, theme }) => {
+  ${({ type, inline = false, floatRight = false, minWidth, theme }) => {
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
     return css`
       color: ${color};
       background-color: ${backgroundColor};
       border: 1px solid ${borderColor};
+      display: ${inline ? 'inline' : 'block'};
+      float: ${inline ? 'none' : floatRight ? 'right' : 'left'};
+      min-width: ${minWidth ? minWidth + 'px' : 'auto'};
     `
   }}
 
@@ -85,7 +85,6 @@ Badge = styled(Badge)`
   padding: 5px 10px;
   border-radius: 4px;
   font-weight: 600;
-  float: left;
   white-space: nowrap;
 `
 
