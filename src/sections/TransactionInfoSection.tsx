@@ -56,19 +56,21 @@ const TransactionInfoSection = () => {
       try {
         const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
         const tx = data as Transaction
+
         if (tx) setTxInfo(tx)
+
         setTxInfoStatus(status)
 
-        if (!isTxConfirmed(tx)) {
-          return
-        }
+        if (!isTxConfirmed(tx)) return
 
         const { data: block } = await client.blocks.getBlocksBlockHash(tx.blockHash)
         const { data: chainHeights } = await client.infos.getInfosHeights()
+
         if (block && chainHeights) {
           const chain = chainHeights.find(
             (c: PerChainValue) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
           )
+
           if (chain) {
             const chainHeight = chain.value
             setConfirmations(chainHeight - block.height + 1)
@@ -77,6 +79,7 @@ const TransactionInfoSection = () => {
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
+
         setTxInfoStatus(status)
         setTxInfoError(error.detail || error.message || 'Unknown error')
       }
@@ -115,7 +118,14 @@ const TransactionInfoSection = () => {
                   <td>Status</td>
                   {isTxConfirmed(txInfo) ? (
                     <td>
-                      <Badge type="plus" content={<span> {confirmations} Confirmations </span>} />
+                      <Badge
+                        type="plus"
+                        content={
+                          <span>
+                            {confirmations ?? '0'} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                          </span>
+                        }
+                      />
                     </td>
                   ) : (
                     <td>
@@ -196,7 +206,7 @@ const TransactionInfoSection = () => {
                 </TableRow>
                 <TableRow>
                   <td>
-                    <b>Total value</b>
+                    <b>Total Value</b>
                   </td>
                   <td>
                     <Badge
