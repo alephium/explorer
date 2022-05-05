@@ -59,7 +59,7 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       break
     case 'neutral':
       backgroundColor = theme.bgTertiary
-      color = theme.textPrimary
+      color = theme.textSecondary
       break
     case 'neutralHighlight':
       backgroundColor = theme.bgTertiary
