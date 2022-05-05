@@ -46,7 +46,7 @@ const TransactionInfoSection = () => {
   const { client } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
   const [txBlock, setTxBlock] = useState<BlockEntryLite>()
-  const [chainHeights, setChainHeights] = useState<PerChainValue[]>()
+  const [txChain, setTxChain] = useState<PerChainValue>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -71,7 +71,12 @@ const TransactionInfoSection = () => {
         const { data: chainHeights } = await client.infos.getInfosHeights()
 
         setTxBlock(block)
-        setChainHeights(chainHeights)
+
+        const chain = chainHeights.find(
+          (c: PerChainValue) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
+        )
+
+        setTxChain(chain)
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
@@ -96,7 +101,7 @@ const TransactionInfoSection = () => {
   }, 15 * 1000)
 
   // Compute confirmations
-  const confirmations = computeConfirmations(txBlock, chainHeights)
+  const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
   const outputs: Array<Output | UOutput> | undefined = txInfo && txInfo.outputs && txInfo.outputs
@@ -146,7 +151,12 @@ const TransactionInfoSection = () => {
                   <TableRow>
                     <td>Block</td>
                     <td>
-                      <SimpleLink to={`../blocks/${txInfo.blockHash || ''}`}>{txBlock?.height.toString()}</SimpleLink>
+                      <SimpleLink
+                        to={`../blocks/${txInfo.blockHash || ''}`}
+                        data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                      >
+                        {txBlock?.height.toString()}
+                      </SimpleLink>
                       <span data-tip="Number of blocks mined since" style={{ marginLeft: 10 }}>
                         <Badge
                           type="neutral"
@@ -240,18 +250,12 @@ const isTxConfirmed = (tx: Transaction): tx is Transaction => {
   return (tx as Transaction).blockHash !== undefined
 }
 
-const computeConfirmations = (txBlock?: BlockEntryLite, chainHeights?: PerChainValue[]): number => {
+const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainValue): number => {
   let confirmations = 0
 
-  if (txBlock && chainHeights) {
-    const chain = chainHeights.find(
-      (c: PerChainValue) => c.chainFrom === txBlock.chainFrom && c.chainTo === txBlock.chainTo
-    )
-
-    if (chain) {
-      const chainHeight = chain.value
-      confirmations = chainHeight - txBlock.height + 1
-    }
+  if (txBlock && txChain) {
+    const chainHeight = txChain.value
+    confirmations = chainHeight - txBlock.height + 1
   }
 
   return confirmations
