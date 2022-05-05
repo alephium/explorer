@@ -31,15 +31,9 @@ interface TightLinkProps extends LinkProps {
   text: string
 }
 
-export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
-  return (
-    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink {...props} data-tip={text}>
-        {smartHash(text)}
-      </StyledLink>
-    </div>
-  )
-}
+export const SimpleLink: React.FC<LinkProps> = ({ children, ...props }) => (
+  <StyledLink {...props}>{children}</StyledLink>
+)
 
 export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
   return (
@@ -52,6 +46,16 @@ export const TightLink: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }
         }}
       >
         {text}
+      </StyledLink>
+    </div>
+  )
+}
+
+export const TightLinkStrict: React.FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
+  return (
+    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
+      <StyledLink {...props} data-tip={text}>
+        {smartHash(text)}
       </StyledLink>
     </div>
   )

@@ -28,12 +28,16 @@ interface BadgeProps {
   className?: string
   amount?: string | bigint | undefined
   prefix?: string
+  inline?: boolean
   floatRight?: boolean
   minWidth?: number
 }
 
-let Badge = ({ content, className, amount, prefix, minWidth, floatRight = false }: BadgeProps) => (
-  <div className={className} style={{ float: floatRight ? 'right' : 'left', minWidth }}>
+let Badge = ({ content, className, amount, prefix, minWidth, inline = false, floatRight = false }: BadgeProps) => (
+  <div
+    className={className}
+    style={{ display: inline ? 'inline' : 'block', float: inline ? 'none' : floatRight ? 'right' : 'left', minWidth }}
+  >
     {prefix && <span>{prefix}</span>}
     {amount ? <Amount value={BigInt(amount)} /> : content}
   </div>
@@ -58,7 +62,7 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       color = theme.textPrimary
       break
     case 'neutralHighlight':
-      backgroundColor = theme.bgSecondary
+      backgroundColor = theme.bgTertiary
       color = theme.textPrimary
       borderColor = theme.borderPrimary
   }

@@ -17,14 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { Output, PerChainValue, Transaction, UOutput } from '@alephium/sdk/api/explorer'
+import { BlockEntryLite, Output, PerChainValue, Transaction, UOutput } from '@alephium/sdk/api/explorer'
+import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
-import { AddressLink, TightLink } from '../components/Links'
+import { AddressLink, SimpleLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
@@ -44,7 +45,8 @@ const TransactionInfoSection = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
-  const [confirmations, setConfirmations] = useState<number>()
+  const [txBlock, setTxBlock] = useState<BlockEntryLite>()
+  const [chainHeights, setChainHeights] = useState<PerChainValue[]>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -52,7 +54,9 @@ const TransactionInfoSection = () => {
   const getTxInfo = useCallback(async () => {
     const fetchTransactionInfo = async () => {
       if (!client) return
+
       setLoading(true)
+
       try {
         const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
         const tx = data as Transaction
@@ -66,16 +70,8 @@ const TransactionInfoSection = () => {
         const { data: block } = await client.blocks.getBlocksBlockHash(tx.blockHash)
         const { data: chainHeights } = await client.infos.getInfosHeights()
 
-        if (block && chainHeights) {
-          const chain = chainHeights.find(
-            (c: PerChainValue) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
-          )
-
-          if (chain) {
-            const chainHeight = chain.value
-            setConfirmations(chainHeight - block.height + 1)
-          }
-        }
+        setTxBlock(block)
+        setChainHeights(chainHeights)
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
@@ -98,6 +94,20 @@ const TransactionInfoSection = () => {
   useInterval(() => {
     if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
   }, 15 * 1000)
+
+  // Compute confirmations
+  let confirmations
+
+  if (txBlock && chainHeights) {
+    const chain = chainHeights.find(
+      (c: PerChainValue) => c.chainFrom === txBlock.chainFrom && c.chainTo === txBlock.chainTo
+    )
+
+    if (chain) {
+      const chainHeight = chain.value
+      confirmations = chainHeight - txBlock.height + 1
+    }
+  }
 
   // https://github.com/microsoft/TypeScript/issues/33591
   const outputs: Array<Output | UOutput> | undefined = txInfo && txInfo.outputs && txInfo.outputs
@@ -122,9 +132,11 @@ const TransactionInfoSection = () => {
                         type="plus"
                         content={
                           <span>
-                            {confirmations ?? '0'} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            <Check style={{ marginRight: 5 }} size={15} />
+                            Success
                           </span>
                         }
+                        inline
                       />
                     </td>
                   ) : (
@@ -134,22 +146,29 @@ const TransactionInfoSection = () => {
                         content={
                           <>
                             <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                            <span>Unconfirmed</span>
+                            <span>Pending</span>
                           </>
                         }
                       />
                     </td>
                   )}
                 </TableRow>
-                {isTxConfirmed(txInfo) && txInfo.blockHash && (
+                {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
                   <TableRow>
-                    <td>Block Hash</td>
+                    <td>Block</td>
                     <td>
-                      <TightLink
-                        to={`../blocks/${txInfo.blockHash || ''}`}
-                        text={txInfo.blockHash || ''}
-                        maxWidth="550px"
-                      />
+                      <SimpleLink to={`../blocks/${txInfo.blockHash || ''}`}>{txBlock?.height.toString()}</SimpleLink>
+                      <span data-tip="Number of blocks mined since" style={{ marginLeft: 10 }}>
+                        <Badge
+                          type="neutral"
+                          content={
+                            <span>
+                              {confirmations ?? '0'} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            </span>
+                          }
+                          inline
+                        />
+                      </span>
                     </td>
                   </TableRow>
                 )}
