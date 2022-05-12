@@ -56,8 +56,7 @@ const LabelText = styled.span`
 const Label = styled.div`
   color: ${({ theme }) => theme.textSecondary};
   border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-  border-top-left-radius: 9px;
-  border-top-right-radius: 9px;
+  border-radius: 9px 9px 0 0;
   background-color: ${({ theme }) => theme.borderSecondary};
   padding: 9px 22px 7px 20px;
 `
