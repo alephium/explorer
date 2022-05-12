@@ -51,7 +51,7 @@ const formatYAxis =
 const formatXAxis =
   (type: Props['xAxisType']) =>
   (value: string | string[]): string => {
-    const _value = Array.isArray(value) ? value[0] : value
+    const _value = Array.isArray(value) && value.length > 0 ? value[0] : value
     if (type === 'datetime') {
       return formatToMonthDay(new Date(_value))
     }
@@ -138,7 +138,7 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
     },
     tooltip: {
       theme: false as unknown as string,
-      custom: function ({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
+      custom({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
         return `<div style="
           color: ${theme.textPrimary};
           border: 1px solid ${theme.borderSecondary};
@@ -151,8 +151,7 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
               background-color: ${theme.bgSecondary};
               padding: 9px 0px 5px 11px;
               border-bottom: 1px solid ${theme.borderSecondary};
-              border-top-left-radius: 9px;
-              border-top-right-radius: 9px;
+              border-radius: 9px 9px 0 0;
             ">
               ${formatToYearMonthDay(new Date(categories[dataPointIndex]))}
             </div>
