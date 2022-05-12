@@ -21,15 +21,16 @@ import styled from 'styled-components'
 
 interface Props {
   label: string
+  className?: string
 }
 
-const Card: FC<Props> = ({ label, children }) => (
-  <Container>
+const Card: FC<Props> = ({ label, className, children }) => (
+  <div className={className}>
     <Label>
       <LabelText>{label}</LabelText>
     </Label>
     <Content>{children}</Content>
-  </Container>
+  </div>
 )
 
 const Container = styled.div`
