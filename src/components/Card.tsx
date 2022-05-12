@@ -25,12 +25,12 @@ interface Props {
 }
 
 const Card: FC<Props> = ({ label, className, children }) => (
-  <div className={className}>
+  <Container className={className}>
     <Label>
       <LabelText>{label}</LabelText>
     </Label>
     <Content>{children}</Content>
-  </div>
+  </Container>
 )
 
 const Container = styled.div`

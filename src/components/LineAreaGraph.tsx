@@ -51,9 +51,11 @@ const formatYAxis =
 const formatXAxis =
   (type: Props['xAxisType']) =>
   (value: string | string[]): string => {
-    const _value = Array.isArray(value) && value.length > 0 ? value[0] : value
+    const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
     if (type === 'datetime') {
-      return formatToMonthDay(new Date(_value))
+      if (typeof _value == 'string' || typeof _value == 'number') {
+        return formatToMonthDay(new Date(_value))
+      }
     }
     return _value
   }
