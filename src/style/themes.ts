@@ -26,7 +26,7 @@ export const darkTheme: DefaultTheme = {
 
   textPrimary: 'rgba(255, 255, 255, 0.8)',
   textSecondary: 'rgba(255, 255, 255, 0.45)',
-  textAccent: '#FFD036',
+  textAccent: '#EFA25B',
 
   link: '#53A9F5',
   linkHighlight: '#0E82E7',

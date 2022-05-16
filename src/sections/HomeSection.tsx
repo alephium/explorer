@@ -22,7 +22,6 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { SimpleLink } from '../components/Links'
 import PageSwitch from '../components/PageSwitch'
 import SearchBar from '../components/SearchBar'
 import Section from '../components/Section'
@@ -32,9 +31,10 @@ import TableBody from '../components/Table/TableBody'
 import TableHeader from '../components/Table/TableHeader'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
+import Waves from '../components/Wave/Waves'
 import { useGlobalContext } from '../contexts/global'
+import useInterval from '../hooks/useInterval'
 import usePageNumber from '../hooks/usePageNumber'
-import { useInterval } from '../utils/hooks'
 
 const HomeSection = () => {
   const [blockList, setBlockList] = useState<ListBlocks>()
@@ -134,6 +134,7 @@ const HomeSection = () => {
           <PageSwitch totalNumberOfElements={blockList?.total} />
         </LatestsBlocks>
       </MainContent>
+      <Waves />
     </StyledSection>
   )
 }

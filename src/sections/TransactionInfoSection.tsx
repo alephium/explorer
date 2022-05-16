@@ -36,7 +36,7 @@ import TableBody from '../components/Table/TableBody'
 import TableRow from '../components/Table/TableRow'
 import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
-import { useInterval } from '../utils/hooks'
+import useInterval from '../hooks/useInterval'
 
 interface ParamTypes {
   id: string

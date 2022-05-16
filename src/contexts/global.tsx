@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ExplorerClient } from '@alephium/sdk'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
+import useStateWithLocalStorage from '../hooks/useStateWithLocalStorage'
 import { ThemeType } from '../style/themes'
 import { OnOff } from '../types/generics'
 import { NetworkType, networkTypes } from '../types/network'
 import { SnackbarMessage } from '../types/ui'
-import { useStateWithLocalStorage } from '../utils/hooks'
 
 interface GlobalContextInterface {
   client: ExplorerClient | undefined
