@@ -55,7 +55,7 @@ const HomeSection = () => {
       console.log('Fetching blocks...')
 
       manualFetch ? setManualLoading(true) : setLoading(true)
-      const { data } = await client.blocks.getBlocks({ page: pageNumber })
+      const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 10 })
 
       // Check if manual fetching has been set in the meantime (overriding polling fetch)
 
@@ -102,7 +102,7 @@ const HomeSection = () => {
           <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
         </TitleAndLoader>
         <Content>
-          <Table main scrollable noBorder isLoading={manualLoading} minHeight={950}>
+          <BlockListTable main scrollable noBorder isLoading={manualLoading} minHeight={500}>
             <TableHeader
               headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
               columnWidths={['20%', '20%', '20%', '20%', '20%']}
@@ -130,7 +130,7 @@ const HomeSection = () => {
                   </TableRow>
                 ))}
             </TableBody>
-          </Table>
+          </BlockListTable>
         </Content>
         <PageSwitch totalNumberOfElements={blockList?.total} />
       </LatestsBlocks>
@@ -141,7 +141,8 @@ const HomeSection = () => {
 const StyledSection = styled(Section)`
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 30px;
+  align-self: center;
 `
 
 const StatisticCards = styled.div`
@@ -158,6 +159,10 @@ const TitleAndLoader = styled.div`
 
 const Content = styled.div`
   margin-top: 30px;
+`
+
+const BlockListTable = styled(Table)`
+  height: 500px;
 `
 
 const TableBodyCustomStyles: TDStyle[] = [

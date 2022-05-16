@@ -242,8 +242,9 @@ const Container = styled.div`
 const SectionStatisticsTextual = styled.div`
   display: flex;
   margin-bottom: 62px;
-  gap: 27px;
+  gap: 24px;
   flex-wrap: wrap;
+  height: 500px;
 
   > * {
     width: 200px;
