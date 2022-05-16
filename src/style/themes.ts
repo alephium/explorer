@@ -45,7 +45,7 @@ export const darkTheme: DefaultTheme = {
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.15)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.1)',
 
-  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
+  accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
 
   tooltip: 'black',
 
@@ -78,7 +78,7 @@ export const lightTheme: DefaultTheme = {
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.04)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 
-  accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',
+  accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
 
   tooltip: 'black',
 

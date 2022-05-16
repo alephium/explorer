@@ -94,7 +94,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
   }
 
   return (
-    <div className={className}>
+    <motion.div className={className} layoutId={document.documentElement.scrollTop === 0 ? 'searchBar' : undefined}>
       <SearchInput
         ref={inputRef}
         onBlur={handleRemoveFocus}
@@ -106,7 +106,8 @@ const SearchBar = ({ className }: SearchBarProps) => {
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
-    </div>
+      <SearchBackdropGradient />
+    </motion.div>
   )
 }
 
@@ -129,11 +130,12 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
+  border: 2px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 9px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => (theme.name === 'dark' ? theme.bgTertiary : theme.bgPrimary)};
+  background-color: ${({ theme }) => theme.bgPrimary};
+  box-shadow: inset ${({ theme }) => theme.shadowPrimary};
   z-index: 10;
 
   &:hover {
@@ -145,9 +147,23 @@ const SearchInput = styled.input`
     box-shadow: ${({ theme }) => theme.shadowTertiary}, inset;
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       ${({ theme }) => theme.accentGradient};
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     z-index: 10;
   }
+`
+
+const SearchBackdropGradient = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(#16d9f4 15%, #f46016 40%, #6510f8 60%);
+  transform: scale(4);
+  opacity: 0.15;
+  filter: blur(20px);
+  z-index: -1;
+  border-radius: 100%;
 `
 
 const Backdrop = styled(motion.div)`
