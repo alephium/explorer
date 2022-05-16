@@ -20,18 +20,16 @@ import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useRef } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
 import { useGlobalContext } from './contexts/global'
 import AddressInfoSection from './sections/AddressInfoSection'
-import AddressesSection from './sections/AdressesSection'
 import BlockInfoSection from './sections/BlockInfoSection'
 import HomeSection from './sections/HomeSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
-import TransactionsSection from './sections/TransactionsSection'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import { darkTheme, lightTheme } from './style/themes'
 import { SnackbarMessage } from './types/ui'
@@ -75,22 +73,13 @@ const App = () => {
 
             <Content>
               <Route exact path="/">
-                <Redirect to="/blocks" />
-              </Route>
-              <Route exact path="/blocks">
                 <HomeSection />
               </Route>
               <Route path="/blocks/:id">
                 <BlockInfoSection />
               </Route>
-              <Route exact path="/addresses">
-                <AddressesSection />
-              </Route>
               <Route path="/addresses/:id">
                 <AddressInfoSection />
-              </Route>
-              <Route exact path="/transactions">
-                <TransactionsSection />
               </Route>
               <Route path="/transactions/:id">
                 <TransactionInfoSection />
