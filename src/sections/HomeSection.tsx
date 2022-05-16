@@ -22,11 +22,10 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import { TightLink } from '../components/Links'
+import { SimpleLink } from '../components/Links'
 import PageSwitch from '../components/PageSwitch'
 import SearchBar from '../components/SearchBar'
 import Section from '../components/Section'
-import SectionTitle from '../components/SectionTitle'
 import Statistics from '../components/Statistics'
 import Table, { TDStyle } from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
@@ -105,8 +104,8 @@ const HomeSection = () => {
           <Content>
             <BlockListTable main scrollable isLoading={manualLoading} minHeight={500}>
               <TableHeader
-                headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-                columnWidths={['20%', '20%', '20%', '20%', '20%']}
+                headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
+                columnWidths={['20%', '30%', '30%', '20%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>
                 {blockList &&
@@ -118,12 +117,11 @@ const HomeSection = () => {
                       }}
                     >
                       <td>
-                        <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                        <BlockHeight>{b.height.toString()}</BlockHeight>
                       </td>
                       <td>
                         <Timestamp timeInMs={b.timestamp} />
                       </td>
-                      <td>{b.height}</td>
                       <td>{b.txNumber}</td>
                       <td>
                         {b.chainFrom} → {b.chainTo}
@@ -174,28 +172,16 @@ const BlockListTable = styled(Table)`
   height: 500px;
 `
 
+const BlockHeight = styled.span`
+  color: ${({ theme }) => theme.textAccent};
+`
+
 const TableBodyCustomStyles: TDStyle[] = [
-  {
-    tdPos: 3,
-    style: css`
-      font-feature-settings: 'tnum';
-      color: ${({ theme }) => theme.textAccent};
-      font-weight: 400;
-    `
-  },
   {
     tdPos: 4,
     style: css`
       font-feature-settings: 'tnum';
-      font-weight: 400;
-    `
-  },
-  {
-    tdPos: 5,
-    style: css`
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-weight: 600;
     `
   }
 ]
