@@ -60,7 +60,6 @@ const NetworkSwitch = ({
 }
 
 export default styled(NetworkSwitch)`
-  border-radius: 7px;
+  border-radius: 9px;
   background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
 `

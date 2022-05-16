@@ -55,7 +55,7 @@ export const darkTheme: DefaultTheme = {
 
 export const lightTheme: DefaultTheme = {
   name: 'light',
-  body: '#fbfbfb',
+  body: '#f3f3f3',
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.50)',
@@ -65,8 +65,8 @@ export const lightTheme: DefaultTheme = {
   linkHighlight: '#53A9F5',
 
   bgPrimary: 'white',
-  bgSecondary: '#fbfbfb',
-  bgTertiary: '#f7f7f7',
+  bgSecondary: '#f3f3f3',
+  bgTertiary: '#e8e8e8',
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 

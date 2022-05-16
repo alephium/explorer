@@ -24,6 +24,7 @@ import styled, { css } from 'styled-components'
 
 import { TightLink } from '../components/Links'
 import PageSwitch from '../components/PageSwitch'
+import SearchBar from '../components/SearchBar'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
 import Statistics from '../components/Statistics'
@@ -90,59 +91,71 @@ const HomeSection = () => {
 
   return (
     <StyledSection>
-      <StatisticCards>
-        <TitleAndLoader>
-          <SectionTitle title="Our numbers" />
-        </TitleAndLoader>
-
-        <Statistics refresh={loading} />
-      </StatisticCards>
-      <LatestsBlocks>
-        <TitleAndLoader>
-          <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
-        </TitleAndLoader>
-        <Content>
-          <BlockListTable main scrollable noBorder isLoading={manualLoading} minHeight={500}>
-            <TableHeader
-              headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-              columnWidths={['20%', '20%', '20%', '20%', '20%']}
-            />
-            <TableBody tdStyles={TableBodyCustomStyles}>
-              {blockList &&
-                blockList.blocks?.map((b) => (
-                  <TableRow
-                    key={b.hash}
-                    onClick={() => {
-                      history.push(`blocks/${b.hash}`)
-                    }}
-                  >
-                    <td>
-                      <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
-                    </td>
-                    <td>
-                      <Timestamp timeInMs={b.timestamp} />
-                    </td>
-                    <td>{b.height}</td>
-                    <td>{b.txNumber}</td>
-                    <td>
-                      {b.chainFrom} → {b.chainTo}
-                    </td>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </BlockListTable>
-        </Content>
-        <PageSwitch totalNumberOfElements={blockList?.total} />
-      </LatestsBlocks>
+      <Search>
+        <Heading>Search</Heading>
+        <SearchBar />
+      </Search>
+      <MainContent>
+        <StatisticCards>
+          <Heading>Our numbers</Heading>
+          <Statistics refresh={loading} />
+        </StatisticCards>
+        <LatestsBlocks>
+          <Heading>Latest Blocks</Heading>
+          <Content>
+            <BlockListTable main scrollable isLoading={manualLoading} minHeight={500}>
+              <TableHeader
+                headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+                columnWidths={['20%', '20%', '20%', '20%', '20%']}
+              />
+              <TableBody tdStyles={TableBodyCustomStyles}>
+                {blockList &&
+                  blockList.blocks?.map((b) => (
+                    <TableRow
+                      key={b.hash}
+                      onClick={() => {
+                        history.push(`blocks/${b.hash}`)
+                      }}
+                    >
+                      <td>
+                        <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                      </td>
+                      <td>
+                        <Timestamp timeInMs={b.timestamp} />
+                      </td>
+                      <td>{b.height}</td>
+                      <td>{b.txNumber}</td>
+                      <td>
+                        {b.chainFrom} → {b.chainTo}
+                      </td>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </BlockListTable>
+          </Content>
+          <PageSwitch totalNumberOfElements={blockList?.total} />
+        </LatestsBlocks>
+      </MainContent>
     </StyledSection>
   )
 }
 
 const StyledSection = styled(Section)`
+  margin-top: -30px;
+`
+
+const MainContent = styled.div`
   display: flex;
   flex-direction: row;
   gap: 30px;
   align-self: center;
+`
+
+const Heading = styled.h2``
+
+const Search = styled.div`
+  margin: 0 auto 50px auto;
+  width: 60%;
 `
 
 const StatisticCards = styled.div`
@@ -151,10 +164,6 @@ const StatisticCards = styled.div`
 
 const LatestsBlocks = styled.div`
   flex: 1;
-`
-
-const TitleAndLoader = styled.div`
-  position: relative;
 `
 
 const Content = styled.div`

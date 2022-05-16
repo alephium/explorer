@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import logoDarkSrc from '../images/explorer-logo-dark.svg'
@@ -31,6 +32,7 @@ interface AppHeaderProps {
 
 const AppHeader = ({ className }: AppHeaderProps) => {
   const theme = useTheme()
+  const { pathname } = useLocation()
 
   return (
     <header className={className}>
@@ -39,7 +41,7 @@ const AppHeader = ({ className }: AppHeaderProps) => {
           <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
         </StyledLogoLink>
       </HeaderSideContainer>
-      <StyledSearchBar />
+      {pathname !== '/' && <StyledSearchBar />}
       <HeaderSideContainer justifyContent="flex-end" hideOnMobile>
         <NetworkSwitch direction="down" />
       </HeaderSideContainer>

@@ -29,7 +29,7 @@ interface MenuItem {
 
 type Direction = 'up' | 'down'
 
-const menuHeight = '47px'
+const menuHeight = '45px'
 
 const Menu = ({
   label,
@@ -131,7 +131,7 @@ const MenuItemsContainer = styled(motion.div)`
 
 const MenuItemsList = styled.div`
   overflow: hidden;
-  border-radius: 7px;
+  border-radius: 9px;
   background-color: ${({ theme }) => theme.bgPrimary};
   border: 1px solid ${({ theme }) => theme.borderPrimary};
   box-shadow: ${({ theme }) => theme.shadowSecondary};

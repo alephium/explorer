@@ -67,6 +67,7 @@ const GlobalStyle = createGlobalStyle`
   // Titles
   h2 {
     font-weight: 600;
+    font-size: 1.6rem;
   }
 
   // Animations
