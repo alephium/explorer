@@ -22,52 +22,37 @@ import styled from 'styled-components'
 import SkeletonLoader from './SkeletonLoader'
 
 interface Props {
-  title: string
   primary: ReactNode
   secondary: ReactNode
   isLoading: boolean
 }
 
-const StatisticBlock = ({ title, primary, secondary, isLoading }: Props) =>
+const StatisticTextual = ({ primary, secondary, isLoading }: Props) =>
   isLoading ? (
     <SkeletonLoaderStyled heightInPx={136} />
   ) : (
-    <Block>
-      <Title>{title}</Title>
+    <Container>
       <Primary>{primary}</Primary>
       <Secondary>{secondary}</Secondary>
-    </Block>
+    </Container>
   )
-
-const Block = styled.div`
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
-  box-shadow: ${({ theme }) => theme.shadowPrimary};
-  border-radius: 7px;
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 20px 20px 34px;
-`
 
 const SkeletonLoaderStyled = styled(SkeletonLoader)`
   padding: 20px 20px 34px;
 `
 
-const Title = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
-  font-size: 14px;
-  margin-bottom: 18px;
-`
+const Container = styled.div``
 
 const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
   font-size: 23px;
   font-weight: 500;
-  margin-bottom: 5px;
-`
-const Secondary = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  padding: 20px 6px 0px 20px;
 `
 
-export default StatisticBlock
+const Secondary = styled.div`
+  color: ${({ theme }) => theme.textSecondary};
+  padding: 0 6px 0px 20px;
+`
+
+export default StatisticTextual

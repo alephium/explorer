@@ -50,7 +50,12 @@ export default styled(TableHeader)`
 
   th {
     padding: 0px 12px 12px 12px;
-    font-weight: 500;
+
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 15px;
+
     ${({ compact, theme }) =>
       !compact &&
       css`
@@ -59,7 +64,7 @@ export default styled(TableHeader)`
         box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
         padding: 12px;
       `}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.borderSecondary}`)};
   }
 
   tr {

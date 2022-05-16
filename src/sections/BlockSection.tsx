@@ -95,7 +95,7 @@ const BlockSection = () => {
         <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
       </TitleAndLoader>
       <Content>
-        <Table main scrollable isLoading={manualLoading} minHeight={950}>
+        <Table main scrollable noBorder isLoading={manualLoading} minHeight={950}>
           <TableHeader
             headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
             columnWidths={['20%', '20%', '20%', '20%', '20%']}
