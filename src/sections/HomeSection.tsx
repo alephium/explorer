@@ -145,7 +145,7 @@ const StyledSection = styled(Section)`
 const MainContent = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 30px;
+  gap: 40px;
   align-self: center;
 `
 
@@ -164,9 +164,7 @@ const LatestsBlocks = styled.div`
   flex: 1;
 `
 
-const Content = styled.div`
-  margin-top: 30px;
-`
+const Content = styled.div``
 
 const BlockListTable = styled(Table)`
   height: 500px;

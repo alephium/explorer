@@ -68,6 +68,7 @@ const GlobalStyle = createGlobalStyle`
   h2 {
     font-weight: 600;
     font-size: 1.6rem;
+    margin-bottom: 15px;
   }
 
   // Animations

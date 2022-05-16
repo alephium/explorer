@@ -68,6 +68,6 @@ export default styled(TableHeader)`
   }
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '48px')};
+    height: ${({ compact }) => (compact ? '30px' : '45px')};
   }
 `

@@ -232,7 +232,6 @@ const Statistics = ({ refresh }: Props) => {
 const Container = styled.div`
   display: flex;
   flex: 1;
-  margin-top: 30px;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
