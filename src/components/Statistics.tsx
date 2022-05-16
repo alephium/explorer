@@ -28,7 +28,6 @@ import { deviceBreakPoints } from '../style/globalStyles'
 import { formatNumberForDisplay } from '../utils/strings'
 import Card from './Card'
 import Counter from './Counter'
-import LineAreaGraph from './LineAreaGraph'
 import StatisticTextual from './StatisticTextual'
 
 dayjs.extend(duration)
@@ -204,13 +203,6 @@ const Statistics = ({ refresh }: Props) => {
             isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
           />
         </Card>
-        <Card label="Transactions">
-          <StatisticTextual
-            primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
-            secondary="Total"
-            isLoading={totalTransactions.isLoading}
-          />
-        </Card>
         <Card label="Blocks">
           <StatisticTextual
             primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
@@ -225,24 +217,22 @@ const Statistics = ({ refresh }: Props) => {
             isLoading={avgBlockTime.isLoading}
           />
         </Card>
-      </SectionStatisticsTextual>
-      <SectionStatisticGraph>
-        <Card label="Transactions per day">
-          <LineAreaGraph
-            yAxisType="tx"
-            xAxisType="datetime"
-            categories={txPerDay.value.categories}
-            series={txPerDay.value.series}
-            isLoading={txPerDay.isLoading}
+        <Card label="Transactions">
+          <StatisticTextual
+            primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
+            secondary="Total"
+            isLoading={totalTransactions.isLoading}
           />
         </Card>
-      </SectionStatisticGraph>
+      </SectionStatisticsTextual>
     </Container>
   )
 }
 
 const Container = styled.div`
   display: flex;
+  flex: 1;
+  margin-top: 30px;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -252,9 +242,9 @@ const Container = styled.div`
 const SectionStatisticsTextual = styled.div`
   display: flex;
   margin-bottom: 62px;
-  justify-content: center;
   gap: 27px;
   flex-wrap: wrap;
+
   > * {
     width: 200px;
     padding-bottom: 25px;
@@ -273,13 +263,6 @@ const SectionStatisticsTextual = styled.div`
       width: 100%;
     }
   }
-`
-
-const SectionStatisticGraph = styled.div`
-  display: flex;
-  height: fit-content;
-  margin-bottom: 62px;
-  width: 100%;
 `
 
 const TextPrimary = styled.span`

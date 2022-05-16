@@ -34,12 +34,15 @@ const Card: FC<Props> = ({ label, className, children }) => (
 )
 
 const Container = styled.div`
+  flex: 1;
   background-color: ${({ theme }) => theme.bgPrimary};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
   border-radius: 9px;
   display: flex;
-  width: 100%;
   flex-direction: column;
+  width: 100%;
+  min-width: 220px;
+  height: 150px;
 `
 
 const LabelText = styled.span`
@@ -55,9 +58,7 @@ const LabelText = styled.span`
 
 const Label = styled.div`
   color: ${({ theme }) => theme.textSecondary};
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 9px 9px 0 0;
-  background-color: ${({ theme }) => theme.borderSecondary};
   padding: 9px 22px 7px 20px;
 `
 

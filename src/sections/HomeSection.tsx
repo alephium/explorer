@@ -89,46 +89,68 @@ const HomeSection = () => {
   )
 
   return (
-    <Section>
-      <Statistics refresh={loading} />
-      <TitleAndLoader>
-        <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
-      </TitleAndLoader>
-      <Content>
-        <Table main scrollable noBorder isLoading={manualLoading} minHeight={950}>
-          <TableHeader
-            headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
-            columnWidths={['20%', '20%', '20%', '20%', '20%']}
-          />
-          <TableBody tdStyles={TableBodyCustomStyles}>
-            {blockList &&
-              blockList.blocks?.map((b) => (
-                <TableRow
-                  key={b.hash}
-                  onClick={() => {
-                    history.push(`blocks/${b.hash}`)
-                  }}
-                >
-                  <td>
-                    <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
-                  </td>
-                  <td>
-                    <Timestamp timeInMs={b.timestamp} />
-                  </td>
-                  <td>{b.height}</td>
-                  <td>{b.txNumber}</td>
-                  <td>
-                    {b.chainFrom} → {b.chainTo}
-                  </td>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </Content>
-      <PageSwitch totalNumberOfElements={blockList?.total} />
-    </Section>
+    <StyledSection>
+      <StatisticCards>
+        <TitleAndLoader>
+          <SectionTitle title="Our numbers" />
+        </TitleAndLoader>
+
+        <Statistics refresh={loading} />
+      </StatisticCards>
+      <LatestsBlocks>
+        <TitleAndLoader>
+          <SectionTitle title="Latest Blocks" isLoading={loading || manualLoading} />
+        </TitleAndLoader>
+        <Content>
+          <Table main scrollable noBorder isLoading={manualLoading} minHeight={950}>
+            <TableHeader
+              headerTitles={['Hash', 'Timestamp', 'Height', 'Txn', 'Chain index']}
+              columnWidths={['20%', '20%', '20%', '20%', '20%']}
+            />
+            <TableBody tdStyles={TableBodyCustomStyles}>
+              {blockList &&
+                blockList.blocks?.map((b) => (
+                  <TableRow
+                    key={b.hash}
+                    onClick={() => {
+                      history.push(`blocks/${b.hash}`)
+                    }}
+                  >
+                    <td>
+                      <TightLink to={`blocks/${b.hash}`} text={b.hash} maxWidth="150px" />
+                    </td>
+                    <td>
+                      <Timestamp timeInMs={b.timestamp} />
+                    </td>
+                    <td>{b.height}</td>
+                    <td>{b.txNumber}</td>
+                    <td>
+                      {b.chainFrom} → {b.chainTo}
+                    </td>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </Content>
+        <PageSwitch totalNumberOfElements={blockList?.total} />
+      </LatestsBlocks>
+    </StyledSection>
   )
 }
+
+const StyledSection = styled(Section)`
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+`
+
+const StatisticCards = styled.div`
+  flex: 1;
+`
+
+const LatestsBlocks = styled.div`
+  flex: 1;
+`
 
 const TitleAndLoader = styled.div`
   position: relative;
