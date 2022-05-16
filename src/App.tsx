@@ -29,7 +29,7 @@ import { useGlobalContext } from './contexts/global'
 import AddressInfoSection from './sections/AddressInfoSection'
 import AddressesSection from './sections/AdressesSection'
 import BlockInfoSection from './sections/BlockInfoSection'
-import BlockSection from './sections/BlockSection'
+import HomeSection from './sections/HomeSection'
 import TransactionInfoSection from './sections/TransactionInfoSection'
 import TransactionsSection from './sections/TransactionsSection'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
@@ -78,7 +78,7 @@ const App = () => {
                 <Redirect to="/blocks" />
               </Route>
               <Route exact path="/blocks">
-                <BlockSection />
+                <HomeSection />
               </Route>
               <Route path="/blocks/:id">
                 <BlockInfoSection />

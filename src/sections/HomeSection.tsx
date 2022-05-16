@@ -36,7 +36,7 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import { useInterval } from '../utils/hooks'
 
-const BlockSection = () => {
+const HomeSection = () => {
   const [blockList, setBlockList] = useState<ListBlocks>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
@@ -164,4 +164,4 @@ const TableBodyCustomStyles: TDStyle[] = [
   }
 ]
 
-export default BlockSection
+export default HomeSection
