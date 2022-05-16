@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { useCallback, useRef } from 'react'
 import { Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -33,7 +32,6 @@ import TransactionInfoSection from './sections/TransactionInfoSection'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import { darkTheme, lightTheme } from './style/themes'
 import { SnackbarMessage } from './types/ui'
-import { ScrollToTop } from './utils/routing'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -58,9 +56,6 @@ dayjs.updateLocale('en', {
 
 const App = () => {
   const { snackbarMessage, currentTheme } = useGlobalContext()
-  const contentRef = useRef(null)
-
-  const getContentRef = useCallback(() => contentRef.current, [])
 
   return (
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
@@ -69,8 +64,7 @@ const App = () => {
         <AnimateSharedLayout>
           <AppHeader />
           <ContentContainer>
-            <ContentWrapper ref={contentRef}>
-              <ScrollToTop getScrollContainer={getContentRef} />
+            <ContentWrapper>
               <Content>
                 <Route exact path="/">
                   <HomeSection />

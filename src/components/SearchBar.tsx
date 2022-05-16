@@ -94,7 +94,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
   }
 
   return (
-    <motion.div className={className} layoutId={document.documentElement.scrollTop === 0 ? 'searchBar' : undefined}>
+    <motion.div className={className} layoutId="searchBar">
       <SearchInput
         ref={inputRef}
         onBlur={handleRemoveFocus}
@@ -159,7 +159,7 @@ const SearchBackdropGradient = styled.div`
   bottom: 0;
   left: 0;
   background: radial-gradient(#16d9f4 15%, #f46016 40%, #6510f8 60%);
-  transform: scale(4);
+  transform: scaleY(5) scaleX(3);
   opacity: 0.15;
   filter: blur(20px);
   z-index: -1;

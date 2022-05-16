@@ -50,6 +50,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.body};
     transition: background-color 0.2s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     color: ${({ theme }) => theme.textPrimary};
     margin: 0;
