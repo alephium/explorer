@@ -41,7 +41,7 @@ export const darkTheme: DefaultTheme = {
   borderSecondary: 'rgb(34, 34, 38)',
   borderHighlight: '#585962',
 
-  shadowPrimary: '0 3px 5px rgba(0, 0, 0, 0.2)',
+  shadowPrimary: '0 5px 10px rgba(0, 0, 0, 0.3)',
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.15)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.1)',
 
@@ -66,16 +66,16 @@ export const lightTheme: DefaultTheme = {
 
   bgPrimary: 'white',
   bgSecondary: '#f3f3f3',
-  bgTertiary: '#e8e8e8',
+  bgTertiary: '#eeeeee',
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
   bgHover: 'rgba(0, 0, 0, 0.01)',
 
-  borderPrimary: '#ebebeb',
-  borderSecondary: '#f1f1f1',
+  borderPrimary: '#e4e4e4',
+  borderSecondary: '#e5e5e5',
   borderHighlight: '#D1D1D4',
 
-  shadowPrimary: '0 2px 2px rgba(0, 0, 0, 0.03)',
-  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.02)',
+  shadowPrimary: '0 5px 10px rgba(0, 0, 0, 0.05)',
+  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.04)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 
   accentGradient: 'linear-gradient(200deg, #6510f7, #f76110) border-box',

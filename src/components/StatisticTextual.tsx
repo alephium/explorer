@@ -29,7 +29,7 @@ interface Props {
 
 const StatisticTextual = ({ primary, secondary, isLoading }: Props) =>
   isLoading ? (
-    <SkeletonLoaderStyled heightInPx={136} />
+    <SkeletonLoaderStyled heightInPx={150} />
   ) : (
     <Container>
       <Primary>{primary}</Primary>
@@ -38,7 +38,12 @@ const StatisticTextual = ({ primary, secondary, isLoading }: Props) =>
   )
 
 const SkeletonLoaderStyled = styled(SkeletonLoader)`
-  padding: 20px 20px 34px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: none;
 `
 
 const Container = styled.div``

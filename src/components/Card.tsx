@@ -35,6 +35,7 @@ const Card: FC<Props> = ({ label, className, children }) => (
 
 const Container = styled.div`
   flex: 1;
+  position: relative;
   background-color: ${({ theme }) => theme.bgPrimary};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
   border: 1px solid ${({ theme }) => theme.borderSecondary};

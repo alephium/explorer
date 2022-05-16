@@ -129,12 +129,11 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
+  border: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 9px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => theme.bgTertiary};
-  border: none;
-  box-shadow: inset ${({ theme }) => theme.shadowPrimary}, inset 0px -1px ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => (theme.name === 'dark' ? theme.bgTertiary : theme.bgPrimary)};
   z-index: 10;
 
   &:hover {
@@ -148,7 +147,6 @@ const SearchInput = styled.input`
       ${({ theme }) => theme.accentGradient};
     border: 1px solid transparent;
     z-index: 10;
-    padding: 0 19px;
   }
 `
 
