@@ -167,7 +167,9 @@ const Statistics = ({ refresh }: Props) => {
   }, [refresh, client])
 
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
+
   const { txPerDay } = statsVectorData
+  console.log(txPerDay)
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
 
@@ -232,6 +234,7 @@ const Statistics = ({ refresh }: Props) => {
 const Container = styled.div`
   display: flex;
   flex: 1;
+  margin-top: 30px;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -243,7 +246,6 @@ const SectionStatisticsTextual = styled.div`
   margin-bottom: 62px;
   gap: 24px;
   flex-wrap: wrap;
-  height: 500px;
 
   > * {
     width: 200px;
