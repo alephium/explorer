@@ -15,8 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, css } from 'styled-components'
 import normalize from 'styled-normalize'
+import tinycolor from 'tinycolor2'
 
 // Breakpoints
 
@@ -101,6 +102,11 @@ const GlobalStyle = createGlobalStyle`
   th {
     font-weight: normal;
   }
+`
+
+export const blurredBackground = (color: string) => css`
+  background-color: ${tinycolor(color).setAlpha(0.7).toString()};
+  backdrop-filter: blur(20px);
 `
 
 export default GlobalStyle

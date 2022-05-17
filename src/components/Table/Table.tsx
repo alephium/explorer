@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
-import { deviceBreakPoints } from '../../style/globalStyles'
+import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
 import SkeletonLoader from '../SkeletonLoader'
 
 interface TableProps {
@@ -62,6 +62,7 @@ const TableWrapper = styled.div<TableProps>`
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
   box-shadow: ${({ theme }) => theme.shadowPrimary};
+  ${({ theme }) => blurredBackground(theme.bgPrimary)}
 `
 
 const StyledTable = styled.table<TableProps>`
@@ -126,8 +127,6 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tbody {
-    background-color: ${({ theme }) => theme.bgPrimary};
-
     tr:not(:last-child) {
       border-bottom: ${({ hasDetails, theme }) => (!hasDetails ? `1px solid ${theme.borderSecondary}` : '')};
     }

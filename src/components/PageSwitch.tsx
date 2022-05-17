@@ -97,7 +97,7 @@ const SwitchContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 35px;
+  margin-top: 25px;
 `
 
 const PageNumbers = styled.div`

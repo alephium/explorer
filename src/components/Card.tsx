@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC } from 'react'
 import styled from 'styled-components'
 
+import { blurredBackground } from '../style/globalStyles'
+
 interface Props {
   label: string
   className?: string
@@ -36,7 +38,7 @@ const Card: FC<Props> = ({ label, className, children }) => (
 const Container = styled.div`
   flex: 1;
   position: relative;
-  background-color: ${({ theme }) => theme.bgPrimary};
+  ${({ theme }) => blurredBackground(theme.bgPrimary)};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
   border: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 9px;

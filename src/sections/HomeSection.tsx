@@ -153,7 +153,7 @@ const MainContent = styled.div`
 const Heading = styled.h2``
 
 const Search = styled.div`
-  margin: 0 auto 50px auto;
+  margin: 0 auto 80px auto;
   width: 60%;
 `
 

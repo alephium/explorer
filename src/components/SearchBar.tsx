@@ -135,7 +135,6 @@ const SearchInput = styled.input`
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
   background-color: ${({ theme }) => theme.bgPrimary};
-  box-shadow: inset ${({ theme }) => theme.shadowPrimary};
   z-index: 10;
 
   &:hover {
@@ -158,9 +157,9 @@ const SearchBackdropGradient = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background: radial-gradient(#16d9f4 15%, #f46016 40%, #6510f8 60%);
+  background: radial-gradient(#16d9f4 25%, #f46016 40%, #6510f8 60%);
   transform: scaleY(5) scaleX(3);
-  opacity: 0.15;
+  opacity: 0.18;
   filter: blur(20px);
   z-index: -1;
   border-radius: 100%;

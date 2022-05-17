@@ -41,7 +41,7 @@ class WaveEntity {
       const wave2 = Math.sin(i * this.waveLength[1] - frequency)
       const wave3 = Math.sin(i * this.waveLength[2] - frequency)
 
-      ctx.lineTo(i * 2.5, height - (150 + this.base * 50) + wave1 * wave2 * wave3 * 80 * this.amplitude)
+      ctx.lineTo(i * 2.5, height - (100 + this.base * 50) + wave1 * wave2 * wave3 * 80 * this.amplitude)
     }
     ctx.lineTo(width, height)
 
