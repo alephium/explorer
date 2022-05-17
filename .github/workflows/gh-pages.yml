@@ -1,8 +1,11 @@
 name: Github Pages
 
 on:
-  push:
-    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  REACT_APP_BACKEND_URL: https://testnet-backend.alephium.org
+  REACT_APP_NETWORK_TYPE: testnet
 
 jobs:
   deploy:
