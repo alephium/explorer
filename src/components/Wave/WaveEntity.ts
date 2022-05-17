@@ -18,15 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 class WaveEntity {
   private waveLength: number[]
-  private color: string
+  private gradientColors: string[]
+  private amplitude: number
+  private base: number
 
-  constructor(waveLength: number[], color: string) {
+  constructor(waveLength: number[], amplitude: number, base: number, gradientColors: string[]) {
     this.waveLength = waveLength
-    this.color = color
-  }
-
-  public set waveColor(color: string) {
-    this.color = color
+    this.gradientColors = gradientColors
+    this.amplitude = amplitude
+    this.base = base
   }
 
   public draw = (ctx: CanvasRenderingContext2D, width: number, height: number, frequency: number): void => {
@@ -35,15 +35,24 @@ class WaveEntity {
     if (this.waveLength.length < 3) {
       return
     }
+
     for (let i = 0; i < width; i++) {
       const wave1 = Math.sin(i * this.waveLength[0] - frequency)
       const wave2 = Math.sin(i * this.waveLength[1] - frequency)
       const wave3 = Math.sin(i * this.waveLength[2] - frequency)
 
-      ctx.lineTo(i * 2.5, height - 400 + wave1 * wave2 * wave3 * 200)
+      ctx.lineTo(i * 2.5, height - (150 + this.base * 50) + wave1 * wave2 * wave3 * 80 * this.amplitude)
     }
     ctx.lineTo(width, height)
-    ctx.fillStyle = this.color
+
+    const gradient = ctx.createLinearGradient(0, height / 1.8, 0, height)
+
+    // Add three color stops
+    gradient.addColorStop(0, this.gradientColors[0])
+    gradient.addColorStop(1, this.gradientColors[1])
+
+    ctx.fillStyle = gradient
+
     ctx.fill()
     ctx.closePath()
   }

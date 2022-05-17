@@ -80,7 +80,7 @@ const socialMediaData = [
 export default styled(AppFooter)`
   display: flex;
   justify-content: space-between;
-  background-color: ${({ theme }) => theme.bgTertiary};
+  backdrop-filter: blur(20px);
   padding: 15px 30px;
 
   @media ${deviceBreakPoints.mobile} {

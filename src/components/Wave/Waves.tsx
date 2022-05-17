@@ -34,13 +34,13 @@ const Waves: FC = () => {
   let t = 0
 
   useAnimationFrame((deltaTime) => {
-    t = t + deltaTime * 0.0001
+    t = t + (deltaTime * 6) / 100000
     const { innerWidth, innerHeight } = window
 
     if (canvasContextRef.current) {
       canvasContextRef.current.clearRect(0, 0, innerWidth, innerHeight / waveHeightWindowRatio)
-      Object.entries(waves).forEach(([waveName, wave]) => {
-        wave.draw(
+      Object.entries(waves).forEach((w) => {
+        w[1].draw(
           canvasContextRef.current as CanvasRenderingContext2D,
           innerWidth,
           innerHeight / waveHeightWindowRatio,
@@ -50,7 +50,6 @@ const Waves: FC = () => {
     } else {
       let ctx
       if ((ctx = canvasRef.current?.getContext('2d'))) {
-        console.log(ctx)
         canvasContextRef.current = ctx
       }
     }
@@ -63,11 +62,11 @@ const Waves: FC = () => {
   )
 }
 
-const waveHeightWindowRatio = 3
+const waveHeightWindowRatio = 2
 
 const waves: Record<WaveName, WaveEntity> = {
-  frontWave: new WaveEntity([0.0211, 0.028, 0.015], 'rgba(255,179,0,0.88)'),
-  backWave: new WaveEntity([0.0122, 0.018, 0.005], 'rgba(255,179,0,0.48)')
+  frontWave: new WaveEntity([0.0081, 0.028, 0.015], 1, 1, ['rgba(22, 204, 244, 0.6)', 'rgba(101, 16, 248, 0)']),
+  backWave: new WaveEntity([0.0022, 0.018, 0.005], 1, 1.2, ['rgba(244, 129, 22, 0.6)', 'rgba(101, 16, 248, 0)'])
 }
 
 const CanvasContainer = styled.div`
@@ -75,6 +74,7 @@ const CanvasContainer = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: -1;
 `
 
 export default Waves
