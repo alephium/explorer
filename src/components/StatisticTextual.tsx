@@ -52,12 +52,10 @@ const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
   font-size: 23px;
   font-weight: 500;
-  padding: 20px 6px 0px 20px;
 `
 
 const Secondary = styled.div`
   color: ${({ theme }) => theme.textSecondary};
-  padding: 0 6px 0px 20px;
 `
 
 export default StatisticTextual

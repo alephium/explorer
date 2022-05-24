@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { blurredBackground } from '../style/globalStyles'
+import { blurredBackground, deviceBreakPoints } from '../style/globalStyles'
 
 interface Props {
   label: string
@@ -44,18 +44,22 @@ const Container = styled.div`
   border-radius: 9px;
   display: flex;
   flex-direction: column;
+  gap: 25%;
   width: 100%;
-  min-width: 220px;
+  min-width: 210px;
   height: 150px;
+  padding: 20px;
+
+  @media ${deviceBreakPoints.mobile} {
+    height: 100px;
+    padding-top: 12px;
+  }
 `
 
 const LabelText = styled.span`
-  height: 31px;
-  font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  line-height: 17px;
   display: flex;
   align-items: center;
 `
@@ -63,7 +67,6 @@ const LabelText = styled.span`
 const Label = styled.div`
   color: ${({ theme }) => theme.textSecondary};
   border-radius: 9px 9px 0 0;
-  padding: 9px 22px 7px 20px;
 `
 
 const Content = styled.div``

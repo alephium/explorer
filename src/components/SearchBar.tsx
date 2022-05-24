@@ -23,6 +23,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 interface SearchBarProps {
@@ -163,6 +164,10 @@ const SearchBackdropGradient = styled.div`
   filter: blur(20px);
   z-index: -1;
   border-radius: 100%;
+
+  @media ${deviceBreakPoints.mobile} {
+    display: none;
+  }
 `
 
 const Backdrop = styled(motion.div)`

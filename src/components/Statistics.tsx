@@ -234,7 +234,6 @@ const Statistics = ({ refresh }: Props) => {
 const Container = styled.div`
   display: flex;
   flex: 1;
-  margin-top: 30px;
 
   @media ${deviceBreakPoints.tablet} {
     flex-direction: column;
@@ -243,14 +242,8 @@ const Container = styled.div`
 
 const SectionStatisticsTextual = styled.div`
   display: flex;
-  margin-bottom: 62px;
   gap: 24px;
   flex-wrap: wrap;
-
-  > * {
-    width: 200px;
-    padding-bottom: 25px;
-  }
 
   @media ${deviceBreakPoints.tablet} {
     justify-content: center;
@@ -261,6 +254,8 @@ const SectionStatisticsTextual = styled.div`
   }
 
   @media ${deviceBreakPoints.mobile} {
+    gap: 20px;
+
     > * {
       width: 100%;
     }

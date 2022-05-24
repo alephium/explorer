@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC, useRef } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components'
 
 import useAnimationFrame from '../../hooks/useAnimationFrame'
@@ -25,7 +25,7 @@ import WaveEntity from './WaveEntity'
 
 type WaveName = 'frontWave' | 'backWave'
 
-const Waves: FC = () => {
+const Waves = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContextRef = useRef<CanvasRenderingContext2D>()
 

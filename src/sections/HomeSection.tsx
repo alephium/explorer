@@ -35,13 +35,17 @@ import Waves from '../components/Wave/Waves'
 import { useGlobalContext } from '../contexts/global'
 import useInterval from '../hooks/useInterval'
 import usePageNumber from '../hooks/usePageNumber'
+import { useWindowSize } from '../hooks/useWindowSize'
+import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
 
 const HomeSection = () => {
   const [blockList, setBlockList] = useState<ListBlocks>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
+
   const history = useHistory()
   const isAppVisible = usePageVisibility()
+  const { width } = useWindowSize()
 
   const { client } = useGlobalContext()
 
@@ -90,10 +94,12 @@ const HomeSection = () => {
 
   return (
     <StyledSection>
-      <Search>
-        <Heading>Search</Heading>
-        <SearchBar />
-      </Search>
+      {width && width > deviceSizes.mobile && (
+        <Search>
+          <Heading>Search</Heading>
+          <SearchBar />
+        </Search>
+      )}
       <MainContent>
         <StatisticCards>
           <Heading>Our numbers</Heading>
@@ -102,10 +108,10 @@ const HomeSection = () => {
         <LatestsBlocks>
           <Heading>Latest Blocks</Heading>
           <Content>
-            <BlockListTable main scrollable isLoading={manualLoading} minHeight={500}>
+            <BlockListTable main isLoading={manualLoading} minHeight={500}>
               <TableHeader
                 headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
-                columnWidths={['20%', '30%', '30%', '20%']}
+                columnWidths={['20%', '30%', '20%', '25%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>
                 {blockList &&
@@ -148,6 +154,11 @@ const MainContent = styled.div`
   flex-direction: row;
   gap: 40px;
   align-self: center;
+
+  @media ${deviceBreakPoints.mobile} {
+    flex-direction: column;
+    gap: 30px;
+  }
 `
 
 const Heading = styled.h2``
@@ -159,16 +170,18 @@ const Search = styled.div`
 
 const StatisticCards = styled.div`
   flex: 1;
+  min-width: 300px;
 `
 
 const LatestsBlocks = styled.div`
   flex: 1;
+  min-width: 300px;
 `
 
 const Content = styled.div``
 
 const BlockListTable = styled(Table)`
-  height: 500px;
+  height: 498px;
 `
 
 const BlockHeight = styled.span`
