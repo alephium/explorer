@@ -169,7 +169,7 @@ const Statistics = ({ refresh }: Props) => {
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
 
   const { txPerDay } = statsVectorData
-  console.log(txPerDay)
+  console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
 
