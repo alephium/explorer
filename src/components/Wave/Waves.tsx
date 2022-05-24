@@ -29,23 +29,18 @@ const Waves: FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContextRef = useRef<CanvasRenderingContext2D>()
 
-  const { width, height } = useWindowSize()
+  const { width } = useWindowSize()
 
   let t = 0
 
   useAnimationFrame((deltaTime) => {
     t = t + (deltaTime * 6) / 100000
-    const { innerWidth, innerHeight } = window
+    const { innerWidth } = window
 
     if (canvasContextRef.current) {
-      canvasContextRef.current.clearRect(0, 0, innerWidth, innerHeight / waveHeightWindowRatio)
+      canvasContextRef.current.clearRect(0, 0, innerWidth, staticHeight)
       Object.entries(waves).forEach((w) => {
-        w[1].draw(
-          canvasContextRef.current as CanvasRenderingContext2D,
-          innerWidth,
-          innerHeight / waveHeightWindowRatio,
-          t
-        )
+        w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t)
       })
     } else {
       let ctx
@@ -56,13 +51,13 @@ const Waves: FC = () => {
   })
 
   return (
-    <CanvasContainer style={{ height: `${height && height / waveHeightWindowRatio}px` }}>
-      <canvas id="canvas" ref={canvasRef} width={width} height={height && height / waveHeightWindowRatio} />
+    <CanvasContainer style={{ height: `${staticHeight}px` }}>
+      <canvas id="canvas" ref={canvasRef} width={width} height={staticHeight} />
     </CanvasContainer>
   )
 }
 
-const waveHeightWindowRatio = 2
+const staticHeight = 600
 
 const waves: Record<WaveName, WaveEntity> = {
   frontWave: new WaveEntity([0.0081, 0.028, 0.015], 1, 1, ['rgba(22, 204, 244, 0.6)', 'rgba(101, 16, 248, 0)']),
