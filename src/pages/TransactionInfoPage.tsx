@@ -42,7 +42,7 @@ interface ParamTypes {
   id: string
 }
 
-const TransactionInfoSection = () => {
+const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
@@ -267,4 +267,4 @@ const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainValue)
   return confirmations
 }
 
-export default TransactionInfoSection
+export default TransactionInfoPage

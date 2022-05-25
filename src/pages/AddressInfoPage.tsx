@@ -46,7 +46,7 @@ interface ParamTypes {
   id: string
 }
 
-const TransactionInfoSection = () => {
+const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage } = useGlobalContext()
   const [txNumber, setTxNumber] = useState<number>()
@@ -359,4 +359,4 @@ const ErrorMessage = styled.span`
   font-weight: 400;
 `
 
-export default TransactionInfoSection
+export default TransactionInfoPage

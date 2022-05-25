@@ -185,6 +185,7 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
   }
 
   const _series = [{ name: 'series-1', data: series }]
+
   return isLoading ? (
     <SkeletonLoaderStyled heightInPx={136} />
   ) : (

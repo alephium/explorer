@@ -38,7 +38,7 @@ import usePageNumber from '../hooks/usePageNumber'
 import { useWindowSize } from '../hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
 
-const HomeSection = () => {
+const HomePage = () => {
   const [blockList, setBlockList] = useState<ListBlocks>()
   const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
@@ -198,4 +198,4 @@ const TableBodyCustomStyles: TDStyle[] = [
   }
 ]
 
-export default HomeSection
+export default HomePage
