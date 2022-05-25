@@ -17,13 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addApostrophes } from '@alephium/sdk'
-import { HttpResponse } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../contexts/global'
+import useStatisticsData from '../pages/HomePage/useStatisticsData'
 import { deviceBreakPoints } from '../style/globalStyles'
 import { formatNumberForDisplay } from '../utils/strings'
 import Card from './Card'
@@ -32,143 +30,16 @@ import StatisticTextual from './StatisticTextual'
 
 dayjs.extend(duration)
 
-const ONE_DAY = 1000 * 60 * 60 * 24
-
 interface Props {
   refresh: boolean
 }
 
-interface Stat<T> {
-  value: T
-  isLoading: boolean
-}
-
-type StatScalar = Stat<number>
-type StatScalarKeys =
-  | 'hashrate'
-  | 'totalSupply'
-  | 'circulatingSupply'
-  | 'totalTransactions'
-  | 'totalBlocks'
-  | 'avgBlockTime'
-
-type StatVector = Stat<{ categories: number[]; series: number[] }>
-type StatVectorKeys = 'txPerDay'
-
-type StatsScalarData = { [key in StatScalarKeys]: StatScalar }
-type StatsVectorData = { [key in StatVectorKeys]: StatVector }
-
-const statScalarDefault = { value: 0, isLoading: true }
-const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
-
 const Statistics = ({ refresh }: Props) => {
-  const { client } = useGlobalContext()
-  const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
-    hashrate: statScalarDefault,
-    totalSupply: statScalarDefault,
-    circulatingSupply: statScalarDefault,
-    totalTransactions: statScalarDefault,
-    totalBlocks: statScalarDefault,
-    avgBlockTime: statScalarDefault
-  })
+  const {
+    scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
+    vector: { txPerDay }
+  } = useStatisticsData(refresh)
 
-  const [statsVectorData, setStatsVectorData] = useState<StatsVectorData>({
-    txPerDay: statVectorDefault
-  })
-
-  const updateStatsScalar = (key: StatScalarKeys, value: StatScalar['value']) => {
-    setStatsScalarData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
-  }
-
-  const updateStatsVector = (key: StatVectorKeys, value: StatVector['value']) => {
-    setStatsVectorData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
-  }
-
-  useEffect(() => {
-    if (!client) return
-
-    const fetchAndUpdateStatsScalar = async (
-      key: StatScalarKeys,
-      fetchCall: () => Promise<HttpResponse<string | number>>
-    ) => {
-      await fetchCall()
-        .then((res) => res.text())
-        .then((text) => updateStatsScalar(key, parseInt(text)))
-    }
-
-    const fetchHashrateData = async () => {
-      const now = new Date().getTime()
-      const yesterday = now - ONE_DAY
-
-      const { data } = await client.charts.getChartsHashrates({
-        fromTs: yesterday,
-        toTs: now,
-        'interval-type': 'hourly'
-      })
-
-      if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[0].value))
-    }
-
-    const fetchBlocksData = async () => {
-      const { data } = await client.infos.getInfosHeights()
-      if (data && data.length > 0)
-        updateStatsScalar(
-          'totalBlocks',
-          data.reduce((acc: number, { value }) => acc + value, 0)
-        )
-    }
-
-    const fetchAvgBlockTimeData = async () => {
-      const { data } = await client.infos.getInfosAverageBlockTimes()
-      if (data && data.length > 0)
-        updateStatsScalar('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
-    }
-
-    const fetchTxPerDayData = async () => {
-      // TODO: Replace with a real call.
-      const { data } = await Promise.resolve({
-        data: [
-          { x: new Date('2022-05-01').getTime(), y: 1 },
-          { x: new Date('2022-05-01').getTime(), y: 2 },
-          { x: new Date('2022-05-02').getTime(), y: 40 },
-          { x: new Date('2022-05-02').getTime(), y: 60 },
-          { x: new Date('2022-05-04').getTime(), y: 80 },
-          { x: new Date('2022-05-05').getTime(), y: 30 },
-          { x: new Date('2022-05-06').getTime(), y: 40 },
-          { x: new Date('2022-05-07').getTime(), y: 200 },
-          { x: new Date('2022-05-08').getTime(), y: 600 }
-        ]
-      })
-
-      if (data && data.length > 0)
-        updateStatsVector(
-          'txPerDay',
-          data.reduce(
-            (acc, { x, y }) => {
-              acc.categories.push(x)
-              acc.series.push(y)
-              return acc
-            },
-            {
-              series: [],
-              categories: []
-            } as { series: number[]; categories: number[] }
-          )
-        )
-    }
-
-    fetchHashrateData()
-    fetchBlocksData()
-    fetchAvgBlockTimeData()
-    fetchTxPerDayData()
-    fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
-    fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
-    fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
-  }, [refresh, client])
-
-  const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
-
-  const { txPerDay } = statsVectorData
   console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
