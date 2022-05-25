@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
-import { formatNumberForDisplay } from '../utils/strings'
-import SkeletonLoader from './SkeletonLoader'
+import { formatNumberForDisplay } from '../../utils/strings'
+import SkeletonLoader from '../SkeletonLoader'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -36,58 +36,7 @@ interface Props {
   isLoading: boolean
 }
 
-const formatYAxis =
-  (type: Props['yAxisType']) =>
-  (value: number): string => {
-    if (type === 'tx') {
-      const formattedParts = formatNumberForDisplay(value, 'quantity')
-      const integer = formattedParts[0]
-      const suffix = formattedParts[2]
-      return (integer && integer + suffix) || ''
-    }
-    return value.toString()
-  }
-
-const formatXAxis =
-  (type: Props['xAxisType']) =>
-  (value: string | string[]): string => {
-    const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
-    if (type === 'datetime') {
-      if (typeof _value == 'string' || typeof _value == 'number') {
-        return formatToMonthDay(new Date(_value))
-      }
-    }
-    return _value
-  }
-
-function formatSeriesNumber(type: Props['yAxisType'], value: number): string {
-  // TODO: Special formatting (TX/s, etc)
-  if (type === 'tx') {
-    return value.toString()
-  }
-  return value.toString()
-}
-
-const fontSizeInPx = 12
-
-function getOffsetXYAxisLabel(series: number[], type: Props['yAxisType']): number {
-  const largestNumber = series.reduce((l, c) => Math.max(l, c), 0)
-  const formatted = formatYAxis(type)(largestNumber)
-  return formatted.length * fontSizeInPx
-}
-
-function formatToMonthDay(dt: Date): string {
-  const month = dt.getMonth().toString().padStart(2, '0')
-  const day = dt.getDay().toString().padStart(2, '0')
-  return month + '/' + day
-}
-
-function formatToYearMonthDay(dt: Date): string {
-  const year = dt.getFullYear()
-  return year + '/' + formatToMonthDay(dt)
-}
-
-const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: Props) => {
+const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: Props) => {
   const theme = useTheme()
   const options = {
     chart: {
@@ -243,8 +192,59 @@ const LineAreaGraph = ({ series, categories, xAxisType, yAxisType, isLoading }: 
   )
 }
 
+const formatYAxis =
+  (type: Props['yAxisType']) =>
+  (value: number): string => {
+    if (type === 'tx') {
+      const formattedParts = formatNumberForDisplay(value, 'quantity')
+      const integer = formattedParts[0]
+      const suffix = formattedParts[2]
+      return (integer && integer + suffix) || ''
+    }
+    return value.toString()
+  }
+
+const formatXAxis =
+  (type: Props['xAxisType']) =>
+  (value: string | string[]): string => {
+    const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
+    if (type === 'datetime') {
+      if (typeof _value == 'string' || typeof _value == 'number') {
+        return formatToMonthDay(new Date(_value))
+      }
+    }
+    return _value
+  }
+
+const formatSeriesNumber = (type: Props['yAxisType'], value: number): string => {
+  // TODO: Special formatting (TX/s, etc)
+  if (type === 'tx') {
+    return value.toString()
+  }
+  return value.toString()
+}
+
+const fontSizeInPx = 12
+
+const getOffsetXYAxisLabel = (series: number[], type: Props['yAxisType']): number => {
+  const largestNumber = series.reduce((l, c) => Math.max(l, c), 0)
+  const formatted = formatYAxis(type)(largestNumber)
+  return formatted.length * fontSizeInPx
+}
+
+const formatToMonthDay = (dt: Date): string => {
+  const month = dt.getMonth().toString().padStart(2, '0')
+  const day = dt.getDay().toString().padStart(2, '0')
+  return month + '/' + day
+}
+
+const formatToYearMonthDay = (dt: Date): string => {
+  const year = dt.getFullYear()
+  return year + '/' + formatToMonthDay(dt)
+}
+
 const SkeletonLoaderStyled = styled(SkeletonLoader)`
   padding: 20px 20px 34px;
 `
 
-export default LineAreaGraph
+export default LineAreaChart
