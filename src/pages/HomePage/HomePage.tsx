@@ -16,81 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ListBlocks } from '@alephium/sdk/api/explorer'
-import { useCallback, useEffect, useState } from 'react'
-import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import PageSwitch from '../components/PageSwitch'
-import SearchBar from '../components/SearchBar'
-import Section from '../components/Section'
-import Statistics from '../components/Statistics'
-import Table, { TDStyle } from '../components/Table/Table'
-import TableBody from '../components/Table/TableBody'
-import TableHeader from '../components/Table/TableHeader'
-import TableRow from '../components/Table/TableRow'
-import Timestamp from '../components/Timestamp'
-import Waves from '../components/Wave/Waves'
-import { useGlobalContext } from '../contexts/global'
-import useInterval from '../hooks/useInterval'
-import usePageNumber from '../hooks/usePageNumber'
-import { useWindowSize } from '../hooks/useWindowSize'
-import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
+import PageSwitch from '../../components/PageSwitch'
+import SearchBar from '../../components/SearchBar'
+import Section from '../../components/Section'
+import Statistics from '../../components/Statistics'
+import Table, { TDStyle } from '../../components/Table/Table'
+import TableBody from '../../components/Table/TableBody'
+import TableHeader from '../../components/Table/TableHeader'
+import TableRow from '../../components/Table/TableRow'
+import Timestamp from '../../components/Timestamp'
+import Waves from '../../components/Wave/Waves'
+import { useWindowSize } from '../../hooks/useWindowSize'
+import { deviceBreakPoints, deviceSizes } from '../../style/globalStyles'
+import useBlockListData from './useBlockListData'
 
 const HomePage = () => {
-  const [blockList, setBlockList] = useState<ListBlocks>()
-  const [loading, setLoading] = useState(false)
-  const [manualLoading, setManualLoading] = useState(false)
-
   const history = useHistory()
-  const isAppVisible = usePageVisibility()
   const { width } = useWindowSize()
 
-  const { client } = useGlobalContext()
-
-  // Default page
-  const currentPageNumber = usePageNumber()
-
-  const getBlocks = useCallback(
-    async (pageNumber: number, manualFetch?: boolean) => {
-      if (!client) return
-
-      console.log('Fetching blocks...')
-
-      manualFetch ? setManualLoading(true) : setLoading(true)
-      const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 10 })
-
-      // Check if manual fetching has been set in the meantime (overriding polling fetch)
-
-      if (currentPageNumber !== pageNumber) {
-        setLoading(false)
-        return
-      }
-
-      if (data) {
-        console.log('Number of block fetched: ' + data.blocks?.length)
-        setBlockList(data)
-      }
-
-      manualFetch ? setManualLoading(false) : setLoading(false)
-    },
-    [client, currentPageNumber]
-  )
-
-  // Fetching Data when page number changes or page loads initially
-  useEffect(() => {
-    getBlocks(currentPageNumber, true)
-  }, [getBlocks, currentPageNumber])
-
-  // Polling
-  useInterval(
-    () => {
-      if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
-    },
-    10 * 1000,
-    !isAppVisible
-  )
+  const {
+    loading,
+    manualLoading,
+    data: { blockList }
+  } = useBlockListData()
 
   return (
     <StyledSection>
@@ -108,7 +59,7 @@ const HomePage = () => {
         <LatestsBlocks>
           <Heading>Latest Blocks</Heading>
           <Content>
-            <BlockListTable main isLoading={manualLoading} minHeight={500}>
+            <BlockListTable main isLoading={manualLoading} minHeight={498}>
               <TableHeader
                 headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
                 columnWidths={['20%', '30%', '20%', '25%']}
