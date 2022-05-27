@@ -24,6 +24,7 @@ import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import Card from '../../components/Card'
+import NakedChart from '../../components/Charts/NakedChart'
 import Counter from '../../components/Counter'
 import PageSwitch from '../../components/PageSwitch'
 import SearchBar from '../../components/SearchBar'
@@ -77,8 +78,6 @@ const HomePage = () => {
     10 * 1000,
     !isAppVisible
   )
-
-  console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
 
@@ -146,6 +145,9 @@ const HomePage = () => {
                   secondary="Total"
                   isLoading={totalTransactions.isLoading}
                 />
+                <CardChartContainer>
+                  <NakedChart series={txPerDay.value.series} />
+                </CardChartContainer>
               </Card>
             </SectionStatisticsTextual>
           </StatisticsContainer>
@@ -247,6 +249,15 @@ const SectionStatisticsTextual = styled.div`
       width: 100%;
     }
   }
+`
+
+const CardChartContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
 `
 
 const TextPrimary = styled.span`
