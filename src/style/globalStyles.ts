@@ -105,8 +105,12 @@ const GlobalStyle = createGlobalStyle`
 `
 
 export const blurredBackground = (color: string) => css`
-  background-color: ${tinycolor(color).setAlpha(0.7).toString()};
-  backdrop-filter: blur(20px);
+  background-color: ${tinycolor(color).setAlpha(0.96).toString()};
+
+  @supports (backdrop-filter: blur(20px)) {
+    backdrop-filter: blur(20px);
+    background-color: ${tinycolor(color).setAlpha(0.7).toString()};
+  }
 `
 
 export default GlobalStyle

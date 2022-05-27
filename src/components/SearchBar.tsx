@@ -158,10 +158,9 @@ const SearchBackdropGradient = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  background: radial-gradient(#16d9f4 25%, #f46016 40%, #6510f8 60%);
-  transform: scaleY(5) scaleX(3);
-  opacity: 0.18;
-  filter: blur(20px);
+  background: radial-gradient(#169ff4 25%, #f46016 40%, #6510f8 60%);
+  transform: scaleY(5) scaleX(2);
+  filter: blur(10px) opacity(0.15);
   z-index: -1;
   border-radius: 100%;
 
