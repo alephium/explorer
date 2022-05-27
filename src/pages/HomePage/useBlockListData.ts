@@ -18,23 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ListBlocks } from '@alephium/sdk/api/explorer'
 import { useCallback, useEffect, useState } from 'react'
-import { usePageVisibility } from 'react-page-visibility'
 
 import { useGlobalContext } from '../../contexts/global'
-import useInterval from '../../hooks/useInterval'
-import usePageNumber from '../../hooks/usePageNumber'
 
-const useBlockListData = () => {
+const useBlockListData = (currentPageNumber: number) => {
   const [blockList, setBlockList] = useState<ListBlocks>()
-  const [loading, setLoading] = useState(false)
   const [manualLoading, setManualLoading] = useState(false)
 
-  const isAppVisible = usePageVisibility()
-
   const { client } = useGlobalContext()
-
-  // Default page
-  const currentPageNumber = usePageNumber()
 
   const getBlocks = useCallback(
     async (pageNumber: number, manualFetch?: boolean) => {
@@ -42,24 +33,18 @@ const useBlockListData = () => {
 
       console.log('Fetching blocks...')
 
-      manualFetch ? setManualLoading(true) : setLoading(true)
+      manualFetch && setManualLoading(true)
+
       const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 10 })
-
-      // Check if manual fetching has been set in the meantime (overriding polling fetch)
-
-      if (currentPageNumber !== pageNumber) {
-        setLoading(false)
-        return
-      }
 
       if (data) {
         console.log('Number of block fetched: ' + data.blocks?.length)
         setBlockList(data)
       }
 
-      manualFetch ? setManualLoading(false) : setLoading(false)
+      manualFetch && setManualLoading(false)
     },
-    [client, currentPageNumber]
+    [client]
   )
 
   // Fetching Data when page number changes or page loads initially
@@ -67,16 +52,7 @@ const useBlockListData = () => {
     getBlocks(currentPageNumber, true)
   }, [getBlocks, currentPageNumber])
 
-  // Polling
-  useInterval(
-    () => {
-      if (currentPageNumber === 1 && !loading && !manualLoading) getBlocks(currentPageNumber)
-    },
-    10 * 1000,
-    !isAppVisible
-  )
-
-  return { loading, manualLoading, data: { blockList } }
+  return { getBlocks, blockPageLoading: manualLoading, data: { blockList } }
 }
 
 export default useBlockListData

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HttpResponse } from '@alephium/sdk/api/explorer'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { useGlobalContext } from '../../contexts/global'
 
@@ -46,8 +46,9 @@ type StatsVectorData = { [key in StatVectorKeys]: StatVector }
 const statScalarDefault = { value: 0, isLoading: true }
 const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
-const useStatisticsData = (refresh: boolean) => {
+const useStatisticsData = () => {
   const { client } = useGlobalContext()
+
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
     hashrate: statScalarDefault,
     totalSupply: statScalarDefault,
@@ -69,7 +70,7 @@ const useStatisticsData = (refresh: boolean) => {
     setStatsVectorData((prevState) => ({ ...prevState, [key]: { value, isLoading: false } }))
   }
 
-  useEffect(() => {
+  const fetchStatistics = useCallback(() => {
     if (!client) return
 
     const fetchAndUpdateStatsScalar = async (
@@ -149,7 +150,11 @@ const useStatisticsData = (refresh: boolean) => {
     fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
     fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
     fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
-  }, [refresh, client])
+  }, [client])
+
+  useEffect(() => {
+    fetchStatistics()
+  }, [fetchStatistics])
 
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
 
@@ -157,16 +162,19 @@ const useStatisticsData = (refresh: boolean) => {
   console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   return {
-    scalar: {
-      hashrate,
-      totalSupply,
-      circulatingSupply,
-      totalTransactions,
-      totalBlocks,
-      avgBlockTime
-    },
-    vector: {
-      txPerDay
+    fetchStatistics,
+    data: {
+      scalar: {
+        hashrate,
+        totalSupply,
+        circulatingSupply,
+        totalTransactions,
+        totalBlocks,
+        avgBlockTime
+      },
+      vector: {
+        txPerDay
+      }
     }
   }
 }
