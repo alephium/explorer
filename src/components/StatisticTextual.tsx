@@ -52,6 +52,7 @@ const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
   font-size: 23px;
   font-weight: 500;
+  margin-bottom: 5px;
 `
 
 const Secondary = styled.div`

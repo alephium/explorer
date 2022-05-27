@@ -93,65 +93,61 @@ const HomePage = () => {
         </Search>
       )}
       <MainContent>
-        <StatisticCards>
+        <StatisticsSection>
           <Heading>Our numbers</Heading>
           <StatisticsContainer>
-            <SectionStatisticsTextual>
-              <Card label="Hashrate">
-                <StatisticTextual
-                  primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
-                  secondary={`${hashrateSuffix}H/s`}
-                  isLoading={hashrate.isLoading}
-                />
-              </Card>
-              <Card label="Supply">
-                <StatisticTextual
-                  primary={
+            <Card label="Transactions">
+              <StatisticTextual
+                primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
+                secondary="Total"
+                isLoading={totalTransactions.isLoading}
+              />
+              <CardChartContainer>
+                <NakedChart series={txPerDay.value.series} />
+              </CardChartContainer>
+            </Card>
+            <Card label="Hashrate">
+              <StatisticTextual
+                primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
+                secondary={`${hashrateSuffix}H/s`}
+                isLoading={hashrate.isLoading}
+              />
+            </Card>
+            <Card label="Supply">
+              <StatisticTextual
+                primary={
+                  <>
+                    <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
+                    <TextSecondary> / </TextSecondary>
+                    <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
+                  </>
+                }
+                secondary={
+                  currentSupplyPercentage ? (
                     <>
-                      <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
-                      <TextSecondary> / </TextSecondary>
-                      <TextSecondary>
-                        {totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}
-                      </TextSecondary>
+                      <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
                     </>
-                  }
-                  secondary={
-                    currentSupplyPercentage ? (
-                      <>
-                        <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
-                      </>
-                    ) : null
-                  }
-                  isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
-                />
-              </Card>
-              <Card label="Blocks">
-                <StatisticTextual
-                  primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
-                  secondary="Total"
-                  isLoading={totalBlocks.isLoading}
-                />
-              </Card>
-              <Card label="Avg. block time">
-                <StatisticTextual
-                  primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
-                  secondary="of all shards"
-                  isLoading={avgBlockTime.isLoading}
-                />
-              </Card>
-              <Card label="Transactions">
-                <StatisticTextual
-                  primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
-                  secondary="Total"
-                  isLoading={totalTransactions.isLoading}
-                />
-                <CardChartContainer>
-                  <NakedChart series={txPerDay.value.series} />
-                </CardChartContainer>
-              </Card>
-            </SectionStatisticsTextual>
+                  ) : null
+                }
+                isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
+              />
+            </Card>
+            <Card label="Blocks">
+              <StatisticTextual
+                primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
+                secondary="Total"
+                isLoading={totalBlocks.isLoading}
+              />
+            </Card>
+            <Card label="Avg. block time">
+              <StatisticTextual
+                primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
+                secondary="of all shards"
+                isLoading={avgBlockTime.isLoading}
+              />
+            </Card>
           </StatisticsContainer>
-        </StatisticCards>
+        </StatisticsSection>
         <LatestsBlocks>
           <Heading>Latest Blocks</Heading>
           <Content>
@@ -215,39 +211,23 @@ const Search = styled.div`
   width: 60%;
 `
 
-const StatisticCards = styled.div`
+const StatisticsSection = styled.div`
   flex: 1;
   min-width: 300px;
 `
 
 const StatisticsContainer = styled.div`
-  display: flex;
-  flex: 1;
-
-  @media ${deviceBreakPoints.tablet} {
-    flex-direction: column;
-  }
-`
-
-const SectionStatisticsTextual = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
-  flex-wrap: wrap;
 
-  @media ${deviceBreakPoints.tablet} {
-    justify-content: center;
-
-    > * {
-      width: 200px;
-    }
+  div:nth-child(1) {
+    grid-column-end: span 2;
+    grid-row: 1;
   }
 
   @media ${deviceBreakPoints.mobile} {
     gap: 20px;
-
-    > * {
-      width: 100%;
-    }
   }
 `
 
@@ -266,6 +246,12 @@ const TextPrimary = styled.span`
 
 const TextSecondary = styled.span`
   color: ${({ theme }) => theme.textSecondary};
+  font-size: 0.75em;
+
+  @media ${deviceBreakPoints.mobile} {
+    gap: 20px;
+    font-size: 0.5em;
+  }
 `
 
 const LatestsBlocks = styled.div`

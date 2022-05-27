@@ -45,14 +45,14 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 25%;
-  width: 100%;
-  min-width: 210px;
   height: 150px;
   padding: 20px;
+  overflow: hidden;
 
   @media ${deviceBreakPoints.mobile} {
     height: 100px;
     padding-top: 12px;
+    gap: 10px;
   }
 `
 
