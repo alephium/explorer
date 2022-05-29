@@ -20,13 +20,14 @@ import Chart from 'react-apexcharts'
 
 interface NakedChartProps {
   series: number[]
+  colors: [string, string]
 }
 
-const NakedChart = ({ series }: NakedChartProps) => (
-  <Chart options={chartOptions} series={[{ data: series }]} type="area" height="100%" width="100%" />
+const NakedChart = ({ series, colors }: NakedChartProps) => (
+  <Chart options={getChartOptions(colors)} series={[{ data: series }]} type="area" height="100%" width="100%" />
 )
 
-const chartOptions: ApexCharts.ApexOptions = {
+const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
   chart: {
     offsetY: 15,
     toolbar: {
@@ -75,13 +76,11 @@ const chartOptions: ApexCharts.ApexOptions = {
         [
           {
             offset: 0,
-            color: '#16cbf4',
-            opacity: 1.0
+            color: colors[0]
           },
           {
             offset: 100,
-            color: '#6510F8',
-            opacity: 0.2
+            color: colors[1]
           }
         ]
       ]
@@ -93,6 +92,6 @@ const chartOptions: ApexCharts.ApexOptions = {
   legend: {
     show: false
   }
-}
+})
 
 export default NakedChart

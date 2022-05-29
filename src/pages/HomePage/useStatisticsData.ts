@@ -38,7 +38,7 @@ type StatScalarKeys =
   | 'avgBlockTime'
 
 type StatVector = Stat<{ categories: number[]; series: number[] }>
-type StatVectorKeys = 'txPerDay'
+type StatVectorKeys = 'txPerDay' | 'hashratePerDay'
 
 type StatsScalarData = { [key in StatScalarKeys]: StatScalar }
 type StatsVectorData = { [key in StatVectorKeys]: StatVector }
@@ -59,7 +59,8 @@ const useStatisticsData = () => {
   })
 
   const [statsVectorData, setStatsVectorData] = useState<StatsVectorData>({
-    txPerDay: statVectorDefault
+    txPerDay: statVectorDefault,
+    hashratePerDay: statVectorDefault
   })
 
   const updateStatsScalar = (key: StatScalarKeys, value: StatScalar['value']) => {
@@ -143,10 +144,44 @@ const useStatisticsData = () => {
         )
     }
 
+    const fetchHashratePerDayData = async () => {
+      // TODO: Replace with a real call.
+      const { data } = await Promise.resolve({
+        data: [
+          { x: new Date('2022-05-01').getTime(), y: 400 },
+          { x: new Date('2022-05-01').getTime(), y: 200 },
+          { x: new Date('2022-05-02').getTime(), y: 140 },
+          { x: new Date('2022-05-02').getTime(), y: 160 },
+          { x: new Date('2022-05-04').getTime(), y: 180 },
+          { x: new Date('2022-05-05').getTime(), y: 100 },
+          { x: new Date('2022-05-06').getTime(), y: 90 },
+          { x: new Date('2022-05-07').getTime(), y: 120 },
+          { x: new Date('2022-05-08').getTime(), y: 100 }
+        ]
+      })
+
+      if (data && data.length > 0)
+        updateStatsVector(
+          'hashratePerDay',
+          data.reduce(
+            (acc, { x, y }) => {
+              acc.categories.push(x)
+              acc.series.push(y)
+              return acc
+            },
+            {
+              series: [],
+              categories: []
+            } as { series: number[]; categories: number[] }
+          )
+        )
+    }
+
     fetchHashrateData()
     fetchBlocksData()
     fetchAvgBlockTimeData()
     fetchTxPerDayData()
+    fetchHashratePerDayData()
     fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
     fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
     fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
@@ -158,7 +193,7 @@ const useStatisticsData = () => {
 
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
 
-  const { txPerDay } = statsVectorData
+  const { txPerDay, hashratePerDay } = statsVectorData
   console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   return {
@@ -173,7 +208,8 @@ const useStatisticsData = () => {
         avgBlockTime
       },
       vector: {
-        txPerDay
+        txPerDay,
+        hashratePerDay
       }
     }
   }

@@ -62,7 +62,7 @@ const HomePage = () => {
     fetchStatistics,
     data: {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
-      vector: { txPerDay }
+      vector: { txPerDay, hashratePerDay }
     }
   } = useStatisticsData()
 
@@ -96,23 +96,28 @@ const HomePage = () => {
         <StatisticsSection>
           <Heading>Our numbers</Heading>
           <StatisticsContainer>
-            <Card label="Transactions">
+            <ClickableCard label="Transactions">
               <StatisticTextual
                 primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
                 secondary="Total"
                 isLoading={totalTransactions.isLoading}
               />
               <CardChartContainer>
-                <NakedChart series={txPerDay.value.series} />
+                <NakedChart series={txPerDay.value.series} colors={['#16cbf4', '#8a46ff']} />
               </CardChartContainer>
-            </Card>
-            <Card label="Hashrate">
+              <SeeMoreLink>See more</SeeMoreLink>
+            </ClickableCard>
+            <ClickableCard label="Hashrate">
               <StatisticTextual
                 primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
                 secondary={`${hashrateSuffix}H/s`}
                 isLoading={hashrate.isLoading}
               />
-            </Card>
+              <CardChartContainer>
+                <NakedChart series={hashratePerDay.value.series} colors={['#b116f4', '#ff904c']} />
+              </CardChartContainer>
+              <SeeMoreLink>See more</SeeMoreLink>
+            </ClickableCard>
             <Card label="Supply">
               <StatisticTextual
                 primary={
@@ -238,6 +243,28 @@ const CardChartContainer = styled.div`
   bottom: 0;
   left: 0;
   z-index: -1;
+  opacity: 0.4;
+`
+
+const SeeMoreLink = styled.a`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: ${({ theme }) => theme.textSecondary};
+`
+
+const ClickableCard = styled(Card)`
+  &:hover {
+    cursor: pointer;
+
+    ${CardChartContainer} {
+      opacity: 1;
+    }
+
+    ${SeeMoreLink} {
+      color: ${({ theme }) => theme.textPrimary};
+    }
+  }
 `
 
 const TextPrimary = styled.span`
