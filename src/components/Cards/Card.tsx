@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC } from 'react'
 import styled from 'styled-components'
 
-import { blurredBackground, deviceBreakPoints } from '../style/globalStyles'
+import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
 
 interface Props {
   label: string

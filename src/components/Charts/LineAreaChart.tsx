@@ -195,7 +195,7 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
   return isLoading ? (
     <SkeletonLoaderStyled heightInPx={136} />
   ) : (
-    <Chart options={options} series={[{ data: series }]} type="area" />
+    <Chart height="100%" width="100%" options={options} series={[{ data: series }]} type="area" />
   )
 }
 

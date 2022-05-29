@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import SkeletonLoader from './SkeletonLoader'
+import SkeletonLoader from '../SkeletonLoader'
 
 interface Props {
   primary: ReactNode

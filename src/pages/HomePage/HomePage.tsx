@@ -19,17 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { addApostrophes } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
+import { motion } from 'framer-motion'
 import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import Card from '../../components/Card'
+import Card from '../../components/Cards/Card'
+import FullScreenCard from '../../components/Cards/FullScreenCard'
+import StatisticTextual from '../../components/Cards/StatisticTextual'
+import LineAreaChart from '../../components/Charts/LineAreaChart'
 import NakedChart from '../../components/Charts/NakedChart'
 import Counter from '../../components/Counter'
 import PageSwitch from '../../components/PageSwitch'
 import SearchBar from '../../components/SearchBar'
 import Section from '../../components/Section'
-import StatisticTextual from '../../components/StatisticTextual'
 import Table, { TDStyle } from '../../components/Table/Table'
 import TableBody from '../../components/Table/TableBody'
 import TableHeader from '../../components/Table/TableHeader'
@@ -189,6 +192,15 @@ const HomePage = () => {
         </LatestsBlocks>
       </MainContent>
       <Waves />
+      <FullScreenCard layoutId="expandableCard">
+        <LineAreaChart
+          series={txPerDay.value.series}
+          categories={txPerDay.value.categories}
+          xAxisType="datetime"
+          yAxisType="tx"
+          isLoading={txPerDay.isLoading}
+        />
+      </FullScreenCard>
     </StyledSection>
   )
 }
