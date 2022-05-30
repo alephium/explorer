@@ -74,6 +74,15 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
       },
       tooltip: {
         enabled: false
+      },
+      crosshairs: {
+        show: true,
+        position: 'back',
+        stroke: {
+          color: theme.borderPrimary,
+          width: 1,
+          dashArray: 6
+        }
       }
     },
     yaxis: {
