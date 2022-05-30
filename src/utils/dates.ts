@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export const formatToMonthDay = (dt: Date): string => {
-  const month = dt.getMonth().toString().padStart(2, '0')
-  const day = dt.getDay().toString().padStart(2, '0')
+  const month = (dt.getMonth() + 1).toString().padStart(2, '0')
+  const day = dt.getDate().toString().padStart(2, '0')
   return month + '/' + day
 }
 
