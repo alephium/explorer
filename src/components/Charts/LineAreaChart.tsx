@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import Chart from 'react-apexcharts'
-import styled, { useTheme } from 'styled-components'
+import { useTheme } from 'styled-components'
 import tinycolor from 'tinycolor2'
 
 import {

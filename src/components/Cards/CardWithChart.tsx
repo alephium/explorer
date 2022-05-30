@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ArrowRight } from 'lucide-react'
 import { ComponentProps } from 'react'
 import styled from 'styled-components'
 
@@ -31,7 +30,7 @@ interface CardWithChartProps extends ComponentProps<typeof Card> {
 
 const CardWithChart = ({ chartSeries, chartColors, children, ...props }: CardWithChartProps) => (
   <StyledClickableCard {...props}>
-    {children}
+    <Content>{children}</Content>
     <CardChartContainer>
       <NakedChart series={chartSeries} colors={chartColors} />
     </CardChartContainer>
@@ -41,14 +40,19 @@ const CardWithChart = ({ chartSeries, chartColors, children, ...props }: CardWit
   </StyledClickableCard>
 )
 
+const Content = styled.div`
+  position: absolute;
+  z-index: 1;
+`
+
 const CardChartContainer = styled.div`
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: -1;
   opacity: 0.4;
+  z-index: 0;
 `
 
 const SeeMoreLink = styled.a`
