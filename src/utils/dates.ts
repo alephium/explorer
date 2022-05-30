@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const formatToMonthDay = (dt: Date): string => {
-  const month = (dt.getMonth() + 1).toString().padStart(2, '0')
+export const formatToDay = (dt: Date): string => {
   const day = dt.getDate().toString().padStart(2, '0')
-  return month + '/' + day
+  return day
 }
 
 export const formatToYearMonthDay = (dt: Date): string => {
+  const day = dt.getDate().toString().padStart(2, '0')
+  const month = (dt.getMonth() + 1).toString().padStart(2, '0')
   const year = dt.getFullYear()
-  return year + '/' + formatToMonthDay(dt)
+  return `${day}/${month}/${year}`
 }

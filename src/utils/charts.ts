@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatToMonthDay } from './dates'
+import { formatToDay } from './dates'
 import { formatNumberForDisplay } from './strings'
 
 export type YAxisType = 'plain' | 'tx'
@@ -40,7 +40,7 @@ export const formatXAxis =
     const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
     if (type === 'datetime') {
       if (typeof _value == 'string' || typeof _value == 'number') {
-        return formatToMonthDay(new Date(_value))
+        return formatToDay(new Date(_value))
       }
     }
     return _value
