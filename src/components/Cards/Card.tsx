@@ -16,26 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
+import { HTMLMotionProps, motion } from 'framer-motion'
 import styled from 'styled-components'
 
 import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
+import SkeletonLoader from '../SkeletonLoader'
 
-interface Props {
+interface CardProps extends HTMLMotionProps<'div'> {
   label: string
+  isLoading: boolean
   className?: string
 }
 
-const Card: FC<Props> = ({ label, className, children }) => (
-  <Container className={className}>
-    <Label>
-      <LabelText>{label}</LabelText>
-    </Label>
-    <Content>{children}</Content>
-  </Container>
-)
+const Card = ({ label, className, children, isLoading, ...props }: CardProps) =>
+  isLoading ? (
+    <SkeletonLoader heightInPx={150} />
+  ) : (
+    <Container className={className} initial={false} {...props}>
+      <Header>
+        <LabelText>{label}</LabelText>
+      </Header>
+      <Content>{children}</Content>
+    </Container>
+  )
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   flex: 1;
   position: relative;
   ${({ theme }) => blurredBackground(theme.bgPrimary)};
@@ -62,12 +67,10 @@ const LabelText = styled.span`
   font-size: 14px;
   display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.textSecondary};
 `
 
-const Label = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
-  border-radius: 9px 9px 0 0;
-`
+const Header = styled.div``
 
 const Content = styled.div``
 

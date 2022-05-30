@@ -17,9 +17,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLMotionProps, motion } from 'framer-motion'
+import { X } from 'lucide-react'
 import styled from 'styled-components'
 
-const FullScreenCard = (props: HTMLMotionProps<'div'>) => <Container {...props}></Container>
+interface FullScreenCardProps extends HTMLMotionProps<'div'> {
+  label: string
+  onClose: () => void
+}
+
+const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullScreenCardProps) => (
+  <>
+    <Container {...props} layoutId={layoutId}>
+      <Header>
+        <LabelText>{label}</LabelText>
+        <CloseButton onClick={onClose} />
+      </Header>
+      <Content>{children}</Content>
+    </Container>
+    <Backdrop onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+  </>
+)
 
 const Container = styled(motion.div)`
   position: fixed;
@@ -27,21 +44,56 @@ const Container = styled(motion.div)`
   right: 0;
   bottom: 0;
   left: 0;
-  margin: 20vh 10vw;
+  display: flex;
+  flex-direction: column;
+  margin: 15vh 10vw;
   background-color: ${({ theme }) => theme.bgPrimary};
   border-radius: 9px;
+  overflow: hidden;
   z-index: 100;
+  box-shadow: ${({ theme }) => theme.shadowPrimary};
+`
 
-  &::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-    background-color: rgba(0, 0, 0, 0.5);
+const Backdrop = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+`
+
+const Header = styled.div`
+  height: 50px;
+  padding: 20px;
+  display: flex;
+  background-color: ${({ theme }) => theme.bgSecondary};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const CloseButton = styled(X)`
+  cursor: pointer;
+  color: ${({ theme }) => theme.textPrimary};
+
+  :hover {
+    color: ${({ theme }) => theme.textSecondary};
   }
+`
+
+const LabelText = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+`
+
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
 `
 
 export default FullScreenCard

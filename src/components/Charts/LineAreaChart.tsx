@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
+import tinycolor from 'tinycolor2'
 
 import {
   formatSeriesNumber,
@@ -28,7 +29,6 @@ import {
   YAxisType
 } from '../../utils/charts'
 import { formatToYearMonthDay } from '../../utils/dates'
-import SkeletonLoader from '../SkeletonLoader'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -39,21 +39,26 @@ type TooltipStyleArgs = {
 interface LineAreaChartProps {
   series: number[]
   categories: (number | string)[]
+  colors: [string, string]
   yAxisType: YAxisType
   xAxisType: XAxisType
-  isLoading: boolean
 }
 
-const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: LineAreaChartProps) => {
+const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: LineAreaChartProps) => {
   const theme = useTheme()
-  const options = {
+  const options: ApexCharts.ApexOptions = {
     chart: {
       toolbar: {
         show: false
+      },
+      animations: {
+        enabled: false
+      },
+      zoom: {
+        enabled: false
       }
     },
     xaxis: {
-      type: xAxisType,
       categories,
       axisTicks: {
         color: theme.borderSecondary
@@ -84,25 +89,23 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
       }
     },
     grid: {
-      borderColor: theme.borderPrimary,
+      borderColor: tinycolor(theme.borderPrimary).setAlpha(0.5).toString(),
       padding: {
         top: 0,
-        right: 0,
-        bottom: 0,
-        left: 2
-      }
+        right: 0
+      },
+      strokeDashArray: 5,
+      position: 'front'
     },
     markers: {
-      colors: ['#FFFFFF']
+      colors: theme.bgPrimary
     },
     tooltip: {
       theme: false as unknown as string,
       custom({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
         return `<div style="
           color: ${theme.textPrimary};
-          border: 1px solid ${theme.borderSecondary};
-          border-radius: 9px;
-          box-shadow: ${theme.shadowPrimary};
+          background-color: ${theme.bgPrimary};
           min-width: 121px;
         ">
           <div style="display: flex; flex-direction: column;">
@@ -110,16 +113,12 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
               background-color: ${theme.bgSecondary};
               padding: 9px 0px 5px 11px;
               border-bottom: 1px solid ${theme.borderSecondary};
-              border-radius: 9px 9px 0 0;
             ">
               ${formatToYearMonthDay(new Date(categories[dataPointIndex]))}
             </div>
             <div style="
-              background-color: ${theme.bgPrimary};
               padding: 10px 0px 11px 11px;
               font-weight: 700;
-              border-bottom-left-radius: 9px;
-              border-bottom-right-radius: 9px;
             ">
               ${formatSeriesNumber(yAxisType, series[seriesIndex][dataPointIndex])}
             </div>
@@ -131,60 +130,23 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
       enabled: false
     },
     stroke: {
-      curve: 'smooth' as const,
-      width: 3,
-      fill: {
-        type: 'gradient',
-        gradient: {
-          type: 'horizontal',
-          colorStops: [
-            [
-              {
-                offset: 0,
-                color: '#0085FF',
-                opacity: 1
-              },
-              {
-                offset: 33,
-                color: '#FF2E92',
-                opacity: 1
-              },
-              {
-                offset: 80,
-                color: '#FFAC2F',
-                opacity: 1
-              },
-              {
-                offset: 99,
-                color: '#FFFFFF',
-                opacity: 1
-              }
-            ]
-          ]
-        }
-      }
+      show: false
     },
     fill: {
       type: 'gradient',
       gradient: {
-        shadeIntensity: 1,
         type: 'vertical',
         colorStops: [
           [
             {
               offset: 0,
-              color: '#F48116',
-              opacity: 1.0
+              color: colors[0],
+              opacity: 0.8
             },
             {
-              offset: 70,
-              color: '#6510F8',
-              opacity: 0.2
-            },
-            {
-              offset: 97,
-              color: '#6510F8',
-              opacity: 0.0
+              offset: 100,
+              color: colors[1],
+              opacity: 0.8
             }
           ]
         ]
@@ -192,15 +154,7 @@ const LineAreaChart = ({ series, categories, xAxisType, yAxisType, isLoading }: 
     }
   }
 
-  return isLoading ? (
-    <SkeletonLoaderStyled heightInPx={136} />
-  ) : (
-    <Chart height="100%" width="100%" options={options} series={[{ data: series }]} type="area" />
-  )
+  return <Chart height="100%" width="100%" options={options} series={[{ data: series }]} type="area" />
 }
-
-const SkeletonLoaderStyled = styled(SkeletonLoader)`
-  padding: 20px 20px 34px;
-`
 
 export default LineAreaChart

@@ -19,16 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { addApostrophes } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
-import { motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
+import { useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import Card from '../../components/Cards/Card'
+import CardWithChart from '../../components/Cards/CardWithChart'
 import FullScreenCard from '../../components/Cards/FullScreenCard'
 import StatisticTextual from '../../components/Cards/StatisticTextual'
 import LineAreaChart from '../../components/Charts/LineAreaChart'
-import NakedChart from '../../components/Charts/NakedChart'
 import Counter from '../../components/Counter'
 import PageSwitch from '../../components/PageSwitch'
 import SearchBar from '../../components/SearchBar'
@@ -49,11 +50,14 @@ import useStatisticsData from './useStatisticsData'
 
 dayjs.extend(duration)
 
+type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
+
 const HomePage = () => {
   const history = useHistory()
   const { width } = useWindowSize()
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
+  const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
 
   const {
     getBlocks,
@@ -65,9 +69,11 @@ const HomePage = () => {
     fetchStatistics,
     data: {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
-      vector: { txPerDay, hashratePerDay }
+      vector
     }
   } = useStatisticsData()
+
+  const vectorData = vector
 
   // Polling
   useInterval(
@@ -99,29 +105,33 @@ const HomePage = () => {
         <StatisticsSection>
           <Heading>Our numbers</Heading>
           <StatisticsContainer>
-            <ClickableCard label="Transactions">
+            <CardWithChart
+              label="Transactions"
+              chartSeries={vectorData.txPerDay.value.series}
+              chartColors={['#16cbf4', '#8a46ff']}
+              isLoading={totalTransactions.isLoading}
+              onClick={() => setDetailsCardOpen('txPerDay')}
+              layoutId={`expandableCard-${'txPerDay' as VectorStatisticsKey}`}
+            >
               <StatisticTextual
                 primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
                 secondary="Total"
-                isLoading={totalTransactions.isLoading}
               />
-              <CardChartContainer>
-                <NakedChart series={txPerDay.value.series} colors={['#16cbf4', '#8a46ff']} />
-              </CardChartContainer>
-              <SeeMoreLink>See more</SeeMoreLink>
-            </ClickableCard>
-            <ClickableCard label="Hashrate">
+            </CardWithChart>
+            <CardWithChart
+              chartSeries={vectorData.hashratePerDay.value.series}
+              chartColors={['#b116f4', '#ff904c']}
+              label="Hashrate"
+              isLoading={hashrate.isLoading}
+              onClick={() => setDetailsCardOpen('hashratePerDay')}
+              layoutId={`expandableCard-${'hashratePerDay' as VectorStatisticsKey}`}
+            >
               <StatisticTextual
                 primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
                 secondary={`${hashrateSuffix}H/s`}
-                isLoading={hashrate.isLoading}
               />
-              <CardChartContainer>
-                <NakedChart series={hashratePerDay.value.series} colors={['#b116f4', '#ff904c']} />
-              </CardChartContainer>
-              <SeeMoreLink>See more</SeeMoreLink>
-            </ClickableCard>
-            <Card label="Supply">
+            </CardWithChart>
+            <Card label="Supply" isLoading={circulatingSupply.isLoading || totalSupply.isLoading}>
               <StatisticTextual
                 primary={
                   <>
@@ -137,21 +147,18 @@ const HomePage = () => {
                     </>
                   ) : null
                 }
-                isLoading={circulatingSupply.isLoading || totalSupply.isLoading}
               />
             </Card>
-            <Card label="Blocks">
+            <Card label="Blocks" isLoading={totalBlocks.isLoading}>
               <StatisticTextual
                 primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
                 secondary="Total"
-                isLoading={totalBlocks.isLoading}
               />
             </Card>
-            <Card label="Avg. block time">
+            <Card label="Avg. block time" isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
                 primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
                 secondary="of all shards"
-                isLoading={avgBlockTime.isLoading}
               />
             </Card>
           </StatisticsContainer>
@@ -192,17 +199,36 @@ const HomePage = () => {
         </LatestsBlocks>
       </MainContent>
       <Waves />
-      <FullScreenCard layoutId="expandableCard">
-        <LineAreaChart
-          series={txPerDay.value.series}
-          categories={txPerDay.value.categories}
-          xAxisType="datetime"
-          yAxisType="tx"
-          isLoading={txPerDay.isLoading}
-        />
-      </FullScreenCard>
+      <AnimatePresence initial={false}>
+        {detailsCardOpen && (
+          <FullScreenCard
+            layoutId={`expandableCard-${detailsCardOpen}`}
+            label={fullScreenCardLabels[detailsCardOpen]}
+            key={detailsCardOpen}
+            onClose={() => setDetailsCardOpen(undefined)}
+          >
+            <LineAreaChart
+              series={vectorData[detailsCardOpen].value.series}
+              categories={vectorData[detailsCardOpen].value.categories}
+              colors={chartColors[detailsCardOpen]}
+              xAxisType="datetime"
+              yAxisType="tx"
+            />
+          </FullScreenCard>
+        )}
+      </AnimatePresence>
     </StyledSection>
   )
+}
+
+const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
+  txPerDay: 'Transactions per day',
+  hashratePerDay: 'Hashrate per day'
+}
+
+const chartColors: Record<VectorStatisticsKey, [string, string]> = {
+  txPerDay: ['#16cbf4', '#8a46ff'],
+  hashratePerDay: ['#b116f4', '#ff904c']
 }
 
 const StyledSection = styled(Section)`
@@ -245,37 +271,6 @@ const StatisticsContainer = styled.div`
 
   @media ${deviceBreakPoints.mobile} {
     gap: 20px;
-  }
-`
-
-const CardChartContainer = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: -1;
-  opacity: 0.4;
-`
-
-const SeeMoreLink = styled.a`
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  color: ${({ theme }) => theme.textSecondary};
-`
-
-const ClickableCard = styled(Card)`
-  &:hover {
-    cursor: pointer;
-
-    ${CardChartContainer} {
-      opacity: 1;
-    }
-
-    ${SeeMoreLink} {
-      color: ${({ theme }) => theme.textPrimary};
-    }
   }
 `
 

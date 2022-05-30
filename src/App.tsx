@@ -61,7 +61,7 @@ const App = () => {
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
       <MainContainer>
-        <AnimateSharedLayout>
+        <AnimateSharedLayout type="crossfade">
           <AppHeader />
           <ContentContainer>
             <ContentWrapper>

@@ -194,7 +194,6 @@ const useStatisticsData = () => {
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
 
   const { txPerDay, hashratePerDay } = statsVectorData
-  console.log(txPerDay) // THIS WILL BE REMOVED IN FOLLOWING PR
 
   return {
     fetchStatistics,

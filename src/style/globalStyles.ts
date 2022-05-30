@@ -102,6 +102,12 @@ const GlobalStyle = createGlobalStyle`
   th {
     font-weight: normal;
   }
+
+  /* Apex charts */
+  .apexcharts-tooltip {
+    box-shadow: ${({ theme }) => theme.shadowPrimary} !important;
+    border-radius: 9px !important;
+  }
 `
 
 export const blurredBackground = (color: string) => css`
