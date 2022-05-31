@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Chart from 'react-apexcharts'
 
-interface NakedChartProps {
+export interface NakedChartProps {
   series: number[]
   colors: [string, string]
 }

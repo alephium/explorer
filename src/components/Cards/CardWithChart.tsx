@@ -16,15 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ComponentProps } from 'react'
 import styled from 'styled-components'
 
-import NakedChart from '../Charts/NakedChart'
-import Card from './Card'
+import NakedChart, { NakedChartProps } from '../Charts/NakedChart'
+import Card, { CardProps } from './Card'
 
-interface CardWithChartProps extends ComponentProps<typeof Card> {
-  chartSeries: ComponentProps<typeof NakedChart>['series']
-  chartColors: ComponentProps<typeof NakedChart>['colors']
+interface CardWithChartProps extends CardProps {
+  chartSeries: NakedChartProps['series']
+  chartColors: NakedChartProps['colors']
   isLoading: boolean
 }
 

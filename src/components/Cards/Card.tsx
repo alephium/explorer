@@ -22,7 +22,7 @@ import styled from 'styled-components'
 import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
 import SkeletonLoader from '../SkeletonLoader'
 
-interface CardProps extends HTMLMotionProps<'div'> {
+export interface CardProps extends HTMLMotionProps<'div'> {
   label: string
   isLoading: boolean
   className?: string
