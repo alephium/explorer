@@ -93,6 +93,11 @@ const HomePage = () => {
   const currentSupplyPercentage =
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
+  const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
+    txPerDay: 'Transactions per day',
+    hashratePerDay: `Hashrate per day (${hashrateSuffix}H/s)`
+  }
+
   return (
     <StyledSection>
       {width && width > deviceSizes.mobile && (
@@ -219,11 +224,6 @@ const HomePage = () => {
       </AnimatePresence>
     </StyledSection>
   )
-}
-
-const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-  txPerDay: 'Transactions per day',
-  hashratePerDay: 'Hashrate per day'
 }
 
 const chartColors: Record<VectorStatisticsKey, [string, string]> = {
