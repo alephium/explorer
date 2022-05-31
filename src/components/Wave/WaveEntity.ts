@@ -36,6 +36,7 @@ class WaveEntity {
       return
     }
 
+    // TODO: Don't draw a line for each pixel of the curve (optimization)
     for (let i = 0; i < width; i++) {
       const wave1 = Math.sin(i * this.waveLength[0] - frequency)
       const wave2 = Math.sin(i * this.waveLength[1] - frequency)
@@ -47,7 +48,6 @@ class WaveEntity {
 
     const gradient = ctx.createLinearGradient(0, height / 1.8, 0, height)
 
-    // Add three color stops
     gradient.addColorStop(0, this.gradientColors[0])
     gradient.addColorStop(1, this.gradientColors[1])
 

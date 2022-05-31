@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Inpired by https://github.com/ashiishme/react-sine-wave
+
 import { useRef } from 'react'
 import styled from 'styled-components'
 
 import useAnimationFrame from '../../hooks/useAnimationFrame'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import WaveEntity from './WaveEntity'
-
-type WaveName = 'frontWave' | 'backWave'
 
 const Waves = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -59,10 +59,10 @@ const Waves = () => {
 
 const staticHeight = 600
 
-const waves: Record<WaveName, WaveEntity> = {
-  frontWave: new WaveEntity([0.0081, 0.028, 0.015], 1, 1, ['rgba(22, 204, 244, 0.6)', 'rgba(101, 16, 248, 0)']),
-  backWave: new WaveEntity([0.0022, 0.018, 0.005], 1, 1.2, ['rgba(244, 129, 22, 0.6)', 'rgba(101, 16, 248, 0)'])
-}
+const waves: [WaveEntity, WaveEntity] = [
+  new WaveEntity([0.0081, 0.028, 0.015], 1, 1, ['rgba(22, 204, 244, 0.6)', 'rgba(101, 16, 248, 0)']),
+  new WaveEntity([0.0022, 0.018, 0.005], 1, 1.2, ['rgba(244, 129, 22, 0.6)', 'rgba(101, 16, 248, 0)'])
+]
 
 const CanvasContainer = styled.div`
   position: fixed;
