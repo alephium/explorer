@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { BlockEntryLite, Output, PerChainValue, Transaction, UOutput } from '@alephium/sdk/api/explorer'
+import { BlockEntryLite, Output, PerChainHeight, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -47,7 +47,7 @@ const TransactionInfoPage = () => {
   const { client } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
   const [txBlock, setTxBlock] = useState<BlockEntryLite>()
-  const [txChain, setTxChain] = useState<PerChainValue>()
+  const [txChain, setTxChain] = useState<PerChainHeight>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -75,7 +75,7 @@ const TransactionInfoPage = () => {
         setTxBlock(block)
 
         const chain = chainHeights.find(
-          (c: PerChainValue) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
+          (c: PerChainHeight) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
         )
 
         setTxChain(chain)
@@ -256,7 +256,7 @@ const isTxConfirmed = (tx: Transaction): tx is Transaction => {
   return (tx as Transaction).blockHash !== undefined
 }
 
-const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainValue): number => {
+const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight): number => {
   let confirmations = 0
 
   if (txBlock && txChain) {

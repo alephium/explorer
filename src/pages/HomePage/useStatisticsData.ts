@@ -112,28 +112,16 @@ const useStatisticsData = () => {
     }
 
     const fetchTxPerDayData = async () => {
-      // TODO: Replace with a real call.
-      const { data } = await Promise.resolve({
-        data: [
-          { x: new Date('2022-05-01').getTime(), y: 1 },
-          { x: new Date('2022-05-01').getTime(), y: 2 },
-          { x: new Date('2022-05-02').getTime(), y: 40 },
-          { x: new Date('2022-05-02').getTime(), y: 60 },
-          { x: new Date('2022-05-04').getTime(), y: 80 },
-          { x: new Date('2022-05-05').getTime(), y: 30 },
-          { x: new Date('2022-05-06').getTime(), y: 40 },
-          { x: new Date('2022-05-07').getTime(), y: 200 },
-          { x: new Date('2022-05-08').getTime(), y: 600 }
-        ]
-      })
-
+      const fromTs = new Date().getTime() - 1000 * 60 * 60 * 24 * 30
+      const toTs = new Date().getTime()
+      const { data } = await client.charts.getChartsTransactionsCount({ fromTs, toTs, 'interval-type': 'daily' })
       if (data && data.length > 0)
         updateStatsVector(
           'txPerDay',
           data.reduce(
-            (acc, { x, y }) => {
-              acc.categories.push(x)
-              acc.series.push(y)
+            (acc, { timestamp, totalCountAllChains }) => {
+              acc.categories.push(timestamp)
+              acc.series.push(totalCountAllChains)
               return acc
             },
             {
@@ -145,28 +133,16 @@ const useStatisticsData = () => {
     }
 
     const fetchHashratePerDayData = async () => {
-      // TODO: Replace with a real call.
-      const { data } = await Promise.resolve({
-        data: [
-          { x: new Date('2022-05-01').getTime(), y: 400 },
-          { x: new Date('2022-05-01').getTime(), y: 200 },
-          { x: new Date('2022-05-02').getTime(), y: 140 },
-          { x: new Date('2022-05-02').getTime(), y: 160 },
-          { x: new Date('2022-05-04').getTime(), y: 180 },
-          { x: new Date('2022-05-05').getTime(), y: 100 },
-          { x: new Date('2022-05-06').getTime(), y: 90 },
-          { x: new Date('2022-05-07').getTime(), y: 120 },
-          { x: new Date('2022-05-08').getTime(), y: 100 }
-        ]
-      })
-
+      const fromTs = new Date().getTime() - 1000 * 60 * 60 * 24 * 30
+      const toTs = new Date().getTime()
+      const { data } = await client.charts.getChartsHashrates({ fromTs, toTs, 'interval-type': 'daily' })
       if (data && data.length > 0)
         updateStatsVector(
           'hashratePerDay',
           data.reduce(
-            (acc, { x, y }) => {
-              acc.categories.push(x)
-              acc.series.push(y)
+            (acc, { timestamp, hashrate }) => {
+              acc.categories.push(timestamp)
+              acc.series.push(parseInt(hashrate))
               return acc
             },
             {
