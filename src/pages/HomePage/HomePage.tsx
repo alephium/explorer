@@ -97,13 +97,13 @@ const HomePage = () => {
     <StyledSection>
       {width && width > deviceSizes.mobile && (
         <Search>
-          <Heading>Search</Heading>
+          <h2>Search</h2>
           <SearchBar />
         </Search>
       )}
       <MainContent>
         <StatisticsSection>
-          <Heading>Our numbers</Heading>
+          <h2>Our numbers</h2>
           <StatisticsContainer>
             <CardWithChart
               label="Transactions"
@@ -164,7 +164,7 @@ const HomePage = () => {
           </StatisticsContainer>
         </StatisticsSection>
         <LatestsBlocks>
-          <Heading>Latest Blocks</Heading>
+          <h2>Latest Blocks</h2>
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader
@@ -246,8 +246,6 @@ const MainContent = styled.div`
     gap: 30px;
   }
 `
-
-const Heading = styled.h2``
 
 const Search = styled.div`
   margin: 0 auto 7vh auto;

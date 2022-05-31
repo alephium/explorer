@@ -33,9 +33,9 @@ const Card = ({ label, className, children, isLoading, ...props }: CardProps) =>
     <SkeletonLoader heightInPx={150} />
   ) : (
     <Container className={className} initial={false} {...props}>
-      <Header>
+      <header>
         <LabelText>{label}</LabelText>
-      </Header>
+      </header>
       <Content>{children}</Content>
     </Container>
   )
@@ -69,8 +69,6 @@ const LabelText = styled.span`
   align-items: center;
   color: ${({ theme }) => theme.textSecondary};
 `
-
-const Header = styled.div``
 
 const Content = styled.div``
 
