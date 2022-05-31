@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { HTMLMotionProps, motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
 
 interface FullScreenCardProps extends HTMLMotionProps<'div'> {
@@ -25,18 +26,33 @@ interface FullScreenCardProps extends HTMLMotionProps<'div'> {
   onClose: () => void
 }
 
-const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullScreenCardProps) => (
-  <>
-    <Container {...props} layoutId={layoutId}>
-      <Header>
-        <LabelText>{label}</LabelText>
-        <CloseButton onClick={onClose} />
-      </Header>
-      <Content>{children}</Content>
-    </Container>
-    <Backdrop onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-  </>
-)
+const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullScreenCardProps) => {
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [onClose])
+
+  return (
+    <>
+      <Container {...props} layoutId={layoutId}>
+        <Header>
+          <LabelText>{label}</LabelText>
+          <CloseButton onClick={onClose} />
+        </Header>
+        <Content>{children}</Content>
+      </Container>
+      <Backdrop onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+    </>
+  )
+}
 
 const Container = styled(motion.div)`
   position: fixed;
