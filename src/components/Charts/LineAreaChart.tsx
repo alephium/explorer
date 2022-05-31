@@ -77,7 +77,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
       },
       crosshairs: {
         show: true,
-        position: 'back',
+        position: 'front',
         stroke: {
           color: theme.borderPrimary,
           width: 1,
