@@ -41,32 +41,41 @@ const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullSc
   }, [onClose])
 
   return (
-    <>
-      <Container {...props} layoutId={layoutId}>
+    <Container>
+      <CardContent {...props} layoutId={layoutId}>
         <Header>
           <LabelText>{label}</LabelText>
           <CloseButton onClick={onClose} />
         </Header>
         <Content>{children}</Content>
-      </Container>
+      </CardContent>
       <Backdrop onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
-    </>
+    </Container>
   )
 }
 
-const Container = styled(motion.div)`
+const Container = styled.div`
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+`
+
+const CardContent = styled(motion.div)`
+  display: flex;
   flex-direction: column;
-  margin: 15vh 10vw;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  max-height: 800px;
   background-color: ${({ theme }) => theme.bgPrimary};
   border-radius: 9px;
   overflow: hidden;
-  z-index: 100;
   box-shadow: ${({ theme }) => theme.shadowPrimary};
 `
 
@@ -77,6 +86,7 @@ const Backdrop = styled(motion.div)`
   bottom: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 `
 
 const Header = styled.div`
