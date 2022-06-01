@@ -21,6 +21,8 @@ import { X } from 'lucide-react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
 
+import { isMobile } from '../../utils/browserSupport'
+
 interface FullScreenCardProps extends HTMLMotionProps<'div'> {
   label: string
   onClose: () => void
@@ -40,9 +42,27 @@ const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullSc
     }
   }, [onClose])
 
+  const getAnimationConfig = () => {
+    return isMobile()
+      ? {
+          initial: {
+            opacity: 0
+          },
+          animate: {
+            opacity: 1
+          },
+          exit: {
+            opacity: 0
+          }
+        }
+      : {
+          layoutId
+        }
+  }
+
   return (
     <Container>
-      <CardContent {...props} layoutId={layoutId}>
+      <CardContent {...props} {...getAnimationConfig()}>
         <Header>
           <LabelText>{label}</LabelText>
           <CloseButton onClick={onClose} />
@@ -77,6 +97,10 @@ const CardContent = styled(motion.div)`
   border-radius: 9px;
   overflow: hidden;
   box-shadow: ${({ theme }) => theme.shadowPrimary};
+
+  @media (max-aspect-ratio: 2/3) {
+    height: 60%;
+  }
 `
 
 const Backdrop = styled(motion.div)`
