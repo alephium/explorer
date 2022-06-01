@@ -21,8 +21,7 @@ import { useTheme } from 'styled-components'
 import tinycolor from 'tinycolor2'
 
 import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '../../utils/charts'
-import { formatToYearMonthDay } from '../../utils/dates'
-import { formatNumberForDisplay } from '../../utils/strings'
+import { formatToDayMonthYear } from '../../utils/dates'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -119,7 +118,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
               padding: 9px 0px 5px 11px;
               border-bottom: 1px solid ${theme.borderSecondary};
             ">
-              ${formatToYearMonthDay(new Date(categories[dataPointIndex]))}
+              ${formatToDayMonthYear(new Date(categories[dataPointIndex]))}
             </div>
             <div style="
               padding: 10px 0px 11px 11px;
