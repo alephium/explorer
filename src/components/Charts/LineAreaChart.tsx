@@ -20,15 +20,9 @@ import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
 import tinycolor from 'tinycolor2'
 
-import {
-  formatSeriesNumber,
-  formatXAxis,
-  formatYAxis,
-  getOffsetXYAxisLabel,
-  XAxisType,
-  YAxisType
-} from '../../utils/charts'
+import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '../../utils/charts'
 import { formatToYearMonthDay } from '../../utils/dates'
+import { formatNumberForDisplay } from '../../utils/strings'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -46,6 +40,7 @@ interface LineAreaChartProps {
 
 const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: LineAreaChartProps) => {
   const theme = useTheme()
+
   const options: ApexCharts.ApexOptions = {
     chart: {
       toolbar: {
@@ -129,7 +124,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
               padding: 10px 0px 11px 11px;
               font-weight: 700;
             ">
-              ${formatSeriesNumber(yAxisType, series[seriesIndex][dataPointIndex])}
+              ${formatNumberForDisplay(series[seriesIndex][dataPointIndex]).join('')}
             </div>
           </div>
         </div>`
