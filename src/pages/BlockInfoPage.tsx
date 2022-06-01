@@ -48,7 +48,7 @@ interface ParamTypes {
   id: string
 }
 
-const BlockInfoSection = () => {
+const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
   const history = useHistory()
@@ -325,4 +325,4 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   }
 ]
 
-export default BlockInfoSection
+export default BlockInfoPage

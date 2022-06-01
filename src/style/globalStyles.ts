@@ -15,8 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, css } from 'styled-components'
 import normalize from 'styled-normalize'
+import tinycolor from 'tinycolor2'
 
 // Breakpoints
 
@@ -50,6 +51,8 @@ const GlobalStyle = createGlobalStyle`
   body {
     background-color: ${({ theme }) => theme.body};
     transition: background-color 0.2s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
 
     color: ${({ theme }) => theme.textPrimary};
     margin: 0;
@@ -67,6 +70,8 @@ const GlobalStyle = createGlobalStyle`
   // Titles
   h2 {
     font-weight: 600;
+    font-size: 1.6rem;
+    margin-bottom: 15px;
   }
 
   // Animations
@@ -96,6 +101,21 @@ const GlobalStyle = createGlobalStyle`
 
   th {
     font-weight: normal;
+  }
+
+  /* Apex charts */
+  .apexcharts-tooltip {
+    box-shadow: ${({ theme }) => theme.shadowPrimary} !important;
+    border-radius: 9px !important;
+  }
+`
+
+export const blurredBackground = (color: string) => css`
+  background-color: ${tinycolor(color).setAlpha(0.96).toString()};
+
+  @supports (backdrop-filter: blur(20px)) {
+    backdrop-filter: blur(20px);
+    background-color: ${tinycolor(color).setAlpha(0.7).toString()};
   }
 `
 

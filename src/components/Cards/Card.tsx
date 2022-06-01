@@ -16,49 +16,58 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
+import { HTMLMotionProps, motion } from 'framer-motion'
 import styled from 'styled-components'
 
-interface Props {
+import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
+import SkeletonLoader from '../SkeletonLoader'
+
+export interface CardProps extends HTMLMotionProps<'div'> {
   label: string
+  isLoading: boolean
   className?: string
 }
 
-const Card: FC<Props> = ({ label, className, children }) => (
-  <Container className={className}>
-    <Label>
-      <LabelText>{label}</LabelText>
-    </Label>
-    <Content>{children}</Content>
-  </Container>
-)
+const Card = ({ label, className, children, isLoading, ...props }: CardProps) =>
+  isLoading ? (
+    <SkeletonLoader heightInPx={150} />
+  ) : (
+    <Container className={className} initial={false} {...props}>
+      <header>
+        <LabelText>{label}</LabelText>
+      </header>
+      <Content>{children}</Content>
+    </Container>
+  )
 
-const Container = styled.div`
-  background-color: ${({ theme }) => theme.bgPrimary};
+const Container = styled(motion.div)`
+  flex: 1;
+  position: relative;
+  ${({ theme }) => blurredBackground(theme.bgPrimary)};
   box-shadow: ${({ theme }) => theme.shadowPrimary};
+  border: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 9px;
   display: flex;
-  width: 100%;
   flex-direction: column;
+  gap: 25%;
+  height: 150px;
+  padding: 20px;
+  overflow: hidden;
+
+  @media ${deviceBreakPoints.mobile} {
+    height: 100px;
+    padding-top: 12px;
+    gap: 10px;
+  }
 `
 
 const LabelText = styled.span`
-  height: 31px;
-  font-family: 'Inter';
   font-style: normal;
   font-weight: 700;
   font-size: 14px;
-  line-height: 17px;
   display: flex;
   align-items: center;
-`
-
-const Label = styled.div`
   color: ${({ theme }) => theme.textSecondary};
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-  border-radius: 9px 9px 0 0;
-  background-color: ${({ theme }) => theme.borderSecondary};
-  padding: 9px 22px 7px 20px;
 `
 
 const Content = styled.div``

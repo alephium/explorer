@@ -17,11 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import { useWindowSize } from '../hooks/useWindowSize'
 import logoDarkSrc from '../images/explorer-logo-dark.svg'
 import logoLightSrc from '../images/explorer-logo-light.svg'
-import { deviceBreakPoints } from '../style/globalStyles'
+import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
 import NetworkSwitch from './NetworkSwitch'
 import SearchBar from './SearchBar'
 
@@ -31,6 +33,8 @@ interface AppHeaderProps {
 
 const AppHeader = ({ className }: AppHeaderProps) => {
   const theme = useTheme()
+  const { pathname } = useLocation()
+  const { width } = useWindowSize()
 
   return (
     <header className={className}>
@@ -39,7 +43,7 @@ const AppHeader = ({ className }: AppHeaderProps) => {
           <Logo alt="alephium" src={theme.name === 'light' ? logoLightSrc : logoDarkSrc} />
         </StyledLogoLink>
       </HeaderSideContainer>
-      <StyledSearchBar />
+      {(pathname !== '/' || (width && width <= deviceSizes.mobile)) && <StyledSearchBar />}
       <HeaderSideContainer justifyContent="flex-end" hideOnMobile>
         <NetworkSwitch direction="down" />
       </HeaderSideContainer>
@@ -48,6 +52,7 @@ const AppHeader = ({ className }: AppHeaderProps) => {
 }
 
 export default styled(AppHeader)`
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

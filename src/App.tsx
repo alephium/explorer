@@ -18,24 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useCallback, useRef } from 'react'
-import { Redirect, Route } from 'react-router-dom'
+import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
+import { Route } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
 import { useGlobalContext } from './contexts/global'
-import AddressInfoSection from './sections/AddressInfoSection'
-import AddressesSection from './sections/AdressesSection'
-import BlockInfoSection from './sections/BlockInfoSection'
-import BlockSection from './sections/BlockSection'
-import TransactionInfoSection from './sections/TransactionInfoSection'
-import TransactionsSection from './sections/TransactionsSection'
+import AddressInfoSection from './pages/AddressInfoPage'
+import BlockInfoSection from './pages/BlockInfoPage'
+import HomeSection from './pages/HomePage/HomePage'
+import TransactionInfoSection from './pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
 import { darkTheme, lightTheme } from './style/themes'
 import { SnackbarMessage } from './types/ui'
-import { ScrollToTop } from './utils/routing'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -60,44 +56,32 @@ dayjs.updateLocale('en', {
 
 const App = () => {
   const { snackbarMessage, currentTheme } = useGlobalContext()
-  const contentRef = useRef(null)
-
-  const getContentRef = useCallback(() => contentRef.current, [])
 
   return (
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
       <MainContainer>
-        <AppHeader />
-        <ContentContainer>
-          <ContentWrapper ref={contentRef}>
-            <ScrollToTop getScrollContainer={getContentRef} />
-
-            <Content>
-              <Route exact path="/">
-                <Redirect to="/blocks" />
-              </Route>
-              <Route exact path="/blocks">
-                <BlockSection />
-              </Route>
-              <Route path="/blocks/:id">
-                <BlockInfoSection />
-              </Route>
-              <Route exact path="/addresses">
-                <AddressesSection />
-              </Route>
-              <Route path="/addresses/:id">
-                <AddressInfoSection />
-              </Route>
-              <Route exact path="/transactions">
-                <TransactionsSection />
-              </Route>
-              <Route path="/transactions/:id">
-                <TransactionInfoSection />
-              </Route>
-            </Content>
-          </ContentWrapper>
-        </ContentContainer>
+        <AnimateSharedLayout type="crossfade">
+          <AppHeader />
+          <ContentContainer>
+            <ContentWrapper>
+              <Content>
+                <Route exact path="/">
+                  <HomeSection />
+                </Route>
+                <Route path="/blocks/:id">
+                  <BlockInfoSection />
+                </Route>
+                <Route path="/addresses/:id">
+                  <AddressInfoSection />
+                </Route>
+                <Route path="/transactions/:id">
+                  <TransactionInfoSection />
+                </Route>
+              </Content>
+            </ContentWrapper>
+          </ContentContainer>
+        </AnimateSharedLayout>
         <AppFooter />
         <SnackbarManager message={snackbarMessage} />
       </MainContainer>

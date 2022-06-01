@@ -15,30 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { useEffect, useState } from 'react'
 
-import { useEffect, useRef, useState } from 'react'
-
-export function useInterval(callback: () => void, delay: number, shouldPause = false) {
-  const savedCallback = useRef<() => void>(() => null)
-
-  // Remember the latest callback.
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  // Set up the interval.
-  useEffect(() => {
-    function tick() {
-      savedCallback.current()
-    }
-    if (delay !== null && !shouldPause) {
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay, shouldPause])
-}
-
-export function useStateWithLocalStorage<T extends string>(localStorageKey: string, defaultValue: T) {
+const useStateWithLocalStorage = <T extends string>(localStorageKey: string, defaultValue: T) => {
   const [value, setValue] = useState(localStorage.getItem(localStorageKey) || defaultValue)
 
   useEffect(() => {
@@ -47,3 +26,5 @@ export function useStateWithLocalStorage<T extends string>(localStorageKey: stri
 
   return [value as T, setValue] as const
 }
+
+export default useStateWithLocalStorage

@@ -64,10 +64,10 @@ export default styled(TableHeader)`
         box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
         padding: 12px;
       `}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.borderSecondary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
   }
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '48px')};
+    height: ${({ compact }) => (compact ? '30px' : '45px')};
   }
 `

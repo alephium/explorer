@@ -23,6 +23,7 @@ import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
+import { deviceBreakPoints } from '../style/globalStyles'
 import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
 
 interface SearchBarProps {
@@ -94,7 +95,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
   }
 
   return (
-    <div className={className}>
+    <motion.div className={className} layoutId="searchBar">
       <SearchInput
         ref={inputRef}
         onBlur={handleRemoveFocus}
@@ -106,7 +107,8 @@ const SearchBar = ({ className }: SearchBarProps) => {
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
-    </div>
+      <SearchBackdropGradient />
+    </motion.div>
   )
 }
 
@@ -129,26 +131,41 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border-radius: 7px;
+  border: 2px solid ${({ theme }) => theme.borderPrimary};
+  border-radius: 9px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => theme.bgTertiary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
-  box-shadow: inset ${({ theme }) => theme.shadowPrimary};
-  transition: all 0.15s ease-out;
+  background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 10;
 
   &:hover {
-    border: 1px solid ${({ theme }) => theme.borderHighlight};
+    box-shadow: inset 0px 0px 2px ${({ theme }) => theme.borderHighlight};
   }
 
   &:focus,
   &:active {
-    box-shadow: ${({ theme }) => theme.shadowTertiary};
+    box-shadow: ${({ theme }) => theme.shadowTertiary}, inset;
     background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
       ${({ theme }) => theme.accentGradient};
-    border: 1px solid transparent;
+    border: 2px solid transparent;
     z-index: 10;
+  }
+`
+
+const SearchBackdropGradient = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(#169ff4 25%, #f46016 40%, #6510f8 60%);
+  transform: scaleY(5) scaleX(2);
+  filter: blur(10px) opacity(0.15);
+  z-index: -1;
+  border-radius: 100%;
+
+  @media ${deviceBreakPoints.mobile} {
+    display: none;
   }
 `
 

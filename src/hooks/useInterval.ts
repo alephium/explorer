@@ -16,23 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
+import { useEffect, useRef } from 'react'
 
-import ComingSoon from '../components/ComingSoon'
-import Section from '../components/Section'
+const useInterval = (callback: () => void, delay: number, shouldPause = false) => {
+  const savedCallback = useRef<() => void>(() => null)
 
-const AddressesSection = () => {
-  return (
-    <StyledSection>
-      <ComingSoon text="Coming soon." />
-    </StyledSection>
-  )
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+    if (delay !== null && !shouldPause) {
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay, shouldPause])
 }
 
-const StyledSection = styled(Section)`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-`
-
-export default AddressesSection
+export default useInterval

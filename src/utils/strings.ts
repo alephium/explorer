@@ -50,7 +50,7 @@ export const formatNumberForDisplay = (
   const preciseNumber = (Math.round((formatedNumber + Number.EPSILON) * denominator) / denominator).toString()
   const numberParts = preciseNumber.split('.')
   const numberInteger = numberParts[0]
-  const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || undefined
+  const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || '.0'
 
   return [numberInteger, numberDecimal, suffixes[suffixIndex]]
 }

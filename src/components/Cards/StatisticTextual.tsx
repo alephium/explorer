@@ -19,27 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import SkeletonLoader from './SkeletonLoader'
-
 interface Props {
   primary: ReactNode
   secondary: ReactNode
-  isLoading: boolean
 }
 
-const StatisticTextual = ({ primary, secondary, isLoading }: Props) =>
-  isLoading ? (
-    <SkeletonLoaderStyled heightInPx={136} />
-  ) : (
-    <Container>
-      <Primary>{primary}</Primary>
-      <Secondary>{secondary}</Secondary>
-    </Container>
-  )
-
-const SkeletonLoaderStyled = styled(SkeletonLoader)`
-  padding: 20px 20px 34px;
-`
+const StatisticTextual = ({ primary, secondary }: Props) => (
+  <Container>
+    <Primary>{primary}</Primary>
+    <Secondary>{secondary}</Secondary>
+  </Container>
+)
 
 const Container = styled.div``
 
@@ -47,12 +37,11 @@ const Primary = styled.div`
   color: ${({ theme }) => theme.textPrimary};
   font-size: 23px;
   font-weight: 500;
-  padding: 20px 6px 0px 20px;
+  margin-bottom: 5px;
 `
 
 const Secondary = styled.div`
   color: ${({ theme }) => theme.textSecondary};
-  padding: 0 6px 0px 20px;
 `
 
 export default StatisticTextual

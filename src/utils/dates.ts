@@ -16,23 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
-
-import ComingSoon from '../components/ComingSoon'
-import Section from '../components/Section'
-
-const TransactionsSection = () => {
-  return (
-    <StyledSection>
-      <ComingSoon text="Coming soon." />
-    </StyledSection>
-  )
+export const formatToDay = (dt: Date): string => {
+  const day = dt.getDate().toString().padStart(2, '0')
+  return day
 }
 
-const StyledSection = styled(Section)`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-`
-
-export default TransactionsSection
+export const formatToDayMonthYear = (dt: Date): string => {
+  const day = dt.getDate().toString().padStart(2, '0')
+  const month = (dt.getMonth() + 1).toString().padStart(2, '0')
+  const year = dt.getFullYear()
+  return `${day}/${month}/${year}`
+}
