@@ -268,7 +268,7 @@ const StatisticsContainer = styled.div`
   }
 
   @media ${deviceBreakPoints.mobile} {
-    gap: 20px;
+    gap: 15px;
   }
 `
 
