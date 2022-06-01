@@ -24,7 +24,7 @@ export interface NakedChartProps {
 }
 
 const NakedChart = ({ series, colors }: NakedChartProps) => (
-  <Chart options={getChartOptions(colors)} series={[{ data: series }]} type="area" height="100%" width="100%" />
+  <Chart options={getChartOptions(colors)} series={[{ data: series }]} type="area" height="100%" />
 )
 
 const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
@@ -35,6 +35,9 @@ const getChartOptions = (colors: [string, string]): ApexCharts.ApexOptions => ({
     },
     zoom: {
       enabled: false
+    },
+    sparkline: {
+      enabled: true
     }
   },
   xaxis: {
