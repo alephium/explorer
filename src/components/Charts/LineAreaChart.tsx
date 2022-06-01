@@ -89,7 +89,8 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
         },
         offsetY: -8,
         offsetX: getOffsetXYAxisLabel(series, yAxisType),
-        formatter: formatYAxis(yAxisType)
+        formatter: formatYAxis(yAxisType),
+        align: 'right'
       }
     },
     grid: {
@@ -124,7 +125,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
               padding: 10px 0px 11px 11px;
               font-weight: 700;
             ">
-              ${formatNumberForDisplay(series[seriesIndex][dataPointIndex]).join('')}
+              ${formatYAxis(yAxisType)(series[seriesIndex][dataPointIndex])}
             </div>
           </div>
         </div>`

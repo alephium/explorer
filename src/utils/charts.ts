@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { maxBy } from 'lodash'
+
 import { formatToDay } from './dates'
 import { formatNumberForDisplay } from './strings'
 
@@ -26,10 +28,8 @@ export const formatYAxis =
   (type: YAxisType) =>
   (value: number): string => {
     if (type === 'tx') {
-      const formattedParts = formatNumberForDisplay(value, 'quantity')
-      const integer = formattedParts[0]
-      const suffix = formattedParts[2]
-      return (integer && integer + suffix) || ''
+      const formattedParts = formatNumberForDisplay(value, 'quantity', 1)
+      return formattedParts.join('') || ''
     }
     return value.toString()
   }
@@ -55,7 +55,6 @@ export const formatSeriesNumber = (type: YAxisType, value: number): string => {
 }
 
 export const getOffsetXYAxisLabel = (series: number[], type: YAxisType, fontSizeInPx = 12): number => {
-  const largestNumber = series.reduce((l, c) => Math.max(l, c), 0)
-  const formatted = formatYAxis(type)(largestNumber)
-  return formatted.length * fontSizeInPx
+  const longestValue = maxBy(series, (v) => formatYAxis(type)(v).length)
+  return (formatYAxis(type)(longestValue || series[0]).length - 1) * fontSizeInPx
 }
