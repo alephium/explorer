@@ -42,27 +42,25 @@ const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullSc
     }
   }, [onClose])
 
-  const getAnimationConfig = () => {
-    return isMobile()
-      ? {
-          initial: {
-            opacity: 0
-          },
-          animate: {
-            opacity: 1
-          },
-          exit: {
-            opacity: 0
-          }
+  const animationConfig = isMobile()
+    ? {
+        initial: {
+          opacity: 0
+        },
+        animate: {
+          opacity: 1
+        },
+        exit: {
+          opacity: 0
         }
-      : {
-          layoutId
-        }
-  }
+      }
+    : {
+        layoutId
+      }
 
   return (
     <Container>
-      <CardContent {...props} {...getAnimationConfig()}>
+      <CardContent {...props} {...animationConfig}>
         <Header>
           <LabelText>{label}</LabelText>
           <CloseButton onClick={onClose} />
@@ -97,6 +95,7 @@ const CardContent = styled(motion.div)`
   border-radius: 9px;
   overflow: hidden;
   box-shadow: ${({ theme }) => theme.shadowPrimary};
+  margin: 0 2vw;
 
   @media (max-aspect-ratio: 2/3) {
     height: 60%;

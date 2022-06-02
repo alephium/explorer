@@ -22,16 +22,19 @@ import tinycolor from 'tinycolor2'
 // Breakpoints
 
 export const deviceSizes = {
+  tiny: 370,
   mobile: 800,
   tablet: 1000,
   desktop: 1600
 }
 
-export const deviceBreakPoints = {
-  mobile: `(max-width: ${deviceSizes.mobile}px)`,
-  tablet: `(max-width: ${deviceSizes.tablet}px)`,
-  desktop: `(max-width: ${deviceSizes.desktop}px)`
-}
+export const deviceBreakPoints = Object.entries(deviceSizes).reduce<{ [Key in keyof typeof deviceSizes]?: number }>(
+  (a, s) => ({
+    ...a,
+    [s[0]]: `(max-width: ${s[1]}px)`
+  }),
+  {}
+)
 
 const GlobalStyle = createGlobalStyle`
   ${normalize}

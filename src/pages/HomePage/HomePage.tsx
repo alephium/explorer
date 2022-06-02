@@ -270,6 +270,11 @@ const StatisticsContainer = styled.div`
   @media ${deviceBreakPoints.mobile} {
     gap: 15px;
   }
+
+  @media ${deviceBreakPoints.tiny} {
+    display: flex;
+    flex-direction: column;
+  }
 `
 
 const TextPrimary = styled.span`

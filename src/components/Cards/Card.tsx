@@ -56,6 +56,7 @@ const Container = styled(motion.div)`
 
   @media ${deviceBreakPoints.mobile} {
     height: 100px;
+    min-height: 100px;
     padding-top: 12px;
     gap: 10px;
   }
