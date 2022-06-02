@@ -52,6 +52,13 @@ const CardChartContainer = styled.div`
   opacity: 0.4;
   z-index: 0;
   height: 50%;
+
+  // Safari only hack, forces chart to be rendered on the bottom
+  @media not all and (min-resolution: 0.001dpcm) {
+    @supports (-webkit-appearance: none) {
+      bottom: 0;
+    }
+  }
 `
 
 const SeeMoreLink = styled.a`
