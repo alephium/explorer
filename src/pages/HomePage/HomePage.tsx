@@ -248,7 +248,7 @@ const MainContent = styled.div`
 `
 
 const Search = styled.div`
-  margin: 0 auto 7vh auto;
+  margin: -35px auto 7vh auto;
   width: 60%;
 `
 
