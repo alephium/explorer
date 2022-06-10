@@ -119,7 +119,8 @@ const MainContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 `
 
 const Background = styled.div`
