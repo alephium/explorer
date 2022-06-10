@@ -52,12 +52,12 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: ${({ theme }) => theme.body};
     transition: background-color 0.2s ease;
     overflow-y: auto;
     overflow-x: hidden;
-
+    
     color: ${({ theme }) => theme.textPrimary};
+    background-color: ${({ theme }) => theme.body};
     margin: 0;
   }
 

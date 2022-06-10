@@ -85,6 +85,7 @@ const App = () => {
         <AppFooter />
         <SnackbarManager message={snackbarMessage} />
       </MainContainer>
+      <Background />
     </ThemeProvider>
   )
 }
@@ -118,6 +119,17 @@ const MainContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
+  overflow: auto;
+`
+
+const Background = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -2;
+  background-color: ${({ theme }) => theme.body};
 `
 
 const ContentContainer = styled.div`
