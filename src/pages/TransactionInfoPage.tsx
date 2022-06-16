@@ -86,10 +86,10 @@ const TransactionInfoPage = () => {
         setTxInfoStatus(status)
         setTxInfoError(error.detail || error.message || 'Unknown error')
       }
-      setLoading(false)
     }
 
     fetchTransactionInfo()
+    setLoading(false)
   }, [client, id])
 
   // Initial fetch
@@ -115,138 +115,131 @@ const TransactionInfoPage = () => {
   return (
     <Section>
       <SectionTitle title="Transaction" />
-      {!loading ? (
-        <>
-          {txInfo && txInfoStatus === 200 && txInfo ? (
-            <Table bodyOnly>
-              <TableBody>
+      {!txInfoError ? (
+        <Table bodyOnly isLoading={loading} minHeight={450}>
+          {txInfo && (
+            <TableBody>
+              <TableRow>
+                <td>Hash</td>
+                <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
+              </TableRow>
+              <TableRow>
+                <td>Status</td>
+                {isTxConfirmed(txInfo) ? (
+                  <td>
+                    <Badge
+                      type="plus"
+                      content={
+                        <span>
+                          <Check style={{ marginRight: 5 }} size={15} />
+                          Success
+                        </span>
+                      }
+                      inline
+                    />
+                  </td>
+                ) : (
+                  <td>
+                    <Badge
+                      type="neutral"
+                      content={
+                        <>
+                          <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                          <span>Pending</span>
+                        </>
+                      }
+                    />
+                  </td>
+                )}
+              </TableRow>
+              {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
                 <TableRow>
-                  <td>Hash</td>
-                  <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
-                </TableRow>
-                <TableRow>
-                  <td>Status</td>
-                  {isTxConfirmed(txInfo) ? (
-                    <td>
+                  <td>Block</td>
+                  <td>
+                    <SimpleLink
+                      to={`../blocks/${txInfo.blockHash || ''}`}
+                      data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                    >
+                      {txBlock?.height.toString()}
+                    </SimpleLink>
+                    <span data-tip="Number of blocks mined since" style={{ marginLeft: 10 }}>
                       <Badge
-                        type="plus"
+                        type="neutral"
                         content={
                           <span>
-                            <Check style={{ marginRight: 5 }} size={15} />
-                            Success
+                            {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
                           </span>
                         }
                         inline
                       />
-                    </td>
-                  ) : (
-                    <td>
-                      <Badge
-                        type="neutral"
-                        content={
-                          <>
-                            <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                            <span>Pending</span>
-                          </>
-                        }
-                      />
-                    </td>
-                  )}
+                    </span>
+                  </td>
                 </TableRow>
-                {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
-                  <TableRow>
-                    <td>Block</td>
-                    <td>
-                      <SimpleLink
-                        to={`../blocks/${txInfo.blockHash || ''}`}
-                        data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
-                      >
-                        {txBlock?.height.toString()}
-                      </SimpleLink>
-                      <span data-tip="Number of blocks mined since" style={{ marginLeft: 10 }}>
-                        <Badge
-                          type="neutral"
-                          content={
-                            <span>
-                              {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
-                            </span>
-                          }
-                          inline
-                        />
-                      </span>
-                    </td>
-                  </TableRow>
-                )}
-                {isTxConfirmed(txInfo) && txInfo.timestamp && (
-                  <TableRow>
-                    <td>Timestamp</td>
-                    <td>
-                      <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
-                    </td>
-                  </TableRow>
-                )}
-                {isTxConfirmed(txInfo) && (
-                  <TableRow>
-                    <td>Inputs</td>
-                    <td>
-                      {txInfo.inputs && txInfo.inputs.length > 0
-                        ? txInfo.inputs.map((v, i) => (
-                            <AddressLink
-                              address={v.address}
-                              txHashRef={v.txHashRef}
-                              key={i}
-                              amount={BigInt(v.amount)}
-                            />
-                          ))
-                        : 'Block Rewards'}
-                    </td>
-                  </TableRow>
-                )}
+              )}
+              {isTxConfirmed(txInfo) && txInfo.timestamp && (
+                <TableRow>
+                  <td>Timestamp</td>
+                  <td>
+                    <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
+                  </td>
+                </TableRow>
+              )}
+              {isTxConfirmed(txInfo) && (
+                <TableRow>
+                  <td>Inputs</td>
+                  <td>
+                    {txInfo.inputs && txInfo.inputs.length > 0
+                      ? txInfo.inputs.map((v, i) => (
+                          <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
+                        ))
+                      : 'Block Rewards'}
+                  </td>
+                </TableRow>
+              )}
+              {isTxConfirmed(txInfo) && (
                 <TableRow>
                   <td>Outputs</td>
                   <td>
-                    {isTxConfirmed(txInfo) &&
-                      txInfo.outputs &&
-                      txInfo.outputs.map((v, i) => (
-                        <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
-                      ))}
+                    {txInfo.outputs
+                      ? txInfo.outputs.map((v, i) => (
+                          <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
+                        ))
+                      : '-'}
                   </td>
                 </TableRow>
-                <TableRow>
-                  <td>Gas Amount</td>
-                  <td>{txInfo.gasAmount || '-'} GAS</td>
-                </TableRow>
-                <TableRow>
-                  <td>Gas Price</td>
-                  <td>
-                    <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
-                  </td>
-                </TableRow>
-                <TableRow>
-                  <td>Transaction Fee</td>
-                  <td>
-                    <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
-                  </td>
-                </TableRow>
-                <TableRow>
-                  <td>
-                    <b>Total Value</b>
-                  </td>
-                  <td>
-                    <Badge
-                      type="neutralHighlight"
-                      amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
-                    />
-                  </td>
-                </TableRow>
-              </TableBody>
-            </Table>
-          ) : (
-            <InlineErrorMessage message={txInfoError} code={txInfoStatus} />
+              )}
+              <TableRow>
+                <td>Gas Amount</td>
+                <td>{txInfo.gasAmount || '-'} GAS</td>
+              </TableRow>
+              <TableRow>
+                <td>Gas Price</td>
+                <td>
+                  <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
+                </td>
+              </TableRow>
+              <TableRow>
+                <td>Transaction Fee</td>
+                <td>
+                  <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
+                </td>
+              </TableRow>
+              <TableRow>
+                <td>
+                  <b>Total Value</b>
+                </td>
+                <td>
+                  <Badge
+                    type="neutralHighlight"
+                    amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
+                  />
+                </td>
+              </TableRow>
+            </TableBody>
           )}
-        </>
+        </Table>
       ) : (
-        <LoadingSpinner />
+        <InlineErrorMessage message={txInfoError} code={txInfoStatus} />
       )}
     </Section>
   )
