@@ -19,12 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
 import AppHeader from './components/AppHeader'
 import { useGlobalContext } from './contexts/global'
+import PageNotFound from './pages/404'
 import AddressInfoSection from './pages/AddressInfoPage'
 import BlockInfoSection from './pages/BlockInfoPage'
 import HomeSection from './pages/HomePage/HomePage'
@@ -66,18 +67,23 @@ const App = () => {
           <ContentContainer>
             <ContentWrapper>
               <Content>
-                <Route exact path="/">
-                  <HomeSection />
-                </Route>
-                <Route path="/blocks/:id">
-                  <BlockInfoSection />
-                </Route>
-                <Route path="/addresses/:id">
-                  <AddressInfoSection />
-                </Route>
-                <Route path="/transactions/:id">
-                  <TransactionInfoSection />
-                </Route>
+                <Switch>
+                  <Route exact path="/">
+                    <HomeSection />
+                  </Route>
+                  <Route path="/blocks/:id">
+                    <BlockInfoSection />
+                  </Route>
+                  <Route path="/addresses/:id">
+                    <AddressInfoSection />
+                  </Route>
+                  <Route path="/transactions/:id">
+                    <TransactionInfoSection />
+                  </Route>
+                  <Route path="*">
+                    <PageNotFound />
+                  </Route>
+                </Switch>
               </Content>
             </ContentWrapper>
           </ContentContainer>
