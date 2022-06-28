@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, useHistory } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
@@ -57,6 +57,10 @@ dayjs.updateLocale('en', {
 
 const App = () => {
   const { snackbarMessage, currentTheme } = useGlobalContext()
+  const history = useHistory()
+
+  // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
+  if (location.hash.startsWith('#/')) history.push(location.hash.replace('#', ''))
 
   return (
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
