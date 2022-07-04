@@ -32,15 +32,23 @@ const Waves = () => {
   const { width } = useWindowSize()
 
   let t = 0
+  let f = 0
 
   useAnimationFrame((deltaTime) => {
-    t = t + (deltaTime * 6) / 100000
+    t = t + deltaTime / 1000.0
+    f += 1
+
+    // 60 fps / 8 ~= 8fps
+    // Given the speed of the animation this is sufficient to look smooth
+    if (f != 8) return
+    f = 0
+
     const { innerWidth } = window
 
     if (canvasContextRef.current) {
       canvasContextRef.current.clearRect(0, 0, innerWidth, staticHeight)
       Object.entries(waves).forEach((w) => {
-        w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t)
+        w[1].draw(canvasContextRef.current as CanvasRenderingContext2D, innerWidth, staticHeight, t / 20.0)
       })
     } else {
       let ctx

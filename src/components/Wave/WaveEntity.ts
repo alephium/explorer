@@ -36,8 +36,11 @@ class WaveEntity {
       return
     }
 
-    // TODO: Don't draw a line for each pixel of the curve (optimization)
-    for (let i = 0; i < width; i++) {
+    const standardPpi = 96
+    const pointsPerInch = 15
+    const pointSpacing = standardPpi / pointsPerInch
+
+    for (let i = 0; i < width; i += pointSpacing) {
       const wave1 = Math.sin(i * this.waveLength[0] - frequency)
       const wave2 = Math.sin(i * this.waveLength[1] - frequency)
       const wave3 = Math.sin(i * this.waveLength[2] - frequency)

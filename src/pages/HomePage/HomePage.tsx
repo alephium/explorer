@@ -21,7 +21,6 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { usePageVisibility } from 'react-page-visibility'
 import { useHistory } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
@@ -40,7 +39,6 @@ import TableHeader from '../../components/Table/TableHeader'
 import TableRow from '../../components/Table/TableRow'
 import Timestamp from '../../components/Timestamp'
 import Waves from '../../components/Wave/Waves'
-import useInterval from '../../hooks/useInterval'
 import usePageNumber from '../../hooks/usePageNumber'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import { deviceBreakPoints, deviceSizes } from '../../style/globalStyles'
@@ -55,18 +53,15 @@ type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['v
 const HomePage = () => {
   const history = useHistory()
   const { width } = useWindowSize()
-  const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
   const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
 
   const {
-    getBlocks,
     blockPageLoading,
     data: { blockList }
   } = useBlockListData(currentPageNumber)
 
   const {
-    fetchStatistics,
     data: {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
       vector
@@ -76,17 +71,17 @@ const HomePage = () => {
   const vectorData = vector
 
   // Polling
-  useInterval(
-    () => {
-      fetchStatistics()
+  // useInterval(
+  //   () => {
+  //     fetchStatistics()
 
-      if (currentPageNumber === 1) {
-        getBlocks(currentPageNumber, false)
-      }
-    },
-    10 * 1000,
-    !isAppVisible
-  )
+  //     if (currentPageNumber === 1) {
+  //       getBlocks(currentPageNumber, false)
+  //     }
+  //   },
+  //   10 * 1000,
+  //   !isAppVisible
+  // )
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
 
