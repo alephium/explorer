@@ -17,21 +17,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import useQueryParams from './useQueryParams'
 
 const usePageNumber = () => {
   const pageParam = useQueryParams('p')
   const pageNumber = pageParam && parseInt(pageParam)
-  const history = useHistory()
-  const location = history.location
+  const location = useLocation()
+  const navigate = useNavigate()
 
   const locationSearch = useMemo(() => new URLSearchParams(location.search), [location.search])
 
   if (pageNumber === 1) {
     locationSearch.delete('p')
-    history.replace({ search: locationSearch.toString() })
+    navigate({ search: locationSearch.toString() })
   }
 
   return pageNumber || 1

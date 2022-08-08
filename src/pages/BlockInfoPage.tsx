@@ -21,7 +21,7 @@ import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import Amount from '../components/Amount'
@@ -44,14 +44,14 @@ import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
 
-interface ParamTypes {
+type ParamTypes = {
   id: string
 }
 
 const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client } = useGlobalContext()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const [blockInfo, setBlockInfo] = useState<BlockEntryLite>()
   const [blockInfoError, setBlockInfoError] = useState('')
@@ -67,7 +67,7 @@ const BlockInfoPage = () => {
   // Block info
   useEffect(() => {
     const fetchBlockInfo = async () => {
-      if (!client) return
+      if (!client || !id) return
       setInfoLoading(true)
       try {
         const { data, status } = await client.blocks.getBlocksBlockHash(id)
@@ -88,7 +88,7 @@ const BlockInfoPage = () => {
   // Block transactions
   useEffect(() => {
     const fetchTransactions = async () => {
-      if (!client) return
+      if (!client || !id) return
       setTxLoading(true)
       try {
         const { data, status } = await client.blocks.getBlocksBlockHashTransactions(id, {
@@ -109,19 +109,19 @@ const BlockInfoPage = () => {
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
-    if (!client || !blockInfoError) return
+    if (!client || !blockInfoError || !id) return
 
     const redirectToTransactionIfExists = async () => {
       try {
         const { data } = await client.transactions.getTransactionsTransactionHash(id)
-        if (data) history.push(`/transactions/${id}`)
+        if (data) navigate(`/transactions/${id}`)
       } catch (error) {
         console.error(error)
       }
     }
 
     redirectToTransactionIfExists()
-  }, [blockInfo, id, history, client, blockInfoError])
+  }, [blockInfo, id, client, blockInfoError, navigate])
 
   return !infoLoading && (!blockInfo || blockInfoStatus !== 200) ? (
     <InlineErrorMessage message={blockInfoError} code={blockInfoStatus} />

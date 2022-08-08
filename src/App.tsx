@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { Route, Switch, useHistory } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from './components/AppFooter'
@@ -57,10 +57,10 @@ dayjs.updateLocale('en', {
 
 const App = () => {
   const { snackbarMessage, currentTheme } = useGlobalContext()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
-  if (location.hash.startsWith('#/')) history.push(location.hash.replace('#', ''))
+  if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
 
   return (
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
@@ -71,23 +71,13 @@ const App = () => {
           <ContentContainer>
             <ContentWrapper>
               <Content>
-                <Switch>
-                  <Route exact path="/">
-                    <HomeSection />
-                  </Route>
-                  <Route path="/blocks/:id">
-                    <BlockInfoSection />
-                  </Route>
-                  <Route path="/addresses/:id">
-                    <AddressInfoSection />
-                  </Route>
-                  <Route path="/transactions/:id">
-                    <TransactionInfoSection />
-                  </Route>
-                  <Route path="*">
-                    <PageNotFound />
-                  </Route>
-                </Switch>
+                <Routes>
+                  <Route path="/" element={<HomeSection />} />
+                  <Route path="/blocks/:id" element={<BlockInfoSection />} />
+                  <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                  <Route path="/transactions/:id" element={<TransactionInfoSection />} />
+                  <Route path="*" element={<PageNotFound />} />
+                </Routes>
               </Content>
             </ContentWrapper>
           </ContentContainer>

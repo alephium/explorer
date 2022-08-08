@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion } from 'framer-motion'
 import { Search } from 'lucide-react'
 import React, { useRef, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '../contexts/global'
@@ -36,7 +36,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
   const { setSnackbarMessage } = useGlobalContext()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const handleInputClick = () => setActive(true)
 
@@ -65,7 +65,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
     handleRemoveFocus()
     cleanSearch()
     inputRef.current?.blur()
-    history.push(to)
+    navigate(to)
   }
 
   const searching = (str: string) => {

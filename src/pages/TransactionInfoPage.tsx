@@ -38,7 +38,7 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import useInterval from '../hooks/useInterval'
 
-interface ParamTypes {
+type ParamTypes = {
   id: string
 }
 
@@ -55,7 +55,7 @@ const TransactionInfoPage = () => {
 
   const getTxInfo = useCallback(async () => {
     const fetchTransactionInfo = async () => {
-      if (!client) return
+      if (!client || !id) return
 
       setLoading(true)
 
