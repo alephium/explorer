@@ -6,6 +6,7 @@
     "node": ">=14",
     "npm": ">=7.24.2"
   },
+  "homepage": "/",
   "dependencies": {
     "@alephium/sdk": "0.0.9",
     "apexcharts": "^3.35.0",
