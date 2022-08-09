@@ -42,7 +42,7 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 
-interface ParamTypes {
+type ParamTypes = {
   id: string
 }
 
@@ -63,7 +63,7 @@ const TransactionInfoPage = () => {
 
   // Address info
   useEffect(() => {
-    if (!client) return
+    if (!client || !id) return
 
     const fetchTxNumber = async () => {
       setTxNumberLoading(true)
@@ -107,7 +107,7 @@ const TransactionInfoPage = () => {
 
   // Address transactions
   useEffect(() => {
-    if (!client) return
+    if (!client || !id) return
 
     const fetchTransactions = async () => {
       setTxLoading(true)
@@ -125,6 +125,8 @@ const TransactionInfoPage = () => {
 
     fetchTransactions()
   }, [client, id, pageNumber])
+
+  if (!id) return null
 
   return (
     <Section>

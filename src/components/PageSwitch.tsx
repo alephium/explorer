@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import useQueryParams from '../hooks/useQueryParams'
@@ -34,8 +34,8 @@ const PageSwitch = ({
   numberOfElementsLoaded?: number
 }) => {
   const currentPage = parseInt(useQueryParams('p') || '1')
-  const history = useHistory()
-  const location = history.location
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const locationSearch = useMemo(() => new URLSearchParams(location.search), [location.search])
 
@@ -46,9 +46,9 @@ const PageSwitch = ({
   const setPageNumber = useCallback(
     (pageNumber: number) => {
       locationSearch.set('p', pageNumber.toString())
-      history.push({ search: locationSearch.toString() })
+      navigate({ search: locationSearch.toString() })
     },
-    [history, locationSearch]
+    [locationSearch, navigate]
   )
 
   const totalNumberOfPages = totalNumberOfElements && Math.ceil(totalNumberOfElements / elementsPerPage)

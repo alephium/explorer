@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import './fonts/index.css'
 
 import ReactDOM from 'react-dom'
-import { HashRouter as Router } from 'react-router-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 
 import NotificationBar from './components/NotificationBar'
 import * as serviceWorker from './serviceWorker'
