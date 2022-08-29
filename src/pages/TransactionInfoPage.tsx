@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { BlockEntryLite, Output, PerChainHeight, Transaction, UOutput } from '@alephium/sdk/api/explorer'
+import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction, UOutput } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -110,7 +110,7 @@ const TransactionInfoPage = () => {
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<Output | UOutput> | undefined = txInfo && txInfo.outputs && txInfo.outputs
+  const outputs: Array<Output | UOutput> | undefined = txInfo?.outputs
 
   return (
     <Section>
@@ -189,9 +189,17 @@ const TransactionInfoPage = () => {
                   <td>Inputs</td>
                   <td>
                     {txInfo.inputs && txInfo.inputs.length > 0
-                      ? txInfo.inputs.map((v, i) => (
-                          <AddressLink address={v.address} txHashRef={v.txHashRef} key={i} amount={BigInt(v.amount)} />
-                        ))
+                      ? txInfo.inputs.map(
+                          (v, i) =>
+                            v.address && (
+                              <AddressLink
+                                address={v.address}
+                                txHashRef={v.outputRef.key}
+                                key={i}
+                                amount={BigInt(v.attoAlphAmount ?? 0)}
+                              />
+                            )
+                        )
                       : 'Block Rewards'}
                   </td>
                 </TableRow>
@@ -202,7 +210,12 @@ const TransactionInfoPage = () => {
                   <td>
                     {txInfo.outputs
                       ? txInfo.outputs.map((v, i) => (
-                          <AddressLink address={v.address} key={i} amount={BigInt(v.amount)} txHashRef={v.spent} />
+                          <AddressLink
+                            address={v.address}
+                            key={i}
+                            amount={BigInt(v.attoAlphAmount)}
+                            txHashRef={v.spent}
+                          />
                         ))
                       : '-'}
                   </td>
@@ -231,7 +244,10 @@ const TransactionInfoPage = () => {
                 <td>
                   <Badge
                     type="neutralHighlight"
-                    amount={outputs && outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
+                    amount={outputs?.reduce<bigint>(
+                      (acc, o) => acc + BigInt((o as UOutput).amount ?? (o as AssetOutput).attoAlphAmount),
+                      BigInt(0)
+                    )}
                   />
                 </td>
               </TableRow>

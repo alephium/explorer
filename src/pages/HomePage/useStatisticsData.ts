@@ -142,7 +142,7 @@ const useStatisticsData = () => {
           data.reduce(
             (acc, { timestamp, hashrate }) => {
               acc.categories.push(timestamp)
-              acc.series.push(parseInt(hashrate))
+              acc.series.push(hashrate)
               return acc
             },
             {

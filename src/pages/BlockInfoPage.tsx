@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
+import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
@@ -206,8 +206,9 @@ interface TransactionRowProps {
 
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
+  const outputs = t.outputs as AssetOutput[]
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
-  const containsLockedOutputs = t.outputs && t.outputs.some((o) => o.lockTime && dayjs(o.lockTime).isAfter(dayjs()))
+  const containsLockedOutputs = outputs?.some((o) => o.lockTime && dayjs(o.lockTime).isAfter(dayjs()))
 
   return (
     <>
@@ -225,12 +226,12 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           <ArrowRight size={15} />
         </td>
         <td>
-          {t.outputs ? t.outputs.length : 0} {t.outputs && t.outputs.length === 1 ? 'address' : 'addresses'}
+          {outputs ? outputs.length : 0} {outputs?.length === 1 ? 'address' : 'addresses'}
         </td>
         <td>
           <Badge
             type="neutralHighlight"
-            amount={t.outputs && t.outputs.reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))}
+            amount={outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))}
             floatRight
           />
         </td>
@@ -241,22 +242,26 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <td />
         <AnimatedCell>
           {t.inputs &&
-            t.inputs.map((input, i) => (
-              <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
-            ))}
+            t.inputs.map(
+              (input, i) =>
+                input.address && (
+                  <AddressLink key={i} address={input.address} txHashRef={input.outputRef.key} maxWidth="180px" />
+                )
+            )}
         </AnimatedCell>
         <td />
         <AnimatedCell>
-          {t.outputs && t.outputs.map((o, i) => <AddressLink address={o.address} key={i} maxWidth="180px" />)}
+          {outputs?.map((o, i) => (
+            <AddressLink address={o.address} key={i} maxWidth="180px" />
+          ))}
         </AnimatedCell>
         <AnimatedCell alignItems="right">
-          {t.outputs &&
-            t.outputs.map((o, i) => (
-              <OutputAmount key={o.key} hasRightPadding={containsLockedOutputs}>
-                <Amount value={BigInt(o.amount)} key={i} />
-                {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeIconStyled timestamp={o.lockTime} />}
-              </OutputAmount>
-            ))}
+          {outputs?.map((o, i) => (
+            <OutputAmount key={o.key} hasRightPadding={containsLockedOutputs}>
+              <Amount value={BigInt(o.attoAlphAmount)} key={i} />
+              {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeIconStyled timestamp={o.lockTime} />}
+            </OutputAmount>
+          ))}
         </AnimatedCell>
         <td />
       </TableDetailsRow>
