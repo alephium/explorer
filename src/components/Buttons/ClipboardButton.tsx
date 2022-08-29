@@ -64,6 +64,8 @@ const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   }
 }
 
+export default ClipboardButton
+
 const StyledClipboardIcon = styled(Clipboard)`
   margin-left: 10px;
   cursor: pointer;
@@ -74,5 +76,3 @@ const StyledCheckIcon = styled(Check)`
   margin-left: 10px;
   color: ${({ theme }) => theme.textPrimary};
 `
-
-export default ClipboardButton

@@ -39,6 +39,8 @@ const CardWithChart = ({ chartSeries, chartColors, children, ...props }: CardWit
   </StyledClickableCard>
 )
 
+export default CardWithChart
+
 const Content = styled.div`
   position: absolute;
   z-index: 1;
@@ -89,5 +91,3 @@ const StyledClickableCard = styled(Card)`
     }
   }
 `
-
-export default CardWithChart

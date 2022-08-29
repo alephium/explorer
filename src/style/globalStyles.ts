@@ -36,7 +36,7 @@ export const deviceBreakPoints = Object.entries(deviceSizes).reduce<{ [Key in ke
   {}
 )
 
-const GlobalStyle = createGlobalStyle`
+export default createGlobalStyle`
   ${normalize}
 
   * {
@@ -121,5 +121,3 @@ export const blurredBackground = (color: string) => css`
     background-color: ${tinycolor(color).setAlpha(0.7).toString()};
   }
 `
-
-export default GlobalStyle

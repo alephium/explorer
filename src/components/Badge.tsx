@@ -25,15 +25,15 @@ type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 interface BadgeProps {
   type: BadgeType
   content?: JSX.Element | string | undefined
-  className?: string
   amount?: string | bigint | undefined
   prefix?: string
   inline?: boolean
   floatRight?: boolean
   minWidth?: number
+  className?: string
 }
 
-let Badge = ({ content, className, amount, prefix }: BadgeProps) => (
+const Badge = ({ content, className, amount, prefix }: BadgeProps) => (
   <div className={className}>
     {prefix && <span>{prefix}</span>}
     {amount ? <Amount value={BigInt(amount)} /> : content}
@@ -67,7 +67,7 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
   return { backgroundColor, color, borderColor }
 }
 
-Badge = styled(Badge)`
+export default styled(Badge)`
   ${({ type, inline = false, floatRight = false, minWidth, theme }) => {
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
@@ -87,5 +87,3 @@ Badge = styled(Badge)`
   font-weight: 600;
   white-space: nowrap;
 `
-
-export default Badge

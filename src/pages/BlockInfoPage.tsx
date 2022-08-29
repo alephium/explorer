@@ -264,6 +264,8 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   )
 }
 
+export default BlockInfoPage
+
 // TODO: make expandlable elements generic (in Table.tsx)
 
 const TransactionIcon = styled.div`
@@ -324,5 +326,3 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-export default BlockInfoPage

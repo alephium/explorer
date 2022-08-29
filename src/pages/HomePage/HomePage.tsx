@@ -231,6 +231,8 @@ const chartColors: Record<VectorStatisticsKey, [string, string]> = {
   hashratePerDay: ['#b116f4', '#ff904c']
 }
 
+export default HomePage
+
 const StyledSection = styled(Section)`
   margin-top: -30px;
 `
@@ -315,5 +317,3 @@ const TableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-export default HomePage
