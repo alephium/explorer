@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction, UOutput } from '@alephium/sdk/api/explorer'
+import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -110,7 +110,7 @@ const TransactionInfoPage = () => {
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<Output | UOutput> | undefined = txInfo?.outputs
+  const outputs: Array<Output> | undefined = txInfo?.outputs
 
   return (
     <Section>
@@ -245,7 +245,7 @@ const TransactionInfoPage = () => {
                   <Badge
                     type="neutralHighlight"
                     amount={outputs?.reduce<bigint>(
-                      (acc, o) => acc + BigInt((o as UOutput).amount ?? (o as AssetOutput).attoAlphAmount),
+                      (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
                       BigInt(0)
                     )}
                   />
