@@ -200,7 +200,7 @@ const HomePage = () => {
               </TableBody>
             </BlockListTable>
           </Content>
-          <PageSwitch totalNumberOfElements={blockList?.total} />
+          <PageSwitch totalNumberOfElements={blockList?.total} elementsPerPage={blockList?.blocks?.length} />
         </LatestsBlocks>
       </MainContent>
       <Waves />
