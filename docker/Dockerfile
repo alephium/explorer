@@ -8,15 +8,12 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
 # install app dependencies
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm ci --silent
+RUN npm install -g serve
 
-# add app
-COPY . ./
-
-# create optimized production build
-RUN npm run build
+COPY ./docker/init-server-data.js ./init-server-data.js
+COPY ./docker/entrypoint.sh ./entrypoint.sh
+RUN mkdir build
+COPY ./build ./build
 
 # start app
-CMD ["serve", "-n", "-s", "build", "-p", "3000"]
+ENTRYPOINT ./entrypoint.sh

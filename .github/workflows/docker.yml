@@ -15,6 +15,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_branch }}
 
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Build the static website
+        run: npm ci && npm run build
+
       - uses: docker/setup-qemu-action@v1
       - uses: docker/setup-buildx-action@v1
 
@@ -38,8 +46,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./Dockerfile
-          build-args: RELEASE=${{ steps.get_version.outputs.VERSION-NO-V }}
+          file: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             docker.io/alephium/explorer:${{ steps.get_version.outputs.VERSION-NO-V }}

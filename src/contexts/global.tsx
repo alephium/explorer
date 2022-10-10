@@ -59,9 +59,10 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     // Check and apply environment variables
-    const url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
-    const netType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
-    console.log(`============ ${url} ${netType}`)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const url: string | null | undefined = (window as any).REACT_APP_BACKEND_URL as string | undefined
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const netType = (window as any).REACT_APP_NETWORK_TYPE as NetworkType | undefined
 
     if (!url) {
       throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
