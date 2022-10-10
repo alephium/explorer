@@ -10,19 +10,13 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install app dependencies
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install --silent
-RUN npm install serve -g --silent
+RUN npm ci --silent
 
 # add app
 COPY . ./
-
-ARG backend_url network_type
-
-ENV REACT_APP_BACKEND_URL=${backend_url}
-ENV REACT_APP_NETWORK_TYPE=${network_type}
 
 # create optimized production build
 RUN npm run build
 
 # start app
-CMD ["serve", "-s", "build", "-p", "3000"]
+CMD ["serve", "-n", "-s", "build", "-p", "3000"]

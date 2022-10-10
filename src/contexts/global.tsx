@@ -61,6 +61,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
     // Check and apply environment variables
     const url: string | null | undefined = process.env.REACT_APP_BACKEND_URL
     const netType = process.env.REACT_APP_NETWORK_TYPE as NetworkType | undefined
+    console.log(`============ ${url} ${netType}`)
 
     if (!url) {
       throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
