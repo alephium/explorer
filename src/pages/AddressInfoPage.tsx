@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calAmountDelta, getHumanReadableError } from '@alephium/sdk'
+import { calcTxAmountDeltaForAddress, getDirection, getHumanReadableError, isConsolidationTx } from '@alephium/sdk'
 import { AddressBalance, AssetOutput, Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
-import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import AmountDelta from '../components/AmountDelta'
+import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import { AddressLink, TightLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
@@ -41,6 +41,7 @@ import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
+import { useTransactionUI } from '../hooks/useTransactionUI'
 
 type ParamTypes = {
   id: string
@@ -209,11 +210,12 @@ interface AddressTransactionRowProps {
 }
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressId }) => {
-  const theme = useTheme()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
-  const amountDelta = calAmountDelta(t, addressId)
-  const isOut = amountDelta < BigInt(0)
+  let amount = calcTxAmountDeltaForAddress(t, addressId)
+  amount = amount < 0 ? amount * BigInt(-1) : amount
+  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressId)
+  const { amountTextColor, amountSign, Icon, iconColor } = useTransactionUI(infoType)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -258,23 +260,25 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <td>
-          {isOut ? (
-            <ArrowUpCircle size={directionIconSize} />
-          ) : (
-            <ArrowDownCircle size={directionIconSize} color={theme.valid} />
-          )}
+          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
         </td>
         <td>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
         </td>
         <td>{(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}</td>
         <td>
-          <Badge type="neutral" content={isOut ? 'To' : 'From'} floatRight minWidth={60} />
+          <Badge
+            type="neutral"
+            content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : 'From'}
+            floatRight
+            minWidth={60}
+          />
         </td>
-        <td>{isOut ? renderOutputAccounts() : renderInputAccounts()}</td>
-        <td>
-          <AmountDelta value={amountDelta} />
-        </td>
+        <td>{infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}</td>
+        <AmountCell color={amountTextColor}>
+          {amountSign}
+          <Amount value={amount} />
+        </AmountCell>
         <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
@@ -365,3 +369,8 @@ const ErrorMessage = styled.span`
 `
 
 export default TransactionInfoPage
+
+const AmountCell = styled.td<{ color: string }>`
+  color: ${({ color }) => color};
+  font-weight: 600;
+`
