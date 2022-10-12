@@ -28,9 +28,9 @@ interface DetailsRowProps {
 }
 
 interface AnimatedCellProps {
-  className?: string
   colSpan?: number
   alignItems?: 'left' | 'right'
+  className?: string
 }
 
 interface DetailToggleProps {

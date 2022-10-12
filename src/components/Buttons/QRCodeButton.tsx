@@ -32,6 +32,8 @@ const QRCodeButton = ({ textToEncode }: { textToEncode: string }) => {
   )
 }
 
+export default QRCodeButton
+
 const StyledClipboardIcon = styled(QrCode)`
   margin-left: 10px;
   cursor: pointer;
@@ -41,5 +43,3 @@ const StyledClipboardIcon = styled(QrCode)`
 const Tooltip = styled(ReactTooltip)`
   opacity: 1 !important;
 `
-
-export default QRCodeButton

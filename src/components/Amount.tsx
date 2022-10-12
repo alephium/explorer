@@ -21,9 +21,9 @@ import styled from 'styled-components'
 
 interface AmountProps {
   value: bigint | undefined
-  className?: string
   fadeDecimals?: boolean
   showFullPrecision?: boolean
+  className?: string
 }
 
 const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: AmountProps) => {

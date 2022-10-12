@@ -63,6 +63,8 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
   )
 }
 
+export default ThemeSwitcher
+
 export const StyledThemeSwitcher = styled.div`
   position: relative;
   width: ${toggleWidth}px;
@@ -104,5 +106,3 @@ const ToggleFloatingIndicator = styled(motion.div)`
   border-radius: 60px;
   z-index: 0;
 `
-
-export default ThemeSwitcher

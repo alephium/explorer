@@ -40,6 +40,8 @@ const Card = ({ label, className, children, isLoading, ...props }: CardProps) =>
     </Container>
   )
 
+export default Card
+
 const Container = styled(motion.div)`
   flex: 1;
   position: relative;
@@ -72,5 +74,3 @@ const LabelText = styled.span`
 `
 
 const Content = styled.div``
-
-export default Card

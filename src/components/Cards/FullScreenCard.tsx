@@ -72,6 +72,8 @@ const FullScreenCard = ({ children, label, onClose, layoutId, ...props }: FullSc
   )
 }
 
+export default FullScreenCard
+
 const Container = styled.div`
   position: fixed;
   top: 0;
@@ -144,5 +146,3 @@ const Content = styled.div`
   flex: 1;
   padding: 20px;
 `
-
-export default FullScreenCard

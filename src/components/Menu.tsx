@@ -94,6 +94,8 @@ const Menu = ({
   )
 }
 
+export default Menu
+
 const MenuContainer = styled.div`
   position: relative;
   height: ${menuHeight};
@@ -169,5 +171,3 @@ const Divider = styled.div`
   height: 1px;
   background-color: ${({ theme }) => theme.borderSecondary};
 `
-
-export default Menu

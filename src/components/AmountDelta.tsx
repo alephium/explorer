@@ -22,8 +22,8 @@ import Amount from './Amount'
 
 interface AmountDeltaProps {
   value: bigint | undefined
-  className?: string
   showFullPrecision?: boolean
+  className?: string
 }
 
 const AmountDelta = ({ value, showFullPrecision, className }: AmountDeltaProps) => {

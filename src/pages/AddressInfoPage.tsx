@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calAmountDelta, getHumanReadableError } from '@alephium/sdk'
-import { AddressBalance, Transaction } from '@alephium/sdk/api/explorer'
+import { AddressBalance, AssetOutput, Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowDownCircle, ArrowRight, ArrowUpCircle } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
@@ -244,7 +244,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
     return inputs.length > 0 ? (
       <AccountsSummaryContainer>
-        <AddressLink address={inputs[0]} maxWidth="250px" />
+        {inputs[0] && <AddressLink address={inputs[0]} maxWidth="250px" />}
         {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
       </AccountsSummaryContainer>
     ) : (
@@ -285,15 +285,18 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
               <TableRow>
                 <td>
                   {t.inputs && t.inputs.length > 0 ? (
-                    t.inputs.map((input, i) => (
-                      <AddressLink
-                        key={i}
-                        address={input.address}
-                        txHashRef={input.txHashRef}
-                        amount={BigInt(input.amount)}
-                        maxWidth="180px"
-                      />
-                    ))
+                    t.inputs.map(
+                      (input, i) =>
+                        input.address && (
+                          <AddressLink
+                            key={i}
+                            address={input.address}
+                            txHashRef={input.outputRef.key}
+                            amount={BigInt(input.attoAlphAmount ?? 0)}
+                            maxWidth="180px"
+                          />
+                        )
+                    )
                   ) : (
                     <BlockRewardLabel>Block rewards</BlockRewardLabel>
                   )}
@@ -307,9 +310,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                       <AddressLink
                         key={i}
                         address={output.address}
-                        amount={BigInt(output.amount)}
+                        amount={BigInt(output.attoAlphAmount)}
                         maxWidth="180px"
-                        lockTime={output.lockTime}
+                        lockTime={(output as AssetOutput).lockTime}
                       />
                     ))}
                 </td>

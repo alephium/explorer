@@ -27,9 +27,9 @@ interface LoadingSpinnerProps {
 
 const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
 
+export default LoadingSpinner
+
 const Spinner = styled(Loader)`
   animation: spin 1s infinite;
   color: ${({ theme }) => theme.textSecondary};
 `
-
-export default LoadingSpinner
