@@ -9,7 +9,7 @@ env:
   AWS_DEFAULT_REGION: eu-central-1
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  REACT_APP_BACKEND_URL: https://backend.testnet.alephium.org/
+  REACT_APP_BACKEND_URL: https://backend.testnet.alephium.org
   REACT_APP_NETWORK_TYPE: testnet
 
 jobs:
