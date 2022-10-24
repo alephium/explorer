@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExplorerClient } from '@alephium/sdk'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
@@ -59,10 +60,24 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     // Check and apply environment variables
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const url: string | null | undefined = (window as any).REACT_APP_BACKEND_URL as string | undefined
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const netType = (window as any).REACT_APP_NETWORK_TYPE as NetworkType | undefined
+    let url: string | null | undefined = (window as any).REACT_APP_BACKEND_URL
+
+    let netType = (window as any).REACT_APP_NETWORK_TYPE as NetworkType | undefined
+
+    if (!url) {
+      url = process.env.REACT_APP_BACKEND_URL || 'http://localhost:9090'
+      netType = (process.env.REACT_APP_NETWORK_TYPE || 'testnet') as NetworkType
+
+      console.info(`
+        • DEVELOPMENT MODE •
+
+        Using local env. variables if available. 
+        You can set them using a .env file placed at the project's root.
+
+        - Backend URL: ${url}
+        - Network Type: ${netType}
+      `)
+    }
 
     if (!url) {
       throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')

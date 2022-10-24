@@ -5,10 +5,7 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Alephium Explorer"
-    />
+    <meta name="description" content="Alephium Explorer" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -27,12 +24,10 @@
     <title>Alephium Explorer</title>
     <script>
       try {
-        window.REACT_APP_BACKEND_URL = __REACT_APP_BACKEND_URL__;
-        window.REACT_APP_NETWORK_TYPE = __REACT_APP_NETWORK_TYPE__;
+        window.REACT_APP_BACKEND_URL = __REACT_APP_BACKEND_URL__
+        window.REACT_APP_NETWORK_TYPE = __REACT_APP_NETWORK_TYPE__
       } catch (e) {
-        console.info('Development MODE', e);
-        window.REACT_APP_BACKEND_URL = 'http://localhost:9090';
-        window.REACT_APP_NETWORK_TYPE = 'testnet';
+        console.log('INFO: Backend related env. variables not available in the window object.')
       }
     </script>
   </head>
