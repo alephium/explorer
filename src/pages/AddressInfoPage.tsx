@@ -26,6 +26,7 @@ import styled, { css } from 'styled-components'
 
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
+import Button from '../components/Buttons/Button'
 import { AddressLink, TightLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
@@ -174,7 +175,10 @@ const TransactionInfoPage = () => {
         </TableBody>
       </Table>
 
-      <SecondaryTitle>Transactions</SecondaryTitle>
+      <SectionHeader>
+        <h2>Transactions</h2>
+        <Button>Export CSV ↓</Button>
+      </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
         {txList && txList.length ? (
@@ -366,6 +370,15 @@ const ErrorMessage = styled.span`
   color: ${({ theme }) => theme.textSecondary};
   font-style: italic;
   font-weight: 400;
+`
+
+const SectionHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;
+  margin-bottom: 10px;
 `
 
 export default TransactionInfoPage
