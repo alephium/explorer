@@ -107,7 +107,6 @@ const SearchBar = ({ className }: SearchBarProps) => {
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />
-      <SearchBackdropGradient />
     </motion.div>
   )
 }
@@ -131,16 +130,12 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 2px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 9px;
   padding: 0 20px;
   color: ${({ theme }) => theme.textPrimary};
   background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 10;
-
-  &:hover {
-    box-shadow: inset 0px 0px 2px ${({ theme }) => theme.borderHighlight};
-  }
 
   &:focus,
   &:active {
@@ -152,30 +147,14 @@ const SearchInput = styled.input`
   }
 `
 
-const SearchBackdropGradient = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: radial-gradient(#169ff4 25%, #f46016 40%, #6510f8 60%);
-  transform: scaleY(5) scaleX(2);
-  filter: blur(10px) opacity(0.15);
-  z-index: -1;
-  border-radius: 100%;
-
-  @media ${deviceBreakPoints.mobile} {
-    display: none;
-  }
-`
-
 const Backdrop = styled(motion.div)`
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(3px);
   z-index: 9;
   opacity: 0;
 `

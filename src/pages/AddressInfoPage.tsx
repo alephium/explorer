@@ -28,6 +28,7 @@ import styled, { css, useTheme } from 'styled-components'
 import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import Button from '../components/Buttons/Button'
+import HighlightedHash from '../components/HighlightedHash'
 import { AddressLink, TightLink } from '../components/Links'
 import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
@@ -136,8 +137,7 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" />
-
+      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} />} />
       <TableAndQRCode>
         <Table bodyOnly minHeight={250}>
           <TableBody tdStyles={AddressTableBodyCustomStyles}>
@@ -398,7 +398,6 @@ const TableAndQRCode = styled.div`
 const QRCodeWrapper = styled.div`
   border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
   ${({ theme }) => blurredBackground(theme.bgPrimary)};
-  box-shadow: ${({ theme }) => theme.shadowPrimary};
   border-radius: 7px;
   padding: 10px;
   display: flex;

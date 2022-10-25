@@ -16,32 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-interface ModalProps {
-  onClose: () => void
-  children: ReactNode
-  className: string
+import TextMiddleEllipsis from './TextMiddleEllipsis'
+
+interface HighlightedHashProps {
+  text: string
+  middleEllipsis?: boolean
+  fontSize?: number
+  className?: string
 }
 
-const Modal = ({ onClose, children, className }: ModalProps) => (
-  <div className={className}>
-    {children}
-    <Backdrop onClick={onClose} />
-  </div>
+const HighlightedHash = ({ text, middleEllipsis = false, fontSize = 15, className }: HighlightedHashProps) => (
+  <span style={{ fontSize }} className={className}>
+    {middleEllipsis ? <TextMiddleEllipsis text={text} /> : text}
+  </span>
 )
 
-export default styled(Modal)`
-  border-radius: 7px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-`
-
-const Backdrop = styled.div`
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.1);
+export default styled(HighlightedHash)`
+  background: ${({ theme }) => theme.accentGradient};
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
 `
