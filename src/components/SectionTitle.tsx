@@ -72,10 +72,11 @@ const Subtitle = styled.h2`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.textSecondary};
   margin: 0;
+  margin-bottom: 35px;
 `
 
 export const SecondaryTitle = styled.h2`
-  margin-top: 40px;
+  margin-top: 35px;
 `
 
 export default SectionTitle

@@ -18,26 +18,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
+import ClipboardButton from './Buttons/ClipboardButton'
 import TextMiddleEllipsis from './TextMiddleEllipsis'
 
 interface HighlightedHashProps {
   text: string
+  textToCopy?: string
   middleEllipsis?: boolean
   fontSize?: number
   className?: string
 }
 
-const HighlightedHash = ({ text, middleEllipsis = false, fontSize = 15, className }: HighlightedHashProps) => (
-  <span style={{ fontSize }} className={className}>
+const HighlightedHash = ({
+  text,
+  textToCopy,
+  middleEllipsis = false,
+  fontSize = 14,
+  className
+}: HighlightedHashProps) => (
+  <div style={{ fontSize }} className={className}>
     {middleEllipsis ? <TextMiddleEllipsis text={text} /> : text}
-  </span>
+    {textToCopy && (
+      <ButtonWrapper>
+        <ClipboardButton textToCopy={textToCopy} />
+      </ButtonWrapper>
+    )}
+  </div>
 )
 
 export default styled(HighlightedHash)`
+  display: flex;
   background: ${({ theme }) => theme.accentGradient};
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-variant-numeric: tabular-nums;
   word-break: break-all;
+  font-weight: 600;
+`
+
+const ButtonWrapper = styled.div`
+  flex-shrink: 0;
 `

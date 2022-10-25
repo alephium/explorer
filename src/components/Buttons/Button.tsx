@@ -28,6 +28,7 @@ export default styled(Button)`
   background-color: ${({ theme }) => theme.bgPrimary};
   color: ${({ theme }) => theme.textPrimary};
   border-radius: 9px;
+  border: 1px solid ${({ theme }) => theme.borderSecondary};
   padding: 10px 15px;
 
   &:hover {

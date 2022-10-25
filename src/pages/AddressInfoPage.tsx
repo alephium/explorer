@@ -34,7 +34,6 @@ import LoadingSpinner from '../components/LoadingSpinner'
 import PageSwitch from '../components/PageSwitch'
 import Section from '../components/Section'
 import SectionTitle from '../components/SectionTitle'
-import HighlightedCell from '../components/Table/HighlightedCell'
 import Table, { TDStyle } from '../components/Table/Table'
 import TableBody from '../components/Table/TableBody'
 import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
@@ -137,16 +136,10 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
-      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} />} />
+      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} textToCopy={id} />} />
       <TableAndQRCode>
-        <Table bodyOnly minHeight={250}>
+        <Table bodyOnly minHeight={150}>
           <TableBody tdStyles={AddressTableBodyCustomStyles}>
-            <TableRow>
-              <td>Address</td>
-              <HighlightedCell textToCopy={id} qrCodeContent={id}>
-                {id}
-              </HighlightedCell>
-            </TableRow>
             <TableRow>
               <td>Number of Transactions</td>
               <td>
@@ -180,7 +173,7 @@ const TransactionInfoPage = () => {
           </TableBody>
         </Table>
         <QRCodeWrapper>
-          <QRCode size={150} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
+          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
         </QRCodeWrapper>
       </TableAndQRCode>
 
@@ -386,7 +379,7 @@ const SectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 10px;
 `
 
