@@ -39,4 +39,5 @@ export default styled(HighlightedHash)`
   background-clip: text;
   -webkit-text-fill-color: transparent;
   font-variant-numeric: tabular-nums;
+  word-break: break-all;
 `
