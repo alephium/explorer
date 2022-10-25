@@ -26,9 +26,10 @@ interface ModalProps {
   onClose: () => void
   children: ReactNode
   className?: string
+  maxWidth?: number
 }
 
-const Modal = ({ isOpen = false, onClose, children, className }: ModalProps) => (
+const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }: ModalProps) => (
   <AnimatePresence>
     {isOpen && (
       <div>
@@ -45,6 +46,7 @@ const Modal = ({ isOpen = false, onClose, children, className }: ModalProps) => 
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.1 }}
           className={className}
+          style={{ maxWidth }}
         >
           {children}
         </ModalContentWrapper>
@@ -65,7 +67,6 @@ const ModalContentWrapper = styled(motion.div)`
   border-radius: 12px;
   background-color: ${({ theme }) => theme.bgPrimary};
   height: 50%;
-  width: 800px;
   z-index: 1000;
 `
 
