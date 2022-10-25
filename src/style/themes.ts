@@ -25,7 +25,7 @@ export const darkTheme: DefaultTheme = {
   body: '#141417',
 
   textPrimary: 'rgba(255, 255, 255, 0.8)',
-  textSecondary: 'rgba(255, 255, 255, 0.45)',
+  textSecondary: 'rgba(255, 255, 255, 0.65)',
   textAccent: '#EFA25B',
 
   link: '#53A9F5',

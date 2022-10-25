@@ -44,7 +44,7 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { useTransactionUI } from '../hooks/useTransactionUI'
-import { blurredBackground } from '../style/globalStyles'
+import { blurredBackground, deviceBreakPoints } from '../style/globalStyles'
 
 type ParamTypes = {
   id: string
@@ -173,7 +173,7 @@ const TransactionInfoPage = () => {
           </TableBody>
         </Table>
         <QRCodeWrapper>
-          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
+          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textSecondary} />
         </QRCodeWrapper>
       </TableAndQRCode>
 
@@ -386,6 +386,10 @@ const SectionHeader = styled.div`
 const TableAndQRCode = styled.div`
   display: flex;
   gap: 20px;
+
+  @media ${deviceBreakPoints.tiny} {
+    flex-direction: column;
+  }
 `
 
 const QRCodeWrapper = styled.div`
@@ -395,6 +399,7 @@ const QRCodeWrapper = styled.div`
   padding: 10px;
   display: flex;
   align-items: center;
+  justify-content: center;
 `
 
 export default TransactionInfoPage

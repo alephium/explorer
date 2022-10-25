@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Check, Clipboard } from 'lucide-react'
+import { Check, Copy } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
@@ -66,7 +66,7 @@ const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
 
 export default ClipboardButton
 
-const StyledClipboardIcon = styled(Clipboard)`
+const StyledClipboardIcon = styled(Copy)`
   margin-left: 10px;
   cursor: pointer;
   color: ${({ theme }) => theme.textSecondary};

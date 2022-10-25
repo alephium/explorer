@@ -33,6 +33,9 @@ export default styled(Button)`
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => colord(theme.bgPrimary).lighten(0.05).toHex()};
+    background-color: ${({ theme }) =>
+      theme.name === 'dark'
+        ? colord(theme.bgPrimary).lighten(0.05).toHex()
+        : colord(theme.bgPrimary).darken(0.02).toHex()};
   }
 `
