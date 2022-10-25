@@ -16,32 +16,65 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 interface ModalProps {
+  isOpen: boolean
   onClose: () => void
   children: ReactNode
-  className: string
+  className?: string
 }
 
-const Modal = ({ onClose, children, className }: ModalProps) => (
-  <div className={className}>
-    {children}
-    <Backdrop onClick={onClose} />
-  </div>
+const Modal = ({ isOpen = false, onClose, children, className }: ModalProps) => (
+  <AnimatePresence>
+    {isOpen && (
+      <div>
+        <Backdrop
+          onClick={onClose}
+          initial={{ backdropFilter: 'blur(0px)', opacity: 0 }}
+          animate={{ backdropFilter: 'blur(5px)', opacity: 1 }}
+          exit={{ backdropFilter: 'blur(0px)', opacity: 0 }}
+          transition={{ duration: 0.2 }}
+        />
+        <ModalContentWrapper
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.1 }}
+          className={className}
+        >
+          {children}
+        </ModalContentWrapper>
+      </div>
+    )}
+  </AnimatePresence>
 )
 
-export default styled(Modal)`
-  border-radius: 7px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-`
+export default Modal
 
-const Backdrop = styled.div`
+const ModalContentWrapper = styled(motion.div)`
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.1);
+  margin: auto;
+  border-radius: 12px;
+  background-color: ${({ theme }) => theme.bgPrimary};
+  height: 50%;
+  width: 800px;
+  z-index: 1000;
+`
+
+const Backdrop = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: ${({ theme }) => colord(theme.bgTertiary).alpha(0.9).toHslString()};
+  z-index: 900;
 `

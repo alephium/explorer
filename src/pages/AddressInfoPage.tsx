@@ -44,6 +44,7 @@ import { useGlobalContext } from '../contexts/global'
 import usePageNumber from '../hooks/usePageNumber'
 import useTableDetailsState from '../hooks/useTableDetailsState'
 import { useTransactionUI } from '../hooks/useTransactionUI'
+import ExportAddressTXsModal from '../modals/ExportAddressTXsModal'
 import { blurredBackground, deviceBreakPoints } from '../style/globalStyles'
 
 type ParamTypes = {
@@ -63,6 +64,8 @@ const TransactionInfoPage = () => {
   const [txLoading, setTxLoading] = useState(true)
   const [txNumberLoading, setTxNumberLoading] = useState(true)
   const [totalBalanceLoading, setTotalBalanceLoading] = useState(true)
+
+  const [exportModalShown, setExportModalShown] = useState(false)
 
   // Default page
   const pageNumber = usePageNumber()
@@ -132,13 +135,17 @@ const TransactionInfoPage = () => {
     fetchTransactions()
   }, [client, id, pageNumber])
 
+  const handleExportModalOpen = () => setExportModalShown(true)
+
+  const handleExportModalClose = () => setExportModalShown(false)
+
   if (!id) return null
 
   return (
     <Section>
       <SectionTitle title="Address" subtitle={<HighlightedHash text={id} textToCopy={id} />} />
       <TableAndQRCode>
-        <Table bodyOnly minHeight={150}>
+        <Table bodyOnly minHeight={100}>
           <TableBody tdStyles={AddressTableBodyCustomStyles}>
             <TableRow>
               <td>Number of Transactions</td>
@@ -179,7 +186,7 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        <Button>Export CSV ↓</Button>
+        <Button onClick={handleExportModalOpen}>Export CSV ↓</Button>
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
@@ -206,6 +213,10 @@ const TransactionInfoPage = () => {
       </Table>
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
+
+      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose}>
+        <span></span>
+      </ExportAddressTXsModal>
     </Section>
   )
 }
@@ -395,7 +406,7 @@ const TableAndQRCode = styled.div`
 const QRCodeWrapper = styled.div`
   border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
   ${({ theme }) => blurredBackground(theme.bgPrimary)};
-  border-radius: 7px;
+  border-radius: 9px;
   padding: 10px;
   display: flex;
   align-items: center;
