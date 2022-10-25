@@ -47,7 +47,7 @@ export const darkTheme: DefaultTheme = {
 
   accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
 
-  tooltip: 'black',
+  tooltip: '#000000',
 
   valid: 'rgb(93, 203, 126)',
   alert: 'rgb(243, 113, 93)'
@@ -64,7 +64,7 @@ export const lightTheme: DefaultTheme = {
   link: '#0E82E7',
   linkHighlight: '#53A9F5',
 
-  bgPrimary: 'white',
+  bgPrimary: '#ffffff',
   bgSecondary: '#f3f3f3',
   bgTertiary: '#eeeeee',
   bgHighlight: 'rgba(0, 0, 0, 0.015)',
@@ -80,7 +80,7 @@ export const lightTheme: DefaultTheme = {
 
   accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
 
-  tooltip: 'black',
+  tooltip: '#000000',
 
   valid: 'rgb(93, 203, 126)',
   alert: 'rgb(243, 113, 93)'

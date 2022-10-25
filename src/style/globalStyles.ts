@@ -115,10 +115,10 @@ export default createGlobalStyle`
 `
 
 export const blurredBackground = (color: string) => css`
-  background-color: ${colord(color).alpha(0.96).toHex()};
+  background-color: ${colord(color).alpha(0.96).toRgbString()};
 
   @supports (backdrop-filter: blur(20px)) {
     backdrop-filter: blur(20px);
-    background-color: ${colord(color).alpha(0.7).toHex()};
+    background-color: ${colord(color).alpha(0.7).toRgbString()};
   }
 `
