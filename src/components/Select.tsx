@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -34,7 +35,6 @@ interface SelectProps {
     expandedListWidth?: number | string
     maxListHeight?: number | string
   }
-  alwaysShowTitle?: boolean
   borderRadius?: number
   alignText?: 'start' | 'center' | 'end'
   className?: string
@@ -55,13 +55,12 @@ const Select = ({
   selectedItemValue,
   title,
   dimensions = {
-    initialItemHeight: 50,
-    expandedItemHeight: 55,
+    initialItemHeight: 55,
+    expandedItemHeight: 60,
     initialListWidth: '98%',
     expandedListWidth: '100%',
     maxListHeight: 300
   },
-  alwaysShowTitle,
   alignText,
   borderRadius = 12,
   className,
@@ -143,15 +142,11 @@ const Select = ({
           <ItemContainer
             key={value}
             onClick={() => handleItemClick(value)}
-            animate={{
-              backgroundColor: shouldAnimateItem(value)
-                ? colord(theme.bgHighlight).lighten(0.05).toHex()
-                : theme.bgHighlight
-            }}
             variants={itemContainerVariants}
             style={{
               height: initialItemHeight,
-              justifyContent: alignText
+              justifyContent: alignText,
+              cursor: i === 0 && !isOpen ? 'pointer' : 'initial'
             }}
             borderRadius={borderRadius}
           >
@@ -160,10 +155,10 @@ const Select = ({
                 duration: 0.1
               }}
               animate={{
-                opacity: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? 1 : 0
+                opacity: shouldAnimateItem(value) || i === 0 ? 1 : 0
               }}
               style={{
-                top: expandedItemHeight / 10,
+                top: expandedItemHeight / 6,
                 fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
               }}
             >
@@ -171,11 +166,12 @@ const Select = ({
             </Title>
             <ItemContent
               animate={{
-                marginTop: shouldAnimateItem(value) || (alwaysShowTitle && i === 0) ? expandedItemHeight / 3.5 : 0
+                marginTop: shouldAnimateItem(value) || i === 0 ? expandedItemHeight / 3.5 : 0
               }}
             >
               {label ? label : Component ? Component : null}
             </ItemContent>
+            {i === 0 && <ChevronDown strokeWidth={1.5} strokeOpacity={isOpen ? 0.5 : 1} />}
           </ItemContainer>
         ))}
       </ItemList>
@@ -188,7 +184,6 @@ export default Select
 const SelectWrapper = styled(motion.div)`
   position: relative;
   flex: 1;
-  cursor: pointer;
 `
 
 const ItemList = styled(motion.div)`
@@ -201,6 +196,7 @@ const ItemList = styled(motion.div)`
   margin-left: auto;
   z-index: 3;
   overflow: auto;
+  background-color: ${({ theme }) => theme.bgPrimary};
 
   overscroll-behavior: none;
   -ms-overflow-style: none; /* IE and Edge */
@@ -214,25 +210,22 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   text-align: center;
   white-space: nowrap;
 
   width: 100%;
 
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 14.4px;
 
   padding: 15px;
 
-  background-color: ${({ theme }) => theme.bgHighlight};
   color: rgba(255, 255, 255, 0.7);
   z-index: 1;
 
-  &:hover {
-    color: ${({ theme }) => theme.bgPrimary};
-
+  &:hover:not(:first-child) {
     &::after {
       content: '';
       position: absolute;
@@ -243,6 +236,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
       border-radius: ${({ borderRadius }) => borderRadius}px;
       background-color: rgba(255, 255, 255, 0.03);
       z-index: 0;
+      cursor: pointer;
     }
   }
 
@@ -262,7 +256,11 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
 `
 
 const ItemContent = styled(motion.div)`
+  flex: 1;
   max-width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 
 const Title = styled(motion.span)`

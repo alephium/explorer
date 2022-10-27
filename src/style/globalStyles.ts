@@ -15,9 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { colord } from 'colord'
 import { createGlobalStyle, css } from 'styled-components'
 import normalize from 'styled-normalize'
-import { colord } from 'colord'
 
 // Breakpoints
 
@@ -46,7 +46,7 @@ export default createGlobalStyle`
   :root {
     font-size: 13px;
 
-    @media ${deviceBreakPoints.mobile} {
+    @media ${deviceBreakPoints.tiny} {
       font-size: 12px;
     }
   }

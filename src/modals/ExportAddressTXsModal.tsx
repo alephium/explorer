@@ -68,7 +68,7 @@ export default styled(ExportAddressTXsModal)`
 
 const Explanations = styled.p`
   color: ${({ theme }) => theme.textSecondary};
-  margin: 40px 0;
+  margin: 30px 0 40px 0;
   line-height: 20px;
 `
 

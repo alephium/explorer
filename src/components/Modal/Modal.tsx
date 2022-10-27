@@ -65,8 +65,10 @@ const ModalContentWrapper = styled(motion.div)`
   left: 0;
   margin: auto;
   border-radius: 12px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  height: 50%;
+  background-color: ${({ theme }) => theme.bgSecondary};
+  height: 50vh;
+  min-height: 500px;
+  overflow-y: auto;
   z-index: 1000;
 `
 

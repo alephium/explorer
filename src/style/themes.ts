@@ -31,9 +31,9 @@ export const darkTheme: DefaultTheme = {
   link: '#53A9F5',
   linkHighlight: '#0E82E7',
 
-  bgPrimary: '#19191E',
+  bgPrimary: '#1B1B1F',
   bgSecondary: '#141417',
-  bgTertiary: '#101012',
+  bgTertiary: '#09090b',
   bgHighlight: 'rgba(255, 255, 255, 0.03)',
   bgHover: 'rgb(28, 28, 33)',
 
