@@ -12,7 +12,7 @@
     "apexcharts": "^3.35.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^6.5.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.91.0",
     "prettier": "^2.4.1",
@@ -29,6 +29,8 @@
     "styled-normalize": "^8.0.7"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "^0.1.4",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.175",
@@ -41,6 +43,7 @@
     "@types/styled-components": "^5.1.14",
     "@typescript-eslint/eslint-plugin": "^4.32.0",
     "@typescript-eslint/parser": "^4.32.0",
+    "@vitejs/plugin-react": "^2.2.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-prettier": "^4.0.0",
@@ -48,15 +51,15 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-unused-imports": "^1.1.5",
-    "react-scripts": "^4.0.3",
     "serve": "^14.0.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "vite": "^3.2.0",
+    "vite-plugin-svgr": "^2.2.2",
+    "vite-tsconfig-paths": "^3.5.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "tsc && vite build",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",

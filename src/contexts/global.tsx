@@ -60,13 +60,13 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     // Check and apply environment variables
-    let url: string | null | undefined = (window as any).REACT_APP_BACKEND_URL
+    let url: string | null | undefined = (window as any).VITE_BACKEND_URL
 
-    let netType = (window as any).REACT_APP_NETWORK_TYPE as NetworkType | undefined
+    let netType = (window as any).VITE_NETWORK_TYPE as NetworkType | undefined
 
     if (!url) {
-      url = process.env.REACT_APP_BACKEND_URL || 'http://localhost:9090'
-      netType = (process.env.REACT_APP_NETWORK_TYPE || 'testnet') as NetworkType
+      url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
+      netType = (import.meta.env.VITE_NETWORK_TYPE || 'testnet') as NetworkType
 
       console.info(`
         • DEVELOPMENT MODE •
@@ -80,13 +80,13 @@ export const GlobalContextProvider: FC = ({ children }) => {
     }
 
     if (!url) {
-      throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
+      throw new Error('The VITE_BACKEND_URL environment variable must be defined')
     }
 
     if (!netType) {
-      throw new Error('The REACT_APP_NETWORK_TYPE environment variable must be defined')
+      throw new Error('The VITE_NETWORK_TYPE environment variable must be defined')
     } else if (!networkTypes.includes(netType)) {
-      throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
+      throw new Error('Value of the VITE_NETWORK_TYPE environment variable is invalid')
     }
 
     try {

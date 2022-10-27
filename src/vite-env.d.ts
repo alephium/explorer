@@ -16,23 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const { readFile, writeFile } = require('fs')
-
-const file = './build/index.html'
-
-readFile(file, 'utf-8', function (err, contents) {
-  if (err) {
-    console.log(err)
-    return
-  }
-
-  const replaced0 = contents.replace(
-    /__VITE_BACKEND_URL__/g,
-    `"${import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:9090'}"`
-  )
-  const replaced1 = replaced0.replace(/__VITE_NETWORK_TYPE__/g, `"${process.env.VITE_NETWORK_TYPE ?? 'testnet'}"`)
-
-  writeFile(file, replaced1, 'utf-8', function (err) {
-    console.log(err)
-  })
-})
+/// <reference types="vite/client" />
