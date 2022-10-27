@@ -44,6 +44,7 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
           onItemClick={(v) => setTimePeriodValue(v as TimePeriods)}
           selectedItemValue={timePeriodValue}
         />
+        <Select title="CSV Format" items={formatItems} onItemClick={() => null} selectedItemValue={timePeriodValue} />
       </Selects>
     </Modal>
   )
@@ -59,6 +60,37 @@ const timePeriodsItems: SelectItem[] = [
   {
     value: '30d' as TimePeriods,
     label: 'Last 30 days'
+  },
+  {
+    value: '6m' as TimePeriods,
+    label: 'Last 6 months'
+  },
+  {
+    value: '12m' as TimePeriods,
+    label: 'Last 1 year'
+  },
+  {
+    value: 'lastYear' as TimePeriods,
+    label: 'Last year'
+  },
+  {
+    value: 'thisYear' as TimePeriods,
+    label: 'This year'
+  }
+]
+
+const formatItems: SelectItem[] = [
+  {
+    value: 'default',
+    label: 'Default'
+  },
+  {
+    value: 'bittax',
+    label: 'Bittax'
+  },
+  {
+    value: 'koinly',
+    label: 'Koinly'
   }
 ]
 

@@ -184,21 +184,16 @@ export default Select
 const SelectWrapper = styled(motion.div)`
   position: relative;
   flex: 1;
+  height: 60px;
 `
 
 const ItemList = styled(motion.div)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
   margin-right: auto;
   margin-left: auto;
   z-index: 3;
   overflow: auto;
   background-color: ${({ theme }) => theme.bgPrimary};
 
-  overscroll-behavior: none;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
@@ -223,6 +218,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   padding: 15px;
 
   color: rgba(255, 255, 255, 0.7);
+  background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 1;
 
   &:hover:not(:first-child) {
@@ -248,6 +244,10 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
     top: 0;
     border-radius: ${({ borderRadius }) => borderRadius}px;
     z-index: 2;
+  }
+
+  &:nth-child(2) {
+    border-top: 1px solid ${({ theme }) => theme.borderSecondary};
   }
 
   > span {
