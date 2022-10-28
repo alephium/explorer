@@ -18,13 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
-import dayjs from 'dayjs'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import Amount from '../components/Amount'
 import Badge from '../components/Badge'
 import InlineErrorMessage from '../components/InlineErrorMessage'
 import { AddressLink, TightLink } from '../components/Links'
@@ -208,7 +206,6 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
   const outputs = t.outputs as AssetOutput[]
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
-  const containsLockedOutputs = outputs?.some((o) => o.lockTime && dayjs(o.lockTime).isAfter(dayjs()))
 
   return (
     <>
@@ -250,20 +247,17 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
             )}
         </AnimatedCell>
         <td />
-        <AnimatedCell>
+        <AnimatedCell colSpan={3}>
           {outputs?.map((o, i) => (
-            <AddressLink address={o.address} key={i} maxWidth="180px" />
+            <AddressLink
+              address={o.address}
+              key={i}
+              maxWidth="180px"
+              amount={BigInt(o.attoAlphAmount)}
+              lockTime={o.lockTime}
+            />
           ))}
         </AnimatedCell>
-        <AnimatedCell alignItems="right">
-          {outputs?.map((o, i) => (
-            <OutputAmount key={o.key} hasRightPadding={containsLockedOutputs}>
-              <Amount value={BigInt(o.attoAlphAmount)} key={i} />
-              {o.lockTime && dayjs(o.lockTime).isAfter(dayjs()) && <LockTimeIconStyled timestamp={o.lockTime} />}
-            </OutputAmount>
-          ))}
-        </AnimatedCell>
-        <td />
       </TableDetailsRow>
     </>
   )
