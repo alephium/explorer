@@ -15,11 +15,11 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { colord } from 'colord'
+
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import useOnOutsideClick from '../hooks/useOnClickOutside'
 
@@ -66,8 +66,6 @@ const Select = ({
   className,
   style
 }: SelectProps) => {
-  const theme = useTheme()
-
   const [isOpen, setIsOpen] = useState(false)
 
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -92,7 +90,7 @@ const Select = ({
   }
 
   const handleClick = () => {
-    setIsOpen(true)
+    !isOpen && setIsOpen(true)
 
     // Scroll to top
     listRef.current?.scroll(0, 0)
@@ -103,6 +101,7 @@ const Select = ({
   }
 
   const handleItemClick = (value: string) => {
+    setIsOpen(false)
     onItemClick(value)
   }
 
@@ -121,7 +120,13 @@ const Select = ({
       animate={isOpen ? 'open' : 'initial'}
       style={{ height: initialItemHeight, ...style }}
       ref={wrapperRef}
+      variants={{
+        open: {
+          transform: 'translateY(-5px)'
+        }
+      }}
     >
+      <Divider style={{ top: expandedItemHeight }} />
       <ItemList
         variants={{
           open: {
@@ -151,13 +156,8 @@ const Select = ({
             borderRadius={borderRadius}
           >
             <Title
-              transition={{
-                duration: 0.1
-              }}
-              animate={{
-                opacity: shouldAnimateItem(value) || i === 0 ? 1 : 0
-              }}
               style={{
+                opacity: shouldAnimateItem(value) || i === 0 ? 1 : 0,
                 top: expandedItemHeight / 6,
                 fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
               }}
@@ -165,8 +165,8 @@ const Select = ({
               {title}
             </Title>
             <ItemContent
-              animate={{
-                marginTop: shouldAnimateItem(value) || i === 0 ? expandedItemHeight / 3.5 : 0
+              style={{
+                paddingTop: i === 0 ? expandedItemHeight / 3.5 : 0
               }}
             >
               {label ? label : Component ? Component : null}
@@ -185,6 +185,7 @@ const SelectWrapper = styled(motion.div)`
   position: relative;
   flex: 1;
   height: 60px;
+  overflow: hidden;
 `
 
 const ItemList = styled(motion.div)`
@@ -246,13 +247,17 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
     z-index: 2;
   }
 
-  &:nth-child(2) {
-    border-top: 1px solid ${({ theme }) => theme.borderSecondary};
-  }
-
   > span {
     padding-right: 5px;
   }
+`
+
+const Divider = styled.div`
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.borderSecondary};
+  z-index: 2;
 `
 
 const ItemContent = styled(motion.div)`
