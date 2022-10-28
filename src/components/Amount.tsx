@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay } from '@alephium/sdk'
 import styled from 'styled-components'
+import AlefSymbol from './AlefSymbol'
 
 interface AmountProps {
   value: bigint | undefined
@@ -50,7 +51,7 @@ const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: A
       ) : (
         '-'
       )}
-      {' ℵ'}
+      <AlefSymbol style={{ marginLeft: 3 }} />
     </span>
   )
 }
