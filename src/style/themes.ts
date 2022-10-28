@@ -49,8 +49,11 @@ export const darkTheme: DefaultTheme = {
 
   tooltip: '#000000',
 
+  accent: '#6083ff',
   valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)'
+  alert: 'rgb(243, 113, 93)',
+
+  white: '#ffffff'
 }
 
 export const lightTheme: DefaultTheme = {
@@ -82,6 +85,9 @@ export const lightTheme: DefaultTheme = {
 
   tooltip: '#000000',
 
+  accent: '#6083ff',
   valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)'
+  alert: 'rgb(243, 113, 93)',
+
+  white: '#ffffff'
 }

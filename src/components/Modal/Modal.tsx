@@ -32,7 +32,7 @@ interface ModalProps {
 const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }: ModalProps) => (
   <AnimatePresence>
     {isOpen && (
-      <div>
+      <ModalWrapper>
         <Backdrop
           onClick={onClose}
           initial={{ backdropFilter: 'blur(0px)', opacity: 0 }}
@@ -50,26 +50,29 @@ const Modal = ({ isOpen = false, onClose, children, className, maxWidth = 600 }:
         >
           {children}
         </ModalContentWrapper>
-      </div>
+      </ModalWrapper>
     )}
   </AnimatePresence>
 )
 
 export default Modal
 
-const ModalContentWrapper = styled(motion.div)`
+const ModalWrapper = styled.div`
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
   left: 0;
+  display: flex;
+  z-index: 900;
+`
+
+const ModalContentWrapper = styled(motion.div)`
   margin: auto;
   border-radius: 12px;
   background-color: ${({ theme }) => theme.bgSecondary};
-  height: 60vh;
-  min-height: 600px;
   overflow-y: auto;
-  z-index: 1000;
+  z-index: 1;
 `
 
 const Backdrop = styled(motion.div)`
@@ -79,5 +82,4 @@ const Backdrop = styled(motion.div)`
   right: 0;
   left: 0;
   background-color: ${({ theme }) => colord(theme.bgTertiary).alpha(0.9).toHslString()};
-  z-index: 900;
 `

@@ -17,11 +17,43 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { ButtonHTMLAttributes } from 'react'
-import styled from 'styled-components'
+import { motion, MotionProps } from 'framer-motion'
+import { ReactNode } from 'react'
+import styled, { useTheme } from 'styled-components'
 
-const Button = ({ ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => {
-  return <button {...props} />
+interface ButtonProps extends MotionProps {
+  accent?: boolean
+  big?: boolean
+  children: ReactNode
+}
+
+const Button = ({ accent, big, children, ...props }: ButtonProps) => {
+  const theme = useTheme()
+
+  const bgColor = accent ? theme.accent : theme.bgPrimary
+
+  return (
+    <motion.button
+      {...props}
+      style={{
+        backgroundColor: bgColor,
+        color: accent ? theme.white : theme.textPrimary,
+        height: big ? '50px' : 'intial',
+        minWidth: big ? '250px' : 'initial'
+      }}
+      whileHover={{
+        backgroundColor:
+          theme.name === 'dark'
+            ? colord(bgColor).lighten(0.05).toRgbString()
+            : colord(bgColor).darken(0.02).toRgbString()
+      }}
+      transition={{
+        duration: 0.1
+      }}
+    >
+      {children}
+    </motion.button>
+  )
 }
 
 export default styled(Button)`
