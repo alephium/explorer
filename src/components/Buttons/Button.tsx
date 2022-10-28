@@ -17,17 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { motion, MotionProps } from 'framer-motion'
-import { ReactNode } from 'react'
+import { HTMLMotionProps, motion } from 'framer-motion'
 import styled, { useTheme } from 'styled-components'
 
-interface ButtonProps extends MotionProps {
+interface ButtonProps extends HTMLMotionProps<'button'> {
   accent?: boolean
   big?: boolean
-  children: ReactNode
 }
 
-const Button = ({ accent, big, children, ...props }: ButtonProps) => {
+const Button = ({ accent, big, ...props }: ButtonProps) => {
   const theme = useTheme()
 
   const bgColor = accent ? theme.accent : theme.bgPrimary
@@ -50,9 +48,7 @@ const Button = ({ accent, big, children, ...props }: ButtonProps) => {
       transition={{
         duration: 0.1
       }}
-    >
-      {children}
-    </motion.button>
+    />
   )
 }
 

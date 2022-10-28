@@ -56,3 +56,4 @@ export const formatNumberForDisplay = (
 }
 
 export const DATE_TIME_FORMAT = 'DD/MM/YYYY HH:mm:ss [UTC]Z'
+export const SIMPLE_DATE_FORMAT = 'DD/MM/YYYY'

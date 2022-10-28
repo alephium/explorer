@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import dayjs from 'dayjs'
 import { ComponentProps, useState } from 'react'
 import styled from 'styled-components'
-import Button from '../components/Buttons/Button'
 
+import Button from '../components/Buttons/Button'
 import HighlightedHash from '../components/HighlightedHash'
 import Modal from '../components/Modal/Modal'
 import Select, { SelectItem } from '../components/Select'
+import { SIMPLE_DATE_FORMAT } from '../utils/strings'
 
 interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
   addressHash: string
@@ -46,7 +48,6 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
           onItemClick={(v) => setTimePeriodValue(v as TimePeriods)}
           selectedItemValue={timePeriodValue}
         />
-        <Select title="CSV Format" items={formatItems} onItemClick={() => null} selectedItemValue={timePeriodValue} />
       </Selects>
 
       <FooterButton>
@@ -59,6 +60,9 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
 }
 
 type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
+
+const currentYear = dayjs().year()
+const today = dayjs().format(SIMPLE_DATE_FORMAT)
 
 const timePeriodsItems: SelectItem[] = [
   {
@@ -75,30 +79,18 @@ const timePeriodsItems: SelectItem[] = [
   },
   {
     value: '12m' as TimePeriods,
-    label: 'Last 1 year'
+    label: `Last 1 year 
+    (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)} 
+    - ${today})`
   },
   {
     value: 'lastYear' as TimePeriods,
-    label: 'Last year'
+    label: `Last year 
+    (01.01.${currentYear - 1} - 31.12.${currentYear - 1})`
   },
   {
     value: 'thisYear' as TimePeriods,
-    label: 'This year'
-  }
-]
-
-const formatItems: SelectItem[] = [
-  {
-    value: 'default',
-    label: 'Default'
-  },
-  {
-    value: 'bittax',
-    label: 'Bittax'
-  },
-  {
-    value: 'koinly',
-    label: 'Koinly'
+    label: `This year (01.01.${currentYear - 1} - ${today})`
   }
 ]
 
