@@ -33,7 +33,6 @@ interface SelectProps {
     expandedItemHeight?: number
     initialListWidth?: number | string
     expandedListWidth?: number | string
-    maxListHeight?: number | string
   }
   borderRadius?: number
   alignText?: 'start' | 'center' | 'end'
@@ -58,8 +57,7 @@ const Select = ({
     initialItemHeight: 55,
     expandedItemHeight: 60,
     initialListWidth: '98%',
-    expandedListWidth: '100%',
-    maxListHeight: 300
+    expandedListWidth: '100%'
   },
   alignText,
   borderRadius = 12,
@@ -71,8 +69,9 @@ const Select = ({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
-  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth, maxListHeight } =
-    dimensions as Required<typeof dimensions>
+  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth } = dimensions as Required<
+    typeof dimensions
+  >
 
   const orderedItems = [
     ...items.filter(({ value }) => selectedItemValue === value),
@@ -137,7 +136,6 @@ const Select = ({
         style={{
           height: initialItemHeight,
           width: initialListWidth,
-          maxHeight: maxListHeight,
           borderRadius: borderRadius
         }}
         transition={transition}
