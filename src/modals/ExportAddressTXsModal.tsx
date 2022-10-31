@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Button from 'components/Buttons/Button'
+import HighlightedHash from 'components/HighlightedHash'
+import Modal from 'components/Modal/Modal'
+import Select, { SelectItem } from 'components/Select'
 import dayjs from 'dayjs'
 import { ComponentProps, useState } from 'react'
 import styled from 'styled-components'
 
-import Button from '../components/Buttons/Button'
-import HighlightedHash from '../components/HighlightedHash'
-import Modal from '../components/Modal/Modal'
-import Select, { SelectItem } from '../components/Select'
 import { SIMPLE_DATE_FORMAT } from '../utils/strings'
 
 interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {

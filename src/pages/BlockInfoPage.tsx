@@ -18,28 +18,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
+import Badge from 'components/Badge'
+import InlineErrorMessage from 'components/InlineErrorMessage'
+import { AddressLink, TightLink } from 'components/Links'
+import PageSwitch from 'components/PageSwitch'
+import Section from 'components/Section'
+import SectionTitle, { SecondaryTitle } from 'components/SectionTitle'
+import HighlightedCell from 'components/Table/HighlightedCell'
+import Table, { TDStyle } from 'components/Table/Table'
+import TableBody from 'components/Table/TableBody'
+import { AnimatedCell, DetailToggle, TableDetailsRow } from 'components/Table/TableDetailsRow'
+import TableHeader from 'components/Table/TableHeader'
+import TableRow from 'components/Table/TableRow'
+import Timestamp from 'components/Timestamp'
+import usePageNumber from 'hooks/usePageNumber'
+import useTableDetailsState from 'hooks/useTableDetailsState'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
-import Badge from '../components/Badge'
-import InlineErrorMessage from '../components/InlineErrorMessage'
-import { AddressLink, TightLink } from '../components/Links'
-import LockTimeIcon from '../components/LockTimeIcon'
-import PageSwitch from '../components/PageSwitch'
-import Section from '../components/Section'
-import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import HighlightedCell from '../components/Table/HighlightedCell'
-import Table, { TDStyle } from '../components/Table/Table'
-import TableBody from '../components/Table/TableBody'
-import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
-import TableHeader from '../components/Table/TableHeader'
-import TableRow from '../components/Table/TableRow'
-import Timestamp from '../components/Timestamp'
 import { useGlobalContext } from '../contexts/global'
-import usePageNumber from '../hooks/usePageNumber'
-import useTableDetailsState from '../hooks/useTableDetailsState'
 import transactionIcon from '../images/transaction-icon.svg'
 
 type ParamTypes = {
@@ -283,19 +282,6 @@ const BlockTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-const OutputAmount = styled.span<{ hasRightPadding?: boolean }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding-right: ${({ hasRightPadding }) => (hasRightPadding ? '20px' : '0')};
-`
-
-const LockTimeIconStyled = styled(LockTimeIcon)`
-  position: absolute;
-  right: 0;
-`
 
 const TXTableBodyCustomStyles: TDStyle[] = [
   {

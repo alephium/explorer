@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
-import { colord } from 'colord'
 
 import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '../../utils/charts'
 import { formatToDayMonthYear } from '../../utils/dates'

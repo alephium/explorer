@@ -17,11 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
+import useOnOutsideClick from 'hooks/useOnClickOutside'
 import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
 import styled from 'styled-components'
-
-import useOnOutsideClick from '../hooks/useOnClickOutside'
 
 interface SelectProps {
   items: SelectItem[]

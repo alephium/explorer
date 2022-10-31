@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExplorerClient } from '@alephium/sdk'
+import useStateWithLocalStorage from 'hooks/useStateWithLocalStorage'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
-import useStateWithLocalStorage from '../hooks/useStateWithLocalStorage'
 import { ThemeType } from '../style/themes'
 import { OnOff } from '../types/generics'
 import { NetworkType, networkTypes } from '../types/network'

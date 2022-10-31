@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import useInterval from 'hooks/useInterval'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import useInterval from '../hooks/useInterval'
 import LoadingSpinner from './LoadingSpinner'
 
 interface RefreshTimerProps {

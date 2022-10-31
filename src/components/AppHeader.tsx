@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useWindowSize } from 'hooks/useWindowSize'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { useWindowSize } from '../hooks/useWindowSize'
 import logoDarkSrc from '../images/explorer-logo-dark.svg'
 import logoLightSrc from '../images/explorer-logo-light.svg'
 import { deviceBreakPoints, deviceSizes } from '../style/globalStyles'
