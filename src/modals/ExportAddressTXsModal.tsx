@@ -86,11 +86,11 @@ const timePeriodsItems: SelectItem[] = [
   {
     value: 'lastYear' as TimePeriods,
     label: `Last year 
-    (01.01.${currentYear - 1} - 31.12.${currentYear - 1})`
+    (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
   },
   {
     value: 'thisYear' as TimePeriods,
-    label: `This year (01.01.${currentYear - 1} - ${today})`
+    label: `This year (01/01/${currentYear - 1} - ${today})`
   }
 ]
 
