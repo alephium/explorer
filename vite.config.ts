@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/// <reference types="vitest" />
+
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import react from '@vitejs/plugin-react'
@@ -40,5 +42,14 @@ export default defineConfig({
       ]
     }
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()]
+  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: './src/setupTests.js',
+    coverage: {
+      reporter: ['text', 'html'],
+      exclude: ['node_modules/', 'src/setupTests.js']
+    }
+  }
 })
