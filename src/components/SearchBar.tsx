@@ -22,8 +22,8 @@ import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../contexts/global'
-import { checkAddressValidity, checkHexStringValidity } from '../utils/strings'
+import { useGlobalContext } from '@/contexts/global'
+import { checkAddressValidity, checkHexStringValidity } from '@/utils/strings'
 
 interface SearchBarProps {
   className?: string

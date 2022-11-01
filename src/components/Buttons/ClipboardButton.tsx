@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../../contexts/global'
+import { useGlobalContext } from '@/contexts/global'
 
 const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import { Lock } from 'lucide-react'
 
-import { DATE_TIME_FORMAT } from '../utils/strings'
+import { DATE_TIME_FORMAT } from '@/utils/strings'
 
 interface LockTimeIconProps {
   timestamp: number

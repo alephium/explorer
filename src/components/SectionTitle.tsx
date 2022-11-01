@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import { deviceBreakPoints } from '../style/globalStyles'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface PageTitleProps {
   title: string

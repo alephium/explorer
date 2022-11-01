@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import logo from '../images/alephium-logo-gradient-stroke.svg'
+import logo from '@/images/alephium-logo-gradient-stroke.svg'
 
 const ComingSoon = ({ text }: { text: string }) => {
   return (

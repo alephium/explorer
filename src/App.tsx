@@ -16,23 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import AppFooter from 'components/AppFooter'
-import AppHeader from 'components/AppHeader'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
-import { useGlobalContext } from './contexts/global'
-import PageNotFound from './pages/404'
-import AddressInfoSection from './pages/AddressInfoPage'
-import BlockInfoSection from './pages/BlockInfoPage'
-import HomeSection from './pages/HomePage/HomePage'
-import TransactionInfoSection from './pages/TransactionInfoPage'
-import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
-import { darkTheme, lightTheme } from './style/themes'
-import { SnackbarMessage } from './types/ui'
+import AppFooter from '@/components/AppFooter'
+import AppHeader from '@/components/AppHeader'
+import { useGlobalContext } from '@/contexts/global'
+import PageNotFound from '@/pages/404'
+import AddressInfoSection from '@/pages/AddressInfoPage'
+import BlockInfoSection from '@/pages/BlockInfoPage'
+import HomeSection from '@/pages/HomePage/HomePage'
+import TransactionInfoSection from '@/pages/TransactionInfoPage'
+import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
+import { darkTheme, lightTheme } from '@/styles/themes'
+import { SnackbarMessage } from '@/types/ui'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)

@@ -21,7 +21,7 @@ import { X } from 'lucide-react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
 
-import { isMobile } from '../../utils/browserSupport'
+import { isMobile } from '@/utils/browserSupport'
 
 interface FullScreenCardProps extends HTMLMotionProps<'div'> {
   label: string

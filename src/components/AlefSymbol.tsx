@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CSSProperties } from 'react'
 import styled from 'styled-components'
 
-import alefSymbol from '../images/alef.svg'
+import alefSymbol from '@/images/alef.svg'
 
 interface AlefSymbolProps {
   className?: string

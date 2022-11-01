@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // Inpired by https://github.com/ashiishme/react-sine-wave
 
-import useAnimationFrame from 'hooks/useAnimationFrame'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { useRef } from 'react'
 import styled from 'styled-components'
+
+import useAnimationFrame from '@/hooks/useAnimationFrame'
+import { useWindowSize } from '@/hooks/useWindowSize'
 
 import WaveEntity from './WaveEntity'
 

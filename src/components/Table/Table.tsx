@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
-import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
-import SkeletonLoader from '../SkeletonLoader'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 
 interface TableProps {
   main?: boolean

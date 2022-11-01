@@ -20,8 +20,8 @@ import { colord } from 'colord'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
 
-import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '../../utils/charts'
-import { formatToDayMonthYear } from '../../utils/dates'
+import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '@/utils/charts'
+import { formatToDayMonthYear } from '@/utils/dates'
 
 type TooltipStyleArgs = {
   series: number[][]

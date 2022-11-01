@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import logo from '../images/alephium-not-found.svg'
+import logo from '@/images/alephium-not-found.svg'
 
 const InlineErrorMessage = ({ message, code }: { message?: string; code?: number }) => {
   let shownMessage = ''

@@ -22,9 +22,9 @@ import { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { smartHash } from '../utils/strings'
-import Amount from './Amount'
-import LockTimeIcon from './LockTimeIcon'
+import Amount from '@/components/Amount'
+import LockTimeIcon from '@/components/LockTimeIcon'
+import { smartHash } from '@/utils/strings'
 
 interface TightLinkProps extends LinkProps {
   maxWidth: string

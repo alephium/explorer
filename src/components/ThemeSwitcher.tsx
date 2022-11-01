@@ -21,8 +21,8 @@ import { Moon, Sun } from 'lucide-react'
 import React from 'react'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../contexts/global'
-import { ThemeType } from '../style/themes'
+import { useGlobalContext } from '@/contexts/global'
+import { ThemeType } from '@/styles/themes'
 
 interface ThemeSwitcherProps {
   className?: string
