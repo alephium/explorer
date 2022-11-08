@@ -41,6 +41,8 @@ module.exports = {
     'unused-imports/no-unused-imports-ts': 'warn',
     'simple-import-sort/imports': 'warn',
     'header/header': [2, './license-header.js'],
+    'jsx-quotes': ['warn', 'prefer-double'],
+    'react/jsx-curly-brace-presence': ['warn', { props: 'never', children: 'never' }],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {

@@ -163,7 +163,7 @@ const TransactionInfoPage = () => {
                 {totalBalanceLoading ? (
                   <LoadingSpinner size={14} />
                 ) : totalBalance ? (
-                  <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
+                  <Badge type="neutralHighlight" amount={totalBalance.balance} />
                 ) : (
                   <ErrorMessage>Could not get balance</ErrorMessage>
                 )}
@@ -173,14 +173,14 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <td>Locked Balance</td>
                 <td>
-                  <Badge type={'neutral'} amount={totalBalance.lockedBalance} />
+                  <Badge type="neutral" amount={totalBalance.lockedBalance} />
                 </td>
               </TableRow>
             )}
           </TableBody>
         </Table>
         <QRCodeWrapper>
-          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textSecondary} />
+          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
         </QRCodeWrapper>
       </TableAndQRCode>
 

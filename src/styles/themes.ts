@@ -61,7 +61,7 @@ export const lightTheme: DefaultTheme = {
   body: '#f3f3f3',
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
-  textSecondary: 'rgba(15, 15, 15, 0.50)',
+  textSecondary: 'rgba(15, 15, 15, 0.70)',
   textAccent: '#e69100',
 
   link: '#0E82E7',

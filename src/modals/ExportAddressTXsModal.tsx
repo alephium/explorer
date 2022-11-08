@@ -26,6 +26,8 @@ import Modal from '@/components/Modal/Modal'
 import Select, { SelectItem } from '@/components/Select'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
+type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
+
 interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
   addressHash: string
 }
@@ -34,9 +36,9 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriods>('7d')
 
   return (
-    <Modal {...props} maxWidth={550}>
+    <Modal maxWidth={550} {...props}>
       <h2>Export address transactions</h2>
-      <HighlightedHash text={addressHash} middleEllipsis maxWidth={'200px'} />
+      <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
 
       <Explanations>
         Download the address transaction history. We propose multiple formats, useful for tax reporting.
@@ -58,8 +60,6 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
     </Modal>
   )
 }
-
-type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
 
 const currentYear = dayjs().year()
 const today = dayjs().format(SIMPLE_DATE_FORMAT)

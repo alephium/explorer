@@ -21,9 +21,8 @@ import { useCallback, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+import TextButton from '@/components/Buttons/TextButton'
 import useQueryParams from '@/hooks/useQueryParams'
-
-import TextButton from './Buttons/TextButton'
 
 const PageSwitch = ({
   elementsPerPage = 20,

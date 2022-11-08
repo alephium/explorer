@@ -58,7 +58,7 @@ const ClipboardButton = ({ textToCopy }: { textToCopy: string }) => {
   }, [hasBeenCopied, setSnackbarMessage])
 
   if (!hasBeenCopied) {
-    return <StyledClipboardIcon size={15} data-tip={'Copy to clipboard'} onClick={handleClick} />
+    return <StyledClipboardIcon size={15} data-tip="Copy to clipboard" onClick={handleClick} />
   } else {
     return <StyledCheckIcon size={15} />
   }

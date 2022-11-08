@@ -21,7 +21,7 @@ import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import useOnOutsideClick from '@/hooks/useOnClickOutside'
+import useOnClickOutside from '@/hooks/useOnClickOutside'
 
 interface SelectProps {
   items: SelectItem[]
@@ -74,9 +74,9 @@ const Select = ({
   >
 
   const orderedItems = [
-    ...items.filter(({ value }) => selectedItemValue === value),
+    items.find(({ value }) => selectedItemValue === value),
     ...items.filter(({ value }) => selectedItemValue !== value)
-  ]
+  ] as SelectItem[]
 
   const itemContainerVariants: Variants = {
     initial: {
@@ -104,7 +104,7 @@ const Select = ({
     onItemClick(value)
   }
 
-  useOnOutsideClick(wrapperRef, handleClickOutside)
+  useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
 
   const isSelected = (value: string) => selectedItemValue === value
 
