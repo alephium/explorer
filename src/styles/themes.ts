@@ -34,8 +34,8 @@ export const darkTheme: DefaultTheme = {
   bgPrimary: '#1B1B1F',
   bgSecondary: '#141417',
   bgTertiary: '#09090b',
-  bgHighlight: 'rgba(255, 255, 255, 0.03)',
-  bgHover: 'rgb(28, 28, 33)',
+  bgHighlight: 'rgba(255, 255, 255, 0.04)',
+  bgHover: 'rgb(255, 255, 255, 0.03)',
 
   borderPrimary: 'rgb(43, 43, 48)',
   borderSecondary: 'rgb(34, 34, 38)',
@@ -70,8 +70,8 @@ export const lightTheme: DefaultTheme = {
   bgPrimary: '#ffffff',
   bgSecondary: '#f3f3f3',
   bgTertiary: '#eeeeee',
-  bgHighlight: 'rgba(0, 0, 0, 0.015)',
-  bgHover: 'rgba(0, 0, 0, 0.01)',
+  bgHighlight: 'rgba(0, 0, 0, 0.02)',
+  bgHover: 'rgba(0, 0, 0, 0.015)',
 
   borderPrimary: '#e4e4e4',
   borderSecondary: '#e5e5e5',

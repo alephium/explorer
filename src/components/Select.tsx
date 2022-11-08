@@ -149,7 +149,7 @@ const Select = ({
             style={{
               height: initialItemHeight,
               justifyContent: alignText,
-              cursor: i === 0 && !isOpen ? 'pointer' : 'initial'
+              cursor: i === 0 && !isOpen ? 'pointer' : undefined
             }}
             borderRadius={borderRadius}
           >
@@ -216,23 +216,14 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
 
   padding: 15px;
 
-  color: rgba(255, 255, 255, 0.7);
+  color: ${({ theme }) => theme.textPrimary};
   background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 1;
 
   &:hover:not(:first-child) {
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      border-radius: ${({ borderRadius }) => borderRadius}px;
-      background-color: rgba(255, 255, 255, 0.03);
-      z-index: 0;
-      cursor: pointer;
-    }
+    background-color: ${({ theme }) => theme.bgHover};
+    z-index: 0;
+    cursor: pointer;
   }
 
   // Selected network

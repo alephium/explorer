@@ -34,16 +34,19 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
     <motion.button
       {...props}
       style={{
-        backgroundColor: bgColor,
-        color: accent ? theme.white : theme.textPrimary,
         height: big ? '50px' : 'intial',
         minWidth: big ? '250px' : 'initial'
+      }}
+      initial={{ backgroundColor: bgColor }}
+      animate={{
+        backgroundColor: bgColor,
+        color: accent ? theme.white : theme.textPrimary
       }}
       whileHover={{
         backgroundColor:
           theme.name === 'dark'
             ? colord(bgColor).lighten(0.05).toRgbString()
-            : colord(bgColor).darken(0.02).toRgbString()
+            : colord(bgColor).darken(0.03).toRgbString()
       }}
       transition={{
         duration: 0.1
@@ -53,17 +56,8 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
 }
 
 export default styled(Button)`
-  background-color: ${({ theme }) => theme.bgPrimary};
-  color: ${({ theme }) => theme.textPrimary};
   border-radius: 9px;
   border: 1px solid ${({ theme }) => theme.borderSecondary};
   padding: 10px 15px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) =>
-      theme.name === 'dark'
-        ? colord(theme.bgPrimary).lighten(0.05).toHex()
-        : colord(theme.bgPrimary).darken(0.02).toHex()};
-  }
+  cursor: pointer;
 `
