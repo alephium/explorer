@@ -27,13 +27,10 @@ readFile(file, 'utf-8', function (err, contents) {
   }
 
   const replaced0 = contents.replace(
-    /__REACT_APP_BACKEND_URL__/g,
-    `"${process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:9090'}"`
+    /__VITE_BACKEND_URL__/g,
+    `"${import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:9090'}"`
   )
-  const replaced1 = replaced0.replace(
-    /__REACT_APP_NETWORK_TYPE__/g,
-    `"${process.env.REACT_APP_NETWORK_TYPE ?? 'testnet'}"`
-  )
+  const replaced1 = replaced0.replace(/__VITE_NETWORK_TYPE__/g, `"${process.env.VITE_NETWORK_TYPE ?? 'testnet'}"`)
 
   writeFile(file, replaced1, 'utf-8', function (err) {
     console.log(err)

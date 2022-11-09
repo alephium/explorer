@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Waves from '../components/Wave/Waves'
+import Waves from '@/components/Wave/Waves'
 
 const PageNotFound = ({ className }: { className?: string }) => {
   return (

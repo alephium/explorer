@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExplorerClient } from '@alephium/sdk'
 import { createContext, FC, useContext, useEffect, useState } from 'react'
 
-import useStateWithLocalStorage from '../hooks/useStateWithLocalStorage'
-import { ThemeType } from '../style/themes'
-import { OnOff } from '../types/generics'
-import { NetworkType, networkTypes } from '../types/network'
-import { SnackbarMessage } from '../types/ui'
+import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
+import { ThemeType } from '@/styles/themes'
+import { OnOff } from '@/types/generics'
+import { NetworkType, networkTypes } from '@/types/network'
+import { SnackbarMessage } from '@/types/ui'
 
 interface GlobalContextInterface {
   client: ExplorerClient | undefined
@@ -59,19 +60,33 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     // Check and apply environment variables
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const url: string | null | undefined = (window as any).REACT_APP_BACKEND_URL as string | undefined
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const netType = (window as any).REACT_APP_NETWORK_TYPE as NetworkType | undefined
+    let url: string | null | undefined = (window as any).VITE_BACKEND_URL
+
+    let netType = (window as any).VITE_NETWORK_TYPE as NetworkType | undefined
 
     if (!url) {
-      throw new Error('The REACT_APP_BACKEND_URL environment variable must be defined')
+      url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
+      netType = (import.meta.env.VITE_NETWORK_TYPE || 'testnet') as NetworkType
+
+      console.info(`
+        • DEVELOPMENT MODE •
+
+        Using local env. variables if available. 
+        You can set them using a .env file placed at the project's root.
+
+        - Backend URL: ${url}
+        - Network Type: ${netType}
+      `)
+    }
+
+    if (!url) {
+      throw new Error('The VITE_BACKEND_URL environment variable must be defined')
     }
 
     if (!netType) {
-      throw new Error('The REACT_APP_NETWORK_TYPE environment variable must be defined')
+      throw new Error('The VITE_NETWORK_TYPE environment variable must be defined')
     } else if (!networkTypes.includes(netType)) {
-      throw new Error('Value of the REACT_APP_NETWORK_TYPE environment variable is invalid')
+      throw new Error('Value of the VITE_NETWORK_TYPE environment variable is invalid')
     }
 
     try {

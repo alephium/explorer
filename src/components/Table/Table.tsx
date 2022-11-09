@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
-import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
-import SkeletonLoader from '../SkeletonLoader'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 
 interface TableProps {
   main?: boolean
@@ -58,10 +58,9 @@ const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props 
 const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderSecondary}`};
   overflow: hidden;
-  border-radius: 7px;
+  border-radius: 9px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  box-shadow: ${({ theme }) => theme.shadowPrimary};
   ${({ theme }) => blurredBackground(theme.bgPrimary)}
 `
 

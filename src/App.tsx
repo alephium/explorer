@@ -22,17 +22,17 @@ import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
-import AppFooter from './components/AppFooter'
-import AppHeader from './components/AppHeader'
-import { useGlobalContext } from './contexts/global'
-import PageNotFound from './pages/404'
-import AddressInfoSection from './pages/AddressInfoPage'
-import BlockInfoSection from './pages/BlockInfoPage'
-import HomeSection from './pages/HomePage/HomePage'
-import TransactionInfoSection from './pages/TransactionInfoPage'
-import GlobalStyle, { deviceBreakPoints } from './style/globalStyles'
-import { darkTheme, lightTheme } from './style/themes'
-import { SnackbarMessage } from './types/ui'
+import AppFooter from '@/components/AppFooter'
+import AppHeader from '@/components/AppHeader'
+import { useGlobalContext } from '@/contexts/global'
+import PageNotFound from '@/pages/404'
+import AddressInfoSection from '@/pages/AddressInfoPage'
+import BlockInfoSection from '@/pages/BlockInfoPage'
+import HomeSection from '@/pages/HomePage/HomePage'
+import TransactionInfoSection from '@/pages/TransactionInfoPage'
+import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
+import { darkTheme, lightTheme } from '@/styles/themes'
+import { SnackbarMessage } from '@/types/ui'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -66,7 +66,7 @@ const App = () => {
     <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
       <MainContainer>
-        <AnimateSharedLayout type="crossfade">
+        <AnimateSharedLayout>
           <AppHeader />
           <ContentContainer>
             <ContentWrapper>

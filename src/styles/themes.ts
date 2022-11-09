@@ -24,18 +24,18 @@ export const darkTheme: DefaultTheme = {
   name: 'dark',
   body: '#141417',
 
-  textPrimary: 'rgba(255, 255, 255, 0.8)',
-  textSecondary: 'rgba(255, 255, 255, 0.45)',
+  textPrimary: 'rgba(255, 255, 255, 0.95)',
+  textSecondary: 'rgba(255, 255, 255, 0.65)',
   textAccent: '#EFA25B',
 
   link: '#53A9F5',
   linkHighlight: '#0E82E7',
 
-  bgPrimary: '#19191E',
+  bgPrimary: '#1B1B1F',
   bgSecondary: '#141417',
-  bgTertiary: '#101012',
-  bgHighlight: 'rgba(255, 255, 255, 0.03)',
-  bgHover: 'rgb(28, 28, 33)',
+  bgTertiary: '#09090b',
+  bgHighlight: 'rgba(255, 255, 255, 0.04)',
+  bgHover: 'rgb(255, 255, 255, 0.03)',
 
   borderPrimary: 'rgb(43, 43, 48)',
   borderSecondary: 'rgb(34, 34, 38)',
@@ -45,12 +45,15 @@ export const darkTheme: DefaultTheme = {
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.15)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.1)',
 
-  accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
+  accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
 
-  tooltip: 'black',
+  tooltip: '#000000',
 
+  accent: '#6083ff',
   valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)'
+  alert: 'rgb(243, 113, 93)',
+
+  white: '#ffffff'
 }
 
 export const lightTheme: DefaultTheme = {
@@ -58,17 +61,17 @@ export const lightTheme: DefaultTheme = {
   body: '#f3f3f3',
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
-  textSecondary: 'rgba(15, 15, 15, 0.50)',
+  textSecondary: 'rgba(15, 15, 15, 0.70)',
   textAccent: '#e69100',
 
   link: '#0E82E7',
   linkHighlight: '#53A9F5',
 
-  bgPrimary: 'white',
+  bgPrimary: '#ffffff',
   bgSecondary: '#f3f3f3',
   bgTertiary: '#eeeeee',
-  bgHighlight: 'rgba(0, 0, 0, 0.015)',
-  bgHover: 'rgba(0, 0, 0, 0.01)',
+  bgHighlight: 'rgba(0, 0, 0, 0.02)',
+  bgHover: 'rgba(0, 0, 0, 0.015)',
 
   borderPrimary: '#e4e4e4',
   borderSecondary: '#e5e5e5',
@@ -78,10 +81,13 @@ export const lightTheme: DefaultTheme = {
   shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.04)',
   shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
 
-  accentGradient: 'linear-gradient(200deg, #16d9f4 15%,#f46016 40%,#6510f8 60%) border-box',
+  accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
 
-  tooltip: 'black',
+  tooltip: '#000000',
 
+  accent: '#6083ff',
   valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)'
+  alert: 'rgb(243, 113, 93)',
+
+  white: '#ffffff'
 }

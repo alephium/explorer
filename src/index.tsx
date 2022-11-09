@@ -21,7 +21,8 @@ import './fonts/index.css'
 import ReactDOM from 'react-dom'
 import { BrowserRouter as Router } from 'react-router-dom'
 
-import NotificationBar from './components/NotificationBar'
+import NotificationBar from '@/components/NotificationBar'
+
 import * as serviceWorker from './serviceWorker'
 import { isFlexGapSupported } from './utils/browserSupport'
 

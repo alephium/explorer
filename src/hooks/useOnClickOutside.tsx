@@ -16,20 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import dayjs from 'dayjs'
-import { Lock } from 'lucide-react'
+import { RefObject, useEffect } from 'react'
 
-import { DATE_TIME_FORMAT } from '@/utils/strings'
-
-interface LockTimeIconProps {
-  timestamp: number
-  className?: string
+interface UseOnClickOutsideProps<T> {
+  ref: RefObject<T>
+  handler: (e: MouseEvent) => void
 }
 
-const LockTimeIcon = ({ timestamp, className }: LockTimeIconProps) => {
-  const unlocksOn = dayjs(timestamp).format(DATE_TIME_FORMAT)
+const useOnClickOutside = <T extends HTMLElement>({ ref, handler }: UseOnClickOutsideProps<T>) => {
+  useEffect(() => {
+    const listener = (e: MouseEvent) => {
+      if (!ref.current || ref.current.contains(e.target as Node)) {
+        return
+      }
 
-  return <Lock data-tip={`Unlocks on ${unlocksOn}`} size="13px" className={className} />
+      handler(e)
+    }
+    document.addEventListener('mousedown', listener)
+    return () => {
+      document.removeEventListener('mousedown', listener)
+    }
+  }, [ref, handler])
 }
 
-export default LockTimeIcon
+export default useOnClickOutside

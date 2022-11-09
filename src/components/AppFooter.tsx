@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import { ReactComponent as DiscordIcon } from '../images/brand-icon-discord.svg'
-import { ReactComponent as RedditIcon } from '../images/brand-icon-reddit.svg'
-import { ReactComponent as TelegramIcon } from '../images/brand-icon-telegram.svg'
-import { ReactComponent as TwitterIcon } from '../images/brand-icon-twitter.svg'
-import { deviceBreakPoints } from '../style/globalStyles'
-import ExternalLink from './ExternalLink'
-import NetworkSwitch from './NetworkSwitch'
-import ThemeSwitcher from './ThemeSwitcher'
+import ExternalLink from '@/components/ExternalLink'
+import NetworkSwitch from '@/components/NetworkSwitch'
+import ThemeSwitcher from '@/components/ThemeSwitcher'
+import { ReactComponent as DiscordIcon } from '@/images/brand-icon-discord.svg'
+import { ReactComponent as RedditIcon } from '@/images/brand-icon-reddit.svg'
+import { ReactComponent as TelegramIcon } from '@/images/brand-icon-telegram.svg'
+import { ReactComponent as TwitterIcon } from '@/images/brand-icon-twitter.svg'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface AppFooterProps {
   className?: string

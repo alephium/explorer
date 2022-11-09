@@ -9,25 +9,25 @@ env:
   AWS_DEFAULT_REGION: eu-central-1
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  REACT_APP_BACKEND_URL: https://backend-v18.testnet.alephium.org
-  REACT_APP_NETWORK_TYPE: testnet
+  VITE_BACKEND_URL: https://backend-v18.testnet.alephium.org
+  VITE_NETWORK_TYPE: testnet
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Setup node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16
+      - name: Setup node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
 
-    - name: Build frontend
-      run: npm ci && npm run build && node docker/init-server-data.js
+      - name: Build frontend
+        run: npm ci && npm run build && node docker/init-server-data.js
 
-    - name: Sync files to S3
-      run: aws s3 sync ./build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
+      - name: Sync files to S3
+        run: aws s3 sync ./build/ s3://$AWS_BUCKET_NAME --acl public-read --delete --cache-control max-age=604800
 
-    - name: Notify CloudFront about the changes
-      run: aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"
+      - name: Notify CloudFront about the changes
+        run: aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID} --paths "/*"

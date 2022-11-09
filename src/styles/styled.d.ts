@@ -51,7 +51,10 @@ declare module 'styled-components' {
 
     tooltip: string
 
+    accent: string
     valid: string
     alert: string
+
+    white: string
   }
 }

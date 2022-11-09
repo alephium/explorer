@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { HttpResponse } from '@alephium/sdk/api/explorer'
 import { useCallback, useEffect, useState } from 'react'
 
-import { useGlobalContext } from '../../contexts/global'
+import { useGlobalContext } from '@/contexts/global'
 
 const ONE_DAY = 1000 * 60 * 60 * 24
 

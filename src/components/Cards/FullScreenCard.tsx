@@ -21,7 +21,7 @@ import { X } from 'lucide-react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
 
-import { isMobile } from '../../utils/browserSupport'
+import { isMobile } from '@/utils/browserSupport'
 
 interface FullScreenCardProps extends HTMLMotionProps<'div'> {
   label: string
@@ -96,7 +96,6 @@ const CardContent = styled(motion.div)`
   background-color: ${({ theme }) => theme.bgPrimary};
   border-radius: 9px;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadowPrimary};
   margin: 0 2vw;
 
   @media (max-aspect-ratio: 2/3) {

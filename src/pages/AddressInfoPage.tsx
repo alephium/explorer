@@ -20,36 +20,42 @@ import { calcTxAmountDeltaForAddress, getDirection, getHumanReadableError, isCon
 import { AddressBalance, AssetOutput, Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
+import QRCode from 'qrcode.react'
 import { FC, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
-import Amount from '../components/Amount'
-import Badge from '../components/Badge'
-import { AddressLink, TightLink } from '../components/Links'
-import LoadingSpinner from '../components/LoadingSpinner'
-import PageSwitch from '../components/PageSwitch'
-import Section from '../components/Section'
-import SectionTitle, { SecondaryTitle } from '../components/SectionTitle'
-import HighlightedCell from '../components/Table/HighlightedCell'
-import Table, { TDStyle } from '../components/Table/Table'
-import TableBody from '../components/Table/TableBody'
-import { AnimatedCell, DetailToggle, TableDetailsRow } from '../components/Table/TableDetailsRow'
-import TableHeader from '../components/Table/TableHeader'
-import TableRow from '../components/Table/TableRow'
-import Timestamp from '../components/Timestamp'
-import { useGlobalContext } from '../contexts/global'
-import usePageNumber from '../hooks/usePageNumber'
-import useTableDetailsState from '../hooks/useTableDetailsState'
-import { useTransactionUI } from '../hooks/useTransactionUI'
+import Amount from '@/components/Amount'
+import Badge from '@/components/Badge'
+import Button from '@/components/Buttons/Button'
+import HighlightedHash from '@/components/HighlightedHash'
+import { AddressLink, TightLink } from '@/components/Links'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import PageSwitch from '@/components/PageSwitch'
+import Section from '@/components/Section'
+import SectionTitle from '@/components/SectionTitle'
+import Table, { TDStyle } from '@/components/Table/Table'
+import TableBody from '@/components/Table/TableBody'
+import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/TableDetailsRow'
+import TableHeader from '@/components/Table/TableHeader'
+import TableRow from '@/components/Table/TableRow'
+import Timestamp from '@/components/Timestamp'
+import { useGlobalContext } from '@/contexts/global'
+import usePageNumber from '@/hooks/usePageNumber'
+import useTableDetailsState from '@/hooks/useTableDetailsState'
+import { useTransactionUI } from '@/hooks/useTransactionUI'
+import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 
 type ParamTypes = {
   id: string
 }
 
 const TransactionInfoPage = () => {
+  const theme = useTheme()
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage } = useGlobalContext()
+
   const [txNumber, setTxNumber] = useState<number>()
   const [totalBalance, setTotalBalance] = useState<AddressBalance>()
   const [txListError, setTxListError] = useState('')
@@ -58,6 +64,8 @@ const TransactionInfoPage = () => {
   const [txLoading, setTxLoading] = useState(true)
   const [txNumberLoading, setTxNumberLoading] = useState(true)
   const [totalBalanceLoading, setTotalBalanceLoading] = useState(true)
+
+  const [exportModalShown, setExportModalShown] = useState(false)
 
   // Default page
   const pageNumber = usePageNumber()
@@ -127,54 +135,59 @@ const TransactionInfoPage = () => {
     fetchTransactions()
   }, [client, id, pageNumber])
 
+  const handleExportModalOpen = () => setExportModalShown(true)
+
+  const handleExportModalClose = () => setExportModalShown(false)
+
   if (!id) return null
 
   return (
     <Section>
-      <SectionTitle title="Address" />
-
-      <Table bodyOnly minHeight={250}>
-        <TableBody tdStyles={AddressTableBodyCustomStyles}>
-          <TableRow>
-            <td>Address</td>
-            <HighlightedCell textToCopy={id} qrCodeContent={id}>
-              {id}
-            </HighlightedCell>
-          </TableRow>
-          <TableRow>
-            <td>Number of Transactions</td>
-            <td>
-              {txNumberLoading ? (
-                <LoadingSpinner size={14} />
-              ) : (
-                txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
-              )}
-            </td>
-          </TableRow>
-          <TableRow>
-            <td>Total Balance</td>
-            <td>
-              {totalBalanceLoading ? (
-                <LoadingSpinner size={14} />
-              ) : totalBalance ? (
-                <Badge type={'neutralHighlight'} amount={totalBalance.balance} />
-              ) : (
-                <ErrorMessage>Could not get balance</ErrorMessage>
-              )}
-            </td>
-          </TableRow>
-          {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
+      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} textToCopy={id} />} />
+      <TableAndQRCode>
+        <Table bodyOnly minHeight={100}>
+          <TableBody tdStyles={AddressTableBodyCustomStyles}>
             <TableRow>
-              <td>Locked Balance</td>
+              <td>Number of Transactions</td>
               <td>
-                <Badge type={'neutral'} amount={totalBalance.lockedBalance} />
+                {txNumberLoading ? (
+                  <LoadingSpinner size={14} />
+                ) : (
+                  txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
+                )}
               </td>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            <TableRow>
+              <td>Total Balance</td>
+              <td>
+                {totalBalanceLoading ? (
+                  <LoadingSpinner size={14} />
+                ) : totalBalance ? (
+                  <Badge type="neutralHighlight" amount={totalBalance.balance} />
+                ) : (
+                  <ErrorMessage>Could not get balance</ErrorMessage>
+                )}
+              </td>
+            </TableRow>
+            {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
+              <TableRow>
+                <td>Locked Balance</td>
+                <td>
+                  <Badge type="neutral" amount={totalBalance.lockedBalance} />
+                </td>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        <QRCodeWrapper>
+          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
+        </QRCodeWrapper>
+      </TableAndQRCode>
 
-      <SecondaryTitle>Transactions</SecondaryTitle>
+      <SectionHeader>
+        <h2>Transactions</h2>
+        {/*<Button onClick={handleExportModalOpen}>Export CSV ↓</Button>*/}
+      </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
         {txList && txList.length ? (
@@ -200,6 +213,10 @@ const TransactionInfoPage = () => {
       </Table>
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
+
+      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose}>
+        <span></span>
+      </ExportAddressTXsModal>
     </Section>
   )
 }
@@ -366,6 +383,34 @@ const ErrorMessage = styled.span`
   color: ${({ theme }) => theme.textSecondary};
   font-style: italic;
   font-weight: 400;
+`
+
+const SectionHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+  margin-bottom: 10px;
+`
+
+const TableAndQRCode = styled.div`
+  display: flex;
+  gap: 20px;
+
+  @media ${deviceBreakPoints.tiny} {
+    flex-direction: column;
+  }
+`
+
+const QRCodeWrapper = styled.div`
+  border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
+  ${({ theme }) => blurredBackground(theme.bgPrimary)};
+  border-radius: 9px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export default TransactionInfoPage

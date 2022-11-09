@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { HTMLMotionProps, motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import { blurredBackground, deviceBreakPoints } from '../../style/globalStyles'
-import SkeletonLoader from '../SkeletonLoader'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
 
 export interface CardProps extends HTMLMotionProps<'div'> {
   label: string
@@ -46,7 +46,6 @@ const Container = styled(motion.div)`
   flex: 1;
   position: relative;
   ${({ theme }) => blurredBackground(theme.bgPrimary)};
-  box-shadow: ${({ theme }) => theme.shadowPrimary};
   border: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 9px;
   display: flex;

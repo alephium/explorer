@@ -21,8 +21,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useRef } from 'react'
 import styled from 'styled-components'
 
-import useAnimationFrame from '../../hooks/useAnimationFrame'
-import { useWindowSize } from '../../hooks/useWindowSize'
+import useAnimationFrame from '@/hooks/useAnimationFrame'
+import { useWindowSize } from '@/hooks/useWindowSize'
+
 import WaveEntity from './WaveEntity'
 
 const Waves = () => {

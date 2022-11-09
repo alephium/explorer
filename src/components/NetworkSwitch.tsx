@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ComponentPropsWithoutRef } from 'react'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../contexts/global'
-import Menu from './Menu'
-import NetworkLogo from './NetworkLogo'
+import Menu from '@/components/Menu'
+import NetworkLogo from '@/components/NetworkLogo'
+import { useGlobalContext } from '@/contexts/global'
 
 const NetworkSwitch = ({
   direction = 'down',

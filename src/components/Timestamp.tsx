@@ -23,8 +23,8 @@ import { MouseEvent } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '../contexts/global'
-import { DATE_TIME_FORMAT } from '../utils/strings'
+import { useGlobalContext } from '@/contexts/global'
+import { DATE_TIME_FORMAT } from '@/utils/strings'
 
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)

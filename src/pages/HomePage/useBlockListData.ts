@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ListBlocks } from '@alephium/sdk/api/explorer'
 import { useCallback, useEffect, useState } from 'react'
 
-import { useGlobalContext } from '../../contexts/global'
+import { useGlobalContext } from '@/contexts/global'
 
 const useBlockListData = (currentPageNumber: number) => {
   const [blockList, setBlockList] = useState<ListBlocks>()

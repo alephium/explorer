@@ -15,9 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { colord } from 'colord'
 import { createGlobalStyle, css } from 'styled-components'
 import normalize from 'styled-normalize'
-import tinycolor from 'tinycolor2'
 
 // Breakpoints
 
@@ -46,7 +46,7 @@ export default createGlobalStyle`
   :root {
     font-size: 13px;
 
-    @media ${deviceBreakPoints.mobile} {
+    @media ${deviceBreakPoints.tiny} {
       font-size: 12px;
     }
   }
@@ -92,6 +92,7 @@ export default createGlobalStyle`
   button {
     outline: none;
     cursor: pointer;
+    border: none;
   }
 
   a {
@@ -114,10 +115,10 @@ export default createGlobalStyle`
 `
 
 export const blurredBackground = (color: string) => css`
-  background-color: ${tinycolor(color).setAlpha(0.96).toString()};
+  background-color: ${colord(color).alpha(0.96).toRgbString()};
 
   @supports (backdrop-filter: blur(20px)) {
     backdrop-filter: blur(20px);
-    background-color: ${tinycolor(color).setAlpha(0.7).toString()};
+    background-color: ${colord(color).alpha(0.7).toRgbString()};
   }
 `

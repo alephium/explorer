@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import { deviceBreakPoints } from '../style/globalStyles'
-import LoadingSpinner from './LoadingSpinner'
+import LoadingSpinner from '@/components/LoadingSpinner'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface PageTitleProps {
   title: string
@@ -72,10 +72,11 @@ const Subtitle = styled.h2`
   font-size: 1.6rem;
   color: ${({ theme }) => theme.textSecondary};
   margin: 0;
+  margin-bottom: 35px;
 `
 
 export const SecondaryTitle = styled.h2`
-  margin-top: 40px;
+  margin-top: 35px;
 `
 
 export default SectionTitle

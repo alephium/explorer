@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
-import tinycolor from 'tinycolor2'
 
-import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '../../utils/charts'
-import { formatToDayMonthYear } from '../../utils/dates'
+import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '@/utils/charts'
+import { formatToDayMonthYear } from '@/utils/dates'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -93,7 +93,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
       }
     },
     grid: {
-      borderColor: tinycolor(theme.borderPrimary).setAlpha(0.5).toString(),
+      borderColor: colord(theme.borderPrimary).alpha(0.5).toHex(),
       padding: {
         top: 0,
         right: 0
