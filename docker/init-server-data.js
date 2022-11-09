@@ -28,7 +28,7 @@ readFile(file, 'utf-8', function (err, contents) {
 
   const replaced0 = contents.replace(
     /__VITE_BACKEND_URL__/g,
-    `"${import.meta.env.VITE_BACKEND_URL ?? 'http://localhost:9090'}"`
+    `"${process.env.VITE_BACKEND_URL ?? 'http://localhost:9090'}"`
   )
   const replaced1 = replaced0.replace(/__VITE_NETWORK_TYPE__/g, `"${process.env.VITE_NETWORK_TYPE ?? 'testnet'}"`)
 

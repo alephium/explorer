@@ -61,7 +61,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --outDir build",
     "serve": "node docker/init-server-data.js && serve -s build -p 3000",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
