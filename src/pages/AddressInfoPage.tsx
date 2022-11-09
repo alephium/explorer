@@ -186,7 +186,7 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        <Button onClick={handleExportModalOpen}>Export CSV ↓</Button>
+        {/*<Button onClick={handleExportModalOpen}>Export CSV ↓</Button>*/}
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
