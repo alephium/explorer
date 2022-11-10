@@ -390,7 +390,7 @@ const SectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 10px;
 `
 
