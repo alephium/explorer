@@ -27,7 +27,6 @@ import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
-import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import { AddressLink, TightLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -134,8 +133,6 @@ const TransactionInfoPage = () => {
 
     fetchTransactions()
   }, [client, id, pageNumber])
-
-  const handleExportModalOpen = () => setExportModalShown(true)
 
   const handleExportModalClose = () => setExportModalShown(false)
 
