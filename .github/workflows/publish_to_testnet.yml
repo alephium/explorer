@@ -9,7 +9,7 @@ env:
   AWS_DEFAULT_REGION: eu-central-1
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-  VITE_BACKEND_URL: https://backend.testnet.alephium.org
+  VITE_BACKEND_URL: https://backend-v19.testnet.alephium.org
   VITE_NETWORK_TYPE: testnet
 
 jobs:
