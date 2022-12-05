@@ -23,7 +23,7 @@ import styled from 'styled-components'
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import Modal from '@/components/Modal/Modal'
-import Select, { SelectItem } from '@/components/Select'
+import Select, { SelectListItem } from '@/components/Select'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
@@ -64,7 +64,7 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
 const currentYear = dayjs().year()
 const today = dayjs().format(SIMPLE_DATE_FORMAT)
 
-const timePeriodsItems: SelectItem[] = [
+const timePeriodsItems: SelectListItem[] = [
   {
     value: '7d' as TimePeriods,
     label: 'Last 7 days'

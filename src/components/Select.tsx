@@ -23,27 +23,31 @@ import styled from 'styled-components'
 
 import useOnClickOutside from '@/hooks/useOnClickOutside'
 
+interface Dimensions {
+  initialItemHeight?: number
+  expandedItemHeight?: number
+  initialListWidth?: number | string
+  expandedListWidth?: number | string
+}
+
+type AlignText = 'start' | 'center' | 'end'
+
 interface SelectProps {
-  items: SelectItem[]
+  items: SelectListItem[]
   onItemClick: (value: string) => void
   selectedItemValue?: string
   title: string
-  dimensions?: {
-    initialItemHeight?: number
-    expandedItemHeight?: number
-    initialListWidth?: number | string
-    expandedListWidth?: number | string
-  }
+  dimensions?: Dimensions
   borderRadius?: number
-  alignText?: 'start' | 'center' | 'end'
+  alignText?: AlignText
   className?: string
   style?: MotionStyle
 }
 
-export interface SelectItem {
+export interface SelectListItem {
   value: string
   label?: string
-  Component?: ReactNode
+  LabelComponent?: ReactNode
 }
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
@@ -69,26 +73,12 @@ const Select = ({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
-  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth } = dimensions as Required<
-    typeof dimensions
-  >
+  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth } =
+    dimensions as Required<Dimensions>
 
-  const orderedItems = [
-    items.find(({ value }) => selectedItemValue === value),
-    ...items.filter(({ value }) => selectedItemValue !== value)
-  ] as SelectItem[]
+  const selectedItem = items.find(({ value }) => selectedItemValue === value)
 
-  const itemContainerVariants: Variants = {
-    initial: {
-      height: initialItemHeight
-    },
-    open: {
-      height: expandedItemHeight,
-      transition
-    }
-  }
-
-  const handleClick = () => {
+  const handleSelectClick = () => {
     !isOpen && setIsOpen(true)
 
     // Scroll to top
@@ -99,23 +89,33 @@ const Select = ({
     setIsOpen(false)
   }
 
+  useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
+
+  const isItemSelected = (value: string) => selectedItemValue === value
+
   const handleItemClick = (value: string) => {
     setIsOpen(false)
     onItemClick(value)
   }
 
-  useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
-
-  const isSelected = (value: string) => selectedItemValue === value
-
-  const shouldAnimateItem = (value: string) => isSelected(value) && isOpen
+  const getSelectItemBaseProps = (listItemProps: SelectListItem) => ({
+    value: listItemProps.value,
+    label: listItemProps.label,
+    LabelComponent: listItemProps.LabelComponent,
+    onClick: handleItemClick,
+    isDrawerOpen: isOpen,
+    initialItemHeight: initialItemHeight,
+    expandedItemHeight: expandedItemHeight,
+    alignText: alignText,
+    borderRadius: borderRadius
+  })
 
   return (
     <SelectWrapper
       role="button"
       aria-label="Selected network"
       className={className}
-      onClick={handleClick}
+      onClick={handleSelectClick}
       animate={isOpen ? 'open' : 'initial'}
       style={{ height: initialItemHeight, ...style }}
       ref={wrapperRef}
@@ -141,39 +141,85 @@ const Select = ({
         transition={transition}
         ref={listRef}
       >
-        {orderedItems.map(({ value, label, Component }, i) => (
-          <ItemContainer
-            key={value}
-            onClick={() => handleItemClick(value)}
-            variants={itemContainerVariants}
-            style={{
-              height: initialItemHeight,
-              justifyContent: alignText,
-              cursor: i === 0 && !isOpen ? 'pointer' : undefined
-            }}
-            borderRadius={borderRadius}
-          >
-            <Title
-              style={{
-                opacity: shouldAnimateItem(value) || i === 0 ? 1 : 0,
-                top: expandedItemHeight / 6,
-                fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
-              }}
-            >
-              {title}
-            </Title>
-            <ItemContent
-              style={{
-                paddingTop: i === 0 ? expandedItemHeight / 3.5 : 0
-              }}
-            >
-              {label ? label : Component ? Component : null}
-            </ItemContent>
-            {i === 0 && <ChevronDown strokeWidth={1.5} strokeOpacity={isOpen ? 0.5 : 1} />}
-          </ItemContainer>
+        {selectedItem && <SelectItem title={title} {...getSelectItemBaseProps(selectedItem)} />}
+        {items.map((item) => (
+          <SelectItem key={item.value} isSelected={isItemSelected(item.value)} {...getSelectItemBaseProps(item)} />
         ))}
       </ItemList>
     </SelectWrapper>
+  )
+}
+
+interface SelectItemProps {
+  value: string
+  label?: string
+  LabelComponent?: ReactNode
+  title?: string
+  isDrawerOpen: boolean
+  isSelected?: boolean
+  onClick: (value: string) => void
+  initialItemHeight: Required<Dimensions>['initialItemHeight']
+  expandedItemHeight: Required<Dimensions>['expandedItemHeight']
+  borderRadius: number
+  alignText?: AlignText
+}
+
+const SelectItem = ({
+  value,
+  label,
+  LabelComponent,
+  title,
+  isSelected = false,
+  isDrawerOpen,
+  onClick,
+  initialItemHeight,
+  expandedItemHeight,
+  alignText,
+  borderRadius
+}: SelectItemProps) => {
+  const itemContainerVariants: Variants = {
+    initial: {
+      height: initialItemHeight
+    },
+    open: {
+      height: expandedItemHeight,
+      transition
+    }
+  }
+
+  return (
+    <ItemContainer
+      key={value}
+      onClick={() => !isSelected && onClick(value)}
+      className={isSelected ? 'selected' : undefined}
+      variants={itemContainerVariants}
+      style={{
+        height: initialItemHeight,
+        justifyContent: alignText,
+        cursor: title && !isDrawerOpen ? 'pointer' : undefined
+      }}
+      borderRadius={borderRadius}
+    >
+      {title && (
+        <Title
+          style={{
+            top: expandedItemHeight / 6,
+            fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
+          }}
+        >
+          {title}
+        </Title>
+      )}
+      <ItemContent
+        style={{
+          paddingTop: title ? expandedItemHeight / 3.5 : 0,
+          opacity: isSelected ? 0.5 : 1
+        }}
+      >
+        {label ? label : LabelComponent ? LabelComponent : null}
+      </ItemContent>
+      {title && <ChevronDown strokeWidth={1.5} strokeOpacity={isDrawerOpen ? 0.5 : 1} />}
+    </ItemContainer>
   )
 }
 
@@ -220,7 +266,7 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 1;
 
-  &:hover:not(:first-child) {
+  &:hover:not(:first-child):not(.selected) {
     background-color: ${({ theme }) => theme.bgHover};
     z-index: 0;
     cursor: pointer;
@@ -245,7 +291,7 @@ const Divider = styled.div`
   position: absolute;
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.borderSecondary};
+  background-color: ${({ theme }) => theme.borderPrimary};
   z-index: 2;
 `
 
@@ -259,7 +305,6 @@ const ItemContent = styled(motion.div)`
 
 const Title = styled(motion.span)`
   position: absolute;
-  opacity: 0;
   color: ${({ theme }) => theme.textSecondary};
   font-weight: 600;
 `

@@ -45,6 +45,7 @@ import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
+import Button from '@/components/Buttons/Button'
 
 type ParamTypes = {
   id: string
@@ -134,6 +135,8 @@ const TransactionInfoPage = () => {
     fetchTransactions()
   }, [client, id, pageNumber])
 
+  const handleExportModalOpen = () => setExportModalShown(true)
+
   const handleExportModalClose = () => setExportModalShown(false)
 
   if (!id) return null
@@ -183,7 +186,7 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        {/*<Button onClick={handleExportModalOpen}>Export CSV ↓</Button>*/}
+        <Button onClick={handleExportModalOpen}>Export CSV ↓</Button>
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
