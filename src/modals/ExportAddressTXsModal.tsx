@@ -47,8 +47,6 @@ interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
 const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalProps) => {
   const { client, setSnackbarMessage } = useGlobalContext()
 
-  console.log(dayjs().subtract(1, 'week').toString())
-
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
 
   const getCSVFile = useCallback(
