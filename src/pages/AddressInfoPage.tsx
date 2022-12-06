@@ -157,25 +157,38 @@ const TransactionInfoPage = () => {
                 )}
               </td>
             </TableRow>
-            <TableRow>
-              <td>Total Balance</td>
-              <td>
-                {totalBalanceLoading ? (
-                  <LoadingSpinner size={14} />
-                ) : totalBalance ? (
-                  <Badge type="neutralHighlight" amount={totalBalance.balance} />
-                ) : (
-                  <ErrorMessage>Could not get balance</ErrorMessage>
-                )}
-              </td>
-            </TableRow>
-            {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
-              <TableRow>
-                <td>Locked Balance</td>
-                <td>
-                  <Badge type="neutral" amount={totalBalance.lockedBalance} />
-                </td>
-              </TableRow>
+            {totalBalanceLoading ? (
+              <>
+                <TableRow>
+                  <td>
+                    <LoadingSpinner size={14} />
+                  </td>
+                </TableRow>
+                <TableRow>
+                  <td>
+                    <LoadingSpinner size={14} />
+                  </td>
+                </TableRow>
+              </>
+            ) : totalBalance ? (
+              <>
+                <TableRow>
+                  <td>Locked Balance</td>
+                  <td>
+                    <Badge type="neutral" amount={totalBalance?.lockedBalance} />
+                  </td>
+                </TableRow>
+                <TableRow>
+                  <td>
+                    <b>Total Balance</b>
+                  </td>
+                  <td>
+                    <Badge type="neutralHighlight" amount={totalBalance.balance} />
+                  </td>
+                </TableRow>
+              </>
+            ) : (
+              <ErrorMessage>Could not get balance</ErrorMessage>
             )}
           </TableBody>
         </Table>
@@ -390,7 +403,7 @@ const SectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 35px;
   margin-bottom: 10px;
 `
 
