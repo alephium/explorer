@@ -32,10 +32,10 @@ interface Dimensions {
 
 type AlignText = 'start' | 'center' | 'end'
 
-interface SelectProps {
-  items: SelectListItem[]
-  onItemClick: (value: string) => void
-  selectedItemValue?: string
+interface SelectProps<T extends string> {
+  items: SelectListItem<T>[]
+  onItemClick: (value: T) => void
+  selectedItemValue?: T
   title: string
   dimensions?: Dimensions
   borderRadius?: number
@@ -44,15 +44,15 @@ interface SelectProps {
   style?: MotionStyle
 }
 
-export interface SelectListItem {
-  value: string
+export interface SelectListItem<T extends string> {
+  value: T
   label?: string
   LabelComponent?: ReactNode
 }
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
 
-const Select = ({
+const Select = <T extends string>({
   items,
   onItemClick,
   selectedItemValue,
@@ -67,7 +67,7 @@ const Select = ({
   borderRadius = 12,
   className,
   style
-}: SelectProps) => {
+}: SelectProps<T>) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -91,14 +91,14 @@ const Select = ({
 
   useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
 
-  const isItemSelected = (value: string) => selectedItemValue === value
+  const isItemSelected = (value: T) => selectedItemValue === value
 
-  const handleItemClick = (value: string) => {
+  const handleItemClick = (value: T) => {
     setIsOpen(false)
     onItemClick(value)
   }
 
-  const getSelectItemBaseProps = (listItemProps: SelectListItem) => ({
+  const getSelectItemBaseProps = (listItemProps: SelectListItem<T>) => ({
     value: listItemProps.value,
     label: listItemProps.label,
     LabelComponent: listItemProps.LabelComponent,
@@ -150,21 +150,21 @@ const Select = ({
   )
 }
 
-interface SelectItemProps {
-  value: string
+interface SelectItemProps<T> {
+  value: T
   label?: string
   LabelComponent?: ReactNode
   title?: string
   isDrawerOpen: boolean
   isSelected?: boolean
-  onClick: (value: string) => void
+  onClick: (value: T) => void
   initialItemHeight: Required<Dimensions>['initialItemHeight']
   expandedItemHeight: Required<Dimensions>['expandedItemHeight']
   borderRadius: number
   alignText?: AlignText
 }
 
-const SelectItem = ({
+const SelectItem = <T extends string>({
   value,
   label,
   LabelComponent,
@@ -176,7 +176,7 @@ const SelectItem = ({
   expandedItemHeight,
   alignText,
   borderRadius
-}: SelectItemProps) => {
+}: SelectItemProps<T>) => {
   const itemContainerVariants: Variants = {
     initial: {
       height: initialItemHeight

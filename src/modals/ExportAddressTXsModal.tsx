@@ -17,23 +17,50 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import dayjs from 'dayjs'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import Modal from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
+import { useGlobalContext } from '@/contexts/global'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
+type TimePeriodValue = '1w' | '1m' | '6m' | '1y' | 'previousYear' | 'thisYear'
+
+const now = dayjs()
+
+const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
+  '1w': { from: now.startOf('day').subtract(7, 'day').millisecond(), to: now.millisecond() },
+  '1m': { from: now.startOf('day').subtract(30, 'day').millisecond(), to: now.millisecond() },
+  '6m': { from: now.startOf('day').subtract(6, 'month').millisecond(), to: now.millisecond() },
+  '1y': { from: now.startOf('day').subtract(12, 'month').millisecond(), to: now.millisecond() },
+  previousYear: { from: now.startOf('year').subtract(1, 'year').millisecond(), to: now.millisecond() },
+  thisYear: { from: now.startOf('year').millisecond(), to: now.endOf('year').millisecond() }
+}
 
 interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
   addressHash: string
 }
 
 const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalProps) => {
-  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriods>('7d')
+  const { client, setSnackbarMessage } = useGlobalContext()
+
+  console.log(dayjs().subtract(1, 'week').toString())
+
+  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
+
+  const getCSVFile = useCallback(
+    async (periodValue: TimePeriodValue) => {
+      console.log(client)
+      await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
+        fromTs: timePeriods[periodValue].from,
+        toTs: timePeriods[periodValue].to
+      })
+    },
+    [addressHash, client]
+  )
 
   return (
     <Modal maxWidth={550} {...props}>
@@ -41,19 +68,20 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
 
       <Explanations>
-        Download the address transaction history. We propose multiple formats, useful for tax reporting.
+        You can download the address transaction history for a selected time period. This can be useful for tax
+        reporting.
       </Explanations>
       <Selects>
         <Select
           title="Time period"
           items={timePeriodsItems}
-          onItemClick={(v) => setTimePeriodValue(v as TimePeriods)}
           selectedItemValue={timePeriodValue}
+          onItemClick={(v) => setTimePeriodValue(v)}
         />
       </Selects>
 
       <FooterButton>
-        <Button accent big>
+        <Button accent big onClick={() => getCSVFile(timePeriodValue)}>
           Export
         </Button>
       </FooterButton>
@@ -64,32 +92,32 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
 const currentYear = dayjs().year()
 const today = dayjs().format(SIMPLE_DATE_FORMAT)
 
-const timePeriodsItems: SelectListItem[] = [
+const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   {
-    value: '7d' as TimePeriods,
-    label: 'Last 7 days'
+    value: '1w',
+    label: 'Last week'
   },
   {
-    value: '30d' as TimePeriods,
-    label: 'Last 30 days'
+    value: '1m',
+    label: 'Last month'
   },
   {
-    value: '6m' as TimePeriods,
+    value: '6m',
     label: 'Last 6 months'
   },
   {
-    value: '12m' as TimePeriods,
+    value: '1y',
     label: `Last 1 year 
     (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)} 
     - ${today})`
   },
   {
-    value: 'lastYear' as TimePeriods,
-    label: `Last year 
+    value: 'previousYear',
+    label: `Previous year 
     (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
   },
   {
-    value: 'thisYear' as TimePeriods,
+    value: 'thisYear',
     label: `This year (01/01/${currentYear - 1} - ${today})`
   }
 ]

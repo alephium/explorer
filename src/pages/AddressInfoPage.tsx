@@ -27,6 +27,7 @@ import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
+import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import { AddressLink, TightLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -45,7 +46,6 @@ import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
-import Button from '@/components/Buttons/Button'
 
 type ParamTypes = {
   id: string
