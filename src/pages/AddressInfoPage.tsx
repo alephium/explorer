@@ -227,9 +227,7 @@ const TransactionInfoPage = () => {
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
 
-      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose}>
-        <span></span>
-      </ExportAddressTXsModal>
+      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>
   )
 }

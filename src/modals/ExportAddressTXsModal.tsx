@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -40,28 +41,55 @@ const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
   thisYear: { from: now.startOf('year').millisecond(), to: now.endOf('year').millisecond() }
 }
 
-interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
+interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
   addressHash: string
 }
 
-const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalProps) => {
+const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
   const { client, setSnackbarMessage } = useGlobalContext()
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
 
   const getCSVFile = useCallback(
     async (periodValue: TimePeriodValue) => {
-      console.log(client)
-      await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
-        fromTs: timePeriods[periodValue].from,
-        toTs: timePeriods[periodValue].to
-      })
+      try {
+        const result = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
+          fromTs: timePeriods[periodValue].from,
+          toTs: timePeriods[periodValue].to
+        })
+
+        const blob = await result?.blob()
+
+        if (!blob) throw 'Problem while downloading the CSV file'
+
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.style.display = 'none'
+        a.href = url
+        a.download = `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}` // Filename
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(url)
+
+        setSnackbarMessage({
+          text: 'The CSV has been successfully downloaded',
+          type: 'success'
+        })
+
+        onClose()
+      } catch (e) {
+        setSnackbarMessage({
+          text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
+          type: 'alert'
+        })
+      }
     },
-    [addressHash, client]
+    [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue]
   )
 
   return (
-    <Modal maxWidth={550} {...props}>
+    <Modal maxWidth={550} onClose={onClose} {...props}>
       <h2>Export address transactions</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
 
