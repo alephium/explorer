@@ -33,12 +33,12 @@ type TimePeriodValue = '1w' | '1m' | '6m' | '1y' | 'previousYear' | 'thisYear'
 const now = dayjs()
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
-  '1w': { from: now.startOf('day').subtract(7, 'day').millisecond(), to: now.millisecond() },
-  '1m': { from: now.startOf('day').subtract(30, 'day').millisecond(), to: now.millisecond() },
-  '6m': { from: now.startOf('day').subtract(6, 'month').millisecond(), to: now.millisecond() },
-  '1y': { from: now.startOf('day').subtract(12, 'month').millisecond(), to: now.millisecond() },
-  previousYear: { from: now.startOf('year').subtract(1, 'year').millisecond(), to: now.millisecond() },
-  thisYear: { from: now.startOf('year').millisecond(), to: now.endOf('year').millisecond() }
+  '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
+  '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
+  '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
+  '1y': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
+  previousYear: { from: now.startOf('year').subtract(1, 'year').valueOf(), to: now.valueOf() },
+  thisYear: { from: now.startOf('year').valueOf(), to: now.endOf('year').valueOf() }
 }
 
 interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
@@ -50,49 +50,45 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
 
-  const getCSVFile = useCallback(
-    async (periodValue: TimePeriodValue) => {
-      try {
-        const result = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
-          fromTs: timePeriods[periodValue].from,
-          toTs: timePeriods[periodValue].to
-        })
+  const getCSVFile = useCallback(async () => {
+    try {
+      const result = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
+        fromTs: timePeriods[timePeriodValue].from,
+        toTs: timePeriods[timePeriodValue].to
+      })
 
-        const blob = await result?.blob()
+      const blob = await result?.blob()
 
-        if (!blob) throw 'Problem while downloading the CSV file'
+      if (!blob) throw 'Problem while downloading the CSV file'
 
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.style.display = 'none'
-        a.href = url
-        a.download = `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}` // Filename
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        window.URL.revokeObjectURL(url)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.style.display = 'none'
+      a.href = url
+      a.download = `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}` // Filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
 
-        setSnackbarMessage({
-          text: 'The CSV has been successfully downloaded',
-          type: 'success'
-        })
+      setSnackbarMessage({
+        text: 'The CSV has been successfully downloaded',
+        type: 'success'
+      })
 
-        onClose()
-      } catch (e) {
-        setSnackbarMessage({
-          text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
-          type: 'alert'
-        })
-      }
-    },
-    [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue]
-  )
+      onClose()
+    } catch (e) {
+      setSnackbarMessage({
+        text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
+        type: 'alert'
+      })
+    }
+  }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
       <h2>Export address transactions</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
-
       <Explanations>
         You can download the address transaction history for a selected time period. This can be useful for tax
         reporting.
@@ -105,9 +101,8 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
           onItemClick={(v) => setTimePeriodValue(v)}
         />
       </Selects>
-
       <FooterButton>
-        <Button accent big onClick={() => getCSVFile(timePeriodValue)}>
+        <Button accent big onClick={getCSVFile}>
           Export
         </Button>
       </FooterButton>
