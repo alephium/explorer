@@ -23,6 +23,7 @@ import styled from 'styled-components'
 
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
@@ -52,8 +53,11 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
   const { client, setSnackbarMessage } = useGlobalContext()
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
+  const [isLoading, setIsLoading] = useState(false)
 
   const getCSVFile = useCallback(async () => {
+    setIsLoading(true)
+
     try {
       const result = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
         fromTs: timePeriods[timePeriodValue].from,
@@ -85,11 +89,18 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
         text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
         type: 'alert'
       })
+    } finally {
+      setIsLoading(false)
     }
   }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
+      {isLoading && (
+        <LoadingOverlay>
+          <LoadingSpinner size={35} />
+        </LoadingOverlay>
+      )}
       <h2>Export address transactions</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
       <Explanations>
@@ -170,4 +181,19 @@ const FooterButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+const LoadingOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  z-index: 100;
+
+  > * {
+    margin: auto;
+  }
 `

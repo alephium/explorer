@@ -68,6 +68,7 @@ const ModalWrapper = styled.div`
 `
 
 const ModalContentWrapper = styled(motion.div)`
+  position: relative;
   margin: auto;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.borderPrimary};
