@@ -28,7 +28,7 @@ import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriodValue = '1w' | '1m' | '6m' | '1y' | 'previousYear' | 'thisYear'
+type TimePeriodValue = '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
 const now = dayjs()
 
@@ -36,9 +36,12 @@ const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
   '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
   '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
   '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
-  '1y': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
-  previousYear: { from: now.startOf('year').subtract(1, 'year').valueOf(), to: now.valueOf() },
-  thisYear: { from: now.startOf('year').valueOf(), to: now.endOf('year').valueOf() }
+  '12m': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
+  previousYear: {
+    from: now.subtract(1, 'year').startOf('year').valueOf(),
+    to: now.subtract(1, 'year').endOf('year').valueOf()
+  },
+  thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
 }
 
 interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
@@ -127,8 +130,8 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
     label: 'Last 6 months'
   },
   {
-    value: '1y',
-    label: `Last 1 year 
+    value: '12m',
+    label: `Last 12 months 
     (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)} 
     - ${today})`
   },
