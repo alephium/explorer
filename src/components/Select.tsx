@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import useOnClickOutside from '@/hooks/useOnClickOutside'
 
@@ -162,9 +162,10 @@ interface SelectItemProps<T> {
   expandedItemHeight: Required<Dimensions>['expandedItemHeight']
   borderRadius: number
   alignText?: AlignText
+  className?: string
 }
 
-const SelectItem = <T extends string>({
+let SelectItem = <T extends string>({
   value,
   label,
   LabelComponent,
@@ -175,7 +176,7 @@ const SelectItem = <T extends string>({
   initialItemHeight,
   expandedItemHeight,
   alignText,
-  borderRadius
+  className
 }: SelectItemProps<T>) => {
   const itemContainerVariants: Variants = {
     initial: {
@@ -188,17 +189,16 @@ const SelectItem = <T extends string>({
   }
 
   return (
-    <ItemContainer
+    <motion.div
       key={value}
       onClick={() => !isSelected && onClick(value)}
-      className={isSelected ? 'selected' : undefined}
+      className={className}
       variants={itemContainerVariants}
       style={{
         height: initialItemHeight,
         justifyContent: alignText,
         cursor: title && !isDrawerOpen ? 'pointer' : undefined
       }}
-      borderRadius={borderRadius}
     >
       {title && (
         <Title
@@ -219,11 +219,60 @@ const SelectItem = <T extends string>({
         {label ? label : LabelComponent ? LabelComponent : null}
       </ItemContent>
       {title && <ChevronDown strokeWidth={1.5} strokeOpacity={isDrawerOpen ? 0.5 : 1} />}
-    </ItemContainer>
+    </motion.div>
   )
 }
 
 export default Select
+
+SelectItem = styled(SelectItem)`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  text-align: center;
+  white-space: nowrap;
+
+  width: 100%;
+
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 14.4px;
+
+  padding: 15px;
+
+  color: ${({ theme }) => theme.textPrimary};
+  background-color: ${({ theme }) => theme.bgPrimary};
+  z-index: 1;
+
+  ${({ isSelected }) =>
+    !isSelected &&
+    css`
+      &:hover:not(:first-child) {
+        background-color: ${({ theme }) => theme.bgHover};
+        z-index: 0;
+        cursor: pointer;
+      }
+    `}
+
+  &:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+  }
+
+  // Selected network
+  &:first-child {
+    color: ${({ theme }) => theme.textPrimary};
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    border-radius: ${({ borderRadius }) => borderRadius}px;
+    z-index: 2;
+  }
+
+  > span {
+    padding-right: 5px;
+  }
+`
 
 const SelectWrapper = styled(motion.div)`
   position: relative;
@@ -244,51 +293,6 @@ const ItemList = styled(motion.div)`
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
-  }
-`
-
-const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  text-align: center;
-  white-space: nowrap;
-
-  width: 100%;
-
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 14.4px;
-
-  padding: 15px;
-
-  color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => theme.bgPrimary};
-  z-index: 1;
-
-  &:not(:first-child):not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
-  }
-
-  &:hover:not(:first-child):not(.selected) {
-    background-color: ${({ theme }) => theme.bgHover};
-    z-index: 0;
-    cursor: pointer;
-  }
-
-  // Selected network
-  &:first-child {
-    color: ${({ theme }) => theme.textPrimary};
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    border-radius: ${({ borderRadius }) => borderRadius}px;
-    z-index: 2;
-  }
-
-  > span {
-    padding-right: 5px;
   }
 `
 
