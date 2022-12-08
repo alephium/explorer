@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
+import { Check } from 'lucide-react'
 import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
 
@@ -29,22 +30,7 @@ import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriodValue = '1d' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
-
-const now = dayjs()
-
-const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
-  '1d': { from: now.subtract(24, 'hour').valueOf(), to: now.valueOf() },
-  '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
-  '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
-  '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
-  '12m': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
-  previousYear: {
-    from: now.subtract(1, 'year').startOf('year').valueOf(),
-    to: now.subtract(1, 'year').endOf('year').valueOf()
-  },
-  thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
-}
+type TimePeriodValue = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
 interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
   addressHash: string
@@ -53,56 +39,48 @@ interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 
 const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
   const { client, setSnackbarMessage } = useGlobalContext()
 
-  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1d')
-  const [isLoading, setIsLoading] = useState(false)
+  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
 
   const getCSVFile = useCallback(async () => {
-    setIsLoading(true)
+    onClose()
+
+    setSnackbarMessage({
+      text: "Your CSV is being compiled in the background (don't close the explorer)...",
+      type: 'info',
+      Icon: <LoadingSpinner size={20} style={{ color: 'inherit' }} />,
+      duration: -1
+    })
 
     try {
-      const result = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
+      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
         fromTs: timePeriods[timePeriodValue].from,
         toTs: timePeriods[timePeriodValue].to
       })
 
-      const blob = await result?.blob()
+      const blob = await res?.blob()
 
       if (!blob) throw 'The blob is not available.'
 
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.style.display = 'none'
-      a.href = url
-      a.download = `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}` // Filename
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
+      startCSVFileDownload(blob, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
 
       setSnackbarMessage({
-        text: 'The CSV has been successfully downloaded',
-        type: 'success'
+        text: 'Your CSV has been successfully downloaded.',
+        type: 'success',
+        Icon: <Check size={14} />
       })
-
-      onClose()
     } catch (e) {
       console.error(e)
+      setSnackbarMessage(undefined) // remove previously set message
+
       setSnackbarMessage({
         text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
         type: 'alert'
       })
-    } finally {
-      setIsLoading(false)
     }
   }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
-      {isLoading && (
-        <LoadingOverlay>
-          <LoadingSpinner size={35} />
-        </LoadingOverlay>
-      )}
       <h2>Export address transactions</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
       <Explanations>
@@ -126,12 +104,13 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
   )
 }
 
-const currentYear = dayjs().year()
-const today = dayjs().format(SIMPLE_DATE_FORMAT)
+const now = dayjs()
+const currentYear = now.year()
+const today = now.format(SIMPLE_DATE_FORMAT)
 
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   {
-    value: '1d',
+    value: '24h',
     label: 'Last 24h'
   },
   {
@@ -163,6 +142,31 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   }
 ]
 
+const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
+  '24h': { from: now.subtract(24, 'hour').valueOf(), to: now.valueOf() },
+  '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
+  '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
+  '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
+  '12m': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
+  previousYear: {
+    from: now.subtract(1, 'year').startOf('year').valueOf(),
+    to: now.subtract(1, 'year').endOf('year').valueOf()
+  },
+  thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
+}
+
+const startCSVFileDownload = (blob: Blob, fileName: string) => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.style.display = 'none'
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
+}
+
 export default styled(ExportAddressTXsModal)`
   padding: 30px 50px;
 `
@@ -187,19 +191,4 @@ const FooterButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`
-
-const LoadingOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.25);
-  display: flex;
-  z-index: 100;
-
-  > * {
-    margin: auto;
-  }
 `

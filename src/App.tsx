@@ -103,7 +103,8 @@ const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) 
             exit={{ opacity: 0 }}
             className={message?.type}
           >
-            {message?.text}
+            {message.Icon}
+            {message.text}
           </SnackbarPopup>
         )}
       </AnimatePresence>
@@ -168,18 +169,24 @@ const SnackbarManagerContainer = styled.div`
   left: 0;
   display: flex;
   z-index: 10001;
+  justify-content: flex-end;
 `
 
 const SnackbarPopup = styled(motion.div)`
-  bottom: 10px;
-  left: 25px;
-  margin: 10px auto;
+  margin: 10px;
   text-align: center;
   min-width: 150px;
   max-width: 50vw;
   padding: 20px;
   color: white;
-  border-radius: 14px;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  box-shadow: ${({ theme }) => theme.shadowSecondary};
+
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
   z-index: 1000;
 
   &.alert {
@@ -192,5 +199,10 @@ const SnackbarPopup = styled(motion.div)`
 
   &.success {
     background-color: rgb(56, 168, 93);
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    margin: 10px auto;
+    max-width: 90vw;
   }
 `

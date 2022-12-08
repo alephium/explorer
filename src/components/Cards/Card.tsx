@@ -46,7 +46,7 @@ const Container = styled(motion.div)`
   flex: 1;
   position: relative;
   ${({ theme }) => blurredBackground(theme.bgPrimary)};
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
   border-radius: 9px;
   display: flex;
   flex-direction: column;
