@@ -166,10 +166,14 @@ const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
   right: 0;
-  left: 0;
   display: flex;
   z-index: 10001;
   justify-content: flex-end;
+
+  @media ${deviceBreakPoints.mobile} {
+    left: 0;
+    justify-content: center;
+  }
 `
 
 const SnackbarPopup = styled(motion.div)`
