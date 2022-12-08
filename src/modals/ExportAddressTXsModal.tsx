@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/sdk'
+import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
+import { isString } from 'lodash'
 import { Check } from 'lucide-react'
 import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
@@ -52,16 +53,21 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
     })
 
     try {
-      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(addressHash, {
-        fromTs: timePeriods[timePeriodValue].from,
-        toTs: timePeriods[timePeriodValue].to
-      })
+      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(
+        addressHash,
+        {
+          fromTs: timePeriods[timePeriodValue].from,
+          toTs: timePeriods[timePeriodValue].to
+        },
+        {
+          // Don't forget to define the format field in order to show errors! (cf. swagger-typescript-api code)
+          format: 'text' // We expect a CSV. Careful: errors would be returned as a string as well.
+        }
+      )
 
-      const blob = await res?.blob()
+      if (!res?.data) throw 'Something wrong happened while fetching the data.'
 
-      if (!blob) throw 'The blob is not available.'
-
-      startCSVFileDownload(blob, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
+      startCSVFileDownload(res.data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
 
       setSnackbarMessage({
         text: 'Your CSV has been successfully downloaded.',
@@ -70,11 +76,18 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       })
     } catch (e) {
       console.error(e)
+      const parsedError = e as APIError
+
+      if (isString(parsedError.error)) {
+        parsedError.error = JSON.parse(parsedError.error as string) // we received a "text" format, need to parse the JSON
+      }
+
       setSnackbarMessage(undefined) // remove previously set message
 
       setSnackbarMessage({
-        text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
-        type: 'alert'
+        text: getHumanReadableError(parsedError, 'Problem while downloading the CSV file'),
+        type: 'alert',
+        duration: 5000
       })
     }
   }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
@@ -155,8 +168,8 @@ const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
   thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
 }
 
-const startCSVFileDownload = (blob: Blob, fileName: string) => {
-  const url = URL.createObjectURL(blob)
+const startCSVFileDownload = (csvContent: string, fileName: string) => {
+  const url = URL.createObjectURL(new Blob([csvContent], { type: 'text/csv' }))
   const a = document.createElement('a')
   a.style.display = 'none'
   a.href = url
