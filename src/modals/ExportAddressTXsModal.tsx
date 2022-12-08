@@ -29,11 +29,12 @@ import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriodValue = '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
+type TimePeriodValue = '1d' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
 const now = dayjs()
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
+  '1d': { from: now.subtract(24, 'hour').valueOf(), to: now.valueOf() },
   '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
   '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
   '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
@@ -52,7 +53,7 @@ interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 
 const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
   const { client, setSnackbarMessage } = useGlobalContext()
 
-  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1w')
+  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('1d')
   const [isLoading, setIsLoading] = useState(false)
 
   const getCSVFile = useCallback(async () => {
@@ -66,7 +67,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       const blob = await result?.blob()
 
-      if (!blob) throw 'Problem while downloading the CSV file'
+      if (!blob) throw 'The blob is not available.'
 
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -85,6 +86,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       onClose()
     } catch (e) {
+      console.error(e)
       setSnackbarMessage({
         text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
         type: 'alert'
@@ -128,6 +130,10 @@ const currentYear = dayjs().year()
 const today = dayjs().format(SIMPLE_DATE_FORMAT)
 
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
+  {
+    value: '1d',
+    label: 'Last 24h'
+  },
   {
     value: '1w',
     label: 'Last week'

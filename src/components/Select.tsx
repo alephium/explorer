@@ -238,6 +238,7 @@ const ItemList = styled(motion.div)`
   z-index: 3;
   overflow: auto;
   background-color: ${({ theme }) => theme.bgPrimary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -266,6 +267,10 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 1;
 
+  &:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+  }
+
   &:hover:not(:first-child):not(.selected) {
     background-color: ${({ theme }) => theme.bgHover};
     z-index: 0;
@@ -292,7 +297,7 @@ const Divider = styled.div`
   height: 1px;
   width: 100%;
   background-color: ${({ theme }) => theme.borderPrimary};
-  z-index: 2;
+  z-index: 10;
 `
 
 const ItemContent = styled(motion.div)`
