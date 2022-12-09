@@ -38,12 +38,12 @@ export const darkTheme: DefaultTheme = {
   bgHover: 'rgb(255, 255, 255, 0.03)',
 
   borderPrimary: 'rgb(43, 43, 48)',
-  borderSecondary: 'rgb(34, 34, 38)',
+  borderSecondary: 'rgba(255, 255, 255, 0.04)',
   borderHighlight: '#585962',
 
-  shadowPrimary: '0 5px 10px rgba(0, 0, 0, 0.3)',
-  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.15)',
-  shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.1)',
+  shadowPrimary: '0 5px 5px rgba(0, 0, 0, 0.35)',
+  shadowSecondary: '0 4px 10px rgba(0, 0, 0, 0.3)',
+  shadowTertiary: '0 5px 20px rgba(0, 0, 0, 0.50)',
 
   accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
 
@@ -74,12 +74,12 @@ export const lightTheme: DefaultTheme = {
   bgHover: 'rgba(0, 0, 0, 0.015)',
 
   borderPrimary: '#e4e4e4',
-  borderSecondary: '#e5e5e5',
+  borderSecondary: 'rgba(36, 34, 32, 0.07)',
   borderHighlight: '#D1D1D4',
 
-  shadowPrimary: '0 5px 10px rgba(0, 0, 0, 0.05)',
-  shadowSecondary: '0 5px 5px rgba(0, 0, 0, 0.04)',
-  shadowTertiary: '0 0px 10px rgba(0, 0, 0, 0.01)',
+  shadowPrimary: '0 5px 5px rgba(0, 0, 0, 0.2)',
+  shadowSecondary: '0 4px 7px rgba(0, 0, 0, 0.15)',
+  shadowTertiary: '0 5px 20px rgba(0, 0, 0, 0.08)',
 
   accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
 

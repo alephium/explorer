@@ -27,6 +27,7 @@ import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
+import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import { AddressLink, TightLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
@@ -134,6 +135,8 @@ const TransactionInfoPage = () => {
     fetchTransactions()
   }, [client, id, pageNumber])
 
+  const handleExportModalOpen = () => setExportModalShown(true)
+
   const handleExportModalClose = () => setExportModalShown(false)
 
   if (!id) return null
@@ -154,25 +157,38 @@ const TransactionInfoPage = () => {
                 )}
               </td>
             </TableRow>
-            <TableRow>
-              <td>Total Balance</td>
-              <td>
-                {totalBalanceLoading ? (
-                  <LoadingSpinner size={14} />
-                ) : totalBalance ? (
-                  <Badge type="neutralHighlight" amount={totalBalance.balance} />
-                ) : (
-                  <ErrorMessage>Could not get balance</ErrorMessage>
-                )}
-              </td>
-            </TableRow>
-            {totalBalance?.lockedBalance && parseInt(totalBalance.lockedBalance) > 0 && (
-              <TableRow>
-                <td>Locked Balance</td>
-                <td>
-                  <Badge type="neutral" amount={totalBalance.lockedBalance} />
-                </td>
-              </TableRow>
+            {totalBalanceLoading ? (
+              <>
+                <TableRow>
+                  <td>
+                    <LoadingSpinner size={14} />
+                  </td>
+                </TableRow>
+                <TableRow>
+                  <td>
+                    <LoadingSpinner size={14} />
+                  </td>
+                </TableRow>
+              </>
+            ) : totalBalance ? (
+              <>
+                <TableRow>
+                  <td>Locked Balance</td>
+                  <td>
+                    <Badge type="neutral" amount={totalBalance?.lockedBalance} />
+                  </td>
+                </TableRow>
+                <TableRow>
+                  <td>
+                    <b>Total Balance</b>
+                  </td>
+                  <td>
+                    <Badge type="neutralHighlight" amount={totalBalance.balance} />
+                  </td>
+                </TableRow>
+              </>
+            ) : (
+              <ErrorMessage>Could not get balance</ErrorMessage>
             )}
           </TableBody>
         </Table>
@@ -183,7 +199,7 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        {/*<Button onClick={handleExportModalOpen}>Export CSV ↓</Button>*/}
+        <Button onClick={handleExportModalOpen}>Export CSV ↓</Button>
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
@@ -211,9 +227,7 @@ const TransactionInfoPage = () => {
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
 
-      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose}>
-        <span></span>
-      </ExportAddressTXsModal>
+      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>
   )
 }
@@ -387,7 +401,7 @@ const SectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 35px;
   margin-bottom: 10px;
 `
 

@@ -19,36 +19,40 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { ReactNode, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import useOnClickOutside from '@/hooks/useOnClickOutside'
 
-interface SelectProps {
-  items: SelectItem[]
-  onItemClick: (value: string) => void
-  selectedItemValue?: string
+interface Dimensions {
+  initialItemHeight?: number
+  expandedItemHeight?: number
+  initialListWidth?: number | string
+  expandedListWidth?: number | string
+}
+
+type AlignText = 'start' | 'center' | 'end'
+
+interface SelectProps<T extends string> {
+  items: SelectListItem<T>[]
+  onItemClick: (value: T) => void
+  selectedItemValue?: T
   title: string
-  dimensions?: {
-    initialItemHeight?: number
-    expandedItemHeight?: number
-    initialListWidth?: number | string
-    expandedListWidth?: number | string
-  }
+  dimensions?: Dimensions
   borderRadius?: number
-  alignText?: 'start' | 'center' | 'end'
+  alignText?: AlignText
   className?: string
   style?: MotionStyle
 }
 
-export interface SelectItem {
-  value: string
+export interface SelectListItem<T extends string> {
+  value: T
   label?: string
-  Component?: ReactNode
+  LabelComponent?: ReactNode
 }
 
 const transition: Transition = { type: 'tween', duration: 0.15 }
 
-const Select = ({
+const Select = <T extends string>({
   items,
   onItemClick,
   selectedItemValue,
@@ -63,32 +67,18 @@ const Select = ({
   borderRadius = 12,
   className,
   style
-}: SelectProps) => {
+}: SelectProps<T>) => {
   const [isOpen, setIsOpen] = useState(false)
 
   const wrapperRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
-  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth } = dimensions as Required<
-    typeof dimensions
-  >
+  const { initialItemHeight, expandedItemHeight, initialListWidth, expandedListWidth } =
+    dimensions as Required<Dimensions>
 
-  const orderedItems = [
-    items.find(({ value }) => selectedItemValue === value),
-    ...items.filter(({ value }) => selectedItemValue !== value)
-  ] as SelectItem[]
+  const selectedItem = items.find(({ value }) => selectedItemValue === value)
 
-  const itemContainerVariants: Variants = {
-    initial: {
-      height: initialItemHeight
-    },
-    open: {
-      height: expandedItemHeight,
-      transition
-    }
-  }
-
-  const handleClick = () => {
+  const handleSelectClick = () => {
     !isOpen && setIsOpen(true)
 
     // Scroll to top
@@ -99,23 +89,33 @@ const Select = ({
     setIsOpen(false)
   }
 
-  const handleItemClick = (value: string) => {
+  useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
+
+  const isItemSelected = (value: T) => selectedItemValue === value
+
+  const handleItemClick = (value: T) => {
     setIsOpen(false)
     onItemClick(value)
   }
 
-  useOnClickOutside({ ref: wrapperRef, handler: handleClickOutside })
-
-  const isSelected = (value: string) => selectedItemValue === value
-
-  const shouldAnimateItem = (value: string) => isSelected(value) && isOpen
+  const getSelectItemBaseProps = (listItemProps: SelectListItem<T>) => ({
+    value: listItemProps.value,
+    label: listItemProps.label,
+    LabelComponent: listItemProps.LabelComponent,
+    onClick: handleItemClick,
+    isDrawerOpen: isOpen,
+    initialItemHeight: initialItemHeight,
+    expandedItemHeight: expandedItemHeight,
+    alignText: alignText,
+    borderRadius: borderRadius
+  })
 
   return (
     <SelectWrapper
       role="button"
       aria-label="Selected network"
       className={className}
-      onClick={handleClick}
+      onClick={handleSelectClick}
       animate={isOpen ? 'open' : 'initial'}
       style={{ height: initialItemHeight, ...style }}
       ref={wrapperRef}
@@ -141,66 +141,91 @@ const Select = ({
         transition={transition}
         ref={listRef}
       >
-        {orderedItems.map(({ value, label, Component }, i) => (
-          <ItemContainer
-            key={value}
-            onClick={() => handleItemClick(value)}
-            variants={itemContainerVariants}
-            style={{
-              height: initialItemHeight,
-              justifyContent: alignText,
-              cursor: i === 0 && !isOpen ? 'pointer' : undefined
-            }}
-            borderRadius={borderRadius}
-          >
-            <Title
-              style={{
-                opacity: shouldAnimateItem(value) || i === 0 ? 1 : 0,
-                top: expandedItemHeight / 6,
-                fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
-              }}
-            >
-              {title}
-            </Title>
-            <ItemContent
-              style={{
-                paddingTop: i === 0 ? expandedItemHeight / 3.5 : 0
-              }}
-            >
-              {label ? label : Component ? Component : null}
-            </ItemContent>
-            {i === 0 && <ChevronDown strokeWidth={1.5} strokeOpacity={isOpen ? 0.5 : 1} />}
-          </ItemContainer>
+        {selectedItem && <SelectItem title={title} {...getSelectItemBaseProps(selectedItem)} />}
+        {items.map((item) => (
+          <SelectItem key={item.value} isSelected={isItemSelected(item.value)} {...getSelectItemBaseProps(item)} />
         ))}
       </ItemList>
     </SelectWrapper>
   )
 }
 
+interface SelectItemProps<T> {
+  value: T
+  label?: string
+  LabelComponent?: ReactNode
+  title?: string
+  isDrawerOpen: boolean
+  isSelected?: boolean
+  onClick: (value: T) => void
+  initialItemHeight: Required<Dimensions>['initialItemHeight']
+  expandedItemHeight: Required<Dimensions>['expandedItemHeight']
+  borderRadius: number
+  alignText?: AlignText
+  className?: string
+}
+
+let SelectItem = <T extends string>({
+  value,
+  label,
+  LabelComponent,
+  title,
+  isSelected = false,
+  isDrawerOpen,
+  onClick,
+  initialItemHeight,
+  expandedItemHeight,
+  alignText,
+  className
+}: SelectItemProps<T>) => {
+  const itemContainerVariants: Variants = {
+    initial: {
+      height: initialItemHeight
+    },
+    open: {
+      height: expandedItemHeight,
+      transition
+    }
+  }
+
+  return (
+    <motion.div
+      key={value}
+      onClick={() => !isSelected && onClick(value)}
+      className={className}
+      variants={itemContainerVariants}
+      style={{
+        height: initialItemHeight,
+        justifyContent: alignText,
+        cursor: title && !isDrawerOpen ? 'pointer' : undefined
+      }}
+    >
+      {title && (
+        <Title
+          style={{
+            top: expandedItemHeight / 6,
+            fontSize: expandedItemHeight / 5 >= 12 ? 12 : expandedItemHeight / 5
+          }}
+        >
+          {title}
+        </Title>
+      )}
+      <ItemContent
+        style={{
+          paddingTop: title ? expandedItemHeight / 3.5 : 0,
+          opacity: isSelected ? 0.5 : 1
+        }}
+      >
+        {label ? label : LabelComponent ? LabelComponent : null}
+      </ItemContent>
+      {title && <ChevronDown strokeWidth={1.5} strokeOpacity={isDrawerOpen ? 0.5 : 1} />}
+    </motion.div>
+  )
+}
+
 export default Select
 
-const SelectWrapper = styled(motion.div)`
-  position: relative;
-  flex: 1;
-  height: 60px;
-  overflow: hidden;
-`
-
-const ItemList = styled(motion.div)`
-  margin-right: auto;
-  margin-left: auto;
-  z-index: 3;
-  overflow: auto;
-  background-color: ${({ theme }) => theme.bgPrimary};
-
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-`
-
-const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
+SelectItem = styled(SelectItem)`
   position: relative;
   display: flex;
   align-items: center;
@@ -220,10 +245,18 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   background-color: ${({ theme }) => theme.bgPrimary};
   z-index: 1;
 
-  &:hover:not(:first-child) {
-    background-color: ${({ theme }) => theme.bgHover};
-    z-index: 0;
-    cursor: pointer;
+  ${({ isSelected }) =>
+    !isSelected &&
+    css`
+      &:hover:not(:first-child) {
+        background-color: ${({ theme }) => theme.bgHover};
+        z-index: 0;
+        cursor: pointer;
+      }
+    `}
+
+  &:not(:first-child):not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
   }
 
   // Selected network
@@ -241,12 +274,34 @@ const ItemContainer = styled(motion.div)<{ borderRadius: number }>`
   }
 `
 
+const SelectWrapper = styled(motion.div)`
+  position: relative;
+  flex: 1;
+  height: 60px;
+  overflow: hidden;
+`
+
+const ItemList = styled(motion.div)`
+  margin-right: auto;
+  margin-left: auto;
+  z-index: 3;
+  overflow: auto;
+  background-color: ${({ theme }) => theme.bgPrimary};
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+`
+
 const Divider = styled.div`
   position: absolute;
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.borderSecondary};
-  z-index: 2;
+  background-color: ${({ theme }) => theme.borderPrimary};
+  z-index: 10;
 `
 
 const ItemContent = styled(motion.div)`
@@ -259,7 +314,6 @@ const ItemContent = styled(motion.div)`
 
 const Title = styled(motion.span)`
   position: absolute;
-  opacity: 0;
   color: ${({ theme }) => theme.textSecondary};
   font-weight: 600;
 `

@@ -32,7 +32,7 @@ interface GlobalContextInterface {
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
   snackbarMessage: SnackbarMessage | undefined
-  setSnackbarMessage: (message: SnackbarMessage) => void
+  setSnackbarMessage: (message?: SnackbarMessage) => void
   timestampPrecisionMode: OnOff
   setTimestampPrecisionMode: (status: OnOff) => void
 }
@@ -100,7 +100,8 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   // Remove snackbar popup
   useEffect(() => {
-    if (snackbarMessage) {
+    // Use a negative duration to make the snackbarMessage stay
+    if (snackbarMessage && (!snackbarMessage.duration || snackbarMessage.duration > 0)) {
       setTimeout(() => setSnackbarMessage(undefined), snackbarMessage.duration || 3000)
     }
   }, [snackbarMessage])

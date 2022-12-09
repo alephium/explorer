@@ -16,44 +16,100 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
-import { ComponentProps, useState } from 'react'
+import { isString } from 'lodash'
+import { Check } from 'lucide-react'
+import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal from '@/components/Modal/Modal'
-import Select, { SelectItem } from '@/components/Select'
+import Select, { SelectListItem } from '@/components/Select'
+import { useGlobalContext } from '@/contexts/global'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
-type TimePeriods = '7d' | '30d' | '6m' | '12m' | 'lastYear' | 'thisYear'
+type TimePeriodValue = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
-interface ExportAddressTXsModalProps extends ComponentProps<typeof Modal> {
+interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 'children'> {
   addressHash: string
 }
 
-const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalProps) => {
-  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriods>('7d')
+const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
+  const { client, setSnackbarMessage } = useGlobalContext()
+
+  const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
+
+  const getCSVFile = useCallback(async () => {
+    onClose()
+
+    setSnackbarMessage({
+      text: "Your CSV is being compiled in the background (don't close the explorer)...",
+      type: 'info',
+      Icon: <LoadingSpinner size={20} style={{ color: 'inherit' }} />,
+      duration: -1
+    })
+
+    try {
+      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(
+        addressHash,
+        {
+          fromTs: timePeriods[timePeriodValue].from,
+          toTs: timePeriods[timePeriodValue].to
+        },
+        {
+          // Don't forget to define the format field in order to show errors! (cf. swagger-typescript-api code)
+          format: 'text' // We expect a CSV. Careful: errors would be returned as a string as well.
+        }
+      )
+
+      if (!res?.data) throw 'Something wrong happened while fetching the data.'
+
+      startCSVFileDownload(res.data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
+
+      setSnackbarMessage({
+        text: 'Your CSV has been successfully downloaded.',
+        type: 'success',
+        Icon: <Check size={14} />
+      })
+    } catch (e) {
+      console.error(e)
+      const parsedError = e as APIError
+
+      if (isString(parsedError.error)) {
+        parsedError.error = JSON.parse(parsedError.error as string) // we received a "text" format, need to parse the JSON
+      }
+
+      setSnackbarMessage(undefined) // remove previously set message
+
+      setSnackbarMessage({
+        text: getHumanReadableError(parsedError, 'Problem while downloading the CSV file'),
+        type: 'alert',
+        duration: 5000
+      })
+    }
+  }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
 
   return (
-    <Modal maxWidth={550} {...props}>
+    <Modal maxWidth={550} onClose={onClose} {...props}>
       <h2>Export address transactions</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" />
-
       <Explanations>
-        Download the address transaction history. We propose multiple formats, useful for tax reporting.
+        You can download the address transaction history for a selected time period. This can be useful for tax
+        reporting.
       </Explanations>
       <Selects>
         <Select
           title="Time period"
           items={timePeriodsItems}
-          onItemClick={(v) => setTimePeriodValue(v as TimePeriods)}
           selectedItemValue={timePeriodValue}
+          onItemClick={(v) => setTimePeriodValue(v)}
         />
       </Selects>
-
       <FooterButton>
-        <Button accent big>
+        <Button accent big onClick={getCSVFile}>
           Export
         </Button>
       </FooterButton>
@@ -61,38 +117,68 @@ const ExportAddressTXsModal = ({ addressHash, ...props }: ExportAddressTXsModalP
   )
 }
 
-const currentYear = dayjs().year()
-const today = dayjs().format(SIMPLE_DATE_FORMAT)
+const now = dayjs()
+const currentYear = now.year()
+const today = now.format(SIMPLE_DATE_FORMAT)
 
-const timePeriodsItems: SelectItem[] = [
+const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   {
-    value: '7d' as TimePeriods,
-    label: 'Last 7 days'
+    value: '24h',
+    label: 'Last 24h'
   },
   {
-    value: '30d' as TimePeriods,
-    label: 'Last 30 days'
+    value: '1w',
+    label: 'Last week'
   },
   {
-    value: '6m' as TimePeriods,
+    value: '1m',
+    label: 'Last month'
+  },
+  {
+    value: '6m',
     label: 'Last 6 months'
   },
   {
-    value: '12m' as TimePeriods,
-    label: `Last 1 year 
+    value: '12m',
+    label: `Last 12 months 
     (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)} 
     - ${today})`
   },
   {
-    value: 'lastYear' as TimePeriods,
-    label: `Last year 
+    value: 'previousYear',
+    label: `Previous year 
     (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
   },
   {
-    value: 'thisYear' as TimePeriods,
+    value: 'thisYear',
     label: `This year (01/01/${currentYear - 1} - ${today})`
   }
 ]
+
+const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
+  '24h': { from: now.subtract(24, 'hour').valueOf(), to: now.valueOf() },
+  '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
+  '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
+  '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
+  '12m': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
+  previousYear: {
+    from: now.subtract(1, 'year').startOf('year').valueOf(),
+    to: now.subtract(1, 'year').endOf('year').valueOf()
+  },
+  thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
+}
+
+const startCSVFileDownload = (csvContent: string, fileName: string) => {
+  const url = URL.createObjectURL(new Blob([csvContent], { type: 'text/csv' }))
+  const a = document.createElement('a')
+  a.style.display = 'none'
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
+}
 
 export default styled(ExportAddressTXsModal)`
   padding: 30px 50px;

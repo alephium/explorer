@@ -68,11 +68,14 @@ const ModalWrapper = styled.div`
 `
 
 const ModalContentWrapper = styled(motion.div)`
+  position: relative;
   margin: auto;
   border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
   background-color: ${({ theme }) => theme.bgSecondary};
   overflow-y: auto;
   z-index: 1;
+  box-shadow: ${({ theme }) => theme.shadowTertiary};
 `
 
 const Backdrop = styled(motion.div)`
@@ -81,5 +84,5 @@ const Backdrop = styled(motion.div)`
   bottom: 0;
   right: 0;
   left: 0;
-  background-color: ${({ theme }) => colord(theme.bgTertiary).alpha(0.9).toHslString()};
+  background-color: ${({ theme }) => colord(theme.bgTertiary).alpha(0.5).toHslString()};
 `
