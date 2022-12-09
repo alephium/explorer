@@ -47,7 +47,7 @@ import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import useBlockListData from './useBlockListData'
-import useStatisticsData from './useStatisticsData'
+import useStatisticsData, { TimeFrame } from './useStatisticsData'
 
 dayjs.extend(duration)
 
@@ -59,6 +59,8 @@ const HomePage = () => {
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
   const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
+
+  const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily')
 
   const {
     getBlocks,
@@ -72,7 +74,7 @@ const HomePage = () => {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
       vector
     }
-  } = useStatisticsData()
+  } = useStatisticsData(timeFrame)
 
   const vectorData = vector
 
@@ -89,14 +91,14 @@ const HomePage = () => {
     !isAppVisible
   )
 
-  const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, 'hash')
+  const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, '', 'hash')
 
   const currentSupplyPercentage =
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txPerDay: 'Transactions per day',
-    hashratePerDay: `Hashrate per day (${hashrateSuffix}H/s)`
+    txVector: `Transactions per ${timeFrame === 'daily' ? 'day' : 'hour'}`,
+    hashrateVector: `Hashrate per ${timeFrame === 'daily' ? 'day' : 'hour'}`
   }
 
   return (
@@ -109,15 +111,25 @@ const HomePage = () => {
       )}
       <MainContent>
         <StatisticsSection>
-          <h2>Our numbers</h2>
+          <StatisticsHeader>
+            <h2>Our numbers</h2>
+            <TimeFrameSwitch>
+              <TimeFrameButton isSelected={timeFrame === 'daily'} onClick={() => setTimeFrame('daily')}>
+                Daily
+              </TimeFrameButton>
+              <TimeFrameButton isSelected={timeFrame === 'hourly'} onClick={() => setTimeFrame('hourly')}>
+                Hourly
+              </TimeFrameButton>
+            </TimeFrameSwitch>
+          </StatisticsHeader>
           <StatisticsContainer>
             <CardWithChart
               label="Transactions"
-              chartSeries={vectorData.txPerDay.value.series}
+              chartSeries={vectorData.txVector.value.series}
               chartColors={['#16cbf4', '#8a46ff']}
               isLoading={totalTransactions.isLoading}
-              onClick={() => setDetailsCardOpen('txPerDay')}
-              layoutId={`expandableCard-${'txPerDay' as VectorStatisticsKey}`}
+              onClick={() => setDetailsCardOpen('txVector')}
+              layoutId={`expandableCard-${'txVector' as VectorStatisticsKey}`}
             >
               <StatisticTextual
                 primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
@@ -125,12 +137,12 @@ const HomePage = () => {
               />
             </CardWithChart>
             <CardWithChart
-              chartSeries={vectorData.hashratePerDay.value.series}
+              chartSeries={vectorData.hashrateVector.value.series}
               chartColors={['#b116f4', '#ff904c']}
               label="Hashrate"
               isLoading={hashrate.isLoading}
-              onClick={() => setDetailsCardOpen('hashratePerDay')}
-              layoutId={`expandableCard-${'hashratePerDay' as VectorStatisticsKey}`}
+              onClick={() => setDetailsCardOpen('hashrateVector')}
+              layoutId={`expandableCard-${'hashrateVector' as VectorStatisticsKey}`}
             >
               <StatisticTextual
                 primary={hashrateInteger ? addApostrophes(hashrateInteger) + (hashrateDecimal ?? '') : '-'}
@@ -141,9 +153,11 @@ const HomePage = () => {
               <StatisticTextual
                 primary={
                   <>
-                    <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value) : '-'}</span>
+                    <span>{circulatingSupply.value ? formatNumberForDisplay(circulatingSupply.value, '') : '-'}</span>
                     <TextSecondary> / </TextSecondary>
-                    <TextSecondary>{totalSupply.value ? formatNumberForDisplay(totalSupply.value) : '-'}</TextSecondary>
+                    <TextSecondary>
+                      {totalSupply.value ? formatNumberForDisplay(totalSupply.value, '') : '-'}
+                    </TextSecondary>
                   </>
                 }
                 secondary={
@@ -161,7 +175,7 @@ const HomePage = () => {
                 secondary="Total"
               />
             </Card>
-            <Card label="Avg. block time" isLoading={avgBlockTime.isLoading}>
+            <Card label="Avg. block time (2h)" isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
                 primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
                 secondary="of all shards"
@@ -218,7 +232,9 @@ const HomePage = () => {
               categories={vectorData[detailsCardOpen].value.categories}
               colors={chartColors[detailsCardOpen]}
               xAxisType="datetime"
-              yAxisType="tx"
+              yAxisType="formatted"
+              timeFrame={timeFrame}
+              unit={detailsCardOpen === 'hashrateVector' ? 'H/s' : ''}
             />
           </FullScreenCard>
         )}
@@ -228,8 +244,8 @@ const HomePage = () => {
 }
 
 const chartColors: Record<VectorStatisticsKey, [string, string]> = {
-  txPerDay: ['#16cbf4', '#8a46ff'],
-  hashratePerDay: ['#b116f4', '#ff904c']
+  txVector: ['#16cbf4', '#8a46ff'],
+  hashrateVector: ['#b116f4', '#ff904c']
 }
 
 export default HomePage
@@ -258,6 +274,42 @@ const Search = styled.div`
 const StatisticsSection = styled.div`
   flex: 1;
   min-width: 300px;
+`
+
+const StatisticsHeader = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  margin-top: 18px;
+
+  h2 {
+    margin: 0;
+  }
+`
+
+const TimeFrameSwitch = styled.div`
+  display: flex;
+  gap: 10px;
+`
+
+const TimeFrameButton = styled.button<{ isSelected: boolean }>`
+  padding: 4px;
+  border: 1px solid ${({ theme }) => theme.borderSecondary};
+  border-radius: 4px;
+  background-color: transparent;
+  color: ${({ theme }) => theme.textSecondary};
+
+  ${({ isSelected }) =>
+    isSelected &&
+    css`
+      border: 1px solid ${({ theme }) => theme.textSecondary};
+      color: ${({ theme }) => theme.textPrimary};
+    `}
+
+  &:hover {
+    border: 1px solid ${({ theme }) => theme.textPrimary};
+  }
 `
 
 const StatisticsContainer = styled.div`

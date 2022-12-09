@@ -17,11 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HttpResponse } from '@alephium/sdk/api/explorer'
+import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 
 import { useGlobalContext } from '@/contexts/global'
 
 const ONE_DAY = 1000 * 60 * 60 * 24
+
+export type TimeFrame = 'hourly' | 'daily'
 
 interface Stat<T> {
   value: T
@@ -38,7 +41,7 @@ type StatScalarKeys =
   | 'avgBlockTime'
 
 type StatVector = Stat<{ categories: number[]; series: number[] }>
-type StatVectorKeys = 'txPerDay' | 'hashratePerDay'
+type StatVectorKeys = 'txVector' | 'hashrateVector'
 
 type StatsScalarData = { [key in StatScalarKeys]: StatScalar }
 type StatsVectorData = { [key in StatVectorKeys]: StatVector }
@@ -46,7 +49,12 @@ type StatsVectorData = { [key in StatVectorKeys]: StatVector }
 const statScalarDefault = { value: 0, isLoading: true }
 const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
-const useStatisticsData = () => {
+const getTimeIntervals = (timeFrame: TimeFrame) => ({
+  from: timeFrame === 'daily' ? dayjs().subtract(1, 'month').valueOf() : dayjs().subtract(2, 'day').valueOf(),
+  to: dayjs().valueOf()
+})
+
+const useStatisticsData = (timeFrame: TimeFrame) => {
   const { client } = useGlobalContext()
 
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
@@ -59,8 +67,8 @@ const useStatisticsData = () => {
   })
 
   const [statsVectorData, setStatsVectorData] = useState<StatsVectorData>({
-    txPerDay: statVectorDefault,
-    hashratePerDay: statVectorDefault
+    txVector: statVectorDefault,
+    hashrateVector: statVectorDefault
   })
 
   const updateStatsScalar = (key: StatScalarKeys, value: StatScalar['value']) => {
@@ -93,7 +101,7 @@ const useStatisticsData = () => {
         'interval-type': 'hourly'
       })
 
-      if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[0].value))
+      if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[data.length - 1].value))
     }
 
     const fetchBlocksData = async () => {
@@ -111,13 +119,16 @@ const useStatisticsData = () => {
         updateStatsScalar('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
     }
 
-    const fetchTxPerDayData = async () => {
-      const fromTs = new Date().getTime() - 1000 * 60 * 60 * 24 * 30
-      const toTs = new Date().getTime()
-      const { data } = await client.charts.getChartsTransactionsCount({ fromTs, toTs, 'interval-type': 'daily' })
+    const fetchTxVectorData = async () => {
+      const timeIntervals = getTimeIntervals(timeFrame)
+      const { data } = await client.charts.getChartsTransactionsCount({
+        fromTs: timeIntervals.from,
+        toTs: timeIntervals.to,
+        'interval-type': timeFrame
+      })
       if (data && data.length > 0)
         updateStatsVector(
-          'txPerDay',
+          'txVector',
           data.reduce(
             (acc, { timestamp, totalCountAllChains }) => {
               acc.categories.push(timestamp)
@@ -132,13 +143,17 @@ const useStatisticsData = () => {
         )
     }
 
-    const fetchHashratePerDayData = async () => {
-      const fromTs = new Date().getTime() - 1000 * 60 * 60 * 24 * 30
-      const toTs = new Date().getTime()
-      const { data } = await client.charts.getChartsHashrates({ fromTs, toTs, 'interval-type': 'daily' })
+    const fetchHashrateVectorData = async () => {
+      const timeIntervals = getTimeIntervals(timeFrame)
+
+      const { data } = await client.charts.getChartsHashrates({
+        fromTs: timeIntervals.from,
+        toTs: timeIntervals.to,
+        'interval-type': timeFrame
+      })
       if (data && data.length > 0)
         updateStatsVector(
-          'hashratePerDay',
+          'hashrateVector',
           data.reduce(
             (acc, { timestamp, hashrate }) => {
               acc.categories.push(timestamp)
@@ -156,12 +171,12 @@ const useStatisticsData = () => {
     fetchHashrateData()
     fetchBlocksData()
     fetchAvgBlockTimeData()
-    fetchTxPerDayData()
-    fetchHashratePerDayData()
+    fetchTxVectorData()
+    fetchHashrateVectorData()
     fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
     fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
     fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
-  }, [client])
+  }, [client, timeFrame])
 
   useEffect(() => {
     fetchStatistics()
@@ -169,7 +184,7 @@ const useStatisticsData = () => {
 
   const { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime } = statsScalarData
 
-  const { txPerDay, hashratePerDay } = statsVectorData
+  const { txVector, hashrateVector } = statsVectorData
 
   return {
     fetchStatistics,
@@ -183,8 +198,8 @@ const useStatisticsData = () => {
         avgBlockTime
       },
       vector: {
-        txPerDay,
-        hashratePerDay
+        txVector,
+        hashrateVector
       }
     }
   }

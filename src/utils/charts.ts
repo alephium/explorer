@@ -16,31 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { maxBy } from 'lodash'
+import dayjs from 'dayjs'
 
-import { formatToDay } from './dates'
+import { TimeFrame } from '@/pages/HomePage/useStatisticsData'
+
 import { formatNumberForDisplay } from './strings'
 
-export type YAxisType = 'plain' | 'tx'
+export type YAxisType = 'plain' | 'formatted'
 export type XAxisType = ApexXAxis['type']
 
 export const formatYAxis =
-  (type: YAxisType) =>
+  (type: YAxisType, unit: string) =>
   (value: number): string => {
-    if (type === 'tx') {
-      const formattedParts = formatNumberForDisplay(value, 'quantity', 1)
+    if (type === 'formatted') {
+      const formattedParts = formatNumberForDisplay(value, unit, 'hash', 1)
       return formattedParts.join('') || ''
     }
     return value.toString()
   }
 
 export const formatXAxis =
-  (type: XAxisType) =>
+  (type: XAxisType, timeFrame: TimeFrame) =>
   (value: string | string[]): string => {
     const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
     if (type === 'datetime') {
       if (typeof _value == 'string' || typeof _value == 'number') {
-        return formatToDay(new Date(_value))
+        return timeFrame === 'daily' ? dayjs(_value).format('D') : dayjs(_value).format('hh')
       }
     }
     return _value
@@ -48,13 +49,8 @@ export const formatXAxis =
 
 export const formatSeriesNumber = (type: YAxisType, value: number): string => {
   // TODO: Special formatting (TX/s, etc)
-  if (type === 'tx') {
+  if (type === 'formatted') {
     return value.toString()
   }
   return value.toString()
-}
-
-export const getOffsetXYAxisLabel = (series: number[], type: YAxisType, fontSizeInPx = 12): number => {
-  const longestValue = maxBy(series, (v) => formatYAxis(type)(v).length)
-  return (formatYAxis(type)(longestValue || series[0]).length - 1) * fontSizeInPx
 }
