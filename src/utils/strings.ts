@@ -31,6 +31,7 @@ export const checkHexStringValidity = (stringToTest: string) => {
 
 export const formatNumberForDisplay = (
   number: number,
+  unit: string,
   numberType: 'quantity' | 'hash' = 'quantity',
   maxDecimals: 1 | 2 = 1
 ) => {
@@ -52,7 +53,7 @@ export const formatNumberForDisplay = (
   const numberInteger = numberParts[0]
   const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || '.0'
 
-  return [numberInteger, numberDecimal, suffixes[suffixIndex]]
+  return [numberInteger, numberDecimal, suffixes[suffixIndex], unit]
 }
 
 export const SIMPLE_DATE_FORMAT = 'DD/MM/YYYY'

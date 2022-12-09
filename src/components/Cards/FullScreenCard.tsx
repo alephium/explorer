@@ -97,6 +97,7 @@ const CardContent = styled(motion.div)`
   border-radius: 9px;
   overflow: hidden;
   margin: 0 2vw;
+  border: 1px solid ${({ theme }) => theme.borderPrimary};
 
   @media (max-aspect-ratio: 2/3) {
     height: 60%;

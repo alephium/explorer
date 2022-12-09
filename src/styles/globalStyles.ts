@@ -108,9 +108,17 @@ export default createGlobalStyle`
   }
 
   /* Apex charts */
+  .apexcharts-canvas {
+    tspan {
+      font-family: 'Inter' !important;
+    }
+    font-feature-settings: "tnum";
+  }
+
   .apexcharts-tooltip {
     box-shadow: ${({ theme }) => theme.shadowPrimary} !important;
     border-radius: 9px !important;
+    border: 1px solid ${({ theme }) => theme.borderPrimary};
   }
 `
 

@@ -17,11 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
+import dayjs from 'dayjs'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
 
-import { formatXAxis, formatYAxis, getOffsetXYAxisLabel, XAxisType, YAxisType } from '@/utils/charts'
-import { formatToDayMonthYear } from '@/utils/dates'
+import { TimeFrame } from '@/pages/HomePage/useStatisticsData'
+import { formatXAxis, formatYAxis, XAxisType, YAxisType } from '@/utils/charts'
 
 type TooltipStyleArgs = {
   series: number[][]
@@ -35,9 +36,11 @@ interface LineAreaChartProps {
   colors: [string, string]
   yAxisType: YAxisType
   xAxisType: XAxisType
+  timeFrame: TimeFrame
+  unit: string
 }
 
-const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: LineAreaChartProps) => {
+const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType, timeFrame, unit }: LineAreaChartProps) => {
   const theme = useTheme()
 
   const options: ApexCharts.ApexOptions = {
@@ -64,7 +67,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
         style: {
           colors: theme.textSecondary
         },
-        formatter: formatXAxis(xAxisType)
+        formatter: formatXAxis(xAxisType, timeFrame)
       },
       tooltip: {
         enabled: false
@@ -86,10 +89,10 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
           colors: theme.textSecondary,
           fontSize: '12px'
         },
-        offsetY: -8,
-        offsetX: getOffsetXYAxisLabel(series, yAxisType),
-        formatter: formatYAxis(yAxisType),
-        align: 'right'
+        offsetY: -10,
+        offsetX: 50,
+        formatter: formatYAxis(yAxisType, unit),
+        align: 'left'
       }
     },
     grid: {
@@ -118,13 +121,17 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType }: Lin
               padding: 9px 0px 5px 11px;
               border-bottom: 1px solid ${theme.borderSecondary};
             ">
-              ${formatToDayMonthYear(new Date(categories[dataPointIndex]))}
+              ${
+                timeFrame === 'daily'
+                  ? dayjs(new Date(categories[dataPointIndex])).format('DD/MM/YYYY')
+                  : dayjs(categories[dataPointIndex]).format('ddd, hh:ss')
+              }
             </div>
             <div style="
               padding: 10px 0px 11px 11px;
               font-weight: 700;
             ">
-              ${formatYAxis(yAxisType)(series[seriesIndex][dataPointIndex])}
+              ${formatYAxis(yAxisType, unit)(series[seriesIndex][dataPointIndex])}
             </div>
           </div>
         </div>`
