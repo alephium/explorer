@@ -194,22 +194,13 @@ const HomePage = () => {
               <TableBody tdStyles={TableBodyCustomStyles}>
                 {blockList &&
                   blockList.blocks?.map((b) => (
-                    <TableRow
-                      key={b.hash}
-                      onClick={() => {
-                        navigate(`blocks/${b.hash}`)
-                      }}
-                    >
-                      <td>
-                        <BlockHeight>{b.height.toString()}</BlockHeight>
-                      </td>
-                      <td>
-                        <Timestamp timeInMs={b.timestamp} />
-                      </td>
-                      <td>{b.txNumber}</td>
-                      <td>
+                    <TableRow key={b.hash} linkTo={`blocks/${b.hash}`}>
+                      <BlockHeight>{b.height.toString()}</BlockHeight>
+                      <Timestamp timeInMs={b.timestamp} />
+                      <span>{b.txNumber}</span>
+                      <span>
                         {b.chainFrom} → {b.chainTo}
-                      </td>
+                      </span>
                     </TableRow>
                   ))}
               </TableBody>

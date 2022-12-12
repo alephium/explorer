@@ -148,43 +148,32 @@ const TransactionInfoPage = () => {
         <Table bodyOnly minHeight={100}>
           <TableBody tdStyles={AddressTableBodyCustomStyles}>
             <TableRow>
-              <td>Number of Transactions</td>
-              <td>
-                {txNumberLoading ? (
-                  <LoadingSpinner size={14} />
-                ) : (
-                  txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
-                )}
-              </td>
+              <span>Number of Transactions</span>
+              {txNumberLoading ? (
+                <LoadingSpinner size={14} />
+              ) : (
+                txNumber ?? <ErrorMessage>Could not get total number of transactions</ErrorMessage>
+              )}
             </TableRow>
             {totalBalanceLoading ? (
               <>
                 <TableRow>
-                  <td>
-                    <LoadingSpinner size={14} />
-                  </td>
+                  <LoadingSpinner size={14} />
                 </TableRow>
                 <TableRow>
-                  <td>
-                    <LoadingSpinner size={14} />
-                  </td>
+                  <LoadingSpinner size={14} />
                 </TableRow>
               </>
             ) : totalBalance ? (
               <>
                 <TableRow>
-                  <td>Locked Balance</td>
-                  <td>
-                    <Badge type="neutral" amount={totalBalance?.lockedBalance} />
-                  </td>
+                  <span>Locked Balance</span>
+
+                  <Badge type="neutral" amount={totalBalance?.lockedBalance} />
                 </TableRow>
                 <TableRow>
-                  <td>
-                    <b>Total Balance</b>
-                  </td>
-                  <td>
-                    <Badge type="neutralHighlight" amount={totalBalance.balance} />
-                  </td>
+                  <b>Total Balance</b>
+                  <Badge type="neutralHighlight" amount={totalBalance.balance} />
                 </TableRow>
               </>
             ) : (
@@ -287,22 +276,20 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
-        <td>
-          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
-        </td>
-        <td>
-          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
-        </td>
-        <td>{(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}</td>
-        <td>
-          <Badge
-            type="neutral"
-            content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : 'From'}
-            floatRight
-            minWidth={60}
-          />
-        </td>
-        <td>{infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}</td>
+        <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
+
+        <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
+
+        {(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}
+
+        <Badge
+          type="neutral"
+          content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : 'From'}
+          floatRight
+          minWidth={60}
+        />
+
+        {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
           {amountSign}
           <Amount value={amount} />
@@ -315,39 +302,37 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
             <TableBody>
               <TableRow>
-                <td>
-                  {t.inputs && t.inputs.length > 0 ? (
-                    t.inputs.map(
-                      (input, i) =>
-                        input.address && (
-                          <AddressLink
-                            key={i}
-                            address={input.address}
-                            txHashRef={input.outputRef.key}
-                            amount={BigInt(input.attoAlphAmount ?? 0)}
-                            maxWidth="180px"
-                          />
-                        )
-                    )
-                  ) : (
-                    <BlockRewardLabel>Block rewards</BlockRewardLabel>
-                  )}
-                </td>
-                <td style={{ textAlign: 'center' }}>
+                {t.inputs && t.inputs.length > 0 ? (
+                  t.inputs.map(
+                    (input, i) =>
+                      input.address && (
+                        <AddressLink
+                          key={i}
+                          address={input.address}
+                          txHashRef={input.outputRef.key}
+                          amount={BigInt(input.attoAlphAmount ?? 0)}
+                          maxWidth="180px"
+                        />
+                      )
+                  )
+                ) : (
+                  <BlockRewardLabel>Block rewards</BlockRewardLabel>
+                )}
+
+                <span style={{ textAlign: 'center' }}>
                   <ArrowRight size={12} />
-                </td>
-                <td>
-                  {t.outputs &&
-                    t.outputs.map((output, i) => (
-                      <AddressLink
-                        key={i}
-                        address={output.address}
-                        amount={BigInt(output.attoAlphAmount)}
-                        maxWidth="180px"
-                        lockTime={(output as AssetOutput).lockTime}
-                      />
-                    ))}
-                </td>
+                </span>
+
+                {t.outputs &&
+                  t.outputs.map((output, i) => (
+                    <AddressLink
+                      key={i}
+                      address={output.address}
+                      amount={BigInt(output.attoAlphAmount)}
+                      maxWidth="180px"
+                      lockTime={(output as AssetOutput).lockTime}
+                    />
+                  ))}
               </TableRow>
             </TableBody>
           </Table>
@@ -426,7 +411,7 @@ const QRCodeWrapper = styled.div`
 
 export default TransactionInfoPage
 
-const AmountCell = styled.td<{ color: string }>`
+const AmountCell = styled.span<{ color: string }>`
   color: ${({ color }) => color};
   font-weight: 600;
 `

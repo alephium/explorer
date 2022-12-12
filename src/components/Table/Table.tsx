@@ -117,10 +117,6 @@ const StyledTable = styled.table<TableProps>`
       `}
   }
 
-  tr:not(.details) td {
-    height: 45px;
-  }
-
   svg {
     vertical-align: bottom;
   }

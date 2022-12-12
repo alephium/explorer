@@ -30,11 +30,11 @@ interface HighlightedCellProps {
 
 const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCodeContent, className }) => {
   return (
-    <td className={className}>
+    <span className={className}>
       <span>{children}</span>
       {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
       {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
-    </td>
+    </span>
   )
 }
 
