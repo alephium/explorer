@@ -194,7 +194,7 @@ const TransactionInfoPage = () => {
                             v.address && (
                               <AddressLink
                                 address={v.address}
-                                txHashRef={v.outputRef.key}
+                                txHashRef={v.txHashRef}
                                 key={i}
                                 amount={BigInt(v.attoAlphAmount ?? 0)}
                               />
