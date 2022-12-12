@@ -16,16 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
-import { isString } from 'lodash'
 import { Check } from 'lucide-react'
-import { ComponentProps, useCallback, useState } from 'react'
+import { ComponentProps, useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
-import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
