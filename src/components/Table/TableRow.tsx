@@ -38,7 +38,9 @@ const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
     {Children.map(children, (c) =>
       linkTo ? (
         <td style={{ padding: 0 }}>
-          <FullHeightLink to={linkTo}>{c}</FullHeightLink>
+          <FullHeightLink className="row-link" to={linkTo}>
+            {c}
+          </FullHeightLink>
         </td>
       ) : (
         <td>{c}</td>
@@ -52,6 +54,10 @@ export default styled(TableRow)`
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
   height: 45px;
+
+  td:first-child .row-link {
+    padding-left: 20px;
+  }
 `
 
 const FullHeightLink = styled(Link)`
@@ -61,10 +67,7 @@ const FullHeightLink = styled(Link)`
   display: flex;
   align-items: center;
   color: inherit;
-
-  &:first-child {
-    padding-left: 20px;
-  }
+  padding: 12px;
 
   &:hover {
     color: inherit;

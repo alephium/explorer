@@ -302,37 +302,41 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
             <TableBody>
               <TableRow>
-                {t.inputs && t.inputs.length > 0 ? (
-                  t.inputs.map(
-                    (input, i) =>
-                      input.address && (
-                        <AddressLink
-                          key={i}
-                          address={input.address}
-                          txHashRef={input.outputRef.key}
-                          amount={BigInt(input.attoAlphAmount ?? 0)}
-                          maxWidth="180px"
-                        />
-                      )
-                  )
-                ) : (
-                  <BlockRewardLabel>Block rewards</BlockRewardLabel>
-                )}
+                <div>
+                  {t.inputs && t.inputs.length > 0 ? (
+                    t.inputs.map(
+                      (input, i) =>
+                        input.address && (
+                          <AddressLink
+                            key={i}
+                            address={input.address}
+                            txHashRef={input.outputRef.key}
+                            amount={BigInt(input.attoAlphAmount ?? 0)}
+                            maxWidth="180px"
+                          />
+                        )
+                    )
+                  ) : (
+                    <BlockRewardLabel>Block rewards</BlockRewardLabel>
+                  )}
+                </div>
 
                 <span style={{ textAlign: 'center' }}>
                   <ArrowRight size={12} />
                 </span>
 
-                {t.outputs &&
-                  t.outputs.map((output, i) => (
-                    <AddressLink
-                      key={i}
-                      address={output.address}
-                      amount={BigInt(output.attoAlphAmount)}
-                      maxWidth="180px"
-                      lockTime={(output as AssetOutput).lockTime}
-                    />
-                  ))}
+                <div>
+                  {t.outputs &&
+                    t.outputs.map((output, i) => (
+                      <AddressLink
+                        key={i}
+                        address={output.address}
+                        amount={BigInt(output.attoAlphAmount)}
+                        maxWidth="180px"
+                        lockTime={(output as AssetOutput).lockTime}
+                      />
+                    ))}
+                </div>
               </TableRow>
             </TableBody>
           </Table>

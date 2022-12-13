@@ -22,7 +22,6 @@ import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
-import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import Card from '@/components/Cards/Card'
@@ -54,7 +53,6 @@ dayjs.extend(duration)
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
 
 const HomePage = () => {
-  const navigate = useNavigate()
   const { width } = useWindowSize()
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
