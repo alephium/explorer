@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ChevronsLeftRight, ChevronsRightLeft, LucideProps } from 'lucide-react'
-import { ReactNode } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
