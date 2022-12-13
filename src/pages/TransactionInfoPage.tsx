@@ -181,19 +181,21 @@ const TransactionInfoPage = () => {
               {isTxConfirmed(txInfo) && (
                 <TableRow>
                   <span>Inputs</span>
-                  {txInfo.inputs && txInfo.inputs.length > 0
-                    ? txInfo.inputs.map(
-                        (v, i) =>
-                          v.address && (
-                            <AddressLink
-                              address={v.address}
-                              txHashRef={v.outputRef.key}
-                              key={i}
-                              amount={BigInt(v.attoAlphAmount ?? 0)}
-                            />
-                          )
-                      )
-                    : 'Block Rewards'}
+                  <div>
+                    {txInfo.inputs && txInfo.inputs.length > 0
+                      ? txInfo.inputs.map(
+                          (v, i) =>
+                            v.address && (
+                              <AddressLink
+                                address={v.address}
+                                txHashRef={v.outputRef.key}
+                                key={i}
+                                amount={BigInt(v.attoAlphAmount ?? 0)}
+                              />
+                            )
+                        )
+                      : 'Block Rewards'}
+                  </div>
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (
