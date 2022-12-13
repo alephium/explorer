@@ -85,6 +85,8 @@ const StyledTable = styled.table<TableProps>`
             tr {
               display: flex;
               flex-direction: column;
+              height: auto !important;
+
               td:first-child {
                 height: 25px !important;
                 font-weight: 600;

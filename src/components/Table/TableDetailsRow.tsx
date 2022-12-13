@@ -72,11 +72,11 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
 }
 
 export const DetailToggle = ({ isOpen, onClick }: DetailToggleProps) => (
-  <td style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
+  <span style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
     <DetailToggleWrapper animate={isOpen ? 'open' : 'closed'} variants={variants} onClick={onClick}>
       <ChevronDown size={20} />
     </DetailToggleWrapper>
-  </td>
+  </span>
 )
 
 const variants = {
