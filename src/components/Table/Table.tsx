@@ -102,6 +102,10 @@ const StyledTable = styled.table<TableProps>`
     padding: 12px;
   }
 
+  tr:not(.details) {
+    height: 45px;
+  }
+
   th:first-child,
   td:first-child {
     padding-left: 20px;
@@ -113,7 +117,7 @@ const StyledTable = styled.table<TableProps>`
     ${({ bodyOnly }) =>
       bodyOnly &&
       css`
-        width: 27%;
+        width: 35%;
       `}
   }
 

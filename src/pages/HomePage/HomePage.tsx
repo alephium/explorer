@@ -47,6 +47,8 @@ import { formatNumberForDisplay } from '@/utils/strings'
 
 import useBlockListData from './useBlockListData'
 import useStatisticsData, { TimeFrame } from './useStatisticsData'
+import { ChevronsLeftRight } from 'lucide-react'
+import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 
 dayjs.extend(duration)
 
@@ -186,7 +188,14 @@ const HomePage = () => {
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader
-                headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
+                headerTitles={[
+                  'Height',
+                  <span key="timestamp">
+                    Timestamp <TimestampExpandButton />
+                  </span>,
+                  'Txn',
+                  'Chain index'
+                ]}
                 columnWidths={['20%', '30%', '20%', '25%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>

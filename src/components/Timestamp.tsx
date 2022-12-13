@@ -39,7 +39,7 @@ interface TimestampProps {
 const Timestamp = ({ timeInMs, className, forceHighPrecision = false, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
 
-  const isHighPrecision = (formatToggle && timestampPrecisionMode === 'on') || forceHighPrecision
+  const isHighPrecision = timestampPrecisionMode === 'on' || forceHighPrecision
 
   const handleTimestampClick = (e: MouseEvent<HTMLSpanElement>) => {
     if (forceHighPrecision || !formatToggle) return
@@ -55,9 +55,18 @@ const Timestamp = ({ timeInMs, className, forceHighPrecision = false, formatTogg
     <div
       onClick={handleTimestampClick}
       data-tip={
-        !forceHighPrecision && formatToggle
+        !forceHighPrecision
           ? `${highPrecisionTimestamp}
-            <br/>Click to change format`
+            ${
+              formatToggle ? (
+                <span>
+                  <br />
+                  Click to change format
+                </span>
+              ) : (
+                ''
+              )
+            }`
           : undefined
       }
       data-multiline

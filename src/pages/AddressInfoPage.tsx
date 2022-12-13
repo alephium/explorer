@@ -46,6 +46,7 @@ import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
+import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 
 type ParamTypes = {
   id: string
@@ -195,7 +196,17 @@ const TransactionInfoPage = () => {
         {txList && txList.length ? (
           <>
             <TableHeader
-              headerTitles={['', 'Hash', 'Timestamp', '', 'Account(s)', 'Amount', '']}
+              headerTitles={[
+                '',
+                'Hash',
+                <span key="timestamp">
+                  Timestamp <TimestampExpandButton />
+                </span>,
+                '',
+                'Account(s)',
+                'Amount',
+                ''
+              ]}
               columnWidths={['20px', '15%', '100px', '80px', '25%', '120px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />

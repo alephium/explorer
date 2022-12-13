@@ -53,7 +53,6 @@ export default styled(TableRow)`
   background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
-  height: 45px;
 
   td:first-child .row-link {
     padding-left: 20px;
