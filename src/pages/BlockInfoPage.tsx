@@ -222,7 +222,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
           floatRight
         />
 
-        <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
+        <DetailToggle isOpen={detailOpen} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <td />

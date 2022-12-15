@@ -305,7 +305,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           {amountSign}
           <Amount value={amount} />
         </AmountCell>
-        <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
+        <DetailToggle isOpen={detailOpen} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <AnimatedCell colSpan={7}>

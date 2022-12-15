@@ -35,7 +35,6 @@ interface AnimatedCellProps {
 
 interface DetailToggleProps {
   isOpen: boolean
-  onClick: () => void
 }
 
 export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => {
@@ -71,9 +70,9 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
   )
 }
 
-export const DetailToggle = ({ isOpen, onClick }: DetailToggleProps) => (
+export const DetailToggle = ({ isOpen }: DetailToggleProps) => (
   <span style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
-    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed'} variants={variants} onClick={onClick}>
+    <DetailToggleWrapper animate={isOpen ? 'open' : 'closed'} variants={variants}>
       <ChevronDown size={20} />
     </DetailToggleWrapper>
   </span>
