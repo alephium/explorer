@@ -112,6 +112,11 @@ const TransactionInfoPage = () => {
   // https://github.com/microsoft/TypeScript/issues/33591
   const outputs: Array<Output> | undefined = txInfo?.outputs
 
+  const totalAmount = outputs?.reduce<bigint>(
+    (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
+    BigInt(0)
+  )
+
   return (
     <Section>
       <SectionTitle title="Transaction" />
@@ -229,13 +234,7 @@ const TransactionInfoPage = () => {
               </TableRow>
               <TableRow>
                 <b>Total Value</b>
-                <Badge
-                  type="neutralHighlight"
-                  amount={outputs?.reduce<bigint>(
-                    (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
-                    BigInt(0)
-                  )}
-                />
+                <Badge type="neutralHighlight" amount={totalAmount} />
               </TableRow>
             </TableBody>
           )}

@@ -204,6 +204,8 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const outputs = t.outputs as AssetOutput[]
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
+  const totalAmount = outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))
+
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
@@ -216,11 +218,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <span>
           {outputs ? outputs.length : 0} {outputs?.length === 1 ? 'address' : 'addresses'}
         </span>
-        <Badge
-          type="neutralHighlight"
-          amount={outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))}
-          floatRight
-        />
+        <Badge type="neutralHighlight" amount={totalAmount} floatRight />
 
         <DetailToggle isOpen={detailOpen} />
       </TableRow>
