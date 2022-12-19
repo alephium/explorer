@@ -130,28 +130,26 @@ const BlockInfoPage = () => {
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
-              <td>Hash</td>
+              <span>Hash</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
             <TableRow>
-              <td>Height</td>
-              <td>{blockInfo.height}</td>
+              <span>Height</span>
+              <span>{blockInfo.height}</span>
             </TableRow>
             <TableRow>
-              <td>Chain Index</td>
-              <td>
+              <span>Chain Index</span>
+              <span>
                 {blockInfo.chainFrom} → {blockInfo.chainTo}
-              </td>
+              </span>
             </TableRow>
             <TableRow>
-              <td>Nb. of transactions</td>
-              <td>{blockInfo.txNumber}</td>
+              <span>Nb. of transactions</span>
+              <span>{blockInfo.txNumber}</span>
             </TableRow>
             <TableRow>
-              <td>Timestamp</td>
-              <td>
-                <Timestamp timeInMs={blockInfo.timestamp} forceHighPrecision />
-              </td>
+              <span>Timestamp</span>
+              <Timestamp timeInMs={blockInfo.timestamp} forceHighPrecision />
             </TableRow>
           </TableBody>
         )}
@@ -206,32 +204,23 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const outputs = t.outputs as AssetOutput[]
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
+  const totalAmount = outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))
+
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
-        <td>
-          <TransactionIcon />
-        </td>
-        <td>
-          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="150px" />
-        </td>
-        <td>
+        <TransactionIcon />
+        <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="150px" />
+        <span>
           {t.inputs ? t.inputs.length : 0} {t.inputs && t.inputs.length === 1 ? 'address' : 'addresses'}
-        </td>
-        <td>
-          <ArrowRight size={15} />
-        </td>
-        <td>
+        </span>
+        <ArrowRight size={15} />
+        <span>
           {outputs ? outputs.length : 0} {outputs?.length === 1 ? 'address' : 'addresses'}
-        </td>
-        <td>
-          <Badge
-            type="neutralHighlight"
-            amount={outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))}
-            floatRight
-          />
-        </td>
-        <DetailToggle isOpen={detailOpen} onClick={toggleDetail} />
+        </span>
+        <Badge type="neutralHighlight" amount={totalAmount} floatRight />
+
+        <DetailToggle isOpen={detailOpen} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <td />

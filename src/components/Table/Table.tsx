@@ -85,6 +85,8 @@ const StyledTable = styled.table<TableProps>`
             tr {
               display: flex;
               flex-direction: column;
+              height: auto !important;
+
               td:first-child {
                 height: 25px !important;
                 font-weight: 600;
@@ -102,6 +104,10 @@ const StyledTable = styled.table<TableProps>`
     padding: 12px;
   }
 
+  tr:not(.details) {
+    height: 45px;
+  }
+
   th:first-child,
   td:first-child {
     padding-left: 20px;
@@ -113,12 +119,8 @@ const StyledTable = styled.table<TableProps>`
     ${({ bodyOnly }) =>
       bodyOnly &&
       css`
-        width: 27%;
+        width: 35%;
       `}
-  }
-
-  tr:not(.details) td {
-    height: 45px;
   }
 
   svg {

@@ -22,9 +22,9 @@ import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
-import { useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import Card from '@/components/Cards/Card'
 import CardWithChart from '@/components/Cards/CardWithChart'
 import FullScreenCard from '@/components/Cards/FullScreenCard'
@@ -54,7 +54,6 @@ dayjs.extend(duration)
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
 
 const HomePage = () => {
-  const navigate = useNavigate()
   const { width } = useWindowSize()
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
@@ -188,28 +187,26 @@ const HomePage = () => {
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader
-                headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
+                headerTitles={[
+                  'Height',
+                  <span key="timestamp">
+                    Timestamp <TimestampExpandButton />
+                  </span>,
+                  'Txn',
+                  'Chain index'
+                ]}
                 columnWidths={['20%', '30%', '20%', '25%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>
                 {blockList &&
                   blockList.blocks?.map((b) => (
-                    <TableRow
-                      key={b.hash}
-                      onClick={() => {
-                        navigate(`blocks/${b.hash}`)
-                      }}
-                    >
-                      <td>
-                        <BlockHeight>{b.height.toString()}</BlockHeight>
-                      </td>
-                      <td>
-                        <Timestamp timeInMs={b.timestamp} />
-                      </td>
-                      <td>{b.txNumber}</td>
-                      <td>
+                    <TableRow key={b.hash} linkTo={`blocks/${b.hash}`}>
+                      <BlockHeight>{b.height.toString()}</BlockHeight>
+                      <Timestamp timeInMs={b.timestamp} />
+                      <span>{b.txNumber}</span>
+                      <span>
                         {b.chainFrom} → {b.chainTo}
-                      </td>
+                      </span>
                     </TableRow>
                   ))}
               </TableBody>

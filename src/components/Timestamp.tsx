@@ -32,16 +32,17 @@ dayjs.extend(relativeTime)
 interface TimestampProps {
   timeInMs: number
   forceHighPrecision?: boolean
+  formatToggle?: boolean
   className?: string
 }
 
-const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: TimestampProps) => {
+const Timestamp = ({ timeInMs, className, forceHighPrecision = false, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
 
   const isHighPrecision = timestampPrecisionMode === 'on' || forceHighPrecision
 
   const handleTimestampClick = (e: MouseEvent<HTMLSpanElement>) => {
-    if (forceHighPrecision) return
+    if (forceHighPrecision || !formatToggle) return
     e.stopPropagation()
     setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
     ReactTooltip.hide()
@@ -56,7 +57,16 @@ const Timestamp = ({ timeInMs, className, forceHighPrecision = false }: Timestam
       data-tip={
         !forceHighPrecision
           ? `${highPrecisionTimestamp}
-            <br/>Click to change format`
+            ${
+              formatToggle ? (
+                <span>
+                  <br />
+                  Click to change format
+                </span>
+              ) : (
+                ''
+              )
+            }`
           : undefined
       }
       data-multiline

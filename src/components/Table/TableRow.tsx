@@ -17,12 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { FC } from 'react'
+import { Children, FC } from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 interface RowProps {
   isActive?: boolean
   onClick?: React.MouseEventHandler<HTMLTableRowElement>
+  linkTo?: string
   className?: string
 }
 
@@ -31,9 +33,20 @@ const rowVariants = {
   shown: { opacity: 1 }
 }
 
-const TableRow: FC<RowProps> = ({ children, onClick, className }) => (
-  <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onClick={onClick} className={className}>
-    {children}
+const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
+  <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onMouseUp={onClick} className={className}>
+    {Children.map(children, (c) =>
+      // TODO: Don't use the children API. Refactor tables entierly, using flexbox / grid / a library.
+      linkTo ? (
+        <td style={{ padding: 0 }}>
+          <FullHeightLink className="row-link" to={linkTo}>
+            {c}
+          </FullHeightLink>
+        </td>
+      ) : (
+        <td>{c}</td>
+      )
+    )}
   </motion.tr>
 )
 
@@ -41,4 +54,22 @@ export default styled(TableRow)`
   background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
+
+  td:first-child .row-link {
+    padding-left: 20px;
+  }
+`
+
+const FullHeightLink = styled(Link)`
+  display: block;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  padding: 12px;
+
+  &:hover {
+    color: inherit;
+  }
 `

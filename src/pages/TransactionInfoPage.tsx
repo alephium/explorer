@@ -112,6 +112,11 @@ const TransactionInfoPage = () => {
   // https://github.com/microsoft/TypeScript/issues/33591
   const outputs: Array<Output> | undefined = txInfo?.outputs
 
+  const totalAmount = outputs?.reduce<bigint>(
+    (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
+    BigInt(0)
+  )
+
   return (
     <Section>
       <SectionTitle title="Transaction" />
@@ -120,42 +125,38 @@ const TransactionInfoPage = () => {
           {txInfo && (
             <TableBody>
               <TableRow>
-                <td>Hash</td>
+                <span>Hash</span>
                 <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
               </TableRow>
               <TableRow>
-                <td>Status</td>
+                <span>Status</span>
                 {isTxConfirmed(txInfo) ? (
-                  <td>
-                    <Badge
-                      type="plus"
-                      content={
-                        <span>
-                          <Check style={{ marginRight: 5 }} size={15} />
-                          Success
-                        </span>
-                      }
-                      inline
-                    />
-                  </td>
+                  <Badge
+                    type="plus"
+                    content={
+                      <span>
+                        <Check style={{ marginRight: 5 }} size={15} />
+                        Success
+                      </span>
+                    }
+                    inline
+                  />
                 ) : (
-                  <td>
-                    <Badge
-                      type="neutral"
-                      content={
-                        <>
-                          <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                          <span>Pending</span>
-                        </>
-                      }
-                    />
-                  </td>
+                  <Badge
+                    type="neutral"
+                    content={
+                      <>
+                        <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                        <span>Pending</span>
+                      </>
+                    }
+                  />
                 )}
               </TableRow>
               {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
                 <TableRow>
-                  <td>Block</td>
-                  <td>
+                  <span>Block</span>
+                  <span>
                     <SimpleLink
                       to={`../blocks/${txInfo.blockHash || ''}`}
                       data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
@@ -173,21 +174,19 @@ const TransactionInfoPage = () => {
                         inline
                       />
                     </span>
-                  </td>
+                  </span>
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && txInfo.timestamp && (
                 <TableRow>
-                  <td>Timestamp</td>
-                  <td>
-                    <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
-                  </td>
+                  <span>Timestamp</span>
+                  <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (
                 <TableRow>
-                  <td>Inputs</td>
-                  <td>
+                  <span>Inputs</span>
+                  <div>
                     {txInfo.inputs && txInfo.inputs.length > 0
                       ? txInfo.inputs.map(
                           (v, i) =>
@@ -201,55 +200,41 @@ const TransactionInfoPage = () => {
                             )
                         )
                       : 'Block Rewards'}
-                  </td>
+                  </div>
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (
                 <TableRow>
-                  <td>Outputs</td>
-                  <td>
-                    {txInfo.outputs
-                      ? txInfo.outputs.map((v, i) => (
-                          <AddressLink
-                            address={v.address}
-                            key={i}
-                            amount={BigInt(v.attoAlphAmount)}
-                            txHashRef={v.spent}
-                          />
-                        ))
-                      : '-'}
-                  </td>
+                  <span>Outputs</span>
+
+                  {txInfo.outputs
+                    ? txInfo.outputs.map((v, i) => (
+                        <AddressLink
+                          address={v.address}
+                          key={i}
+                          amount={BigInt(v.attoAlphAmount)}
+                          txHashRef={v.spent}
+                        />
+                      ))
+                    : '-'}
                 </TableRow>
               )}
               <TableRow>
-                <td>Gas Amount</td>
-                <td>{txInfo.gasAmount || '-'} GAS</td>
+                <span>Gas Amount</span>
+                <span>{txInfo.gasAmount || '-'} GAS</span>
               </TableRow>
               <TableRow>
-                <td>Gas Price</td>
-                <td>
-                  <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
-                </td>
+                <span>Gas Price</span>
+
+                <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
               </TableRow>
               <TableRow>
-                <td>Transaction Fee</td>
-                <td>
-                  <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
-                </td>
+                <span>Transaction Fee</span>
+                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
               </TableRow>
               <TableRow>
-                <td>
-                  <b>Total Value</b>
-                </td>
-                <td>
-                  <Badge
-                    type="neutralHighlight"
-                    amount={outputs?.reduce<bigint>(
-                      (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
-                      BigInt(0)
-                    )}
-                  />
-                </td>
+                <b>Total Value</b>
+                <Badge type="neutralHighlight" amount={totalAmount} />
               </TableRow>
             </TableBody>
           )}
