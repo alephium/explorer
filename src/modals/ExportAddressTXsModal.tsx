@@ -16,13 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
+import { isString } from 'lodash'
 import { Check } from 'lucide-react'
-import { ComponentProps, useState } from 'react'
+import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
 
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import { useGlobalContext } from '@/contexts/global'
@@ -39,17 +42,55 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
 
-  const downloadLink = `${client?.baseUrl}/addresses/${addressHash}/export-transactions/csv?fromTs=${timePeriods[timePeriodValue].from}&toTs=${timePeriods[timePeriodValue].to}`
+  const getCSVFile = useCallback(async () => {
+    onClose()
 
-  const handleDownloadStart = () => {
     setSnackbarMessage({
-      text: 'Your CSV file is being downloaded.',
-      type: 'success',
-      Icon: <Check size={14} />
+      text: "Your CSV is being compiled in the background (don't close the explorer)...",
+      type: 'info',
+      Icon: <LoadingSpinner size={20} style={{ color: 'inherit' }} />,
+      duration: -1
     })
 
-    onClose()
-  }
+    try {
+      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(
+        addressHash,
+        {
+          fromTs: timePeriods[timePeriodValue].from,
+          toTs: timePeriods[timePeriodValue].to
+        },
+        {
+          // Don't forget to define the format field in order to show errors! (cf. swagger-typescript-api code)
+          format: 'text' // We expect a CSV. Careful: errors would be returned as a string as well.
+        }
+      )
+
+      if (!res?.data) throw 'Something wrong happened while fetching the data.'
+
+      startCSVFileDownload(res.data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
+
+      setSnackbarMessage({
+        text: 'Your CSV has been successfully downloaded.',
+        type: 'success',
+        Icon: <Check size={14} />
+      })
+    } catch (e) {
+      console.error(e)
+      const parsedError = e as APIError
+
+      if (isString(parsedError.error)) {
+        parsedError.error = JSON.parse(parsedError.error as string) // we received a "text" format, need to parse the JSON
+      }
+
+      setSnackbarMessage(undefined) // remove previously set message
+
+      setSnackbarMessage({
+        text: getHumanReadableError(parsedError, 'Problem while downloading the CSV file'),
+        type: 'alert',
+        duration: 5000
+      })
+    }
+  }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
@@ -68,11 +109,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
         />
       </Selects>
       <FooterButton>
-        <a href={downloadLink} download onClick={handleDownloadStart}>
-          <Button accent big>
-            Export
-          </Button>
-        </a>
+        <Button accent big onClick={getCSVFile}>
+          Export
+        </Button>
       </FooterButton>
     </Modal>
   )
@@ -127,6 +166,18 @@ const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
     to: now.subtract(1, 'year').endOf('year').valueOf()
   },
   thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
+}
+
+const startCSVFileDownload = (csvContent: string, fileName: string) => {
+  const url = URL.createObjectURL(new Blob([csvContent], { type: 'text/csv' }))
+  const a = document.createElement('a')
+  a.style.display = 'none'
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
 }
 
 export default styled(ExportAddressTXsModal)`
