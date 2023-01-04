@@ -108,19 +108,27 @@ const StyledTable = styled.table<TableProps>`
     height: 45px;
   }
 
-  th:first-child,
-  td:first-child {
-    padding-left: 20px;
-
-    @media ${deviceBreakPoints.mobile} {
-      padding-left: 12px;
-    }
-
+  th,
+  td {
     ${({ bodyOnly }) =>
       bodyOnly &&
       css`
-        width: 35%;
+        width: 65%;
       `}
+
+    &:first-child {
+      padding-left: 20px;
+
+      @media ${deviceBreakPoints.mobile} {
+        padding-left: 12px;
+      }
+
+      ${({ bodyOnly }) =>
+        bodyOnly &&
+        css`
+          width: 35%;
+        `}
+    }
   }
 
   svg {
