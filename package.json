@@ -1,6 +1,6 @@
 {
   "name": "alephium-explorer",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "private": true,
   "engines": {
     "node": ">=14",
