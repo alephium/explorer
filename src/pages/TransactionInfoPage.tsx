@@ -206,17 +206,18 @@ const TransactionInfoPage = () => {
               {isTxConfirmed(txInfo) && (
                 <TableRow>
                   <span>Outputs</span>
-
-                  {txInfo.outputs
-                    ? txInfo.outputs.map((v, i) => (
-                        <AddressLink
-                          address={v.address}
-                          key={i}
-                          amount={BigInt(v.attoAlphAmount)}
-                          txHashRef={v.spent}
-                        />
-                      ))
-                    : '-'}
+                  <div>
+                    {txInfo.outputs
+                      ? txInfo.outputs.map((v, i) => (
+                          <AddressLink
+                            address={v.address}
+                            key={i}
+                            amount={BigInt(v.attoAlphAmount)}
+                            txHashRef={v.spent}
+                          />
+                        ))
+                      : '-'}
+                  </div>
                 </TableRow>
               )}
               <TableRow>
