@@ -16,15 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { HttpResponse } from '@alephium/sdk/api/explorer'
+import { HttpResponse, IntervalType } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 
 import { useGlobalContext } from '@/contexts/global'
 
 const ONE_DAY = 1000 * 60 * 60 * 24
-
-export type TimeFrame = 'hourly' | 'daily'
 
 interface Stat<T> {
   value: T
@@ -49,12 +47,13 @@ type StatsVectorData = { [key in StatVectorKeys]: StatVector }
 const statScalarDefault = { value: 0, isLoading: true }
 const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
-const getTimeIntervals = (timeFrame: TimeFrame) => ({
-  from: timeFrame === 'daily' ? dayjs().subtract(1, 'month').valueOf() : dayjs().subtract(2, 'day').valueOf(),
+const getTimeIntervals = (timeInterval: IntervalType) => ({
+  from:
+    timeInterval === IntervalType.Daily ? dayjs().subtract(1, 'month').valueOf() : dayjs().subtract(2, 'day').valueOf(),
   to: dayjs().valueOf()
 })
 
-const useStatisticsData = (timeFrame: TimeFrame) => {
+const useStatisticsData = (timeInterval: IntervalType) => {
   const { client } = useGlobalContext()
 
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
@@ -98,7 +97,7 @@ const useStatisticsData = (timeFrame: TimeFrame) => {
       const { data } = await client.charts.getChartsHashrates({
         fromTs: yesterday,
         toTs: now,
-        'interval-type': 'hourly'
+        'interval-type': IntervalType.Hourly
       })
 
       if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[data.length - 1].value))
@@ -120,11 +119,11 @@ const useStatisticsData = (timeFrame: TimeFrame) => {
     }
 
     const fetchTxVectorData = async () => {
-      const timeIntervals = getTimeIntervals(timeFrame)
+      const timeIntervals = getTimeIntervals(timeInterval)
       const { data } = await client.charts.getChartsTransactionsCount({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
-        'interval-type': timeFrame
+        'interval-type': timeInterval
       })
       if (data && data.length > 0)
         updateStatsVector(
@@ -144,12 +143,12 @@ const useStatisticsData = (timeFrame: TimeFrame) => {
     }
 
     const fetchHashrateVectorData = async () => {
-      const timeIntervals = getTimeIntervals(timeFrame)
+      const timeIntervals = getTimeIntervals(timeInterval)
 
       const { data } = await client.charts.getChartsHashrates({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
-        'interval-type': timeFrame
+        'interval-type': timeInterval
       })
       if (data && data.length > 0)
         updateStatsVector(
@@ -176,7 +175,7 @@ const useStatisticsData = (timeFrame: TimeFrame) => {
     fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
     fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
     fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
-  }, [client, timeFrame])
+  }, [client, timeInterval])
 
   useEffect(() => {
     fetchStatistics()

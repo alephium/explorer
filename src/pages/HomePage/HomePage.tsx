@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addApostrophes } from '@alephium/sdk'
+import { IntervalType } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
@@ -47,7 +48,7 @@ import { deviceBreakPoints, deviceSizes } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import useBlockListData from './useBlockListData'
-import useStatisticsData, { TimeFrame } from './useStatisticsData'
+import useStatisticsData from './useStatisticsData'
 
 dayjs.extend(duration)
 
@@ -59,7 +60,7 @@ const HomePage = () => {
   const currentPageNumber = usePageNumber()
   const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
 
-  const [timeFrame, setTimeFrame] = useState<TimeFrame>('daily')
+  const [timeInterval, setTimeInterval] = useState(IntervalType.Daily)
 
   const {
     getBlocks,
@@ -73,7 +74,7 @@ const HomePage = () => {
       scalar: { hashrate, totalSupply, circulatingSupply, totalTransactions, totalBlocks, avgBlockTime },
       vector
     }
-  } = useStatisticsData(timeFrame)
+  } = useStatisticsData(timeInterval)
 
   const vectorData = vector
 
@@ -96,8 +97,8 @@ const HomePage = () => {
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `Transactions per ${timeFrame === 'daily' ? 'day' : 'hour'}`,
-    hashrateVector: `Hashrate per ${timeFrame === 'daily' ? 'day' : 'hour'}`
+    txVector: `Transactions per ${timeInterval === IntervalType.Daily ? 'day' : 'hour'}`,
+    hashrateVector: `Hashrate per ${timeInterval === IntervalType.Daily ? 'day' : 'hour'}`
   }
 
   return (
@@ -112,14 +113,20 @@ const HomePage = () => {
         <StatisticsSection>
           <StatisticsHeader>
             <h2>Our numbers</h2>
-            <TimeFrameSwitch>
-              <TimeFrameButton isSelected={timeFrame === 'daily'} onClick={() => setTimeFrame('daily')}>
+            <TimeIntervalSwitch>
+              <TimeIntervalButton
+                isSelected={timeInterval === IntervalType.Daily}
+                onClick={() => setTimeInterval(IntervalType.Daily)}
+              >
                 Daily
-              </TimeFrameButton>
-              <TimeFrameButton isSelected={timeFrame === 'hourly'} onClick={() => setTimeFrame('hourly')}>
+              </TimeIntervalButton>
+              <TimeIntervalButton
+                isSelected={timeInterval === IntervalType.Hourly}
+                onClick={() => setTimeInterval(IntervalType.Hourly)}
+              >
                 Hourly
-              </TimeFrameButton>
-            </TimeFrameSwitch>
+              </TimeIntervalButton>
+            </TimeIntervalSwitch>
           </StatisticsHeader>
           <StatisticsContainer>
             <CardWithChart
@@ -230,7 +237,7 @@ const HomePage = () => {
               colors={chartColors[detailsCardOpen]}
               xAxisType="datetime"
               yAxisType="formatted"
-              timeFrame={timeFrame}
+              timeInterval={timeInterval}
               unit={detailsCardOpen === 'hashrateVector' ? 'H/s' : ''}
             />
           </FullScreenCard>
@@ -285,12 +292,12 @@ const StatisticsHeader = styled.header`
   }
 `
 
-const TimeFrameSwitch = styled.div`
+const TimeIntervalSwitch = styled.div`
   display: flex;
   gap: 10px;
 `
 
-const TimeFrameButton = styled.button<{ isSelected: boolean }>`
+const TimeIntervalButton = styled.button<{ isSelected: boolean }>`
   padding: 4px;
   border: 1px solid ${({ theme }) => theme.borderSecondary};
   border-radius: 4px;
