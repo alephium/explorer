@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { IntervalType } from '@alephium/sdk/api/explorer'
 import { colord } from 'colord'
 import dayjs from 'dayjs'
 import Chart from 'react-apexcharts'
 import { useTheme } from 'styled-components'
 
-import { TimeFrame } from '@/pages/HomePage/useStatisticsData'
 import { formatXAxis, formatYAxis, XAxisType, YAxisType } from '@/utils/charts'
 
 type TooltipStyleArgs = {
@@ -36,11 +36,19 @@ interface LineAreaChartProps {
   colors: [string, string]
   yAxisType: YAxisType
   xAxisType: XAxisType
-  timeFrame: TimeFrame
+  timeInterval: IntervalType
   unit: string
 }
 
-const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType, timeFrame, unit }: LineAreaChartProps) => {
+const LineAreaChart = ({
+  series,
+  categories,
+  colors,
+  xAxisType,
+  yAxisType,
+  timeInterval,
+  unit
+}: LineAreaChartProps) => {
   const theme = useTheme()
 
   const options: ApexCharts.ApexOptions = {
@@ -67,7 +75,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType, timeF
         style: {
           colors: theme.textSecondary
         },
-        formatter: formatXAxis(xAxisType, timeFrame)
+        formatter: formatXAxis(xAxisType, timeInterval)
       },
       tooltip: {
         enabled: false
@@ -122,7 +130,7 @@ const LineAreaChart = ({ series, categories, colors, xAxisType, yAxisType, timeF
               border-bottom: 1px solid ${theme.borderSecondary};
             ">
               ${
-                timeFrame === 'daily'
+                timeInterval === IntervalType.Daily
                   ? dayjs(new Date(categories[dataPointIndex])).format('DD/MM/YYYY')
                   : dayjs(categories[dataPointIndex]).format('ddd, hh:ss')
               }
