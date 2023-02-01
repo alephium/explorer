@@ -321,7 +321,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                           <AddressLink
                             key={i}
                             address={input.address}
-                            txHashRef={input.outputRef.key}
+                            txHashRef={input.txHashRef}
                             amount={BigInt(input.attoAlphAmount ?? 0)}
                             maxWidth="180px"
                           />

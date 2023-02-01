@@ -230,7 +230,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
             t.inputs.map(
               (input, i) =>
                 input.address && (
-                  <AddressLink key={i} address={input.address} txHashRef={input.outputRef.key} maxWidth="180px" />
+                  <AddressLink key={i} address={input.address} txHashRef={input.txHashRef} maxWidth="180px" />
                 )
             )}
         </AnimatedCell>
