@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountDeltaForAddress, getDirection, getHumanReadableError, isConsolidationTx } from '@alephium/sdk'
+import { calcTxAmountsDeltaForAddress, getDirection, getHumanReadableError, isConsolidationTx } from '@alephium/sdk'
 import { AddressBalance, AssetOutput, Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
@@ -214,7 +214,7 @@ const TransactionInfoPage = () => {
               {txList
                 .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
                 .map((t, i) => (
-                  <AddressTransactionRow transaction={t} addressId={id} key={i} />
+                  <AddressTransactionRow transaction={t} addressHash={id} key={i} />
                 ))}
             </TableBody>
           </>
@@ -234,24 +234,26 @@ const TransactionInfoPage = () => {
 
 interface AddressTransactionRowProps {
   transaction: Transaction
-  addressId: string
+  addressHash: string
 }
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressId }) => {
+const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
-  let amount = calcTxAmountDeltaForAddress(t, addressId)
-  amount = amount < 0 ? amount * BigInt(-1) : amount
-  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressId)
+  let { alph: alphAmount } = calcTxAmountsDeltaForAddress(t, addressHash) // TODO: Support tokens
+
+  alphAmount = alphAmount < 0 ? alphAmount * BigInt(-1) : alphAmount
+
+  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
   const { amountTextColor, amountSign, Icon, iconColor } = useTransactionUI(infoType)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
     // Check for auto-sent tx
-    if (t.outputs.every((o) => o.address === addressId)) {
-      return <AddressLink key={addressId} address={addressId} maxWidth="250px" />
+    if (t.outputs.every((o) => o.address === addressHash)) {
+      return <AddressLink key={addressHash} address={addressHash} maxWidth="250px" />
     } else {
-      const outputs = _(t.outputs.filter((o) => o.address !== addressId))
+      const outputs = _(t.outputs.filter((o) => o.address !== addressHash))
         .map((v) => v.address)
         .uniq()
         .value()
@@ -267,7 +269,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
   const renderInputAccounts = () => {
     if (!t.inputs) return
-    const inputs = _(t.inputs.filter((o) => o.address !== addressId))
+    const inputs = _(t.inputs.filter((o) => o.address !== addressHash))
       .map((v) => v.address)
       .uniq()
       .value()
@@ -303,7 +305,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
           {amountSign}
-          <Amount value={amount} />
+          <Amount value={alphAmount} />
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
       </TableRow>

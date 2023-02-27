@@ -33,13 +33,16 @@ const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: A
   let fractionalPart = ''
 
   if (value !== undefined) {
-    const amountParts = formatAmountForDisplay(value, showFullPrecision).split('.')
+    const amountParts = formatAmountForDisplay({ amount: value, fullPrecision: showFullPrecision }).split('.')
     integralPart = amountParts[0]
     fractionalPart = amountParts[1]
   }
 
   return (
-    <span className={className} data-tip={value ? `${formatAmountForDisplay(BigInt(value), true)} א` : null}>
+    <span
+      className={className}
+      data-tip={value ? `${formatAmountForDisplay({ amount: BigInt(value), fullPrecision: true })} א` : null}
+    >
       {value !== undefined ? (
         fadeDecimals ? (
           <>
