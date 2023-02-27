@@ -26,6 +26,7 @@ export const darkTheme: DefaultTheme = {
 
   textPrimary: 'rgba(255, 255, 255, 0.95)',
   textSecondary: 'rgba(255, 255, 255, 0.65)',
+  textTertiary: 'rgba(255, 255, 255, 0.45)',
   textAccent: '#EFA25B',
 
   link: '#53A9F5',
@@ -62,6 +63,7 @@ export const lightTheme: DefaultTheme = {
 
   textPrimary: 'rgba(15, 15, 15, 0.95)',
   textSecondary: 'rgba(15, 15, 15, 0.70)',
+  textTertiary: 'rgba(15, 15, 15, 0.60)',
   textAccent: '#e69100',
 
   link: '#0E82E7',

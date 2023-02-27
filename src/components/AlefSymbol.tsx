@@ -16,30 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CSSProperties } from 'react'
 import styled from 'styled-components'
 
 import alefSymbol from '@/images/alef.svg'
 
 interface AlefSymbolProps {
+  color?: string
   className?: string
-  style?: CSSProperties
 }
 
-const AlefSymbol = ({ className, style }: AlefSymbolProps) => (
+const AlefSymbol = ({ className, color }: AlefSymbolProps) => (
   <span className={className}>
     <HiddenForCopying>&nbsp;ALPH</HiddenForCopying>
-    <AlefSymbolSVG style={{ backgroundColor: 'currentColor', ...style }} />
+    <AlefSymbolSVG color={color} />
   </span>
 )
 
-export default AlefSymbol
+export default styled(AlefSymbol)`
+  height: 1em;
+`
 
 const HiddenForCopying = styled.span`
   font-size: 0;
 `
 
-const AlefSymbolSVG = styled.span`
+const AlefSymbolSVG = styled.span<{ color?: string }>`
+  background-color: currentColor;
   display: inline-block;
   font-size: 1em;
   width: 1em;
@@ -48,5 +50,4 @@ const AlefSymbolSVG = styled.span`
   mask: url(${alefSymbol}) no-repeat 100% 100%;
   -webkit-mask-size: cover;
   mask-size: cover;
-  background-color: ${({ color, theme }) => color || theme.textPrimary};
 `
