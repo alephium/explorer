@@ -28,6 +28,7 @@ declare module 'styled-components' {
 
     textPrimary: string
     textSecondary: string
+    textTertiary: string
     textAccent: string
 
     link: string

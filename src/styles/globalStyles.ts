@@ -22,9 +22,9 @@ import normalize from 'styled-normalize'
 // Breakpoints
 
 export const deviceSizes = {
-  tiny: 370,
-  mobile: 800,
-  tablet: 1000,
+  tiny: 400,
+  mobile: 600,
+  tablet: 800,
   desktop: 1600
 }
 
