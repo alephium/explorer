@@ -17,12 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import { AddressBalance, Transaction } from '@alephium/sdk/api/explorer'
+import { last } from 'lodash'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import { fetchAddressData, fetchAddressTransactions } from '@/api/addressApi'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -35,10 +36,12 @@ import SectionTitle from '@/components/SectionTitle'
 import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
+import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressInfoGrid from './AddressInfoGrid'
@@ -53,97 +56,90 @@ const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage } = useGlobalContext()
 
-  const [txNumber, setTxNumber] = useState<number>()
-  const [totalBalance, setTotalBalance] = useState<AddressBalance>()
-  const [txListError, setTxListError] = useState('')
-  const [txList, setTxList] = useState<Transaction[]>()
-  const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
-
+  const [addressData, setAddressData] = useState<AddressDataResult>()
+  const [addressTransactions, setAddressTransactions] = useState<AddressTransactionsResult>()
   const [txLoading, setTxLoading] = useState(true)
+
+  const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
 
   const [exportModalShown, setExportModalShown] = useState(false)
 
   // Default page
   const pageNumber = usePageNumber()
 
-  // Address info
   useEffect(() => {
     if (!client || !id) return
 
-    const fetchTxNumber = async () => {
-      setTxNumber(undefined)
-
+    const fetch = async () => {
+      setAddressData(undefined)
       try {
-        const { data } = await client.addresses.getAddressesAddressTotalTransactions(id)
-        setTxNumber(data)
+        const addressData = await fetchAddressData(client, id)
+        setAddressData(addressData)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching total transactions number'),
+          text: getHumanReadableError(error, 'Error while fetching address data'),
           type: 'alert'
         })
       }
     }
 
-    const fetchTotalBalance = async () => {
-      setTotalBalance(undefined)
-
-      try {
-        const { data } = await client.addresses.getAddressesAddressBalance(id)
-        setTotalBalance(data)
-      } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching total balance'),
-          type: 'alert'
-        })
-      }
-    }
-
-    fetchTxNumber()
-    fetchTotalBalance()
+    fetch()
   }, [client, id, setSnackbarMessage])
 
-  // Address transactions
   useEffect(() => {
     if (!client || !id) return
 
-    const fetchTransactions = async () => {
+    const fetch = async () => {
       setTxLoading(true)
-
+      setAddressTransactions(undefined)
       try {
-        const { data } = await client.getAddressTransactions(id, pageNumber)
-        if (data) setTxList(data)
+        const transactionsData = await fetchAddressTransactions(client, id, pageNumber)
+        setAddressTransactions(transactionsData)
       } catch (error) {
         console.error(error)
-        setTxListError(getHumanReadableError(error, 'Error while fetching transaction list'))
+        setSnackbarMessage({
+          text: getHumanReadableError(error, "Error while fetching address' transactions"),
+          type: 'alert'
+        })
+      } finally {
+        setTxLoading(false)
       }
-
-      setTxLoading(false)
     }
 
-    fetchTransactions()
-  }, [client, id, pageNumber])
+    fetch()
+  }, [client, id, pageNumber, setSnackbarMessage])
 
   // Asset price (appox).
-  // TODO: when listed tokens, add prices. ALPH only for now.
+  // TODO: when listed tokens, add resp. prices. ALPH only for now.
   useEffect(() => {
+    setAddressWorth(undefined)
+
     const getAddressWorth = async () => {
-      if (!totalBalance?.balance) return
+      const balance = addressData?.details.balance
+      if (!balance) return
+
       const price = await fetchAssetPrice('alephium')
 
-      setAddressWorth(calculateAmountWorth(BigInt(totalBalance.balance), price))
+      setAddressWorth(calculateAmountWorth(BigInt(balance), price))
     }
     getAddressWorth()
-  }, [totalBalance?.balance])
+  }, [addressData?.details.balance])
 
   const handleExportModalOpen = () => setExportModalShown(true)
-
   const handleExportModalClose = () => setExportModalShown(false)
 
   if (!id) return null
 
   const addressGroup = addressToGroup(id, TOTAL_NUMBER_OF_GROUPS)
+
+  const totalBalance = addressData?.details.balance
+  const lockedBalance = addressData?.details.lockedBalance
+  const txNumber = addressData?.details.txNumber
+  const txList = addressTransactions?.transactions
+  const latestActivityDate = txList?.[0].timestamp
+  const nbOfAssets =
+    (totalBalance && parseInt(totalBalance) > 0 ? 1 : 0) + (addressData?.tokens.length || 0) || undefined
 
   return (
     <Section>
@@ -152,13 +148,13 @@ const TransactionInfoPage = () => {
         <InfoGrid>
           <InfoGrid.Cell
             label="ALPH balance"
-            value={totalBalance && <Amount value={BigInt(totalBalance.balance)} />}
+            value={totalBalance && <Amount value={BigInt(totalBalance)} />}
             sublabel={
-              totalBalance?.lockedBalance && (
+              lockedBalance && (
                 <Badge
                   content={
                     <span>
-                      Locked: <Amount value={BigInt(totalBalance.lockedBalance)} />
+                      Locked: <Amount value={BigInt(lockedBalance)} />
                     </span>
                   }
                   type="neutral"
@@ -169,11 +165,14 @@ const TransactionInfoPage = () => {
           <InfoGrid.Cell label="Fiat price" value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />} />
           <InfoGrid.Cell
             label="Nb. of transaction"
-            value={txNumber ? formatNumberForDisplay(txNumber, '') : undefined}
+            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : undefined}
           />
+          <InfoGrid.Cell label="Nb. of assets" value={nbOfAssets} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
-          <InfoGrid.Cell label="Nb. of assets" value="TODO" />
-          <InfoGrid.Cell label="Last activity" value="TODO" />
+          <InfoGrid.Cell
+            label="Latest activity"
+            value={latestActivityDate && <Timestamp timeInMs={latestActivityDate} />}
+          />
         </InfoGrid>
         <QRCodeCell>
           <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
@@ -213,7 +212,7 @@ const TransactionInfoPage = () => {
           </>
         ) : (
           <TableBody>
-            <NoTxMessage>{txListError || 'No transactions yet'}</NoTxMessage>
+            <NoTxMessage>No transactions yet</NoTxMessage>
           </TableBody>
         )}
       </Table>
