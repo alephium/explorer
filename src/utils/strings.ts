@@ -33,7 +33,7 @@ export const formatNumberForDisplay = (
   number: number,
   unit: string,
   numberType: 'quantity' | 'hash' = 'quantity',
-  maxDecimals: 1 | 2 = 1
+  maxDecimals: 0 | 1 | 2 = 1
 ) => {
   const suffixes = {
     quantity: ['', 'K', 'M', 'B', 'T'],
@@ -47,11 +47,11 @@ export const formatNumberForDisplay = (
     suffixIndex++
   }
 
-  const denominator = maxDecimals === 1 ? 10 : 100
+  const denominator = maxDecimals === 1 ? 10 : maxDecimals === 2 ? 100 : 1000
   const preciseNumber = (Math.round((formatedNumber + Number.EPSILON) * denominator) / denominator).toString()
   const numberParts = preciseNumber.split('.')
   const numberInteger = numberParts[0]
-  const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || '.0'
+  const numberDecimal = maxDecimals !== 0 ? (numberParts.length > 1 && `.${numberParts[1]}`) || '.0' : undefined
 
   return [numberInteger, numberDecimal, suffixes[suffixIndex], unit]
 }

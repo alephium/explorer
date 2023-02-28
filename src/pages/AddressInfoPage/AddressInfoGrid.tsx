@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { motion } from 'framer-motion'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { motion } from 'framer-motion'
 
 interface AddressInfoGridProps {
   children: ReactNode
@@ -42,7 +42,7 @@ interface GridCellProps {
 const GridCell = ({ label, value, sublabel, className }: GridCellProps) => (
   <CellContainer className={className}>
     <Label>{label}</Label>
-    {value ? (
+    {value !== undefined ? (
       <Value initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         {value}
       </Value>
