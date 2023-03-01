@@ -283,20 +283,20 @@ const TXTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 3,
     style: css`
-      color: ${({ theme }) => theme.textAccent};
+      color: ${({ theme }) => theme.global.highlight};
     `
   },
   {
     tdPos: 4,
     style: css`
       text-align: center;
-      color: ${({ theme }) => theme.textSecondary};
+      color: ${({ theme }) => theme.font.secondary};
     `
   },
   {
     tdPos: 5,
     style: css`
-      color: ${({ theme }) => theme.textAccent};
+      color: ${({ theme }) => theme.global.highlight};
     `
   }
 ]

@@ -47,7 +47,7 @@ export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }
 )
 
 export default styled(TableHeader)`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 
   th {
     padding: 0px 12px 12px 12px;
@@ -62,10 +62,10 @@ export default styled(TableHeader)`
       css`
         position: sticky;
         top: 0;
-        box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
+        box-shadow: inset 0 -1px 0 ${theme.border.secondary};
         padding: 12px;
       `}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
   }
 
   tr {

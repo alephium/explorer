@@ -37,7 +37,7 @@ export default QRCodeButton
 const StyledClipboardIcon = styled(QrCode)`
   margin-left: 10px;
   cursor: pointer;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const Tooltip = styled(ReactTooltip)`

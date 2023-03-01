@@ -66,14 +66,14 @@ const LineAreaChart = ({
     xaxis: {
       categories,
       axisTicks: {
-        color: theme.borderSecondary
+        color: theme.border.secondary
       },
       axisBorder: {
         show: false
       },
       labels: {
         style: {
-          colors: theme.textSecondary
+          colors: theme.font.secondary
         },
         formatter: formatXAxis(xAxisType, timeInterval)
       },
@@ -84,7 +84,7 @@ const LineAreaChart = ({
         show: true,
         position: 'front',
         stroke: {
-          color: theme.borderPrimary,
+          color: theme.border.primary,
           width: 1,
           dashArray: 6
         }
@@ -94,7 +94,7 @@ const LineAreaChart = ({
       floating: true,
       labels: {
         style: {
-          colors: theme.textSecondary,
+          colors: theme.font.secondary,
           fontSize: '12px'
         },
         offsetY: -10,
@@ -104,7 +104,7 @@ const LineAreaChart = ({
       }
     },
     grid: {
-      borderColor: colord(theme.borderPrimary).alpha(0.5).toHex(),
+      borderColor: colord(theme.border.primary).alpha(0.5).toHex(),
       padding: {
         top: 0,
         right: 0
@@ -113,21 +113,21 @@ const LineAreaChart = ({
       position: 'front'
     },
     markers: {
-      colors: theme.bgPrimary
+      colors: theme.bg.primary
     },
     tooltip: {
       theme: false as unknown as string,
       custom({ series, seriesIndex, dataPointIndex }: TooltipStyleArgs) {
         return `<div style="
-          color: ${theme.textPrimary};
-          background-color: ${theme.bgPrimary};
+          color: ${theme.font.primary};
+          background-color: ${theme.bg.primary};
           min-width: 121px;
         ">
           <div style="display: flex; flex-direction: column;">
             <div style="
-              background-color: ${theme.bgSecondary};
+              background-color: ${theme.bg.secondary};
               padding: 9px 0px 5px 11px;
-              border-bottom: 1px solid ${theme.borderSecondary};
+              border-bottom: 1px solid ${theme.border.secondary};
             ">
               ${
                 timeInterval === IntervalType.Daily

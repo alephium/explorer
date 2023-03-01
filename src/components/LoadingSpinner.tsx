@@ -31,5 +31,5 @@ export default LoadingSpinner
 
 const Spinner = styled(Loader)`
   animation: spin 1s infinite;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `

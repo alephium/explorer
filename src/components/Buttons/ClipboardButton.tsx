@@ -69,10 +69,10 @@ export default ClipboardButton
 const StyledClipboardIcon = styled(Copy)`
   margin-left: 10px;
   cursor: pointer;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const StyledCheckIcon = styled(Check)`
   margin-left: 10px;
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
 `

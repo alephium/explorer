@@ -56,17 +56,17 @@ export default createGlobalStyle`
     overflow-y: auto;
     overflow-x: hidden;
     
-    color: ${({ theme }) => theme.textPrimary};
-    background-color: ${({ theme }) => theme.body};
+    color: ${({ theme }) => theme.font.primary};
+    background-color: ${({ theme }) => theme.bg.background1};
     margin: 0;
   }
 
   a {
-    color: ${({ theme }) => theme.link};
+    color: ${({ theme }) => theme.global.accent};
     cursor: pointer;
 
     &:hover {
-      color: ${({ theme }) => theme.linkHighlight};;
+      color: ${({ theme }) => colord(theme.global.accent).lighten(0.1).toHex()};;
     }
   }
 
@@ -116,9 +116,9 @@ export default createGlobalStyle`
   }
 
   .apexcharts-tooltip {
-    box-shadow: ${({ theme }) => theme.shadowPrimary} !important;
+    box-shadow: ${({ theme }) => theme.shadow.primary} !important;
     border-radius: 9px !important;
-    border: 1px solid ${({ theme }) => theme.borderPrimary};
+    border: 1px solid ${({ theme }) => theme.border.primary};
   }
 `
 

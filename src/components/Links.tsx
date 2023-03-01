@@ -91,7 +91,7 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
 }
 
 const OutputValue = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   margin-left: 8px;
   display: flex;
   gap: 10px;

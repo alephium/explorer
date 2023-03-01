@@ -24,38 +24,40 @@ import { ThemeType } from './themes'
 declare module 'styled-components' {
   export interface DefaultTheme {
     name: ThemeType
-    body: string
-
-    textPrimary: string
-    textSecondary: string
-    textTertiary: string
-    textAccent: string
-
-    link: string
-    linkHighlight: string
-
-    bgPrimary: string
-    bgSecondary: string
-    bgTertiary: string
-    bgHighlight: string
-    bgHover: string
-
-    borderPrimary: string
-    borderSecondary: string
-    borderHighlight: string
-
-    shadowPrimary: string
-    shadowSecondary: string
-    shadowTertiary: string
-
-    accentGradient: string
-
-    tooltip: string
-
-    accent: string
-    valid: string
-    alert: string
-
-    white: string
+    bg: {
+      primary: string
+      secondary: string
+      tertiary: string
+      hover: string
+      contrast: string
+      accent: string
+      background1: string
+      background2: string
+    }
+    font: {
+      primary: string
+      secondary: string
+      tertiary: string
+      contrastPrimary: string
+      contrastSecondary: string
+      highlight: string
+    }
+    shadow: {
+      primary: string
+      secondary: string
+      tertiary: string
+    }
+    border: {
+      primary: string
+      secondary: string
+    }
+    global: {
+      accent: string
+      complementary: string
+      alert: string
+      valid: string
+      highlight: string
+      highlightGradient: string
+    }
   }
 }

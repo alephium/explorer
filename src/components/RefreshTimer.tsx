@@ -46,7 +46,7 @@ const RefreshTimer: React.FC<RefreshTimerProps> = ({ lastRefreshTimestamp, delay
 }
 
 const Timer = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-size: 0.9rem;
   display: flex;
   align-items: center;

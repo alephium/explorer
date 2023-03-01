@@ -44,7 +44,7 @@ const TableBody: FC<TableBodyProps> = ({ className, children }) => (
 )
 
 export default styled(TableBody)`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
 
   & > tr {
     ${({ tdStyles }) =>
@@ -64,7 +64,7 @@ export default styled(TableBody)`
     }
 
     &:hover {
-      background-color: ${({ theme }) => theme.bgHover};
+      background-color: ${({ theme }) => theme.bg.hover};
     }
   }
 `

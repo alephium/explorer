@@ -56,12 +56,12 @@ const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props 
 }
 
 const TableWrapper = styled.div<TableProps>`
-  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
+  border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
   overflow: hidden;
   border-radius: 12px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  ${({ theme }) => blurredBackground(theme.bgPrimary)}
+  ${({ theme }) => blurredBackground(theme.bg.primary)}
 `
 
 const StyledTable = styled.table<TableProps>`
@@ -137,14 +137,14 @@ const StyledTable = styled.table<TableProps>`
 
   tbody {
     tr:not(:last-child) {
-      border-bottom: ${({ hasDetails, theme }) => (!hasDetails ? `1px solid ${theme.borderSecondary}` : '')};
+      border-bottom: ${({ hasDetails, theme }) => (!hasDetails ? `1px solid ${theme.border.secondary}` : '')};
     }
 
     tr.details {
       &:not(:last-child) {
-        border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+        border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
       }
-      background-color: ${({ theme }) => theme.bgHighlight};
+      background-color: ${({ theme }) => theme.bg.hover};
 
       td {
         padding-top: 0;

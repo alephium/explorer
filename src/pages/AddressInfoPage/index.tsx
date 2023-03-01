@@ -204,7 +204,7 @@ const TransactionInfoPage = () => {
           />
         </InfoGrid>
         <QRCodeCell>
-          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.textPrimary} />
+          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.font.primary} />
         </QRCodeCell>
       </InfoGridAndQR>
 
@@ -282,10 +282,10 @@ const SectionHeader = styled.div`
 const InfoGridAndQR = styled.div`
   display: flex;
   flex-direction: row;
-  background-color: ${({ theme }) => theme.bgPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
 
   @media ${deviceBreakPoints.tablet} {
@@ -302,13 +302,14 @@ const QRCodeCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   padding: 40px;
+  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
 `
 
 const NoTxsMessage = styled.tr`
-  color: ${({ theme }) => theme.textSecondary};
-  background-color: ${({ theme }) => theme.bgSecondary};
+  color: ${({ theme }) => theme.font.secondary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
 `
 
