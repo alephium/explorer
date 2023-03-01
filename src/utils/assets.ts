@@ -16,20 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction, UnconfirmedTransaction } from '@alephium/sdk/api/explorer'
+import { NUM_OF_ZEROS_IN_QUINTILLION } from '@alephium/sdk'
 
-import { TokenBalances } from './assets'
-
-export type AddressHash = string
-
-export type AddressDataResult = {
-  hash: AddressHash
-  details: AddressInfo
-  tokens: TokenBalances[]
-}
-
-export type AddressTransactionsResult = {
-  addressHash: AddressHash
-  transactions: Transaction[]
-  unconfirmedTransactions: UnconfirmedTransaction[]
+export const ALPH = {
+  id: '0',
+  name: 'Alephium',
+  symbol: 'ALPH',
+  decimals: NUM_OF_ZEROS_IN_QUINTILLION
 }

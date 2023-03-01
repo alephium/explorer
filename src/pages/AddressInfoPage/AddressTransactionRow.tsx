@@ -27,6 +27,7 @@ import styled from 'styled-components'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import { AddressLink, TightLink } from '@/components/Links'
+import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/TableDetailsRow'
 import TableHeader from '@/components/Table/TableHeader'
@@ -34,7 +35,6 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import Table from '@/components/Table/Table'
 
 interface AddressTransactionRowProps {
   transaction: Transaction

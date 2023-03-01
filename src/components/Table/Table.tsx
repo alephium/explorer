@@ -58,7 +58,7 @@ const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props 
 const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.borderPrimary}`};
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 12px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
   ${({ theme }) => blurredBackground(theme.bgPrimary)}
