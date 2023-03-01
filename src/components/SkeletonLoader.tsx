@@ -21,7 +21,7 @@ import styled from 'styled-components'
 export default styled.div<{ heightInPx: number }>`
   min-height: ${({ heightInPx }) => heightInPx}px;
   width: 100%;
-  border-radius: 9px;
+  border-radius: 12px;
   backdrop-filter: blur(20px);
   border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
   background: ${({ theme }) => theme.bgPrimary};

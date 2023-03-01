@@ -227,11 +227,11 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <span>Gas Price</span>
 
-                <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
+                <Amount value={BigInt(txInfo.gasPrice)} fullPrecision />
               </TableRow>
               <TableRow>
                 <span>Transaction Fee</span>
-                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
+                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
               </TableRow>
               <TableRow>
                 <b>Total Value</b>

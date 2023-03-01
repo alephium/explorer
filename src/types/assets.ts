@@ -16,20 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction, UnconfirmedTransaction } from '@alephium/sdk/api/explorer'
+import { AddressBalance, Token } from '@alephium/sdk/api/explorer'
+import { TokenInfo } from '@alephium/token-list'
 
-import { TokenBalances } from './assets'
+// Used in Redux, amounts need to be in string format
+export type TokenBalances = AddressBalance & { id: Token['id'] }
 
-export type AddressHash = string
-
-export type AddressDataResult = {
-  hash: AddressHash
-  details: AddressInfo
-  tokens: TokenBalances[]
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+  balance: bigint
+  lockedBalance: bigint
 }
 
-export type AddressTransactionsResult = {
-  addressHash: AddressHash
-  transactions: Transaction[]
-  unconfirmedTransactions: UnconfirmedTransaction[]
-}
+export type Asset = TokenDisplayBalances & TokenInfo
+
+export type AssetAmount = { id: Asset['id']; amount?: bigint }

@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import { last } from 'lodash'
+import TokensMetadata from '@alephium/token-list'
+import { sortBy } from 'lodash'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -42,10 +43,13 @@ import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
+import { Asset } from '@/types/assets'
+import { ALPH } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressInfoGrid from './AddressInfoGrid'
 import AddressTransactionRow from './AddressTransactionRow'
+import AssetList from './AssetList'
 
 type ParamTypes = {
   id: string
@@ -54,10 +58,12 @@ type ParamTypes = {
 const TransactionInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
-  const { client, setSnackbarMessage } = useGlobalContext()
+  const { client, setSnackbarMessage, networkType } = useGlobalContext()
 
   const [addressData, setAddressData] = useState<AddressDataResult>()
   const [addressTransactions, setAddressTransactions] = useState<AddressTransactionsResult>()
+
+  const [addressDataLoading, setAddressDataLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
 
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
@@ -71,6 +77,7 @@ const TransactionInfoPage = () => {
     if (!client || !id) return
 
     const fetch = async () => {
+      setAddressDataLoading(true)
       setAddressData(undefined)
       try {
         const addressData = await fetchAddressData(client, id)
@@ -81,6 +88,8 @@ const TransactionInfoPage = () => {
           text: getHumanReadableError(error, 'Error while fetching address data'),
           type: 'alert'
         })
+      } finally {
+        setAddressDataLoading(false)
       }
     }
 
@@ -137,9 +146,22 @@ const TransactionInfoPage = () => {
   const lockedBalance = addressData?.details.lockedBalance
   const txNumber = addressData?.details.txNumber
   const txList = addressTransactions?.transactions
-  const latestActivityDate = txList?.[0].timestamp
-  const nbOfAssets =
-    (totalBalance && parseInt(totalBalance) > 0 ? 1 : 0) + (addressData?.tokens.length || 0) || undefined
+  const latestActivityDate = txList?.[0]?.timestamp
+
+  let assets = addressData?.tokens.map((t) => ({
+    ...t,
+    balance: BigInt(t.balance),
+    lockedBalance: BigInt(t.lockedBalance),
+    ...TokensMetadata[networkType].tokens.find((tm) => tm.id === t.id)
+  })) as Asset[]
+
+  if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
+    assets?.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
+  }
+
+  if (assets) {
+    assets = sortBy(assets, 'name')
+  }
 
   return (
     <Section>
@@ -150,7 +172,8 @@ const TransactionInfoPage = () => {
             label="ALPH balance"
             value={totalBalance && <Amount value={BigInt(totalBalance)} />}
             sublabel={
-              lockedBalance && (
+              lockedBalance &&
+              lockedBalance !== '0' && (
                 <Badge
                   content={
                     <span>
@@ -164,14 +187,20 @@ const TransactionInfoPage = () => {
           />
           <InfoGrid.Cell label="Fiat price" value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />} />
           <InfoGrid.Cell
-            label="Nb. of transaction"
-            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : undefined}
+            label="Nb. of transactions"
+            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !addressDataLoading ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={nbOfAssets} />
+          <InfoGrid.Cell label="Nb. of assets" value={assets?.length} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
-            value={latestActivityDate && <Timestamp timeInMs={latestActivityDate} />}
+            value={
+              latestActivityDate ? (
+                <Timestamp timeInMs={latestActivityDate} />
+              ) : !txLoading ? (
+                'No activity yet'
+              ) : undefined
+            }
           />
         </InfoGrid>
         <QRCodeCell>
@@ -180,8 +209,14 @@ const TransactionInfoPage = () => {
       </InfoGridAndQR>
 
       <SectionHeader>
+        <h2>Assets</h2>
+      </SectionHeader>
+
+      <AssetList assets={assets} isLoading={addressDataLoading} />
+
+      <SectionHeader>
         <h2>Transactions</h2>
-        <Button onClick={handleExportModalOpen}>Export CSV ↓</Button>
+        {txNumber && txNumber > 0 ? <Button onClick={handleExportModalOpen}>Export CSV ↓</Button> : null}
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
@@ -212,7 +247,9 @@ const TransactionInfoPage = () => {
           </>
         ) : (
           <TableBody>
-            <NoTxMessage>No transactions yet</NoTxMessage>
+            <NoTxsMessage>
+              <td>No transactions yet</td>
+            </NoTxsMessage>
           </TableBody>
         )}
       </Table>
@@ -232,11 +269,6 @@ const TxListCustomStyles: TDStyle[] = [
     `
   }
 ]
-
-const NoTxMessage = styled.td`
-  color: ${({ theme }) => theme.textSecondary};
-  padding: 20px;
-`
 
 const SectionHeader = styled.div`
   display: flex;
@@ -272,6 +304,12 @@ const QRCodeCell = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.bgSecondary};
   padding: 40px;
+`
+
+const NoTxsMessage = styled.tr`
+  color: ${({ theme }) => theme.textSecondary};
+  background-color: ${({ theme }) => theme.bgSecondary};
+  padding: 15px 20px;
 `
 
 export default TransactionInfoPage
