@@ -34,14 +34,14 @@ const StatisticTextual = ({ primary, secondary }: Props) => (
 const Container = styled.div``
 
 const Primary = styled.div`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
   font-size: 23px;
   font-weight: 500;
   margin-bottom: 5px;
 `
 
 const Secondary = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export default StatisticTextual

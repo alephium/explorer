@@ -241,27 +241,27 @@ SelectItem = styled(SelectItem)`
 
   padding: 15px;
 
-  color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => theme.bgPrimary};
+  color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
   z-index: 1;
 
   ${({ isSelected }) =>
     !isSelected &&
     css`
       &:hover:not(:first-child) {
-        background-color: ${({ theme }) => theme.bgHover};
+        background-color: ${({ theme }) => theme.bg.hover};
         z-index: 0;
         cursor: pointer;
       }
     `}
 
   &:not(:first-child):not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 
   // Selected network
   &:first-child {
-    color: ${({ theme }) => theme.textPrimary};
+    color: ${({ theme }) => theme.font.primary};
     font-weight: 600;
     position: sticky;
     top: 0;
@@ -286,8 +286,8 @@ const ItemList = styled(motion.div)`
   margin-left: auto;
   z-index: 3;
   overflow: auto;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
@@ -300,7 +300,7 @@ const Divider = styled.div`
   position: absolute;
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.border.primary};
   z-index: 10;
 `
 
@@ -314,6 +314,6 @@ const ItemContent = styled(motion.div)`
 
 const Title = styled(motion.span)`
   position: absolute;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-weight: 600;
 `

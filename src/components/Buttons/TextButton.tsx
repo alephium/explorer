@@ -27,7 +27,7 @@ const StyledTextButton = styled.button`
   background: transparent;
   font-size: inherit;
   color: ${({ theme, disabled }) => {
-    if (disabled) return theme.textSecondary
+    if (disabled) return theme.font.secondary
     else return theme.link
   }};
 

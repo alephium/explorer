@@ -61,6 +61,6 @@ const NetworkSwitch = ({
 
 export default styled(NetworkSwitch)`
   border-radius: 9px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `

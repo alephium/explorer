@@ -299,20 +299,20 @@ const TimeIntervalSwitch = styled.div`
 
 const TimeIntervalButton = styled.button<{ isSelected: boolean }>`
   padding: 4px;
-  border: 1px solid ${({ theme }) => theme.borderSecondary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: 4px;
   background-color: transparent;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 
   ${({ isSelected }) =>
     isSelected &&
     css`
-      border: 1px solid ${({ theme }) => theme.textSecondary};
-      color: ${({ theme }) => theme.textPrimary};
+      border: 1px solid ${({ theme }) => theme.font.secondary};
+      color: ${({ theme }) => theme.font.primary};
     `}
 
   &:hover {
-    border: 1px solid ${({ theme }) => theme.textPrimary};
+    border: 1px solid ${({ theme }) => theme.font.primary};
   }
 `
 
@@ -337,11 +337,11 @@ const StatisticsContainer = styled.div`
 `
 
 const TextPrimary = styled.span`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
 `
 
 const TextSecondary = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-size: 0.75em;
 
   @media ${deviceBreakPoints.mobile} {
@@ -362,7 +362,7 @@ const BlockListTable = styled(Table)`
 `
 
 const BlockHeight = styled.span`
-  color: ${({ theme }) => theme.textAccent};
+  color: ${({ theme }) => theme.global.highlight};
 `
 
 const TableBodyCustomStyles: TDStyle[] = [

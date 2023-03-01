@@ -101,7 +101,7 @@ const TokensList = ({ assets, limit, className }: TokensListProps) => {
                   fadeDecimals
                   value={asset.balance - asset.lockedBalance}
                   suffix={asset.symbol}
-                  color={theme.textTertiary}
+                  color={theme.font.tertiary}
                   decimals={asset.decimals}
                 />
               </TokenAvailableAmount>
@@ -123,8 +123,8 @@ const NFTsList = () => {
 
 export default styled(AssetList)`
   margin-bottom: 35px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
   border-radius: 12px;
 `
@@ -135,7 +135,7 @@ const AssetRow = styled.div`
   align-items: center;
 
   &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 `
 
@@ -146,14 +146,13 @@ const AssetLogoStyled = styled(AssetLogo)`
 const TokenName = styled.span`
   font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
-  width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `
 
 const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.textTertiary};
+  color: ${({ theme }) => theme.font.tertiary};
   font-size: 11px;
 `
 
@@ -164,7 +163,7 @@ const Column = styled.div`
 `
 
 const TokenAvailableAmount = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-size: 10px;
 `
 
@@ -173,7 +172,7 @@ const NameColumn = styled(Column)`
 `
 
 const NoAssetsMessage = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
-  background-color: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bg.secondary};
 `

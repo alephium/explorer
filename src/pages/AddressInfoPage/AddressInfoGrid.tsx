@@ -59,7 +59,7 @@ AddressInfoGrid.Cell = GridCell
 
 export default styled(AddressInfoGrid)`
   display: grid;
-  background-color: ${({ theme }) => theme.borderSecondary};
+  background-color: ${({ theme }) => theme.border.secondary};
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 1px;
   flex: 1;
@@ -73,13 +73,13 @@ const CellContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bgPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
   padding: 20px;
   min-height: 120px;
 `
 
 const Label = styled.label`
-  color: ${({ theme }) => theme.textTertiary};
+  color: ${({ theme }) => theme.font.tertiary};
   font-size: 14px;
   margin-bottom: 8px;
 

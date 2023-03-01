@@ -16,80 +16,83 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { DefaultTheme } from 'styled-components'
-
-export type ThemeType = 'light' | 'dark'
-
-export const darkTheme: DefaultTheme = {
-  name: 'dark',
-  body: '#141417',
-
-  textPrimary: 'rgba(255, 255, 255, 0.95)',
-  textSecondary: 'rgba(255, 255, 255, 0.65)',
-  textTertiary: 'rgba(255, 255, 255, 0.45)',
-  textAccent: '#EFA25B',
-
-  link: '#53A9F5',
-  linkHighlight: '#0E82E7',
-
-  bgPrimary: '#1B1B1F',
-  bgSecondary: '#141417',
-  bgTertiary: '#09090b',
-  bgHighlight: 'rgba(255, 255, 255, 0.04)',
-  bgHover: 'rgb(255, 255, 255, 0.03)',
-
-  borderPrimary: 'rgb(43, 43, 48)',
-  borderSecondary: 'rgba(255, 255, 255, 0.04)',
-  borderHighlight: '#585962',
-
-  shadowPrimary: '0 5px 5px rgba(0, 0, 0, 0.35)',
-  shadowSecondary: '0 4px 10px rgba(0, 0, 0, 0.3)',
-  shadowTertiary: '0 5px 20px rgba(0, 0, 0, 0.50)',
-
-  accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
-
-  tooltip: '#000000',
-
-  accent: '#6083ff',
-  valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)',
-
-  white: '#ffffff'
-}
 
 export const lightTheme: DefaultTheme = {
   name: 'light',
-  body: '#f3f3f3',
+  bg: {
+    primary: '#ffffff',
+    secondary: '#fbfbfb',
+    tertiary: 'rgba(0, 0, 0, 0.05)',
+    hover: 'rgba(0, 0, 0, 0.012)',
+    contrast: '#212126',
+    accent: colord('#5981f3').alpha(0.15).toRgbString(),
+    background1: '#F0F0F0',
+    background2: '#F0F0F0'
+  },
+  font: {
+    primary: '#000',
+    secondary: '#4b4b4b',
+    tertiary: '#adadad',
+    contrastPrimary: 'rgba(255, 255, 255, 1)',
+    contrastSecondary: 'rgba(255, 255, 255, 0.8)',
+    highlight: '#ffb800'
+  },
+  border: {
+    primary: 'rgba(31, 29, 26, 0.07)',
+    secondary: '#f1f1f1'
+  },
+  shadow: {
+    primary: '0 2px 2px rgba(0, 0, 0, 0.03)',
+    secondary: '0 10px 10px rgba(0, 0, 0, 0.04)',
+    tertiary: '0 0 50px rgba(0, 0, 0, 0.3)'
+  },
+  global: {
+    accent: '#5981f3',
+    complementary: '#FF5D51',
+    alert: '#ed4a34',
+    valid: '#18BB63',
+    highlight: '#f78c14',
+    highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
+  }
+}
 
-  textPrimary: 'rgba(15, 15, 15, 0.95)',
-  textSecondary: 'rgba(15, 15, 15, 0.70)',
-  textTertiary: 'rgba(15, 15, 15, 0.60)',
-  textAccent: '#e69100',
-
-  link: '#0E82E7',
-  linkHighlight: '#53A9F5',
-
-  bgPrimary: '#ffffff',
-  bgSecondary: '#f3f3f3',
-  bgTertiary: '#eeeeee',
-  bgHighlight: 'rgba(0, 0, 0, 0.02)',
-  bgHover: 'rgba(0, 0, 0, 0.015)',
-
-  borderPrimary: '#e4e4e4',
-  borderSecondary: 'rgba(36, 34, 32, 0.07)',
-  borderHighlight: '#D1D1D4',
-
-  shadowPrimary: '0 5px 5px rgba(0, 0, 0, 0.2)',
-  shadowSecondary: '0 4px 7px rgba(0, 0, 0, 0.15)',
-  shadowTertiary: '0 5px 20px rgba(0, 0, 0, 0.08)',
-
-  accentGradient: 'linear-gradient(200deg, #F46016 60%, #D333EE 100%) border-box',
-
-  tooltip: '#000000',
-
-  accent: '#6083ff',
-  valid: 'rgb(93, 203, 126)',
-  alert: 'rgb(243, 113, 93)',
-
-  white: '#ffffff'
+export const darkTheme: DefaultTheme = {
+  name: 'dark',
+  bg: {
+    primary: '#1B1B1F',
+    secondary: '#18181B',
+    tertiary: '#141417',
+    hover: 'rgba(255, 255, 255, 0.02)',
+    contrast: 'white',
+    accent: colord('#598BED').alpha(0.15).toRgbString(),
+    background1: '#121215',
+    background2: '#0E0E10'
+  },
+  font: {
+    primary: '#e3e3e3',
+    secondary: '#C0C0C0',
+    tertiary: 'rgba(255, 255, 255, 0.4)',
+    contrastPrimary: 'rgba(0, 0, 0, 1)',
+    contrastSecondary: 'rgba(0, 0, 0, 0.8)',
+    highlight: '#ffb800'
+  },
+  border: {
+    primary: 'rgba(255, 255, 255, 0.08)',
+    secondary: 'rgba(255, 255, 255, 0.04)'
+  },
+  shadow: {
+    primary: '0 4px 4px rgba(0, 0, 0, 0.25)',
+    secondary: '0 10px 10px rgba(0, 0, 0, 0.3)',
+    tertiary: '0 0 50px rgb(0, 0, 0)'
+  },
+  global: {
+    accent: '#598BED',
+    complementary: '#FF5D51',
+    alert: '#ed4a34',
+    valid: '#18BB63',
+    highlight: '#f78c14',
+    highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
+  }
 }

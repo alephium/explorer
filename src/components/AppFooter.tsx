@@ -107,13 +107,13 @@ const RightGroup = styled(FooterGroup)`
   justify-self: flex-end;
 
   .social-media-icon {
-    fill: ${({ theme }) => theme.textSecondary};
+    fill: ${({ theme }) => theme.font.secondary};
     height: 25px;
     width: 25px;
 
     &:hover {
       cursor: pointer;
-      fill: ${({ theme }) => theme.textPrimary};
+      fill: ${({ theme }) => theme.font.primary};
     }
   }
 `

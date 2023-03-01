@@ -42,12 +42,12 @@ export default styled(PageNotFound)`
 `
 
 const Title = styled.h1`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
   font-weight: 600;
   font-size: 2rem;
 `
 
 const LetsGoBack = styled.div`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-size: 1.3rem;
 `

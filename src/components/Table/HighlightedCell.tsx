@@ -40,7 +40,7 @@ const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCod
 
 export default styled(HighlightedCell)`
   font-weight: 600 !important;
-  color: ${({ theme }) => theme.textAccent};
+  color: ${({ theme }) => theme.global.highlight};
   word-wrap: break-word;
   white-space: pre-wrap;
   overflow: hidden;

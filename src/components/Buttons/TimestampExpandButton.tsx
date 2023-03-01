@@ -52,5 +52,5 @@ const TimestampExpandButton = ({ className }: TimestampExpandButtonProps) => {
 
 export default styled(TimestampExpandButton)`
   cursor: pointer;
-  color: ${({ theme }) => theme.accent};
+  color: ${({ theme }) => theme.global.accent};
 `

@@ -107,7 +107,7 @@ const PageNumbers = styled.div`
 `
 
 const TotalNumberOfPages = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export default PageSwitch

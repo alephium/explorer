@@ -169,7 +169,7 @@ const AccountsSummaryContainer = styled.div`
 `
 
 const BlockRewardLabel = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-style: italic;
 `
 

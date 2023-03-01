@@ -28,7 +28,7 @@ interface ButtonProps extends HTMLMotionProps<'button'> {
 const Button = ({ accent, big, ...props }: ButtonProps) => {
   const theme = useTheme()
 
-  const bgColor = accent ? theme.accent : theme.bgPrimary
+  const bgColor = accent ? theme.global.accent : theme.bg.primary
 
   return (
     <motion.button
@@ -40,7 +40,7 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
       initial={{ backgroundColor: bgColor }}
       animate={{
         backgroundColor: bgColor,
-        color: accent ? theme.white : theme.textPrimary
+        color: accent ? theme.white : theme.font.primary
       }}
       whileHover={{
         backgroundColor:
@@ -57,7 +57,7 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
 
 export default styled(Button)`
   border-radius: 9px;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   padding: 10px 15px;
   cursor: pointer;
 `

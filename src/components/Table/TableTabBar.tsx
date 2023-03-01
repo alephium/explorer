@@ -56,34 +56,33 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 
 export default styled(TableTabBar)`
   display: flex;
-  background-color: ${({ theme }) => theme.bgSecondary};
-  border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const Tab = styled.div<{ isActive: boolean }>`
   flex: 1;
-  min-width: 60px;
   text-align: center;
   font-size: 14px;
   padding: 22px 20px;
-  border-right: 1px solid ${({ theme }) => theme.borderSecondary};
+  border-right: 1px solid ${({ theme }) => theme.border.secondary};
   cursor: pointer;
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.textPrimary};
-          background-color: ${theme.bgPrimary};
+          color: ${theme.font.primary};
+          background-color: ${theme.bg.primary};
           font-weight: 600;
-          border-bottom: 1px solid ${({ theme }) => theme.borderSecondary};
+          border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
         `
       : css`
-          color: ${theme.textTertiary};
-          background-color: ${theme.bgSecondary};
-          border-bottom: 1px solid ${({ theme }) => theme.borderPrimary};
+          color: ${theme.font.tertiary};
+          background-color: ${theme.bg.tertiary};
+          border-bottom: 1px solid ${({ theme }) => theme.border.primary};
         `}
 
   &:hover {
-    color: ${({ theme }) => theme.textPrimary};
+    color: ${({ theme }) => theme.font.primary};
   }
 `
