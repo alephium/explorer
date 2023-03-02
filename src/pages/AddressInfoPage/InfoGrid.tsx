@@ -23,12 +23,12 @@ import styled from 'styled-components'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
-interface AddressInfoGridProps {
+interface InfoGridProps {
   children: ReactNode
   className?: string
 }
 
-const AddressInfoGrid = ({ children, className }: AddressInfoGridProps) => <div className={className}>{children}</div>
+const InfoGrid = ({ children, className }: InfoGridProps) => <div className={className}>{children}</div>
 
 // Subcomponent declaration
 
@@ -55,9 +55,9 @@ const GridCell = ({ label, value, sublabel, className }: GridCellProps) => (
 
 // Subcomponent assignement
 
-AddressInfoGrid.Cell = GridCell
+InfoGrid.Cell = GridCell
 
-export default styled(AddressInfoGrid)`
+export default styled(InfoGrid)`
   display: grid;
   background-color: ${({ theme }) => theme.border.secondary};
   grid-template-columns: repeat(3, 1fr);

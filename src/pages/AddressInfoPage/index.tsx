@@ -47,9 +47,9 @@ import { Asset } from '@/types/assets'
 import { ALPH } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
-import AddressInfoGrid from './AddressInfoGrid'
 import AddressTransactionRow from './AddressTransactionRow'
 import AssetList from './AssetList'
+import AddressInfoGrid from './InfoGrid'
 
 type ParamTypes = {
   id: string
@@ -185,7 +185,10 @@ const TransactionInfoPage = () => {
               )
             }
           />
-          <InfoGrid.Cell label="Fiat price" value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />} />
+          <InfoGrid.Cell
+            label="Fiat price"
+            value={networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'}
+          />
           <InfoGrid.Cell
             label="Nb. of transactions"
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !addressDataLoading ? 0 : undefined}
