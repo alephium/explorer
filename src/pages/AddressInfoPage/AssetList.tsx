@@ -93,12 +93,11 @@ const TokensList = ({ assets, limit, className }: TokensListProps) => {
             <TokenSymbol>{asset.symbol}</TokenSymbol>
           </NameColumn>
           <TableCellAmount>
-            <Amount fadeDecimals value={asset.balance} suffix={asset.symbol} decimals={asset.decimals} />
+            <TokenAmount value={asset.balance} suffix={asset.symbol} decimals={asset.decimals} />
             {asset.lockedBalance > 0 && (
               <TokenAvailableAmount>
                 {'Available '}
                 <Amount
-                  fadeDecimals
                   value={asset.balance - asset.lockedBalance}
                   suffix={asset.symbol}
                   color={theme.font.tertiary}
@@ -162,9 +161,13 @@ const Column = styled.div`
   gap: 5px;
 `
 
+const TokenAmount = styled(Amount)`
+  font-size: 14px;
+`
+
 const TokenAvailableAmount = styled.div`
-  color: ${({ theme }) => theme.font.secondary};
-  font-size: 10px;
+  color: ${({ theme }) => theme.font.tertiary};
+  font-size: 11px;
 `
 
 const NameColumn = styled(Column)`

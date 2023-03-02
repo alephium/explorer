@@ -57,24 +57,29 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 export default styled(TableTabBar)`
   display: flex;
   background-color: ${({ theme }) => theme.bg.tertiary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const Tab = styled.div<{ isActive: boolean }>`
   flex: 1;
   text-align: center;
   font-size: 14px;
-  padding: 22px 20px;
-  border-right: 1px solid ${({ theme }) => theme.border.secondary};
+  height: 55px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:not(:last-child) {
+    border-right: 1px solid ${({ theme }) => theme.border.primary};
+  }
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
           color: ${theme.font.primary};
           background-color: ${theme.bg.primary};
-          font-weight: 600;
           border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+          font-weight: 600;
         `
       : css`
           color: ${theme.font.tertiary};

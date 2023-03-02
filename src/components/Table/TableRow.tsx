@@ -51,7 +51,7 @@ const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
 )
 
 export default styled(TableRow)`
-  background-color: ${({ theme, isActive }) => (isActive ? theme.bgHighlight : '')};
+  background-color: ${({ theme, isActive }) => (isActive ? theme.bg.hover : '')};
   border: none;
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 

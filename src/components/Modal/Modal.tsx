@@ -72,10 +72,10 @@ const ModalContentWrapper = styled(motion.div)`
   margin: auto;
   border-radius: 12px;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.background1};
   overflow-y: auto;
   z-index: 1;
-  box-shadow: ${({ theme }) => theme.shadowTertiary};
+  box-shadow: ${({ theme }) => theme.shadow.tertiary};
 `
 
 const Backdrop = styled(motion.div)`

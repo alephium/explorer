@@ -113,7 +113,6 @@ const Select = <T extends string>({
   return (
     <SelectWrapper
       role="button"
-      aria-label="Selected network"
       className={className}
       onClick={handleSelectClick}
       animate={isOpen ? 'open' : 'initial'}
@@ -259,7 +258,6 @@ SelectItem = styled(SelectItem)`
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 
-  // Selected network
   &:first-child {
     color: ${({ theme }) => theme.font.primary};
     font-weight: 600;

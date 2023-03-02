@@ -40,7 +40,7 @@ const Button = ({ accent, big, ...props }: ButtonProps) => {
       initial={{ backgroundColor: bgColor }}
       animate={{
         backgroundColor: bgColor,
-        color: accent ? theme.white : theme.font.primary
+        color: accent ? '#ffffff' : theme.font.primary
       }}
       whileHover={{
         backgroundColor:
