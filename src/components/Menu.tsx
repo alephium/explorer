@@ -155,7 +155,7 @@ const MenuItem = styled.div`
 
   &:hover {
     background-color: ${({ theme }) => theme.bg.hover};
-    color: ${({ theme }) => theme.link};
+    color: ${({ theme }) => theme.global.accent};
 
     ${ItemIcon} {
       opacity: 1;

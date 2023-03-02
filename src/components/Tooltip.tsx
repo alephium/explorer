@@ -28,7 +28,7 @@ const Tooltip: FC<TooltipProps> = ({ id, children }) => {
   const theme = useTheme()
 
   return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id}>
+    <ReactTooltip backgroundColor={theme.bg.background2} id={id}>
       {children}
     </ReactTooltip>
   )

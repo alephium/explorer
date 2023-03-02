@@ -28,7 +28,7 @@ const StyledTextButton = styled.button`
   font-size: inherit;
   color: ${({ theme, disabled }) => {
     if (disabled) return theme.font.secondary
-    else return theme.link
+    else return theme.global.accent
   }};
 
   display: flex;
@@ -40,7 +40,7 @@ const StyledTextButton = styled.button`
   &:hover {
     color: ${({ theme, disabled }) => {
       if (disabled) return
-      return theme.linkHighlight
+      return theme.global.accent
     }};
   }
 `

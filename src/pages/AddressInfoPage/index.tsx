@@ -237,7 +237,7 @@ const TransactionInfoPage = () => {
                 'Amount',
                 ''
               ]}
-              columnWidths={['20px', '15%', '100px', '80px', '25%', '120px', '30px']}
+              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '35px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
@@ -269,6 +269,12 @@ const TxListCustomStyles: TDStyle[] = [
     tdPos: 6,
     style: css`
       text-align: right;
+    `
+  },
+  {
+    tdPos: 7,
+    style: css`
+      padding: 0;
     `
   }
 ]

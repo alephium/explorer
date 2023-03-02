@@ -138,9 +138,9 @@ const SearchInput = styled.input`
 
   &:focus,
   &:active {
-    box-shadow: ${({ theme }) => theme.shadowTertiary}, inset;
+    box-shadow: ${({ theme }) => theme.shadow.tertiary}, inset;
     background: linear-gradient(${({ theme }) => `${theme.bg.secondary}, ${theme.bg.secondary}`}) padding-box,
-      ${({ theme }) => theme.global.accentGradient};
+      ${({ theme }) => theme.global.accent};
     border: 2px solid transparent;
     z-index: 10;
   }

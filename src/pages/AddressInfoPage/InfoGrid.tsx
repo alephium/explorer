@@ -89,7 +89,7 @@ const Label = styled.label`
 `
 
 const Value = styled(motion.div)`
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 600;
 
   @media ${deviceBreakPoints.tiny} {

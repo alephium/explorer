@@ -49,7 +49,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   alphAmount = alphAmount < 0 ? alphAmount * BigInt(-1) : alphAmount
 
   const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
-  const { amountTextColor, amountSign, Icon, iconColor } = useTransactionUI(infoType)
+  const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -88,12 +88,14 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     )
   }
 
-  const directionIconSize = 18
+  const directionIconSize = 15
 
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
-        <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
+        <IconContainer style={{ backgroundColor: iconBgColor }}>
+          <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
+        </IconContainer>
 
         <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
 
@@ -176,6 +178,15 @@ const BlockRewardLabel = styled.span`
 const AmountCell = styled.span<{ color: string }>`
   color: ${({ color }) => color};
   font-weight: 600;
+`
+
+const IconContainer = styled.div`
+  width: 28px;
+  height: 28px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 export default AddressTransactionRow

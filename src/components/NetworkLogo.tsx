@@ -37,7 +37,7 @@ const LogoContainer = styled.div<NetworkLogoProps>`
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
   border-radius: 20%;
-  background: ${({ network, theme }) => (network === 'mainnet' ? theme.global.accentGradient : theme.bg.secondary)};
+  background: ${({ network, theme }) => (network === 'mainnet' ? theme.global.highlightGradient : theme.bg.secondary)};
   color: ${({ network, theme }) => (network === 'mainnet' ? 'rgba(255, 255, 255, 0.8)' : theme.font.primary)};
   border: 1px solid ${({ theme }) => theme.border.primary};
   display: flex;

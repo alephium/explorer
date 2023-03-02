@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
@@ -47,12 +48,13 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
 
   switch (badgeType) {
     case 'plus':
-      backgroundColor = 'rgba(93, 203, 126, 0.12)'
-      color = theme.valid
+      backgroundColor = colord(theme.global.valid).alpha(0.08).toHex()
+      color = theme.global.valid
+      borderColor = colord(theme.global.valid).alpha(0.15).toHex()
       break
     case 'minus':
       backgroundColor = 'rgba(243, 113, 93, 0.1)'
-      color = theme.alert
+      color = theme.global.alert
       break
     case 'neutral':
       backgroundColor = theme.bg.tertiary
@@ -82,7 +84,7 @@ export default styled(Badge)`
   }}
 
   text-align: center;
-  padding: 4px;
+  padding: 4px 5px;
   border-radius: 5px;
   white-space: nowrap;
 `
