@@ -148,19 +148,15 @@ const TransactionInfoPage = () => {
   const txList = addressTransactions?.transactions
   const latestActivityDate = txList?.[0]?.timestamp
 
-  let assets = addressData?.tokens.map((t) => ({
+  const assets = (addressData?.tokens.map((t) => ({
     ...t,
     balance: BigInt(t.balance),
     lockedBalance: BigInt(t.lockedBalance),
     ...TokensMetadata[networkType].tokens.find((tm) => tm.id === t.id)
-  })) as Asset[]
+  })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets?.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
-  }
-
-  if (assets) {
-    assets = sortBy(assets, 'name')
+    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
   }
 
   return (
@@ -193,7 +189,7 @@ const TransactionInfoPage = () => {
             label="Nb. of transactions"
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !addressDataLoading ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={assets?.length} />
+          <InfoGrid.Cell label="Nb. of assets" value={!addressDataLoading ? assets.length : undefined} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
@@ -215,7 +211,7 @@ const TransactionInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList assets={assets} isLoading={addressDataLoading} />
+      <AssetList assets={sortBy(assets, 'name')} isLoading={addressDataLoading} />
 
       <SectionHeader>
         <h2>Transactions</h2>
