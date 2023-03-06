@@ -20,6 +20,7 @@ import { TokenInfo } from '@alephium/token-list'
 import styled, { css } from 'styled-components'
 
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
+import { ALPH } from '@/utils/assets'
 
 interface AssetLogoProps {
   asset: Pick<TokenInfo, 'id' | 'logoURI'>
@@ -44,7 +45,7 @@ export default styled(AssetLogo)`
   flex-shrink: 0;
 
   ${({ asset, theme }) =>
-    asset.id === '0' // ALPH
+    asset.id === ALPH.id
       ? css`
           background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
         `

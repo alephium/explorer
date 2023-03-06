@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ExplorerClient } from '@alephium/sdk'
-import { UnconfirmedTransaction } from '@alephium/sdk/api/explorer'
 
 import { AddressDataResult, AddressHash, AddressTransactionsResult } from '@/types/addresses'
 
@@ -50,14 +49,11 @@ export const fetchAddressTransactions = async (
   page: number
 ): Promise<AddressTransactionsResult> => {
   const { data: transactions } = await client.getAddressTransactions(addressHash, page)
-  const { data: unconfirmedTransactions } = await client.addresses.getAddressesAddressUnconfirmedTransactions(
-    addressHash
-  )
+  const { data: unconfirmedTransactions } = await client.addresses.getAddressesAddressTransactions(addressHash)
 
   return {
     addressHash,
     transactions,
-    // Type casting needed due to https://github.com/alephium/explorer-backend/issues/427
-    unconfirmedTransactions: unconfirmedTransactions as UnconfirmedTransaction[]
+    unconfirmedTransactions
   }
 }

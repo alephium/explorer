@@ -30,29 +30,27 @@ interface TableTabBarProps {
   className?: string
 }
 
-const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarProps) => {
-  return (
-    <div className={className} role="tablist" aria-label="Tab navigation">
-      {items.map((item) => {
-        const isActive = activeTab.value === item.value
+const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarProps) => (
+  <div className={className} role="tablist" aria-label="Tab navigation">
+    {items.map((item) => {
+      const isActive = activeTab.value === item.value
 
-        return (
-          <Tab
-            key={item.value}
-            onClick={() => onTabChange(item)}
-            onKeyPress={() => onTabChange(item)}
-            role="tab"
-            tabIndex={0}
-            aria-selected={isActive}
-            isActive={isActive}
-          >
-            {item.label}
-          </Tab>
-        )
-      })}
-    </div>
-  )
-}
+      return (
+        <Tab
+          key={item.value}
+          onClick={() => onTabChange(item)}
+          onKeyPress={() => onTabChange(item)}
+          role="tab"
+          tabIndex={0}
+          aria-selected={isActive}
+          isActive={isActive}
+        >
+          {item.label}
+        </Tab>
+      )
+    })}
+  </div>
+)
 
 export default styled(TableTabBar)`
   display: flex;

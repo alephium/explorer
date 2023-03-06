@@ -38,10 +38,7 @@ const StyledTextButton = styled.button`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 
   &:hover {
-    color: ${({ theme, disabled }) => {
-      if (disabled) return
-      return theme.global.accent
-    }};
+    color: ${({ theme, disabled }) => (disabled ? theme.font.secondary : theme.global.accent)};
   }
 `
 
