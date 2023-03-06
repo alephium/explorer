@@ -49,11 +49,9 @@ export const fetchAddressTransactions = async (
   page: number
 ): Promise<AddressTransactionsResult> => {
   const { data: transactions } = await client.getAddressTransactions(addressHash, page)
-  const { data: unconfirmedTransactions } = await client.addresses.getAddressesAddressTransactions(addressHash)
 
   return {
     addressHash,
-    transactions,
-    unconfirmedTransactions
+    transactions
   }
 }
