@@ -92,25 +92,23 @@ const App = () => {
 
 export default App
 
-const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) => {
-  return (
-    <SnackbarManagerContainer>
-      <AnimatePresence>
-        {message && (
-          <SnackbarPopup
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={message?.type}
-          >
-            {message.Icon}
-            {message.text}
-          </SnackbarPopup>
-        )}
-      </AnimatePresence>
-    </SnackbarManagerContainer>
-  )
-}
+const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) => (
+  <SnackbarManagerContainer>
+    <AnimatePresence>
+      {message && (
+        <SnackbarPopup
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={message?.type}
+        >
+          {message.Icon}
+          {message.text}
+        </SnackbarPopup>
+      )}
+    </AnimatePresence>
+  </SnackbarManagerContainer>
+)
 
 const MainContainer = styled.div`
   position: absolute;

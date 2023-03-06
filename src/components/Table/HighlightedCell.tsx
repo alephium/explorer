@@ -28,15 +28,13 @@ interface HighlightedCellProps {
   className?: string
 }
 
-const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCodeContent, className }) => {
-  return (
-    <span className={className}>
-      <span>{children}</span>
-      {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
-      {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
-    </span>
-  )
-}
+const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCodeContent, className }) => (
+  <span className={className}>
+    <span>{children}</span>
+    {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
+    {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
+  </span>
+)
 
 export default styled(HighlightedCell)`
   font-weight: 600 !important;

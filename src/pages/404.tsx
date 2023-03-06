@@ -21,17 +21,15 @@ import styled from 'styled-components'
 
 import Waves from '@/components/Wave/Waves'
 
-const PageNotFound = ({ className }: { className?: string }) => {
-  return (
-    <div className={className}>
-      <Title>404 - Page not found</Title>
-      <LetsGoBack>
-        Let&apos;s go back to the <Link to="/">home page.</Link>
-      </LetsGoBack>
-      <Waves />
-    </div>
-  )
-}
+const PageNotFound = ({ className }: { className?: string }) => (
+  <div className={className}>
+    <Title>404 - Page not found</Title>
+    <LetsGoBack>
+      Let&apos;s go back to the <Link to="/">home page.</Link>
+    </LetsGoBack>
+    <Waves />
+  </div>
+)
 
 export default styled(PageNotFound)`
   display: flex;
