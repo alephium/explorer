@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction, UnconfirmedTransaction } from '@alephium/sdk/api/explorer'
+import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
 
 import { TokenBalances } from './assets'
 
@@ -31,5 +31,4 @@ export type AddressDataResult = {
 export type AddressTransactionsResult = {
   addressHash: AddressHash
   transactions: Transaction[]
-  unconfirmedTransactions: UnconfirmedTransaction[]
 }
