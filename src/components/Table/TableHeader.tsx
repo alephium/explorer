@@ -50,20 +50,18 @@ export default styled(TableHeader)`
   color: ${({ theme }) => theme.font.tertiary};
 
   th {
-    padding: 0px 12px 12px 12px;
-    height: 55px;
+    padding: 12px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
-    line-height: 15px;
 
     ${({ compact, theme }) =>
       !compact &&
       css`
+        height: 55px;
         position: sticky;
         top: 0;
         box-shadow: inset 0 -1px 0 ${theme.border.primary};
-        padding: 12px;
       `}
     background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
   }

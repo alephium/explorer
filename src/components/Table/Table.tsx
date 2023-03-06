@@ -105,7 +105,7 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tr:not(.details) {
-    height: 45px;
+    height: 55px;
   }
 
   th,
