@@ -39,6 +39,7 @@ const NetworkSwitch = ({
 
   return (
     <Menu
+      aria-label="Selected network"
       label={isMainnet ? 'Mainnet' : 'Testnet'}
       icon={isMainnet ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
       items={[

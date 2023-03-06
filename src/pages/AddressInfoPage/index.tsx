@@ -125,15 +125,24 @@ const TransactionInfoPage = () => {
     setAddressWorth(undefined)
 
     const getAddressWorth = async () => {
-      const balance = addressData?.details.balance
-      if (!balance) return
+      try {
+        const balance = addressData?.details.balance
+        if (!balance) return
 
-      const price = await fetchAssetPrice('alephium')
+        const price = await fetchAssetPrice('alephium')
 
-      setAddressWorth(calculateAmountWorth(BigInt(balance), price))
+        setAddressWorth(calculateAmountWorth(BigInt(balance), price))
+      } catch (error) {
+        console.error(error)
+        setSnackbarMessage({
+          text: getHumanReadableError(error, 'Error while fetching fiat price'),
+          type: 'alert'
+        })
+      }
     }
+
     getAddressWorth()
-  }, [addressData?.details.balance])
+  }, [addressData?.details.balance, setSnackbarMessage])
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)

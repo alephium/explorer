@@ -124,10 +124,10 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 <div>
                   {t.inputs && t.inputs.length > 0 ? (
                     t.inputs.map(
-                      (input, i) =>
+                      (input) =>
                         input.address && (
                           <AddressLink
-                            key={i}
+                            key={input.txHashRef}
                             address={input.address}
                             txHashRef={input.txHashRef}
                             amount={BigInt(input.attoAlphAmount ?? 0)}
@@ -165,6 +165,8 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   )
 }
 
+export default AddressTransactionRow
+
 const AccountsSummaryContainer = styled.div`
   display: flex;
   align-items: center;
@@ -188,5 +190,3 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
 `
-
-export default AddressTransactionRow

@@ -247,9 +247,7 @@ const TransactionInfoPage = () => {
   )
 }
 
-const isTxConfirmed = (tx: Transaction): tx is Transaction => {
-  return (tx as Transaction).blockHash !== undefined
-}
+const isTxConfirmed = (tx: Transaction): tx is Transaction => (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight): number => {
   let confirmations = 0
