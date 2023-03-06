@@ -76,7 +76,8 @@ const Subtitle = styled.h2`
 `
 
 export const SecondaryTitle = styled.h2`
-  margin-top: 35px;
+  margin-top: 50px;
+  margin-bottom: 25px;
 `
 
 export default SectionTitle
