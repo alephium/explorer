@@ -20,14 +20,12 @@ import styled from 'styled-components'
 
 import logo from '@/images/alephium-logo-gradient-stroke.svg'
 
-const ComingSoon = ({ text }: { text: string }) => {
-  return (
-    <ComingSoonWrapper>
-      <ComingSoonLogo />
-      <ComingSoonText>{text}</ComingSoonText>
-    </ComingSoonWrapper>
-  )
-}
+const ComingSoon = ({ text }: { text: string }) => (
+  <ComingSoonWrapper>
+    <ComingSoonLogo />
+    <ComingSoonText>{text}</ComingSoonText>
+  </ComingSoonWrapper>
+)
 
 const ComingSoonWrapper = styled.div`
   flex: 1;

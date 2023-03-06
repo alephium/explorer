@@ -112,13 +112,11 @@ const TokensList = ({ assets, limit, className }: TokensListProps) => {
   )
 }
 
-const NFTsList = () => {
-  return (
-    <motion.div style={{ padding: 30 }}>
-      <div>Coming soon.</div>
-    </motion.div>
-  )
-}
+const NFTsList = () => (
+  <motion.div style={{ padding: 30 }}>
+    <div>Coming soon.</div>
+  </motion.div>
+)
 
 export default styled(AssetList)`
   margin-bottom: 35px;

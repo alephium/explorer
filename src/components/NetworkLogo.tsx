@@ -25,13 +25,11 @@ interface NetworkLogoProps {
   size?: number
 }
 
-const NetworkLogo = ({ network, size = 25 }: NetworkLogoProps) => {
-  return (
-    <LogoContainer network={network} size={size}>
-      {network === 'mainnet' ? 'M' : 'T'}
-    </LogoContainer>
-  )
-}
+const NetworkLogo = ({ network, size = 25 }: NetworkLogoProps) => (
+  <LogoContainer network={network} size={size}>
+    {network === 'mainnet' ? 'M' : 'T'}
+  </LogoContainer>
+)
 
 const LogoContainer = styled.div<NetworkLogoProps>`
   height: ${({ size }) => size}px;

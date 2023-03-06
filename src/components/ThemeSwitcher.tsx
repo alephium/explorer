@@ -28,9 +28,8 @@ interface ThemeSwitcherProps {
   className?: string
 }
 
-const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
-  return theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
-}
+const getButtonColor = (theme: ThemeType, buttonTheme: string) =>
+  theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
 
 const toggleWidth = 60
 const toggleHeight = toggleWidth / 2

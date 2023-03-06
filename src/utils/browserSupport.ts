@@ -34,6 +34,4 @@ export const isFlexGapSupported = () => {
   return isSupported
 }
 
-export const isMobile = () => {
-  return /Mobi|Android/i.test(navigator.userAgent)
-}
+export const isMobile = () => /Mobi|Android/i.test(navigator.userAgent)
