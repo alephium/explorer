@@ -203,7 +203,7 @@ const TransactionInfoPage = () => {
             label="Latest activity"
             value={
               latestActivityDate ? (
-                <Timestamp timeInMs={latestActivityDate} />
+                <Timestamp timeInMs={latestActivityDate} forceFormat="simple" />
               ) : !txLoading ? (
                 'No activity yet'
               ) : undefined
