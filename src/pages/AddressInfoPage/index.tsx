@@ -105,6 +105,7 @@ const TransactionInfoPage = () => {
       try {
         const transactionsData = await fetchAddressTransactions(client, id, pageNumber)
         setAddressTransactions(transactionsData)
+        console.log(transactionsData)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({

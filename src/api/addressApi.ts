@@ -48,10 +48,12 @@ export const fetchAddressTransactions = async (
   addressHash: AddressHash,
   page: number
 ): Promise<AddressTransactionsResult> => {
-  const { data: transactions } = await client.getAddressTransactions(addressHash, page)
+  const { data: transactions } = await client.addresses.getAddressesAddressTransactions(addressHash, { page })
+  const { data: mempoolTransactions } = await client.addresses.getAddressesAddressMempoolTransactions(addressHash)
 
   return {
     addressHash,
-    transactions
+    transactions,
+    mempoolTransactions
   }
 }
