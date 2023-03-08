@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import TokensMetadata from '@alephium/token-list'
+import TokensMetadata, { ALPH } from '@alephium/token-list'
 import { sortBy } from 'lodash'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
@@ -44,7 +44,6 @@ import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
 import { Asset } from '@/types/assets'
-import { ALPH } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
