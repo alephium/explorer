@@ -27,6 +27,8 @@ import { ReactComponent as TelegramIcon } from '@/images/brand-icon-telegram.svg
 import { ReactComponent as TwitterIcon } from '@/images/brand-icon-twitter.svg'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
+import { version } from '../../package.json'
+
 interface AppFooterProps {
   className?: string
 }
@@ -36,8 +38,13 @@ const AppFooter = ({ className }: AppFooterProps) => (
     <LeftGroup>
       <StyledNetworkSwitch direction="up" />
       <ThemeSwitcher />
+      <Version>v{version}</Version>
     </LeftGroup>
     <RightGroup>
+      <span>
+        <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
+      </span>
+      <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
       <SocialMediaIconList>
         {socialMediaData.map((d) => (
           <ExternalLink href={d.link} key={d.name}>
@@ -45,11 +52,6 @@ const AppFooter = ({ className }: AppFooterProps) => (
           </ExternalLink>
         ))}
       </SocialMediaIconList>
-      <span>
-        <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
-      </span>
-      <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
-      <span>Powered by Alephium - {new Date().getFullYear()}</span>
     </RightGroup>
   </footer>
 )
@@ -130,4 +132,8 @@ const StyledNetworkSwitch = styled(NetworkSwitch)`
   @media ${deviceBreakPoints.mobile} {
     display: inherit;
   }
+`
+
+const Version = styled.span`
+  color: ${({ theme }) => theme.textSecondary};
 `
