@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calcTxAmountsDeltaForAddress, getDirection, isConsolidationTx } from '@alephium/sdk'
 import { AssetOutput } from '@alephium/sdk/api/alephium'
 import { Transaction } from '@alephium/sdk/api/explorer'
+import { ALPH } from '@alephium/token-list'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { FC } from 'react'
@@ -33,20 +34,31 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
+import { getAssetInfo } from '@/utils/assets'
+import { convertToPositive } from '@/utils/numbers'
+import AssetLogo from '@/components/AssetLogo'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
   addressHash: string
 }
 
+const directionIconSize = 15
+
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
+  const { networkType } = useGlobalContext()
 
-  let { alph: alphAmount } = calcTxAmountsDeltaForAddress(t, addressHash) // TODO: Support tokens
+  const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(t, addressHash)
 
-  alphAmount = alphAmount < 0 ? alphAmount * BigInt(-1) : alphAmount
+  const amount = convertToPositive(alphAmount)
+  const tokens = tokenAmounts.map((token) => ({ ...token, amount: convertToPositive(token.amount) }))
+
+  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
+  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
   const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
@@ -88,8 +100,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     )
   }
 
-  const directionIconSize = 15
-
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
@@ -97,9 +107,16 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
         </IconContainer>
 
-        <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
+        <HashAndTimestamp>
+          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
+          {(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}
+        </HashAndTimestamp>
 
-        {(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}
+        <Assets>
+          {assets.map((t) => (
+            <AssetLogo key={t.id} asset={t} size={21} />
+          ))}
+        </Assets>
 
         <Badge
           type="neutral"
@@ -111,14 +128,14 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
           {amountSign}
-          <Amount value={alphAmount} />
+          <Amount value={amount} />
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
       </TableRow>
       <TableDetailsRow openCondition={detailOpen}>
         <AnimatedCell colSpan={7}>
           <Table>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} />
+            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
             <TableBody>
               <TableRow>
                 <div>
@@ -189,4 +206,19 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+const HashAndTimestamp = styled.div`
+  ${Timestamp} {
+    color: ${({ theme }) => theme.font.tertiary};
+    font-size: 12px;
+    margin-top: 2px;
+  }
+`
+
+const Assets = styled.div`
+  display: flex;
+  gap: 20px;
+  row-gap: 10px;
+  flex-wrap: wrap;
 `

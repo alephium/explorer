@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import TokensMetadata, { ALPH } from '@alephium/token-list'
+import { ALPH } from '@alephium/token-list'
 import { sortBy } from 'lodash'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
@@ -44,6 +44,7 @@ import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
 import { Asset } from '@/types/assets'
+import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -160,9 +161,10 @@ const TransactionInfoPage = () => {
     ...t,
     balance: BigInt(t.balance),
     lockedBalance: BigInt(t.lockedBalance),
-    ...TokensMetadata[networkType].tokens.find((tm) => tm.id === t.id)
+    ...getAssetInfo({ assetId: t.id, networkType })
   })) ?? []) as Asset[]
 
+  console.log(assets)
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
     assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
   }
@@ -230,17 +232,7 @@ const TransactionInfoPage = () => {
         {txList && txList.length ? (
           <>
             <TableHeader
-              headerTitles={[
-                '',
-                'Hash',
-                <span key="timestamp">
-                  Timestamp <TimestampExpandButton />
-                </span>,
-                '',
-                'Account(s)',
-                'Amount',
-                ''
-              ]}
+              headerTitles={['', 'Hash', 'Assets', '', 'Account(s)', 'Amount', '']}
               columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '35px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />

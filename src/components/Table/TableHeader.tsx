@@ -49,24 +49,20 @@ export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }
 export default styled(TableHeader)`
   color: ${({ theme }) => theme.font.secondary};
 
+  background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
+
+  tr {
+    height: ${({ compact }) => (compact ? '30px' : '55px')} !important;
+  }
+
   th {
     padding: 12px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
 
-    ${({ compact, theme }) =>
-      !compact &&
-      css`
-        height: 55px;
-        position: sticky;
-        top: 0;
-        box-shadow: inset 0 -1px 0 ${theme.border.primary};
-      `}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
-  }
-
-  tr {
-    height: ${({ compact }) => (compact ? '30px' : '45px')};
+    position: sticky;
+    top: 0;
+    box-shadow: inset 0 -1px 0 ${({ theme }) => theme.border.primary};
   }
 `
