@@ -27,9 +27,15 @@ interface AssetLogoProps {
   className?: string
 }
 
-const AssetLogo = ({ asset, className }: AssetLogoProps) => (
+const AssetLogo = ({ asset, size, className }: AssetLogoProps) => (
   <div className={className}>
-    <LogoImage src={asset.logoURI ?? AlephiumLogoSVG} />
+    {asset.logoURI ? (
+      <LogoImage src={asset.logoURI ?? AlephiumLogoSVG} />
+    ) : asset.id === ALPH.id ? (
+      <LogoImage src={AlephiumLogoSVG} />
+    ) : (
+      <AssetLogoPlaceholder size={size}>?</AssetLogoPlaceholder>
+    )}
   </div>
 )
 
@@ -42,15 +48,24 @@ export default styled(AssetLogo)`
   border-radius: ${({ size }) => size}px;
   padding: 5px;
   flex-shrink: 0;
+  background-color: ${({ theme }) => theme.bg.background2};
 
-  ${({ asset, theme }) =>
-    asset.id === ALPH.id
-      ? css`
-          background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
-        `
-      : css`
-          background-color: ${theme.bg.contrast};
-        `}
+  ${({ asset }) =>
+    asset.id === ALPH.id &&
+    css`
+      background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
+    `}
+`
+
+const AssetLogoPlaceholder = styled.div<{ size: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
+  border-radius: ${({ size }) => size}px;
+  padding: 5px;
+  flex-shrink: 0;
 `
 
 const LogoImage = styled.img`

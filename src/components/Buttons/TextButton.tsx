@@ -26,10 +26,7 @@ const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ childre
 const StyledTextButton = styled.button`
   background: transparent;
   font-size: inherit;
-  color: ${({ theme, disabled }) => {
-    if (disabled) return theme.font.secondary
-    else return theme.global.accent
-  }};
+  color: ${({ theme, disabled }) => (disabled ? theme.font.secondary : theme.global.accent)};
 
   display: flex;
   align-items: center;

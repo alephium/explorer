@@ -22,6 +22,7 @@ import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
+import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
@@ -56,8 +57,8 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
               <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
               {
                 {
-                  tokens: <TokensList limit={limit} assets={assets} />,
-                  nfts: <NFTsList />
+                  tokens: <TokenList limit={limit} assets={assets} />,
+                  nfts: <NFTList />
                 }[currentTab.value]
               }
             </>
@@ -70,13 +71,13 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
   )
 }
 
-interface TokensListProps {
+interface TokenListProps {
   assets?: Asset[]
   limit?: number
   className?: string
 }
 
-const TokensList = ({ assets, limit, className }: TokensListProps) => {
+const TokenList = ({ assets, limit, className }: TokenListProps) => {
   const theme = useTheme()
 
   if (!assets) return null
@@ -89,22 +90,31 @@ const TokensList = ({ assets, limit, className }: TokensListProps) => {
         <AssetRow key={asset.id}>
           <AssetLogoStyled asset={asset} size={30} />
           <NameColumn>
-            <TokenName>{asset.name}</TokenName>
-            <TokenSymbol>{asset.symbol}</TokenSymbol>
+            <TokenName>{asset.name || 'Unknown token'}</TokenName>
+            <TokenSymbol>
+              {asset.symbol ?? (
+                <UnknownTokenId>
+                  <UnknownTokenIdText>{asset.id}</UnknownTokenIdText>
+                  <TokenIdClipboardButton textToCopy={asset.id} />
+                </UnknownTokenId>
+              )}
+            </TokenSymbol>
           </NameColumn>
           <TableCellAmount>
-            <TokenAmount value={asset.balance} suffix={asset.symbol} decimals={asset.decimals} />
-            {asset.lockedBalance > 0 && (
-              <TokenAvailableAmount>
+            <TokenAmount value={asset.balance} suffix={asset.symbol ?? '?'} decimals={asset.decimals} />
+            {asset.lockedBalance > 0 ? (
+              <TokenAmountSublabel>
                 {'Available '}
                 <Amount
                   value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol}
+                  suffix={asset.symbol ?? '?'}
                   color={theme.font.tertiary}
                   decimals={asset.decimals}
                 />
-              </TokenAvailableAmount>
-            )}
+              </TokenAmountSublabel>
+            ) : !asset.name ? (
+              <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
+            ) : undefined}
           </TableCellAmount>
         </AssetRow>
       ))}
@@ -112,7 +122,7 @@ const TokensList = ({ assets, limit, className }: TokensListProps) => {
   )
 }
 
-const NFTsList = () => (
+const NFTList = () => (
   <motion.div style={{ padding: 30 }}>
     <div>Coming soon.</div>
   </motion.div>
@@ -151,6 +161,7 @@ const TokenName = styled.span`
 const TokenSymbol = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 11px;
+  max-width: 150px;
 `
 
 const Column = styled.div`
@@ -163,7 +174,7 @@ const TokenAmount = styled(Amount)`
   font-size: 14px;
 `
 
-const TokenAvailableAmount = styled.div`
+const TokenAmountSublabel = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 11px;
 `
@@ -176,4 +187,18 @@ const NoAssetsMessage = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
+`
+
+const UnknownTokenId = styled.div`
+  display: flex;
+`
+
+const UnknownTokenIdText = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+const TokenIdClipboardButton = styled(ClipboardButton)`
+  flex-shrink: 0;
+  width: 10px;
 `
