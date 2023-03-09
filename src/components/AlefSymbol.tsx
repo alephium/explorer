@@ -40,7 +40,7 @@ const HiddenForCopying = styled.span`
   font-size: 0;
 `
 
-const AlefSymbolSVG = styled.span<{ color?: string }>`
+const AlefSymbolSVG = styled.span`
   background-color: currentColor;
   display: inline-block;
   font-size: 1em;

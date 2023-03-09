@@ -181,7 +181,7 @@ const HomePage = () => {
                 secondary="Total"
               />
             </Card>
-            <Card label="Avg. block time (2h)" isLoading={avgBlockTime.isLoading}>
+            <Card label="Avg. block time" isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
                 primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
                 secondary="of all shards"

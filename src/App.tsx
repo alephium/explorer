@@ -92,7 +92,7 @@ const App = () => {
 
 export default App
 
-const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) => (
+const SnackbarManager = ({ message }: { message?: SnackbarMessage }) => (
   <SnackbarManagerContainer>
     <AnimatePresence>
       {message && (
