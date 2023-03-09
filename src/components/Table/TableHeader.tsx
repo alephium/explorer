@@ -47,7 +47,7 @@ export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }
 )
 
 export default styled(TableHeader)`
-  color: ${({ theme }) => theme.font.tertiary};
+  color: ${({ theme }) => theme.font.secondary};
 
   th {
     padding: 12px;
