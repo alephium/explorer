@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { sortBy } from 'lodash'
+import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -50,7 +51,6 @@ import { formatNumberForDisplay } from '@/utils/strings'
 import AddressTransactionRow from './AddressTransactionRow'
 import AssetList from './AssetList'
 import AddressInfoGrid from './InfoGrid'
-import { Download, FileDown } from 'lucide-react'
 
 type ParamTypes = {
   id: string
@@ -239,7 +239,7 @@ const TransactionInfoPage = () => {
           <>
             <TableHeader
               headerTitles={['', 'Hash', 'Assets', '', 'Account(s)', 'ALPH amount', '']}
-              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '35px']}
+              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '25px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>

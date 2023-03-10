@@ -88,7 +88,7 @@ const Amount = ({
           `${integralPart}.${fractionalPart}`
         ))}
 
-      <Suffix>{suffix && suffix !== 'ALPH' ? ` ${suffix}` : <AlefSymbol color={color} />}</Suffix>
+      <Suffix>{suffix && suffix !== 'ALPH' ? ` ${suffix}` : ' ALPH'}</Suffix>
     </span>
   )
 }
@@ -96,6 +96,7 @@ const Amount = ({
 export default styled(Amount)`
   color: ${({ color }) => color ?? 'inherit'};
   white-space: nowrap;
+  font-weight: 800;
 `
 
 const Decimals = styled.span`
@@ -103,5 +104,6 @@ const Decimals = styled.span`
 `
 
 const Suffix = styled.span`
-  opacity: 0.7;
+  color: ${({ theme }) => theme.font.secondary};
+  font-weight: 500;
 `

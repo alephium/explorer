@@ -55,7 +55,7 @@ export const lightTheme: DefaultTheme = {
     complementary: '#FF5D51',
     alert: '#ed4a34',
     warning: '#FFB800',
-    valid: '#0fac58',
+    valid: '#0ea670',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -95,7 +95,7 @@ export const darkTheme: DefaultTheme = {
     complementary: '#FF5D51',
     alert: '#ed4a34',
     warning: '#FFB800',
-    valid: '#0bab61',
+    valid: '#45d5ab',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

@@ -103,7 +103,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
-        <IconContainer style={{ backgroundColor: iconBgColor }}>
+        <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
           <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
         </IconContainer>
 
@@ -119,7 +119,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         </Assets>
 
         <Badge
-          type="neutral"
+          type="neutralHighlight"
           content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : 'From'}
           floatRight
           minWidth={60}
@@ -127,7 +127,15 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
-          <Amount value={amount} prefix={amountSign} />
+          {amount && <Amount value={amount} prefix={amountSign} />}
+          {tokenAmounts.map((a) => (
+            <Amount
+              key={a.id}
+              value={a.amount}
+              prefix={amountSign}
+              suffix={getAssetInfo({ assetId: a.id, networkType })?.symbol}
+            />
+          ))}
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
       </TableRow>
@@ -196,6 +204,7 @@ const BlockRewardLabel = styled.span`
 const AmountCell = styled.span<{ color: string }>`
   display: flex;
   flex-direction: column;
+  gap: 5px;
   color: ${({ color }) => color};
   font-weight: 600;
 `
@@ -211,7 +220,7 @@ const IconContainer = styled.div`
 
 const HashAndTimestamp = styled.div`
   ${Timestamp} {
-    color: ${({ theme }) => theme.font.tertiary};
+    color: ${({ theme }) => theme.font.secondary};
     font-size: 12px;
     margin-top: 2px;
   }
@@ -219,7 +228,7 @@ const HashAndTimestamp = styled.div`
 
 const Assets = styled.div`
   display: flex;
-  gap: 20px;
-  row-gap: 10px;
+  gap: 15px;
+  row-gap: 15px;
   flex-wrap: wrap;
 `

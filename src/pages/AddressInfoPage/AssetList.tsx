@@ -138,7 +138,7 @@ export default styled(AssetList)`
 
 const AssetRow = styled.div`
   display: flex;
-  padding: 20px;
+  padding: 15px 20px;
   align-items: center;
 
   &:not(:last-child) {
