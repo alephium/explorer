@@ -34,12 +34,12 @@ export const lightTheme: DefaultTheme = {
     background2: '#F0F0F0'
   },
   font: {
-    primary: '#000',
-    secondary: '#4b4b4b',
+    primary: '#1d1d1d',
+    secondary: '#6a6a6a',
     tertiary: '#adadad',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#ffb800'
+    highlight: '#d9a800'
   },
   border: {
     primary: '#e3e3e3',
@@ -54,7 +54,8 @@ export const lightTheme: DefaultTheme = {
     accent: '#5981f3',
     complementary: '#FF5D51',
     alert: '#ed4a34',
-    valid: '#18BB63',
+    warning: '#FFB800',
+    valid: '#0fac58',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -78,7 +79,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
-    highlight: '#ffb800'
+    highlight: '#f0d590'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.08)',
@@ -93,7 +94,8 @@ export const darkTheme: DefaultTheme = {
     accent: '#598BED',
     complementary: '#FF5D51',
     alert: '#ed4a34',
-    valid: '#18BB63',
+    warning: '#FFB800',
+    valid: '#0bab61',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

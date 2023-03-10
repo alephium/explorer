@@ -101,13 +101,13 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             </TokenSymbol>
           </NameColumn>
           <TableCellAmount>
-            <TokenAmount value={asset.balance} suffix={asset.symbol ?? '?'} decimals={asset.decimals} />
+            <TokenAmount value={asset.balance} suffix={asset.symbol ?? '???'} decimals={asset.decimals} />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
                 {'Available '}
                 <Amount
                   value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol ?? '?'}
+                  suffix={asset.symbol ?? '???'}
                   color={theme.font.tertiary}
                   decimals={asset.decimals}
                 />
@@ -152,7 +152,7 @@ const AssetLogoStyled = styled(AssetLogo)`
 
 const TokenName = styled.span`
   font-size: 14px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -160,7 +160,6 @@ const TokenName = styled.span`
 
 const TokenSymbol = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 11px;
   max-width: 150px;
 `
 

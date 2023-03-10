@@ -50,6 +50,7 @@ import { formatNumberForDisplay } from '@/utils/strings'
 import AddressTransactionRow from './AddressTransactionRow'
 import AssetList from './AssetList'
 import AddressInfoGrid from './InfoGrid'
+import { Download, FileDown } from 'lucide-react'
 
 type ParamTypes = {
   id: string
@@ -225,14 +226,19 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        {txNumber && txNumber > 0 ? <Button onClick={handleExportModalOpen}>Export CSV ↓</Button> : null}
+        {txNumber && txNumber > 0 ? (
+          <Button onClick={handleExportModalOpen}>
+            <FileDown size={16} />
+            Download CSV
+          </Button>
+        ) : null}
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
         {txList && txList.length ? (
           <>
             <TableHeader
-              headerTitles={['', 'Hash', 'Assets', '', 'Account(s)', 'Amount', '']}
+              headerTitles={['', 'Hash', 'Assets', '', 'Account(s)', 'ALPH amount', '']}
               columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '35px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />

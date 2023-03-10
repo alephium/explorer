@@ -61,7 +61,7 @@ const TableWrapper = styled.div<TableProps>`
   border-radius: 12px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  ${({ theme }) => blurredBackground(theme.bg.primary)}
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const StyledTable = styled.table<TableProps>`

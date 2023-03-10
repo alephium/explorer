@@ -33,21 +33,23 @@ interface TimestampProps {
   timeInMs: number
   formatToggle?: boolean
   forceFormat?: TimestampPrecisionLevel
+  customFormat?: string
   className?: string
 }
 
-const Timestamp = ({ timeInMs, className, forceFormat, formatToggle = false }: TimestampProps) => {
+const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode } = useGlobalContext()
 
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'precise' : 'simple')
 
   const highPrecisionTimestamp = dayjs(timeInMs).format(DATE_TIME_FORMAT)
   const lowPrecisionTimestamp = dayjs().to(timeInMs)
+  const customTimestamp = dayjs(timeInMs).format(customFormat)
 
   return (
     <div
       data-tip={
-        !forceFormat
+        forceFormat !== 'precise'
           ? `${highPrecisionTimestamp}
             ${
               formatToggle ? (
@@ -64,7 +66,7 @@ const Timestamp = ({ timeInMs, className, forceFormat, formatToggle = false }: T
       data-multiline
       className={className}
     >
-      {precision === 'precise' ? highPrecisionTimestamp : lowPrecisionTimestamp}
+      {precision === 'precise' ? highPrecisionTimestamp : customFormat ? customTimestamp : lowPrecisionTimestamp}
     </div>
   )
 }

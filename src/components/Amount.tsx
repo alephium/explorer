@@ -30,6 +30,7 @@ interface AmountProps {
   nbOfDecimalsToShow?: number
   color?: string
   tabIndex?: number
+  prefix?: string
   suffix?: string
   className?: string
 }
@@ -43,6 +44,7 @@ const Amount = ({
   fullPrecision = false,
   color,
   nbOfDecimalsToShow,
+  prefix,
   suffix,
   tabIndex
 }: AmountProps) => {
@@ -74,6 +76,7 @@ const Amount = ({
 
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
+      {prefix}
       {value !== undefined &&
         (fadeDecimals ? (
           <>

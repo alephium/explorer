@@ -25,7 +25,6 @@ import { useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import styled, { css } from 'styled-components'
 
-import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import Card from '@/components/Cards/Card'
 import CardWithChart from '@/components/Cards/CardWithChart'
 import FullScreenCard from '@/components/Cards/FullScreenCard'
@@ -194,14 +193,7 @@ const HomePage = () => {
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader
-                headerTitles={[
-                  'Height',
-                  <span key="timestamp">
-                    Timestamp <TimestampExpandButton />
-                  </span>,
-                  'Txn',
-                  'Chain index'
-                ]}
+                headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
                 columnWidths={['20%', '30%', '20%', '25%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>
@@ -209,7 +201,7 @@ const HomePage = () => {
                   blockList.blocks?.map((b) => (
                     <TableRow key={b.hash} linkTo={`blocks/${b.hash}`}>
                       <BlockHeight>{b.height.toString()}</BlockHeight>
-                      <Timestamp timeInMs={b.timestamp} />
+                      <Timestamp timeInMs={b.timestamp} customFormat="HH:MM:ss" />
                       <span>{b.txNumber}</span>
                       <span>
                         {b.chainFrom} → {b.chainTo}

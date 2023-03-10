@@ -46,7 +46,6 @@ export default styled(AssetLogo)`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  padding: 5px;
   flex-shrink: 0;
   background-color: ${({ theme }) => theme.bg.background2};
 
@@ -64,11 +63,12 @@ const AssetLogoPlaceholder = styled.div<{ size: number }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  padding: 5px;
   flex-shrink: 0;
+  padding: 15%;
 `
 
 const LogoImage = styled.img`
   width: 100%;
   height: 100%;
+  padding: 15%;
 `

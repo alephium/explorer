@@ -52,7 +52,7 @@ export default styled(TableHeader)`
   background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
 
   tr {
-    height: ${({ compact }) => (compact ? '30px' : '55px')} !important;
+    height: ${({ compact }) => (compact ? '30px' : '50px')} !important;
   }
 
   th {

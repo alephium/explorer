@@ -26,6 +26,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
+import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
 import { AddressLink, TightLink } from '@/components/Links'
 import Table from '@/components/Table/Table'
@@ -39,7 +40,6 @@ import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { getAssetInfo } from '@/utils/assets'
 import { convertToPositive } from '@/utils/numbers'
-import AssetLogo from '@/components/AssetLogo'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -52,6 +52,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const { networkType } = useGlobalContext()
 
+  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
+  const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+
   const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(t, addressHash)
 
   const amount = convertToPositive(alphAmount)
@@ -59,9 +62,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
   const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
-
-  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
-  const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -127,8 +127,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
-          {amountSign}
-          <Amount value={amount} />
+          <Amount value={amount} prefix={amountSign} />
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
       </TableRow>
@@ -195,6 +194,8 @@ const BlockRewardLabel = styled.span`
 `
 
 const AmountCell = styled.span<{ color: string }>`
+  display: flex;
+  flex-direction: column;
   color: ${({ color }) => color};
   font-weight: 600;
 `
