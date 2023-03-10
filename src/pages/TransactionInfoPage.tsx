@@ -37,6 +37,7 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
+import { ALPH } from '@alephium/token-list'
 
 type ParamTypes = {
   id: string
@@ -195,7 +196,7 @@ const TransactionInfoPage = () => {
                                 address={v.address}
                                 txHashRef={v.txHashRef}
                                 key={i}
-                                amount={BigInt(v.attoAlphAmount ?? 0)}
+                                amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount ?? 0) }]}
                               />
                             )
                         )
@@ -212,7 +213,7 @@ const TransactionInfoPage = () => {
                           <AddressLink
                             address={v.address}
                             key={i}
-                            amount={BigInt(v.attoAlphAmount)}
+                            amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount) }]}
                             txHashRef={v.spent}
                           />
                         ))

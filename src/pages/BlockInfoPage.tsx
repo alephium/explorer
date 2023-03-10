@@ -40,6 +40,7 @@ import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
+import { ALPH } from '@alephium/token-list'
 
 type ParamTypes = {
   id: string
@@ -241,7 +242,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
               address={o.address}
               key={i}
               maxWidth="180px"
-              amount={BigInt(o.attoAlphAmount)}
+              amounts={[{ id: ALPH.id, amount: BigInt(o.attoAlphAmount) }]}
               lockTime={o.lockTime}
             />
           ))}

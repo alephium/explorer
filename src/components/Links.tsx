@@ -20,10 +20,13 @@ import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
 import { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
+import { useGlobalContext } from '@/contexts/global'
+import { AssetAmount } from '@/types/assets'
+import { getAssetInfo } from '@/utils/assets'
 import { smartHash } from '@/utils/strings'
 
 interface TightLinkProps extends LinkProps {
@@ -59,43 +62,86 @@ interface AddressLinkProps {
   maxWidth?: string
   address: string
   txHashRef?: string
-  amount?: bigint
+  amounts?: AssetAmount[]
   lockTime?: number
+  flex?: boolean
+  className?: string
 }
 
-export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, txHashRef, amount, lockTime }) => {
+const AddressLinkBase = ({
+  maxWidth = 'auto',
+  address,
+  txHashRef,
+  amounts,
+  lockTime,
+  flex,
+  className
+}: AddressLinkProps) => {
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
+  const { networkType } = useGlobalContext()
 
   return (
-    <AddressWrapper>
+    <div className={className}>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
-      {amount !== undefined && (
-        <OutputValue>
-          <span>
-            (<Amount value={amount} />)
-          </span>
-          {isLocked && <LockTimeIcon timestamp={lockTime} />}
-        </OutputValue>
-      )}
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
           <ExternalLink size={12} />
         </TxLink>
       )}
-    </AddressWrapper>
+      {isLocked && <LockTimeIcon timestamp={lockTime} />}
+      {amounts !== undefined && (
+        <AmountsContainer flex={flex}>
+          <Amounts>
+            {amounts.map((a) => (
+              <Amount key={a.id} value={a.amount} suffix={getAssetInfo({ assetId: a.id, networkType })?.symbol} />
+            ))}
+          </Amounts>
+        </AmountsContainer>
+      )}
+    </div>
   )
 }
 
-const OutputValue = styled.span`
-  color: ${({ theme }) => theme.font.secondary};
+export const AddressLink = styled(AddressLinkBase)`
+  padding: 3px 0;
+  display: flex;
+  width: 100%;
+  display: flex;
+
+  ${({ flex }) =>
+    flex &&
+    css`
+      align-items: center;
+    `}
+`
+
+const AmountsContainer = styled.div<Pick<AddressLinkProps, 'flex'>>`
+  color: ${({ theme }) => theme.font.primary};
   margin-left: 8px;
   display: flex;
   gap: 10px;
   align-items: center;
+  ${({ flex }) =>
+    flex &&
+    css`
+      flex: 1;
+      justify-content: flex-end;
+      text-align: right;
+    `}
+`
+
+const Amounts = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 `
 
 const TxLink = styled(Link)`
-  margin-left: 8px;
+  padding: 3px;
+  background-color: ${({ theme }) => theme.bg.accent};
+  display: flex;
+  border-radius: 4px;
+  margin-left: 4px;
 `
 const StyledLink = styled(Link)`
   white-space: nowrap;
@@ -103,10 +149,4 @@ const StyledLink = styled(Link)`
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.6pt;
-`
-
-const AddressWrapper = styled.div`
-  padding: 3px 0;
-  display: flex;
-  width: 100%;
 `

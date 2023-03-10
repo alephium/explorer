@@ -238,7 +238,18 @@ const TransactionInfoPage = () => {
         {txList && txList.length ? (
           <>
             <TableHeader
-              headerTitles={['', 'Hash', 'Assets', '', 'Account(s)', 'ALPH amount', '']}
+              headerTitles={[
+                '',
+                <span key="hash-time">
+                  Hash & Time
+                  <TimestampExpandButton />
+                </span>,
+                'Assets',
+                '',
+                'Addresses',
+                'Amounts',
+                ''
+              ]}
               columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '25px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />

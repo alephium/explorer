@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calcTxAmountsDeltaForAddress, getDirection, isConsolidationTx } from '@alephium/sdk'
 import { AssetOutput } from '@alephium/sdk/api/alephium'
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { Input, Output, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
@@ -100,6 +100,30 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     )
   }
 
+  const renderInputOutputDetails = (ioList: Input[] | Output[]) =>
+    ioList.map((io, i) => {
+      const amounts = [{ id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) }]
+
+      if (io.tokens) {
+        amounts.push(...io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })))
+      }
+      return (
+        io.address && (
+          <IODetailsContainer>
+            <AddressLink
+              key={`${io.address}-${i}`}
+              address={io.address}
+              txHashRef={(io as Input).txHashRef}
+              lockTime={(io as AssetOutput).lockTime}
+              amounts={amounts}
+              maxWidth="180px"
+              flex
+            />
+          </IODetailsContainer>
+        )
+      )
+    })
+
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
@@ -145,41 +169,19 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
             <TableBody>
               <TableRow>
-                <div>
+                <IODetailList>
                   {t.inputs && t.inputs.length > 0 ? (
-                    t.inputs.map(
-                      (input) =>
-                        input.address && (
-                          <AddressLink
-                            key={input.txHashRef}
-                            address={input.address}
-                            txHashRef={input.txHashRef}
-                            amount={BigInt(input.attoAlphAmount ?? 0)}
-                            maxWidth="180px"
-                          />
-                        )
-                    )
+                    renderInputOutputDetails(t.inputs)
                   ) : (
                     <BlockRewardLabel>Block rewards</BlockRewardLabel>
                   )}
-                </div>
+                </IODetailList>
 
                 <span style={{ textAlign: 'center' }}>
                   <ArrowRight size={12} />
                 </span>
 
-                <div>
-                  {t.outputs &&
-                    t.outputs.map((output, i) => (
-                      <AddressLink
-                        key={i}
-                        address={output.address}
-                        amount={BigInt(output.attoAlphAmount)}
-                        maxWidth="180px"
-                        lockTime={(output as AssetOutput).lockTime}
-                      />
-                    ))}
-                </div>
+                <IODetailList>{t.outputs && renderInputOutputDetails(t.outputs)}</IODetailList>
               </TableRow>
             </TableBody>
           </Table>
@@ -231,4 +233,20 @@ const Assets = styled.div`
   gap: 15px;
   row-gap: 15px;
   flex-wrap: wrap;
+`
+
+const IODetailList = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border-radius: 12px;
+`
+
+const IODetailsContainer = styled.div`
+  padding: 15px;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
 `
