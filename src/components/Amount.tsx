@@ -18,9 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import styled from 'styled-components'
-
-import AlefSymbol from '@/components/AlefSymbol'
-
 interface AmountProps {
   value?: bigint | number
   decimals?: number
@@ -42,7 +39,6 @@ const Amount = ({
   className,
   fadeDecimals,
   fullPrecision = false,
-  color,
   nbOfDecimalsToShow,
   prefix,
   suffix,

@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
+import { ALPH } from '@alephium/token-list'
 import { ArrowRight } from 'lucide-react'
 import { FC, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -40,7 +41,6 @@ import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
-import { ALPH } from '@alephium/token-list'
 
 type ParamTypes = {
   id: string
@@ -237,32 +237,25 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         </AnimatedCell>
         <td />
         <AnimatedCell colSpan={3}>
-          {outputs?.map((o, i) => (
-            <AddressLink
-              address={o.address}
-              key={i}
-              maxWidth="180px"
-              amounts={[{ id: ALPH.id, amount: BigInt(o.attoAlphAmount) }]}
-              lockTime={o.lockTime}
-            />
-          ))}
+          <IODetailList>
+            {outputs?.map((o, i) => (
+              <AddressLink
+                address={o.address}
+                key={i}
+                maxWidth="180px"
+                amounts={[{ id: ALPH.id, amount: BigInt(o.attoAlphAmount) }]}
+                lockTime={o.lockTime}
+                flex
+              />
+            ))}
+          </IODetailList>
         </AnimatedCell>
       </TableDetailsRow>
     </>
   )
 }
 
-export default BlockInfoPage
-
 // TODO: make expandlable elements generic (in Table.tsx)
-
-const TransactionIcon = styled.div`
-  background-image: url(${transactionIcon});
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 20px;
-  width: 20px;
-`
 
 const BlockTableBodyCustomStyles: TDStyle[] = [
   {
@@ -301,3 +294,23 @@ const TXTableBodyCustomStyles: TDStyle[] = [
     `
   }
 ]
+
+export default BlockInfoPage
+
+const TransactionIcon = styled.div`
+  background-image: url(${transactionIcon});
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 20px;
+  width: 20px;
+`
+
+const IODetailList = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border-radius: 12px;
+  padding: 15px;
+`

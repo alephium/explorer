@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 interface TableHeaderProps {
   headerTitles: ReactNode[]

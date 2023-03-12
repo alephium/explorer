@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
+import { ALPH } from '@alephium/token-list'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -37,7 +38,6 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
-import { ALPH } from '@alephium/token-list'
 
 type ParamTypes = {
   id: string

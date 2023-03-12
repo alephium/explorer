@@ -137,8 +137,8 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         </HashAndTimestamp>
 
         <Assets>
-          {assets.map((t) => (
-            <AssetLogo key={t.id} asset={t} size={21} />
+          {assets.map((a) => (
+            <AssetLogo key={a.id} asset={a} size={21} showTooltip />
           ))}
         </Assets>
 

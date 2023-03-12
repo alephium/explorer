@@ -20,7 +20,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface TableProps {
   main?: boolean

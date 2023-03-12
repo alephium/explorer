@@ -165,7 +165,6 @@ const TransactionInfoPage = () => {
     ...getAssetInfo({ assetId: t.id, networkType })
   })) ?? []) as Asset[]
 
-  console.log(assets)
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
     assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
   }
