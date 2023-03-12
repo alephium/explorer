@@ -22,6 +22,7 @@ interface AmountProps {
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
+  unknownToken?: boolean
   fadeDecimals?: boolean
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
@@ -36,6 +37,7 @@ const Amount = ({
   value,
   decimals,
   isFiat,
+  unknownToken,
   className,
   fadeDecimals,
   fullPrecision = false,
@@ -48,26 +50,38 @@ const Amount = ({
   let fractionalPart = ''
   let quantitySymbol = ''
 
-  let amount =
-    value !== undefined
-      ? isFiat && typeof value === 'number'
-        ? formatFiatAmountForDisplay(value)
-        : formatAmountForDisplay({
-            amount: value as bigint,
-            amountDecimals: decimals,
-            displayDecimals: nbOfDecimalsToShow,
-            fullPrecision
-          })
-      : ''
+  let amount = ''
 
-  if (amount) {
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
+  if (!unknownToken) {
+    amount =
+      value !== undefined
+        ? isFiat && typeof value === 'number'
+          ? formatFiatAmountForDisplay(value)
+          : formatAmountForDisplay({
+              amount: value as bigint,
+              amountDecimals: decimals,
+              displayDecimals: nbOfDecimalsToShow,
+              fullPrecision
+            })
+        : ''
+
+    if (amount) {
+      if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+        quantitySymbol = amount.slice(-1)
+        amount = amount.slice(0, -1)
+      }
+      const amountParts = amount.split('.')
+      integralPart = amountParts[0]
+      fractionalPart = amountParts[1]
     }
-    const amountParts = amount.split('.')
-    integralPart = amountParts[0]
-    fractionalPart = amountParts[1]
+  } else {
+    return (
+      <span className={className} tabIndex={tabIndex ?? -1}>
+        {prefix}
+        {value?.toString()}
+        <Suffix> ???</Suffix>
+      </span>
+    )
   }
 
   return (

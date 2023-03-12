@@ -101,7 +101,12 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             </TokenSymbol>
           </NameColumn>
           <TableCellAmount>
-            <TokenAmount value={asset.balance} suffix={asset.symbol ?? '???'} decimals={asset.decimals} />
+            <TokenAmount
+              value={asset.balance}
+              suffix={asset.symbol}
+              decimals={asset.decimals}
+              unknownToken={!asset.symbol}
+            />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
                 {'Available '}

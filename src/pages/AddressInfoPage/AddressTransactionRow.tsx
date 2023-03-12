@@ -59,7 +59,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
   const amount = convertToPositive(alphAmount)
   const tokens = tokenAmounts.map((token) => ({ ...token, amount: convertToPositive(token.amount) }))
-
   const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
@@ -151,14 +150,8 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
-          {amount && <Amount value={amount} prefix={amountSign} />}
-          {tokenAmounts.map((a) => (
-            <Amount
-              key={a.id}
-              value={a.amount}
-              prefix={amountSign}
-              suffix={getAssetInfo({ assetId: a.id, networkType })?.symbol}
-            />
+          {assets.map(({ id, amount, symbol, decimals }) => (
+            <Amount key={id} value={amount} prefix={amountSign} suffix={symbol} decimals={decimals} />
           ))}
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
