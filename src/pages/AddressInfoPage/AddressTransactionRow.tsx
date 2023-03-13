@@ -108,9 +108,8 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
       }
       return (
         io.address && (
-          <IODetailsContainer>
+          <IODetailsContainer key={`${io.address}-${i}`}>
             <AddressLink
-              key={`${io.address}-${i}`}
               address={io.address}
               txHashRef={(io as Input).txHashRef}
               lockTime={(io as AssetOutput).lockTime}
