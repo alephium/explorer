@@ -80,6 +80,11 @@ const AddressLinkBase = ({
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
   const { networkType } = useGlobalContext()
 
+  const renderAmount = (amount: AssetAmount) => {
+    const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
+    return <Amount key={amount.id} value={amount.amount} suffix={assetInfo?.symbol} decimals={assetInfo?.decimals} />
+  }
+
   return (
     <div className={className}>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
@@ -91,11 +96,7 @@ const AddressLinkBase = ({
       {isLocked && <LockTimeIcon timestamp={lockTime} />}
       {amounts !== undefined && (
         <AmountsContainer flex={flex}>
-          <Amounts>
-            {amounts.map((a) => (
-              <Amount key={a.id} value={a.amount} suffix={getAssetInfo({ assetId: a.id, networkType })?.symbol} />
-            ))}
-          </Amounts>
+          <Amounts>{amounts.map((a) => renderAmount(a))}</Amounts>
         </AmountsContainer>
       )}
     </div>
