@@ -118,7 +118,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 }
 
 const now = dayjs()
+const thisMoment = now.valueOf()
 const currentYear = now.year()
+const lastYear = now.subtract(1, 'year')
 const today = now.format(SIMPLE_DATE_FORMAT)
 
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
@@ -140,13 +142,13 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   },
   {
     value: '12m',
-    label: `Last 12 months 
-    (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)} 
+    label: `Last 12 months
+    (${dayjs().subtract(1, 'year').format(SIMPLE_DATE_FORMAT)}
     - ${today})`
   },
   {
     value: 'previousYear',
-    label: `Previous year 
+    label: `Previous year
     (01/01/${currentYear - 1} - 31/12/${currentYear - 1})`
   },
   {
@@ -156,16 +158,16 @@ const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
 ]
 
 const timePeriods: Record<TimePeriodValue, { from: number; to: number }> = {
-  '24h': { from: now.subtract(24, 'hour').valueOf(), to: now.valueOf() },
-  '1w': { from: now.startOf('day').subtract(7, 'day').valueOf(), to: now.valueOf() },
-  '1m': { from: now.startOf('day').subtract(30, 'day').valueOf(), to: now.valueOf() },
-  '6m': { from: now.startOf('day').subtract(6, 'month').valueOf(), to: now.valueOf() },
-  '12m': { from: now.startOf('day').subtract(12, 'month').valueOf(), to: now.valueOf() },
+  '24h': { from: now.subtract(24, 'hour').valueOf(), to: thisMoment },
+  '1w': { from: now.subtract(7, 'day').valueOf(), to: thisMoment },
+  '1m': { from: now.subtract(30, 'day').valueOf(), to: thisMoment },
+  '6m': { from: now.subtract(6, 'month').valueOf(), to: thisMoment },
+  '12m': { from: now.subtract(12, 'month').valueOf(), to: thisMoment },
   previousYear: {
-    from: now.subtract(1, 'year').startOf('year').valueOf(),
-    to: now.subtract(1, 'year').endOf('year').valueOf()
+    from: lastYear.startOf('year').valueOf(),
+    to: lastYear.endOf('year').valueOf()
   },
-  thisYear: { from: now.startOf('year').valueOf(), to: now.valueOf() }
+  thisYear: { from: now.startOf('year').valueOf(), to: thisMoment }
 }
 
 const startCSVFileDownload = (csvContent: string, fileName: string) => {
