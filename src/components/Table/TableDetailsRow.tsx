@@ -87,6 +87,7 @@ const OpenConditionContext = createContext(false)
 
 const DetailToggleWrapper = styled(motion.div)`
   cursor: pointer;
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 const AnimatedCellContainer = styled(motion.div)<{ alignItems: 'left' | 'right' }>`

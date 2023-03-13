@@ -26,9 +26,10 @@ interface TooltipProps {
 
 const Tooltip: FC<TooltipProps> = ({ id, children }) => {
   const theme = useTheme()
+  const backgroundColor = theme.name === 'dark' ? theme.bg.background2 : theme.font.primary
 
   return (
-    <ReactTooltip backgroundColor={theme.tooltip} id={id}>
+    <ReactTooltip backgroundColor={backgroundColor} id={id}>
       {children}
     </ReactTooltip>
   )

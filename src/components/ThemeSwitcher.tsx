@@ -28,9 +28,8 @@ interface ThemeSwitcherProps {
   className?: string
 }
 
-const getButtonColor = (theme: ThemeType, buttonTheme: string) => {
-  return theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
-}
+const getButtonColor = (theme: ThemeType, buttonTheme: string) =>
+  theme === buttonTheme ? (theme === 'dark' ? '#F6C76A' : 'white') : '#646775'
 
 const toggleWidth = 60
 const toggleHeight = toggleWidth / 2
@@ -69,9 +68,9 @@ export const StyledThemeSwitcher = styled.div`
   position: relative;
   width: ${toggleWidth}px;
   height: ${toggleHeight}px;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: 60px;
-  background-color: ${({ theme }) => theme.bgPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
   cursor: pointer;
   box-sizing: content-box;
 
@@ -102,7 +101,7 @@ const ToggleFloatingIndicator = styled(motion.div)`
   position: absolute;
   width: ${toggleIndicatorSize}px;
   height: ${toggleIndicatorSize}px;
-  background-color: ${({ theme }) => theme.textPrimary};
+  background-color: ${({ theme }) => theme.font.primary};
   border-radius: 60px;
   z-index: 0;
 `

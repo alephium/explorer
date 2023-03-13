@@ -92,25 +92,23 @@ const App = () => {
 
 export default App
 
-const SnackbarManager = ({ message }: { message: SnackbarMessage | undefined }) => {
-  return (
-    <SnackbarManagerContainer>
-      <AnimatePresence>
-        {message && (
-          <SnackbarPopup
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={message?.type}
-          >
-            {message.Icon}
-            {message.text}
-          </SnackbarPopup>
-        )}
-      </AnimatePresence>
-    </SnackbarManagerContainer>
-  )
-}
+const SnackbarManager = ({ message }: { message?: SnackbarMessage }) => (
+  <SnackbarManagerContainer>
+    <AnimatePresence>
+      {message && (
+        <SnackbarPopup
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className={message?.type}
+        >
+          {message.Icon}
+          {message.text}
+        </SnackbarPopup>
+      )}
+    </AnimatePresence>
+  </SnackbarManagerContainer>
+)
 
 const MainContainer = styled.div`
   position: absolute;
@@ -131,7 +129,7 @@ const Background = styled.div`
   left: 0;
   bottom: 0;
   z-index: -2;
-  background-color: ${({ theme }) => theme.body};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const ContentContainer = styled.div`
@@ -184,8 +182,8 @@ const SnackbarPopup = styled(motion.div)`
   padding: 20px;
   color: white;
   border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
-  box-shadow: ${({ theme }) => theme.shadowSecondary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
 
   display: flex;
   gap: 10px;

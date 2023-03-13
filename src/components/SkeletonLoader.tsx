@@ -21,10 +21,10 @@ import styled from 'styled-components'
 export default styled.div<{ heightInPx: number }>`
   min-height: ${({ heightInPx }) => heightInPx}px;
   width: 100%;
-  border-radius: 9px;
+  border-radius: 12px;
   backdrop-filter: blur(20px);
-  border: ${({ theme }) => `1px solid ${theme.borderSecondary}`};
-  background: ${({ theme }) => theme.bgPrimary};
+  border: ${({ theme }) => `1px solid ${theme.border.secondary}`};
+  background: ${({ theme }) => theme.bg.primary};
   background: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
   background-size: 400% 400%;
   animation: gradientAnimation 1.5s ease-in-out infinite;

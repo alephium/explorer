@@ -16,20 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
-import styled from 'styled-components'
+import { AddressBalance, Token } from '@alephium/sdk/api/explorer'
+import { TokenInfo } from '@alephium/token-list'
 
-interface LoadingSpinnerProps {
-  size?: number
-  style?: CSSProperties
+export type TokenBalances = AddressBalance & { id: Token['id'] }
+
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+  balance: bigint
+  lockedBalance: bigint
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
+export type Asset = TokenDisplayBalances & TokenInfo
 
-export default LoadingSpinner
-
-const Spinner = styled(Loader)`
-  animation: spin 1s infinite;
-  color: ${({ theme }) => theme.font.secondary};
-`
+export type AssetAmount = { id: Asset['id']; amount?: bigint }

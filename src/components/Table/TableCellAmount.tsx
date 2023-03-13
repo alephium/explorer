@@ -16,20 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-interface LoadingSpinnerProps {
-  size?: number
-  style?: CSSProperties
-}
+export default styled.div<{ color?: string }>`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-grow: 1;
+  min-width: 6em;
+  flex-basis: 120px;
+  gap: 6px;
+  font-weight: 600;
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
-
-export default LoadingSpinner
-
-const Spinner = styled(Loader)`
-  animation: spin 1s infinite;
-  color: ${({ theme }) => theme.font.secondary};
+  ${({ color }) =>
+    color &&
+    css`
+      color: ${color};
+    `}
 `

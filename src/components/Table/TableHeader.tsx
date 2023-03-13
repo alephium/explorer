@@ -47,25 +47,23 @@ export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }
 )
 
 export default styled(TableHeader)`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 
   th {
-    padding: 0px 12px 12px 12px;
-
+    padding: 12px;
     font-family: 'Inter';
     font-weight: 600;
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 13px;
 
     ${({ compact, theme }) =>
       !compact &&
       css`
+        height: 55px;
         position: sticky;
         top: 0;
-        box-shadow: inset 0 -1px 0 ${theme.borderSecondary};
-        padding: 12px;
+        box-shadow: inset 0 -1px 0 ${theme.border.primary};
       `}
-    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bgTertiary}`)};
+    background-color: ${({ theme, transparent }) => (transparent ? 'transparent' : `${theme.bg.tertiary}`)};
   }
 
   tr {

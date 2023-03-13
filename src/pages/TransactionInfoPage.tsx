@@ -180,7 +180,7 @@ const TransactionInfoPage = () => {
               {isTxConfirmed(txInfo) && txInfo.timestamp && (
                 <TableRow>
                   <span>Timestamp</span>
-                  <Timestamp timeInMs={txInfo.timestamp} forceHighPrecision />
+                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="precise" />
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (
@@ -227,11 +227,11 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <span>Gas Price</span>
 
-                <Amount value={BigInt(txInfo.gasPrice)} showFullPrecision />
+                <Amount value={BigInt(txInfo.gasPrice)} fullPrecision />
               </TableRow>
               <TableRow>
                 <span>Transaction Fee</span>
-                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} showFullPrecision />
+                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
               </TableRow>
               <TableRow>
                 <b>Total Value</b>
@@ -247,9 +247,7 @@ const TransactionInfoPage = () => {
   )
 }
 
-const isTxConfirmed = (tx: Transaction): tx is Transaction => {
-  return (tx as Transaction).blockHash !== undefined
-}
+const isTxConfirmed = (tx: Transaction): tx is Transaction => (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight): number => {
   let confirmations = 0

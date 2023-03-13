@@ -47,10 +47,22 @@ const TimestampExpandButton = ({ className }: TimestampExpandButtonProps) => {
   }
   const { Icon, tooltipContent } = config[timestampPrecisionMode]
 
-  return <Icon size={15} onClick={handleClick} className={className} data-tip={tooltipContent} />
+  return (
+    <span className={className} onClick={handleClick} data-tip={tooltipContent}>
+      <Icon size={11} />
+    </span>
+  )
 }
 
 export default styled(TimestampExpandButton)`
   cursor: pointer;
-  color: ${({ theme }) => theme.accent};
+  color: ${({ theme }) => theme.global.accent};
+  background-color: ${({ theme }) => theme.bg.accent};
+  border-radius: 4px;
+  height: 14px;
+  width: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 3px;
 `

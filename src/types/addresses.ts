@@ -16,20 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
-import styled from 'styled-components'
+import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
 
-interface LoadingSpinnerProps {
-  size?: number
-  style?: CSSProperties
+import { TokenBalances } from './assets'
+
+export type AddressHash = string
+
+export type AddressDataResult = {
+  hash: AddressHash
+  details: AddressInfo
+  tokens: TokenBalances[]
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
-
-export default LoadingSpinner
-
-const Spinner = styled(Loader)`
-  animation: spin 1s infinite;
-  color: ${({ theme }) => theme.font.secondary};
-`
+export type AddressTransactionsResult = {
+  addressHash: AddressHash
+  transactions: Transaction[]
+}

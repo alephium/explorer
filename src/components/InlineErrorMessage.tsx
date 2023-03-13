@@ -52,7 +52,7 @@ const ErrorWrapper = styled.div`
 `
 
 const Container = styled.div`
-  background-color: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   border-radius: 14px;
   padding: 35px 25px;
   display: flex;
@@ -90,7 +90,7 @@ const ErrorCode = styled.span`
 const ErrorMessage = styled.span`
   max-width: 500px;
   width: 100%;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   overflow: hidden;
   text-overflow: ellipsis;
 `

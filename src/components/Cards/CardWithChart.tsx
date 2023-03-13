@@ -67,7 +67,7 @@ const SeeMoreLink = styled.a`
   position: absolute;
   bottom: 10px;
   right: 10px;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const StyledArrowRight = styled.span`
@@ -83,7 +83,7 @@ const StyledClickableCard = styled(Card)`
     }
 
     ${SeeMoreLink} {
-      color: ${({ theme }) => theme.textPrimary};
+      color: ${({ theme }) => theme.font.primary};
     }
 
     ${StyledArrowRight} {

@@ -26,10 +26,7 @@ const TextButton: FC<React.ButtonHTMLAttributes<HTMLButtonElement>> = ({ childre
 const StyledTextButton = styled.button`
   background: transparent;
   font-size: inherit;
-  color: ${({ theme, disabled }) => {
-    if (disabled) return theme.textSecondary
-    else return theme.link
-  }};
+  color: ${({ theme, disabled }) => (disabled ? theme.font.secondary : theme.global.accent)};
 
   display: flex;
   align-items: center;
@@ -38,10 +35,7 @@ const StyledTextButton = styled.button`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
 
   &:hover {
-    color: ${({ theme, disabled }) => {
-      if (disabled) return
-      return theme.linkHighlight
-    }};
+    color: ${({ theme, disabled }) => (disabled ? theme.font.secondary : theme.global.accent)};
   }
 `
 

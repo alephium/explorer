@@ -93,11 +93,11 @@ const CardContent = styled(motion.div)`
   height: 100%;
   max-width: 1200px;
   max-height: 800px;
-  background-color: ${({ theme }) => theme.bgPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 9px;
   overflow: hidden;
   margin: 0 2vw;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   @media (max-aspect-ratio: 2/3) {
     height: 60%;
@@ -118,7 +118,7 @@ const Header = styled.div`
   height: 50px;
   padding: 20px;
   display: flex;
-  background-color: ${({ theme }) => theme.bgSecondary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -126,15 +126,15 @@ const Header = styled.div`
 
 const CloseButton = styled(X)`
   cursor: pointer;
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
 
   :hover {
-    color: ${({ theme }) => theme.textSecondary};
+    color: ${({ theme }) => theme.font.secondary};
   }
 `
 
 const LabelText = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   font-style: normal;
   font-weight: 700;
   font-size: 14px;

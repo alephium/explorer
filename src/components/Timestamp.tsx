@@ -19,8 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { MouseEvent } from 'react'
-import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
 import { useGlobalContext } from '@/contexts/global'
@@ -29,33 +27,27 @@ import { DATE_TIME_FORMAT } from '@/utils/strings'
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
 
+type TimestampPrecisionLevel = 'simple' | 'precise'
+
 interface TimestampProps {
   timeInMs: number
-  forceHighPrecision?: boolean
   formatToggle?: boolean
+  forceFormat?: TimestampPrecisionLevel
   className?: string
 }
 
-const Timestamp = ({ timeInMs, className, forceHighPrecision = false, formatToggle = false }: TimestampProps) => {
-  const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
+const Timestamp = ({ timeInMs, className, forceFormat, formatToggle = false }: TimestampProps) => {
+  const { timestampPrecisionMode } = useGlobalContext()
 
-  const isHighPrecision = timestampPrecisionMode === 'on' || forceHighPrecision
-
-  const handleTimestampClick = (e: MouseEvent<HTMLSpanElement>) => {
-    if (forceHighPrecision || !formatToggle) return
-    e.stopPropagation()
-    setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
-    ReactTooltip.hide()
-  }
+  const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'precise' : 'simple')
 
   const highPrecisionTimestamp = dayjs(timeInMs).format(DATE_TIME_FORMAT)
   const lowPrecisionTimestamp = dayjs().to(timeInMs)
 
   return (
     <div
-      onClick={handleTimestampClick}
       data-tip={
-        !forceHighPrecision
+        !forceFormat
           ? `${highPrecisionTimestamp}
             ${
               formatToggle ? (
@@ -72,7 +64,7 @@ const Timestamp = ({ timeInMs, className, forceHighPrecision = false, formatTogg
       data-multiline
       className={className}
     >
-      {isHighPrecision ? highPrecisionTimestamp : lowPrecisionTimestamp}
+      {precision === 'precise' ? highPrecisionTimestamp : lowPrecisionTimestamp}
     </div>
   )
 }

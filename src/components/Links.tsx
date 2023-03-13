@@ -33,31 +33,27 @@ interface TightLinkProps extends LinkProps {
 
 export const SimpleLink: FC<LinkProps> = ({ children, ...props }) => <StyledLink {...props}>{children}</StyledLink>
 
-export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
-  return (
-    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink
-        {...props}
-        data-tip={text}
-        onClick={(e) => {
-          e.stopPropagation()
-        }}
-      >
-        {text}
-      </StyledLink>
-    </div>
-  )
-}
+export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => (
+  <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
+    <StyledLink
+      {...props}
+      data-tip={text}
+      onClick={(e) => {
+        e.stopPropagation()
+      }}
+    >
+      {text}
+    </StyledLink>
+  </div>
+)
 
-export const TightLinkStrict: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => {
-  return (
-    <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-      <StyledLink {...props} data-tip={text}>
-        {smartHash(text)}
-      </StyledLink>
-    </div>
-  )
-}
+export const TightLinkStrict: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => (
+  <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
+    <StyledLink {...props} data-tip={text}>
+      {smartHash(text)}
+    </StyledLink>
+  </div>
+)
 
 interface AddressLinkProps {
   maxWidth?: string
@@ -91,7 +87,7 @@ export const AddressLink: FC<AddressLinkProps> = ({ maxWidth = 'auto', address, 
 }
 
 const OutputValue = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   margin-left: 8px;
   display: flex;
   gap: 10px;

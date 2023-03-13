@@ -45,8 +45,8 @@ export default Card
 const Container = styled(motion.div)`
   flex: 1;
   position: relative;
-  ${({ theme }) => blurredBackground(theme.bgPrimary)};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  ${({ theme }) => blurredBackground(theme.bg.primary)};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: 9px;
   display: flex;
   flex-direction: column;
@@ -69,7 +69,7 @@ const LabelText = styled.span`
   font-size: 14px;
   display: flex;
   align-items: center;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const Content = styled.div``

@@ -50,7 +50,7 @@ const HighlightedHash = ({
 
 export default styled(HighlightedHash)`
   display: flex;
-  background: ${({ theme }) => theme.accentGradient};
+  background: ${({ theme }) => theme.global.highlight};
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

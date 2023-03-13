@@ -103,7 +103,7 @@ const MenuContainer = styled.div`
   outline: none;
 
   &:hover {
-    background-color: ${({ theme }) => theme.bgHover};
+    background-color: ${({ theme }) => theme.bg.hover};
   }
 `
 
@@ -117,7 +117,7 @@ const MenuCurrentContent = styled.div`
 `
 
 const Label = styled.span`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
   line-height: initial;
   flex: 1;
 `
@@ -133,8 +133,8 @@ const MenuItemsContainer = styled(motion.div)`
 const MenuItemsList = styled.div`
   overflow: hidden;
   border-radius: 9px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `
 
 const ItemIcon = styled.div`
@@ -151,11 +151,11 @@ const MenuItem = styled.div`
   align-items: center;
   padding: 0 20px;
   cursor: pointer;
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
 
   &:hover {
-    background-color: ${({ theme }) => theme.bgHover};
-    color: ${({ theme }) => theme.link};
+    background-color: ${({ theme }) => theme.bg.hover};
+    color: ${({ theme }) => theme.global.accent};
 
     ${ItemIcon} {
       opacity: 1;
@@ -167,5 +167,5 @@ const ItemText = styled.div``
 
 const Divider = styled.div`
   height: 1px;
-  background-color: ${({ theme }) => theme.borderSecondary};
+  background-color: ${({ theme }) => theme.border.secondary};
 `

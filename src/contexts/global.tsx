@@ -28,7 +28,7 @@ import { SnackbarMessage } from '@/types/ui'
 
 interface GlobalContextInterface {
   client: ExplorerClient | undefined
-  networkType: NetworkType | undefined
+  networkType: NetworkType
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
   snackbarMessage: SnackbarMessage | undefined
@@ -39,7 +39,7 @@ interface GlobalContextInterface {
 
 export const GlobalContext = createContext<GlobalContextInterface>({
   client: undefined,
-  networkType: undefined,
+  networkType: 'mainnet',
   currentTheme: 'light',
   switchTheme: () => null,
   snackbarMessage: undefined,
@@ -51,7 +51,7 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 export const GlobalContextProvider: FC = ({ children }) => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [client, setClient] = useState<ExplorerClient>()
-  const [networkType, setNetworkType] = useState<NetworkType>()
+  const [networkType, setNetworkType] = useState<NetworkType>('mainnet')
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
@@ -62,7 +62,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
     // Check and apply environment variables
     let url: string | null | undefined = (window as any).VITE_BACKEND_URL
 
-    let netType = (window as any).VITE_NETWORK_TYPE as NetworkType | undefined
+    let netType = (window as any).VITE_NETWORK_TYPE as NetworkType
 
     if (!url) {
       url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'

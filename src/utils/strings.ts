@@ -21,19 +21,15 @@ export const smartHash = (hash: string) => {
   else return hash.substring(0, 8) + '...' + hash.substring(hash.length - 8)
 }
 
-export const checkAddressValidity = (addressToTest: string) => {
-  return /^[1-9A-HJ-NP-Za-km-z]+$/.test(addressToTest)
-}
+export const checkAddressValidity = (addressToTest: string) => /^[1-9A-HJ-NP-Za-km-z]+$/.test(addressToTest)
 
-export const checkHexStringValidity = (stringToTest: string) => {
-  return /^[a-fA-F0-9]+$/.test(stringToTest)
-}
+export const checkHexStringValidity = (stringToTest: string) => /^[a-fA-F0-9]+$/.test(stringToTest)
 
 export const formatNumberForDisplay = (
   number: number,
   unit: string,
   numberType: 'quantity' | 'hash' = 'quantity',
-  maxDecimals: 1 | 2 = 1
+  maxDecimals: 0 | 1 | 2 = 1
 ) => {
   const suffixes = {
     quantity: ['', 'K', 'M', 'B', 'T'],
@@ -47,11 +43,11 @@ export const formatNumberForDisplay = (
     suffixIndex++
   }
 
-  const denominator = maxDecimals === 1 ? 10 : 100
+  const denominator = maxDecimals === 1 ? 10 : maxDecimals === 2 ? 100 : 1000
   const preciseNumber = (Math.round((formatedNumber + Number.EPSILON) * denominator) / denominator).toString()
   const numberParts = preciseNumber.split('.')
   const numberInteger = numberParts[0]
-  const numberDecimal = (numberParts.length > 1 && `.${numberParts[1]}`) || '.0'
+  const numberDecimal = maxDecimals !== 0 ? (numberParts.length > 1 && `.${numberParts[1]}`) || '.0' : undefined
 
   return [numberInteger, numberDecimal, suffixes[suffixIndex], unit]
 }

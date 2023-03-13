@@ -39,6 +39,7 @@ const NetworkSwitch = ({
 
   return (
     <Menu
+      aria-label="Selected network"
       label={isMainnet ? 'Mainnet' : 'Testnet'}
       icon={isMainnet ? <NetworkLogo network="mainnet" /> : <NetworkLogo network="testnet" />}
       items={[
@@ -61,6 +62,6 @@ const NetworkSwitch = ({
 
 export default styled(NetworkSwitch)`
   border-radius: 9px;
-  background-color: ${({ theme }) => theme.bgPrimary};
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `

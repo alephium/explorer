@@ -16,20 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
-import styled from 'styled-components'
+type PriceResponse = { [tokenId: string]: { [currency: string]: number } }
 
-interface LoadingSpinnerProps {
-  size?: number
-  style?: CSSProperties
+export const fetchAssetPrice = async (coinGeckoTokenId: string, currency = 'usd') => {
+  const res = (await (
+    await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coinGeckoTokenId}&vs_currencies=${currency}`)
+  ).json()) as PriceResponse
+
+  return res[coinGeckoTokenId][currency]
 }
-
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
-
-export default LoadingSpinner
-
-const Spinner = styled(Loader)`
-  animation: spin 1s infinite;
-  color: ${({ theme }) => theme.font.secondary};
-`

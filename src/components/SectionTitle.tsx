@@ -47,7 +47,7 @@ const Title = styled.h1`
   font-family: 'Inter';
   font-weight: bold;
   font-size: 2.1rem;
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
   margin: 0 0 5px 0;
   font-weight: 600;
 
@@ -61,7 +61,7 @@ const Surtitle = styled.h2`
   font-family: 'Inter';
   font-weight: 500;
   font-size: 1.6rem;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   margin-bottom: 0;
   overflow: hidden;
 `
@@ -70,13 +70,14 @@ const Subtitle = styled.h2`
   font-family: 'Inter';
   font-weight: 500;
   font-size: 1.6rem;
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
   margin: 0;
   margin-bottom: 35px;
 `
 
 export const SecondaryTitle = styled.h2`
-  margin-top: 35px;
+  margin-top: 50px;
+  margin-bottom: 25px;
 `
 
 export default SectionTitle

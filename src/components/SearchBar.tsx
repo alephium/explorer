@@ -112,14 +112,14 @@ const SearchBar = ({ className }: SearchBarProps) => {
 
 export default styled(SearchBar)`
   position: relative;
-  height: 45px;
+  height: 50px;
 `
 
 const SearchIcon = styled(Search)`
-  color: ${({ theme }) => theme.textPrimary};
+  color: ${({ theme }) => theme.font.primary};
   position: absolute;
   right: 20px;
-  top: 12px;
+  top: 15px;
   z-index: 11;
   height: 21px;
   cursor: pointer;
@@ -129,18 +129,18 @@ const SearchInput = styled.input`
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 1px solid ${({ theme }) => theme.borderPrimary};
-  border-radius: 9px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: 12px;
   padding: 0 20px;
-  color: ${({ theme }) => theme.textPrimary};
-  background-color: ${({ theme }) => theme.bgPrimary};
+  color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.bg.primary};
   z-index: 10;
 
   &:focus,
   &:active {
-    box-shadow: ${({ theme }) => theme.shadowTertiary}, inset;
-    background: linear-gradient(${({ theme }) => `${theme.bgSecondary}, ${theme.bgSecondary}`}) padding-box,
-      ${({ theme }) => theme.accentGradient};
+    box-shadow: ${({ theme }) => theme.shadow.tertiary}, inset;
+    background: linear-gradient(${({ theme }) => `${theme.bg.secondary}, ${theme.bg.secondary}`}) padding-box,
+      ${({ theme }) => theme.global.accent};
     border: 2px solid transparent;
     z-index: 10;
   }

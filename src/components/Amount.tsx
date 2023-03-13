@@ -16,54 +16,89 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { formatAmountForDisplay } from '@alephium/sdk'
+import { formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import styled from 'styled-components'
 
-import AlefSymbol from './AlefSymbol'
+import AlefSymbol from '@/components/AlefSymbol'
 
 interface AmountProps {
-  value: bigint | undefined
+  value?: bigint | number
+  decimals?: number
+  isFiat?: boolean
   fadeDecimals?: boolean
-  showFullPrecision?: boolean
+  fullPrecision?: boolean
+  nbOfDecimalsToShow?: number
+  color?: string
+  tabIndex?: number
+  suffix?: string
   className?: string
 }
 
-const Amount = ({ value, className, fadeDecimals, showFullPrecision = false }: AmountProps) => {
+const Amount = ({
+  value,
+  decimals,
+  isFiat,
+  className,
+  fadeDecimals,
+  fullPrecision = false,
+  color,
+  nbOfDecimalsToShow,
+  suffix,
+  tabIndex
+}: AmountProps) => {
   let integralPart = ''
   let fractionalPart = ''
+  let quantitySymbol = ''
 
-  if (value !== undefined) {
-    const amountParts = formatAmountForDisplay({ amount: value, fullPrecision: showFullPrecision }).split('.')
+  let amount =
+    value !== undefined
+      ? isFiat && typeof value === 'number'
+        ? formatFiatAmountForDisplay(value)
+        : formatAmountForDisplay({
+            amount: value as bigint,
+            amountDecimals: decimals,
+            displayDecimals: nbOfDecimalsToShow,
+            fullPrecision
+          })
+      : ''
+
+  if (amount) {
+    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+      quantitySymbol = amount.slice(-1)
+      amount = amount.slice(0, -1)
+    }
+    const amountParts = amount.split('.')
     integralPart = amountParts[0]
     fractionalPart = amountParts[1]
   }
 
   return (
-    <span
-      className={className}
-      data-tip={value ? `${formatAmountForDisplay({ amount: BigInt(value), fullPrecision: true })} א` : null}
-    >
-      {value !== undefined ? (
-        fadeDecimals ? (
+    <span className={className} tabIndex={tabIndex ?? -1}>
+      {value !== undefined &&
+        (fadeDecimals ? (
           <>
             <span>{integralPart}</span>
             <Decimals>.{fractionalPart}</Decimals>
+            {quantitySymbol && <span>{quantitySymbol}</span>}
           </>
         ) : (
           `${integralPart}.${fractionalPart}`
-        )
-      ) : (
-        '-'
-      )}
-      <AlefSymbol style={{ marginLeft: 3 }} />
+        ))}
+
+      <Suffix>{suffix && suffix !== 'ALPH' ? ` ${suffix}` : <AlefSymbol color={color} />}</Suffix>
     </span>
   )
 }
+
+export default styled(Amount)`
+  color: ${({ color }) => color ?? 'inherit'};
+  white-space: nowrap;
+`
 
 const Decimals = styled.span`
   opacity: 0.7;
 `
 
-export default styled(Amount)`
-  font-feature-settings: 'tnum';
+const Suffix = styled.span`
+  opacity: 0.7;
 `
