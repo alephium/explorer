@@ -135,5 +135,5 @@ const StyledNetworkSwitch = styled(NetworkSwitch)`
 `
 
 const Version = styled.span`
-  color: ${({ theme }) => theme.textSecondary};
+  color: ${({ theme }) => theme.font.secondary};
 `
