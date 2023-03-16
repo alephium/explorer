@@ -79,7 +79,6 @@ const Amount = ({
       <span className={className} tabIndex={tabIndex ?? -1}>
         {prefix}
         {value?.toString()}
-        <Suffix> ???</Suffix>
       </span>
     )
   }

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Check, Copy } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { MouseEvent, useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
@@ -25,14 +25,18 @@ import { useGlobalContext } from '@/contexts/global'
 
 interface ClipboardButtonProps {
   textToCopy: string
+  tooltip?: string
   className?: string
 }
 
-const ClipboardButton = ({ textToCopy, className }: ClipboardButtonProps) => {
+const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProps) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
   const { setSnackbarMessage } = useGlobalContext()
 
-  const handleClick = () => {
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+
     navigator.clipboard
       .writeText(textToCopy)
       .catch((e) => {
@@ -63,7 +67,14 @@ const ClipboardButton = ({ textToCopy, className }: ClipboardButtonProps) => {
   }, [hasBeenCopied, setSnackbarMessage])
 
   if (!hasBeenCopied) {
-    return <StyledClipboardIcon size={15} data-tip="Copy to clipboard" onClick={handleClick} className={className} />
+    return (
+      <StyledClipboardIcon
+        size={15}
+        data-tip={tooltip || 'Copy to clipboard'}
+        onClick={handleClick}
+        className={className}
+      />
+    )
   } else {
     return <StyledCheckIcon size={15} className={className} />
   }

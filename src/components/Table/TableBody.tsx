@@ -59,10 +59,6 @@ export default styled(TableBody)`
           )
         : ''}
 
-    &.details div {
-      overflow: hidden;
-    }
-
     &.details table tr:hover {
       background-color: inherit;
     }

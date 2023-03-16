@@ -20,7 +20,7 @@ import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
 import { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
@@ -29,23 +29,26 @@ import { AssetAmount } from '@/types/assets'
 import { getAssetInfo } from '@/utils/assets'
 import { smartHash } from '@/utils/strings'
 
+import Ellipsed from './Ellipsed'
+import HashEllipsed from './HashEllipsed'
+
 interface TightLinkProps extends LinkProps {
   maxWidth: string
   text: string
+  isHash?: boolean
 }
 
 export const SimpleLink: FC<LinkProps> = ({ children, ...props }) => <StyledLink {...props}>{children}</StyledLink>
 
-export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => (
+export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, isHash, ...props }) => (
   <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
     <StyledLink
       {...props}
-      data-tip={text}
       onClick={(e) => {
         e.stopPropagation()
       }}
     >
-      {text}
+      {isHash ? <HashEllipsed hash={text} /> : <Ellipsed text={text} />}
     </StyledLink>
   </div>
 )
@@ -77,8 +80,9 @@ const AddressLinkBase = ({
   flex,
   className
 }: AddressLinkProps) => {
-  const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
   const { networkType } = useGlobalContext()
+  const theme = useTheme()
+  const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
   const renderAmount = (amount: AssetAmount) => {
     const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
@@ -87,13 +91,13 @@ const AddressLinkBase = ({
 
   return (
     <div className={className}>
-      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} />
+      <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
           <ExternalLink size={12} />
         </TxLink>
       )}
-      {isLocked && <LockTimeIcon timestamp={lockTime} />}
+      {isLocked && <LockTimeIcon timestamp={lockTime} color={theme.global.highlight} />}
       {amounts !== undefined && (
         <AmountsContainer flex={flex}>
           <Amounts>{amounts.map((a) => renderAmount(a))}</Amounts>

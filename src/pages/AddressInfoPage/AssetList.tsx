@@ -23,6 +23,7 @@ import styled, { useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import ClipboardButton from '@/components/Buttons/ClipboardButton'
+import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
@@ -94,8 +95,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             <TokenSymbol>
               {asset.symbol ?? (
                 <UnknownTokenId>
-                  <UnknownTokenIdText>{asset.id}</UnknownTokenIdText>
-                  <TokenIdClipboardButton textToCopy={asset.id} />
+                  <UnknownTokenIdText hash={asset.id} />
                 </UnknownTokenId>
               )}
             </TokenSymbol>
@@ -112,7 +112,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
                 {'Available '}
                 <Amount
                   value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol ?? '???'}
+                  suffix={asset.symbol}
                   color={theme.font.tertiary}
                   decimals={asset.decimals}
                 />
@@ -197,12 +197,7 @@ const UnknownTokenId = styled.div`
   display: flex;
 `
 
-const UnknownTokenIdText = styled.div`
+const UnknownTokenIdText = styled(HashEllipsed)`
   overflow: hidden;
   text-overflow: ellipsis;
-`
-
-const TokenIdClipboardButton = styled(ClipboardButton)`
-  flex-shrink: 0;
-  width: 10px;
 `

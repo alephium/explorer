@@ -165,7 +165,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                   {t.inputs && t.inputs.length > 0 ? (
                     renderInputOutputDetails(t.inputs)
                   ) : (
-                    <BlockRewardLabel>Block rewards</BlockRewardLabel>
+                    <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
                   )}
                 </IODetailList>
 
@@ -193,6 +193,11 @@ const AccountsSummaryContainer = styled.div`
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.font.secondary};
   font-style: italic;
+`
+
+const BlockRewardInputLabel = styled(BlockRewardLabel)`
+  padding: 18px 15px;
+  text-align: center;
 `
 
 const AmountCell = styled.span<{ color: string }>`
