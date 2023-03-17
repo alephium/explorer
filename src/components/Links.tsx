@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
 import { FC } from 'react'
@@ -86,7 +87,16 @@ const AddressLinkBase = ({
 
   const renderAmount = (amount: AssetAmount) => {
     const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
-    return <Amount key={amount.id} value={amount.amount} suffix={assetInfo?.symbol} decimals={assetInfo?.decimals} />
+
+    return (
+      <Amount
+        key={amount.id}
+        value={amount.amount}
+        suffix={assetInfo?.symbol}
+        decimals={assetInfo?.decimals}
+        unknownToken={amount.id !== ALPH.id && !assetInfo?.symbol} // ALPH ID isn't part of token list for now?
+      />
+    )
   }
 
   return (
@@ -100,7 +110,7 @@ const AddressLinkBase = ({
       {isLocked && <LockTimeIcon timestamp={lockTime} color={theme.global.highlight} />}
       {amounts !== undefined && (
         <AmountsContainer flex={flex}>
-          <Amounts>{amounts.map((a) => renderAmount(a))}</Amounts>
+          <Amounts>{amounts.map(renderAmount)}</Amounts>
         </AmountsContainer>
       )}
     </div>

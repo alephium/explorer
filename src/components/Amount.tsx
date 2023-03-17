@@ -30,6 +30,7 @@ interface AmountProps {
   tabIndex?: number
   prefix?: string
   suffix?: string
+  hideSuffix?: boolean
   className?: string
 }
 
@@ -44,6 +45,7 @@ const Amount = ({
   nbOfDecimalsToShow,
   prefix,
   suffix,
+  hideSuffix,
   tabIndex
 }: AmountProps) => {
   let integralPart = ''
@@ -79,6 +81,7 @@ const Amount = ({
       <span className={className} tabIndex={tabIndex ?? -1}>
         {prefix}
         {value?.toString()}
+        {!hideSuffix && <Suffix> ?</Suffix>}
       </span>
     )
   }
@@ -97,7 +100,7 @@ const Amount = ({
           `${integralPart}.${fractionalPart}`
         ))}
 
-      <Suffix>{suffix && suffix !== 'ALPH' ? ` ${suffix}` : ' ALPH'}</Suffix>
+      {!hideSuffix && <Suffix>{suffix && suffix !== 'ALPH' ? ` ${suffix}` : ' ALPH'}</Suffix>}
     </span>
   )
 }

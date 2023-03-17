@@ -181,7 +181,7 @@ const TransactionInfoPage = () => {
               {isTxConfirmed(txInfo) && txInfo.timestamp && (
                 <TableRow>
                   <span>Timestamp</span>
-                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="precise" />
+                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="high" />
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (

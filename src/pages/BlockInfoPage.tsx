@@ -150,7 +150,7 @@ const BlockInfoPage = () => {
             </TableRow>
             <TableRow>
               <span>Timestamp</span>
-              <Timestamp timeInMs={blockInfo.timestamp} forceFormat="precise" />
+              <Timestamp timeInMs={blockInfo.timestamp} forceFormat="high" />
             </TableRow>
           </TableBody>
         )}

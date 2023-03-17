@@ -150,7 +150,14 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
         <AmountCell color={amountTextColor}>
           {assets.map(({ id, amount, symbol, decimals }) => (
-            <Amount key={id} value={amount} prefix={amountSign} suffix={symbol} decimals={decimals} />
+            <Amount
+              key={id}
+              value={amount}
+              prefix={amountSign}
+              suffix={symbol}
+              decimals={decimals}
+              unknownToken={!symbol}
+            />
           ))}
         </AmountCell>
         <DetailToggle isOpen={detailOpen} />
