@@ -107,7 +107,7 @@ const AddressLinkBase = ({
           <ExternalLink size={12} />
         </TxLink>
       )}
-      {isLocked && <LockTimeIcon timestamp={lockTime} color={theme.global.highlight} />}
+      {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}
       {amounts !== undefined && (
         <AmountsContainer flex={flex}>
           <Amounts>{amounts.map(renderAmount)}</Amounts>
@@ -158,10 +158,15 @@ const TxLink = styled(Link)`
   border-radius: 4px;
   margin-left: 4px;
 `
+
 const StyledLink = styled(Link)`
   white-space: nowrap;
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.6pt;
+`
+
+const LockIcon = styled(LockTimeIcon)`
+  margin-left: 10px;
 `
