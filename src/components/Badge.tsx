@@ -84,7 +84,7 @@ export default styled(Badge)`
   }}
 
   text-align: center;
-  padding: 4px 5px;
+  padding: 8px;
   border-radius: 5px;
   white-space: nowrap;
 `

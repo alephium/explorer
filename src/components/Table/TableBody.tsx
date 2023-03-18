@@ -63,6 +63,10 @@ export default styled(TableBody)`
       background-color: inherit;
     }
 
+    &.details > td > div {
+      overflow: hidden;
+    }
+
     &:hover {
       background-color: ${({ theme }) => theme.bg.hover};
     }
