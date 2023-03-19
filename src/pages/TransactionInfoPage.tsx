@@ -132,16 +132,27 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <span>Status</span>
                 {isTxConfirmed(txInfo) ? (
-                  <Badge
-                    type="plus"
-                    content={
-                      <span>
-                        <Check style={{ marginRight: 5 }} size={15} />
-                        Success
-                      </span>
-                    }
-                    inline
-                  />
+                  txInfo.scriptExecutionOk ? (
+                    <Badge
+                      type="plus"
+                      content={
+                        <span>
+                          <Check style={{ marginRight: 5 }} size={15} />
+                          Success
+                        </span>
+                      }
+                      inline
+                    />
+                  ) : (
+                    <Badge
+                      type="minus"
+                      content={
+                        <>
+                          <span>Script execution failed</span>
+                        </>
+                      }
+                    />
+                  )
                 ) : (
                   <Badge
                     type="neutral"
