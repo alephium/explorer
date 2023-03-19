@@ -43,8 +43,6 @@ export default HashEllipsed
 const CopyButton = styled(ClipboardButton)`
   flex-shrink: 0;
   display: none;
-  height: 18px;
-  width: 18px;
   background-color: ${({ theme }) => theme.bg.accent};
   padding: 3px;
   border-radius: 4px;

@@ -55,17 +55,7 @@ const Amount = ({
   let amount = ''
 
   if (!unknownToken) {
-    amount =
-      value !== undefined
-        ? isFiat && typeof value === 'number'
-          ? formatFiatAmountForDisplay(value)
-          : formatAmountForDisplay({
-              amount: value as bigint,
-              amountDecimals: decimals,
-              displayDecimals: nbOfDecimalsToShow,
-              fullPrecision
-            })
-        : ''
+    amount = getAmount(value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision)
 
     if (amount) {
       if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
@@ -78,16 +68,20 @@ const Amount = ({
     }
   } else {
     return (
-      <span className={className} tabIndex={tabIndex ?? -1}>
+      <span className={className} tabIndex={tabIndex ?? -1} data-tip={value?.toString()}>
         {prefix}
-        {value?.toString()}
+        <RawAmount>{value?.toString()}</RawAmount>
         {!hideSuffix && <Suffix> ?</Suffix>}
       </span>
     )
   }
 
   return (
-    <span className={className} tabIndex={tabIndex ?? -1}>
+    <span
+      className={className}
+      tabIndex={tabIndex ?? -1}
+      data-tip={!fullPrecision && value && getAmount(value, isFiat, decimals, nbOfDecimalsToShow, true)}
+    >
       {prefix}
       {value !== undefined &&
         (fadeDecimals ? (
@@ -105,6 +99,24 @@ const Amount = ({
   )
 }
 
+const getAmount = (
+  value: AmountProps['value'],
+  isFiat?: boolean,
+  decimals?: number,
+  nbOfDecimalsToShow?: number,
+  fullPrecision?: boolean
+) =>
+  value !== undefined
+    ? isFiat && typeof value === 'number'
+      ? formatFiatAmountForDisplay(value)
+      : formatAmountForDisplay({
+          amount: value as bigint,
+          amountDecimals: decimals,
+          displayDecimals: nbOfDecimalsToShow,
+          fullPrecision
+        })
+    : ''
+
 export default styled(Amount)`
   color: ${({ color }) => color ?? 'inherit'};
   white-space: nowrap;
@@ -118,4 +130,12 @@ const Decimals = styled.span`
 const Suffix = styled.span`
   color: ${({ theme }) => theme.font.secondary};
   font-weight: 500;
+`
+
+const RawAmount = styled.div`
+  display: inline-block;
+  max-width: 120px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: bottom;
 `
