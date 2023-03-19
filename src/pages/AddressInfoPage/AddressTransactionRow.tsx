@@ -127,6 +127,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
           <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
+          {!t.scriptExecutionOk && <FailedTXBubble data-tip="Failed script execution">!</FailedTXBubble>}
         </IconContainer>
 
         <HashAndTimestamp>
@@ -222,6 +223,7 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 `
 
 const HashAndTimestamp = styled.div`
@@ -253,4 +255,18 @@ const IODetailsContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
+`
+
+const FailedTXBubble = styled.div`
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.global.alert};
+  color: white;
+  top: -7px;
+  right: -7px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
 `
