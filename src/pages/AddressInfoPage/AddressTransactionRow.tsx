@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountsDeltaForAddress, getDirection, isConsolidationTx } from '@alephium/sdk'
+import { getDirection, isConsolidationTx } from '@alephium/sdk'
 import { AssetOutput } from '@alephium/sdk/api/alephium'
 import { Input, Output, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
@@ -38,8 +38,7 @@ import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getAssetInfo } from '@/utils/assets'
-import { convertToPositive } from '@/utils/numbers'
+import { getAssetsWithAmounts } from '@/utils/assets'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -55,12 +54,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
   const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
-  const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(t, addressHash)
-
-  const amount = convertToPositive(alphAmount)
-  const tokens = tokenAmounts.map((token) => ({ ...token, amount: convertToPositive(token.amount) }))
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+  const assets = getAssetsWithAmounts({ transaction: t, addressHash, networkType })
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return

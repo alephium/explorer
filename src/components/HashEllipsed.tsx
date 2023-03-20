@@ -41,11 +41,14 @@ const HashEllipsed = ({ hash, disableCopy = false, className, ...props }: HashEl
 export default HashEllipsed
 
 const CopyButton = styled(ClipboardButton)`
-  flex-shrink: 0;
+  position: absolute;
+  right: 0;
   display: none;
   background-color: ${({ theme }) => theme.bg.accent};
   padding: 3px;
   border-radius: 4px;
+  min-height: 17px;
+  min-width: 17px;
 `
 
 const HashContainer = styled.div`
@@ -54,10 +57,12 @@ const HashContainer = styled.div`
 `
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
   font-family: 'Roboto Mono';
+  line-height: normal;
 
   &:hover {
     ${CopyButton} {
@@ -66,7 +71,7 @@ const Container = styled.div`
 
     ${HashContainer} {
       -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 10%);
-      mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 10%);
+      mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 60px);
     }
   }
 `
