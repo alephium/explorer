@@ -17,9 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getDirection, isConsolidationTx } from '@alephium/sdk'
-import { AssetOutput } from '@alephium/sdk/api/alephium'
-import { Input, Output, Transaction } from '@alephium/sdk/api/explorer'
-import { ALPH } from '@alephium/token-list'
+import { Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { FC } from 'react'
@@ -35,11 +33,11 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { getAddressAssetsWithAmounts } from '@/utils/assets'
-import TransactionIOList from '@/components/TransactionIOList'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -143,7 +141,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
               <TableRow>
                 <IODetailList>
                   {t.inputs && t.inputs.length > 0 ? (
-                    <TransactionIOList ioList={t.inputs} IOItemWrapper={IODetailsContainer} />
+                    <TransactionIOList
+                      ioList={t.inputs}
+                      IOItemWrapper={IODetailsContainer}
+                      addressMaxWidth="180px"
+                      flex
+                    />
                   ) : (
                     <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
                   )}
@@ -154,7 +157,14 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 </span>
 
                 <IODetailList>
-                  {t.outputs && <TransactionIOList ioList={t.outputs} IOItemWrapper={IODetailsContainer} />}
+                  {t.outputs && (
+                    <TransactionIOList
+                      ioList={t.outputs}
+                      IOItemWrapper={IODetailsContainer}
+                      addressMaxWidth="180px"
+                      flex
+                    />
+                  )}
                 </IODetailList>
               </TableRow>
             </TableBody>

@@ -24,10 +24,12 @@ import { AddressLink } from './Links'
 
 interface TransactionIOListProps {
   ioList: Input[] | Output[]
+  flex?: boolean
+  addressMaxWidth?: string
   IOItemWrapper?: ({ children }: { children: ReactNode }) => ReactElement
 }
 
-const TransactionIOList = ({ ioList, IOItemWrapper }: TransactionIOListProps) => (
+const TransactionIOList = ({ ioList, flex, addressMaxWidth, IOItemWrapper }: TransactionIOListProps) => (
   <>
     {ioList.map((io, i) => {
       if (!io.address) return null
@@ -44,8 +46,8 @@ const TransactionIOList = ({ ioList, IOItemWrapper }: TransactionIOListProps) =>
           txHashRef={(io as Input).txHashRef}
           lockTime={(io as AssetOutput).lockTime}
           amounts={amounts}
-          maxWidth="180px"
-          flex
+          maxWidth={addressMaxWidth}
+          flex={flex}
         />
       )
 

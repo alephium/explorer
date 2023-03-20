@@ -38,6 +38,8 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
+import TransactionIOList from '@/components/TransactionIOList'
+import styled from 'styled-components'
 
 type ParamTypes = {
   id: string
@@ -199,19 +201,11 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>Inputs</span>
                   <div>
-                    {txInfo.inputs && txInfo.inputs.length > 0
-                      ? txInfo.inputs.map(
-                          (v, i) =>
-                            v.address && (
-                              <AddressLink
-                                address={v.address}
-                                txHashRef={v.txHashRef}
-                                key={i}
-                                amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount ?? 0) }]}
-                              />
-                            )
-                        )
-                      : 'Block Rewards'}
+                    {txInfo.inputs && txInfo.inputs.length > 0 ? (
+                      <TransactionIOList ioList={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      'Block Rewards'
+                    )}
                   </div>
                 </TableRow>
               )}
@@ -219,16 +213,11 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>Outputs</span>
                   <div>
-                    {txInfo.outputs
-                      ? txInfo.outputs.map((v, i) => (
-                          <AddressLink
-                            address={v.address}
-                            key={i}
-                            amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount) }]}
-                            txHashRef={v.spent}
-                          />
-                        ))
-                      : '-'}
+                    {txInfo.outputs ? (
+                      <TransactionIOList ioList={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      '-'
+                    )}
                   </div>
                 </TableRow>
               )}
@@ -271,5 +260,13 @@ const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight
 
   return confirmations
 }
+
+const IOItemContainer = styled.div`
+  padding: 5px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
+`
 
 export default TransactionInfoPage
