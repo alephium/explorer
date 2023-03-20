@@ -105,7 +105,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
               suffix={asset.symbol}
               decimals={asset.decimals}
               unknownToken={!asset.symbol}
-              hideSuffix
+              hideSuffix={!asset.symbol}
             />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
