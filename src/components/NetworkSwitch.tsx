@@ -33,7 +33,7 @@ const NetworkSwitch = ({
 
   const switchToNetwork = (network: string) => {
     if (networkType !== network) {
-      window.location.assign(isMainnet ? 'https://testnet.alephium.org' : 'https://explorer.alephium.org')
+      window.location.assign(isMainnet ? 'https://explorer.testnet.alephium.org' : 'https://explorer.alephium.org')
     }
   }
 

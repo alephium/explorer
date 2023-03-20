@@ -20,7 +20,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { blurredBackground, deviceBreakPoints } from '@/styles/globalStyles'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface TableProps {
   main?: boolean
@@ -61,7 +61,7 @@ const TableWrapper = styled.div<TableProps>`
   border-radius: 12px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
-  ${({ theme }) => blurredBackground(theme.bg.primary)}
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const StyledTable = styled.table<TableProps>`

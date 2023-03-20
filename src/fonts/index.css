@@ -30,3 +30,9 @@ body {
   src: url('./Inter-Bold.woff') format('woff');
   font-weight: 700;
 }
+
+@font-face {
+  font-family: 'Roboto Mono';
+  src: url('./RobotoMono-var.ttf') format('truetype');
+  font-weight: 100 1000;
+}

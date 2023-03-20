@@ -22,13 +22,14 @@ import styled, { css } from 'styled-components'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
 
 interface AssetLogoProps {
-  asset: Pick<TokenInfo, 'id' | 'logoURI'>
+  asset: Partial<TokenInfo>
   size: number
+  showTooltip?: boolean
   className?: string
 }
 
-const AssetLogo = ({ asset, size, className }: AssetLogoProps) => (
-  <div className={className}>
+const AssetLogo = ({ asset, size, showTooltip, className }: AssetLogoProps) => (
+  <div className={className} data-tip={showTooltip && (asset.name || asset.id)}>
     {asset.logoURI ? (
       <LogoImage src={asset.logoURI ?? AlephiumLogoSVG} />
     ) : asset.id === ALPH.id ? (
@@ -46,7 +47,6 @@ export default styled(AssetLogo)`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  padding: 5px;
   flex-shrink: 0;
   background-color: ${({ theme }) => theme.bg.background2};
 
@@ -64,11 +64,12 @@ const AssetLogoPlaceholder = styled.div<{ size: number }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
-  padding: 5px;
   flex-shrink: 0;
+  padding: 15%;
 `
 
 const LogoImage = styled.img`
   width: 100%;
   height: 100%;
+  padding: 15%;
 `

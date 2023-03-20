@@ -60,4 +60,8 @@ export default styled(Button)`
   border: 1px solid ${({ theme }) => theme.border.primary};
   padding: 10px 15px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 `

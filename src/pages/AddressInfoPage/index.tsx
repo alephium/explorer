@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
-import TokensMetadata, { ALPH } from '@alephium/token-list'
+import { ALPH } from '@alephium/token-list'
 import { sortBy } from 'lodash'
+import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -44,6 +45,7 @@ import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
 import { Asset } from '@/types/assets'
+import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -160,7 +162,7 @@ const TransactionInfoPage = () => {
     ...t,
     balance: BigInt(t.balance),
     lockedBalance: BigInt(t.lockedBalance),
-    ...TokensMetadata[networkType].tokens.find((tm) => tm.id === t.id)
+    ...getAssetInfo({ assetId: t.id, networkType })
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
@@ -203,7 +205,7 @@ const TransactionInfoPage = () => {
             label="Latest activity"
             value={
               latestActivityDate ? (
-                <Timestamp timeInMs={latestActivityDate} forceFormat="simple" />
+                <Timestamp timeInMs={latestActivityDate} forceFormat="low" />
               ) : !txLoading ? (
                 'No activity yet'
               ) : undefined
@@ -223,7 +225,12 @@ const TransactionInfoPage = () => {
 
       <SectionHeader>
         <h2>Transactions</h2>
-        {txNumber && txNumber > 0 ? <Button onClick={handleExportModalOpen}>Export CSV ↓</Button> : null}
+        {txNumber && txNumber > 0 ? (
+          <Button onClick={handleExportModalOpen}>
+            <FileDown size={16} />
+            Download CSV
+          </Button>
+        ) : null}
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
@@ -232,16 +239,17 @@ const TransactionInfoPage = () => {
             <TableHeader
               headerTitles={[
                 '',
-                'Hash',
-                <span key="timestamp">
-                  Timestamp <TimestampExpandButton />
+                <span key="hash-time">
+                  Hash & Time
+                  <TimestampExpandButton />
                 </span>,
+                'Assets',
                 '',
-                'Account(s)',
-                'Amount',
+                'Addresses',
+                'Amounts',
                 ''
               ]}
-              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '35px']}
+              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '25px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>

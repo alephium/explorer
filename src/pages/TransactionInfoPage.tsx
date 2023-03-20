@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
+import { ALPH } from '@alephium/token-list'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -180,7 +181,7 @@ const TransactionInfoPage = () => {
               {isTxConfirmed(txInfo) && txInfo.timestamp && (
                 <TableRow>
                   <span>Timestamp</span>
-                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="precise" />
+                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="high" />
                 </TableRow>
               )}
               {isTxConfirmed(txInfo) && (
@@ -195,7 +196,7 @@ const TransactionInfoPage = () => {
                                 address={v.address}
                                 txHashRef={v.txHashRef}
                                 key={i}
-                                amount={BigInt(v.attoAlphAmount ?? 0)}
+                                amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount ?? 0) }]}
                               />
                             )
                         )
@@ -212,7 +213,7 @@ const TransactionInfoPage = () => {
                           <AddressLink
                             address={v.address}
                             key={i}
-                            amount={BigInt(v.attoAlphAmount)}
+                            amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount) }]}
                             txHashRef={v.spent}
                           />
                         ))
