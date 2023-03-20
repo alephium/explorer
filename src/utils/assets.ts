@@ -27,7 +27,7 @@ import { convertToPositive } from './numbers'
 export const getAssetInfo = ({ assetId, networkType }: { assetId: string; networkType: NetworkType }) =>
   TokensMetadata[networkType].tokens.find((tm) => tm.id === assetId)
 
-export const getAssetsWithAmounts = ({
+export const getAddressAssetsWithAmounts = ({
   transaction,
   addressHash,
   networkType

@@ -38,7 +38,8 @@ import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getAssetsWithAmounts } from '@/utils/assets'
+import { getAddressAssetsWithAmounts } from '@/utils/assets'
+import TransactionIOList from '@/components/TransactionIOList'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -54,7 +55,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
   const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
-  const assets = getAssetsWithAmounts({ transaction: t, addressHash, networkType })
+  const assets = getAddressAssetsWithAmounts({ transaction: t, addressHash, networkType })
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -92,29 +93,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
       <BlockRewardLabel>Block rewards</BlockRewardLabel>
     )
   }
-
-  const renderInputOutputDetails = (ioList: Input[] | Output[]) =>
-    ioList.map((io, i) => {
-      const amounts = [{ id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) }]
-
-      if (io.tokens) {
-        amounts.push(...io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })))
-      }
-      return (
-        io.address && (
-          <IODetailsContainer key={`${io.address}-${i}`}>
-            <AddressLink
-              address={io.address}
-              txHashRef={(io as Input).txHashRef}
-              lockTime={(io as AssetOutput).lockTime}
-              amounts={amounts}
-              maxWidth="180px"
-              flex
-            />
-          </IODetailsContainer>
-        )
-      )
-    })
 
   return (
     <>
@@ -165,7 +143,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
               <TableRow>
                 <IODetailList>
                   {t.inputs && t.inputs.length > 0 ? (
-                    renderInputOutputDetails(t.inputs)
+                    <TransactionIOList ioList={t.inputs} IOItemWrapper={IODetailsContainer} />
                   ) : (
                     <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
                   )}
@@ -175,7 +153,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                   <ArrowRight size={12} />
                 </span>
 
-                <IODetailList>{t.outputs && renderInputOutputDetails(t.outputs)}</IODetailList>
+                <IODetailList>
+                  {t.outputs && <TransactionIOList ioList={t.outputs} IOItemWrapper={IODetailsContainer} />}
+                </IODetailList>
               </TableRow>
             </TableBody>
           </Table>
@@ -261,6 +241,6 @@ const FailedTXBubble = styled.div`
   top: -7px;
   right: -7px;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
 `
