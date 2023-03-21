@@ -120,8 +120,6 @@ const AddressLinkBase = ({
 export const AddressLink = styled(AddressLinkBase)`
   padding: 3px 0;
   display: flex;
-  width: 100%;
-  display: flex;
 
   ${({ flex }) =>
     flex &&
@@ -168,5 +166,5 @@ const StyledLink = styled(Link)`
 `
 
 const LockIcon = styled(LockTimeIcon)`
-  margin-left: 10px;
+  margin-left: 5px;
 `

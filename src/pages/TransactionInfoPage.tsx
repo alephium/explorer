@@ -124,10 +124,13 @@ const TransactionInfoPage = () => {
     BigInt(0)
   )
 
-  const tokenIds = _(txInfo?.inputs?.map((i) => i.tokens?.map((t) => t.id)))
+  const tokenInfos = _(
+    txInfo?.inputs?.map((i) => i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType }) || { id: t.id }))
+  )
     .flatten()
-    .uniq()
+    .uniqBy('id')
     .compact()
+    .sortBy('name')
     .value()
 
   return (
@@ -212,13 +215,8 @@ const TransactionInfoPage = () => {
                   <span>Assets</span>
                   <AssetLogos>
                     {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
-                    {tokenIds.map((id) => (
-                      <AssetLogo
-                        key={id}
-                        asset={getAssetInfo({ assetId: id, networkType }) || { id }}
-                        size={20}
-                        showTooltip
-                      />
+                    {tokenInfos.map((i) => (
+                      <AssetLogo key={i.id} asset={i} size={20} showTooltip />
                     ))}
                   </AssetLogos>
                 </TableRow>
