@@ -97,7 +97,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
           <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
-          {!t.scriptExecutionOk && <FailedTXBubble data-tip="Failed script execution">!</FailedTXBubble>}
+          {!t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
         <HashAndTimestamp>

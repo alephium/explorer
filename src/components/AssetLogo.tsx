@@ -20,9 +20,10 @@ import { ALPH, TokenInfo } from '@alephium/token-list'
 import styled, { css } from 'styled-components'
 
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
+import { PartialBy } from '@/types/generics'
 
 interface AssetLogoProps {
-  asset: Partial<TokenInfo>
+  asset: PartialBy<Pick<TokenInfo, 'id' | 'name' | 'logoURI'>, 'name' | 'logoURI'>
   size: number
   showTooltip?: boolean
   className?: string
@@ -34,9 +35,9 @@ const AssetLogo = ({ asset, size, showTooltip, className }: AssetLogoProps) => (
       <LogoImage src={asset.logoURI ?? AlephiumLogoSVG} />
     ) : asset.id === ALPH.id ? (
       <LogoImage src={AlephiumLogoSVG} />
-    ) : (
+    ) : asset.id ? (
       <AssetLogoPlaceholder size={size}>?</AssetLogoPlaceholder>
-    )}
+    ) : null}
   </div>
 )
 
@@ -51,7 +52,7 @@ export default styled(AssetLogo)`
   background-color: ${({ theme }) => theme.bg.background2};
 
   ${({ asset }) =>
-    asset.id === ALPH.id &&
+    asset?.id === ALPH.id &&
     css`
       background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
     `}

@@ -19,15 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
+import _ from 'lodash'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
+import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
+import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
-import { AddressLink, SimpleLink } from '@/components/Links'
+import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -36,10 +39,10 @@ import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
-import TransactionIOList from '@/components/TransactionIOList'
-import styled from 'styled-components'
+import { getAssetInfo } from '@/utils/assets'
 
 type ParamTypes = {
   id: string
@@ -47,7 +50,7 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
+  const { client, networkType } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
   const [txBlock, setTxBlock] = useState<BlockEntryLite>()
   const [txChain, setTxChain] = useState<PerChainHeight>()
@@ -119,6 +122,12 @@ const TransactionInfoPage = () => {
     (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
     BigInt(0)
   )
+
+  const tokenIds = _(txInfo?.inputs?.map((i) => i.tokens?.map((t) => t.id)))
+    .flatten()
+    .uniq()
+    .compact()
+    .value()
 
   return (
     <Section>
@@ -199,6 +208,22 @@ const TransactionInfoPage = () => {
               )}
               {isTxConfirmed(txInfo) && (
                 <TableRow>
+                  <span>Assets</span>
+                  <AssetLogos>
+                    {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
+                    {tokenIds.map((id) => (
+                      <AssetLogo
+                        key={id}
+                        asset={getAssetInfo({ assetId: id, networkType }) || { id }}
+                        size={20}
+                        showTooltip
+                      />
+                    ))}
+                  </AssetLogos>
+                </TableRow>
+              )}
+              {isTxConfirmed(txInfo) && (
+                <TableRow>
                   <span>Inputs</span>
                   <div>
                     {txInfo.inputs && txInfo.inputs.length > 0 ? (
@@ -235,7 +260,7 @@ const TransactionInfoPage = () => {
                 <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
               </TableRow>
               <TableRow>
-                <b>Total Value</b>
+                <b>Total ALPH Value</b>
                 <Badge type="neutralHighlight" amount={totalAmount} />
               </TableRow>
             </TableBody>
@@ -267,6 +292,11 @@ const IOItemContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
+`
+
+const AssetLogos = styled.div`
+  display: flex;
+  gap: 10px;
 `
 
 export default TransactionInfoPage
