@@ -91,11 +91,12 @@ const TransactionInfoPage = () => {
 
         setTxInfoStatus(status)
         setTxInfoError(error.detail || error.message || 'Unknown error')
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchTransactionInfo()
-    setLoading(false)
   }, [client, id])
 
   // Initial fetch
