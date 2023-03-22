@@ -226,7 +226,7 @@ const TransactionInfoPage = () => {
                   <span>Inputs</span>
                   <div>
                     {txInfo.inputs && txInfo.inputs.length > 0 ? (
-                      <TransactionIOList ioList={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                      <TransactionIOList inputs={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       'Block Rewards'
                     )}
@@ -238,7 +238,7 @@ const TransactionInfoPage = () => {
                   <span>Outputs</span>
                   <div>
                     {txInfo.outputs ? (
-                      <TransactionIOList ioList={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                      <TransactionIOList outputs={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       '-'
                     )}

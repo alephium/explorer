@@ -142,7 +142,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 <IODetailList>
                   {t.inputs && t.inputs.length > 0 ? (
                     <TransactionIOList
-                      ioList={t.inputs}
+                      inputs={t.inputs}
                       IOItemWrapper={IODetailsContainer}
                       addressMaxWidth="180px"
                       flex
@@ -159,7 +159,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 <IODetailList>
                   {t.outputs && (
                     <TransactionIOList
-                      ioList={t.outputs}
+                      outputs={t.outputs}
                       IOItemWrapper={IODetailsContainer}
                       addressMaxWidth="180px"
                       flex

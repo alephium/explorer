@@ -23,41 +23,66 @@ import { ReactElement, ReactNode } from 'react'
 import { AddressLink } from './Links'
 
 interface TransactionIOListProps {
-  ioList: Input[] | Output[]
+  inputs?: Input[]
+  outputs?: Output[]
   flex?: boolean
   addressMaxWidth?: string
   IOItemWrapper?: ({ children }: { children: ReactNode }) => ReactElement
 }
 
-const TransactionIOList = ({ ioList, flex, addressMaxWidth, IOItemWrapper }: TransactionIOListProps) => (
-  <>
-    {ioList.map((io, i) => {
-      if (!io.address) return null
+const TransactionIOList = ({
+  inputs = [],
+  outputs = [],
+  flex,
+  addressMaxWidth,
+  IOItemWrapper
+}: TransactionIOListProps) => {
+  const getAmounts = (io: Input | Output) => [
+    { id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) },
+    ...(io.tokens ? io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })) : [])
+  ]
 
-      const amounts = [{ id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) }]
+  const renderLink = (IOAddressLink: ReactNode, addressHash: string, index: number) =>
+    IOItemWrapper !== undefined ? (
+      <IOItemWrapper key={`${addressHash}-${index}`}>{IOAddressLink}</IOItemWrapper>
+    ) : (
+      IOAddressLink
+    )
 
-      if (io.tokens) {
-        amounts.push(...io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })))
-      }
-
-      const IOAddressLink = (
-        <AddressLink
-          address={io.address}
-          txHashRef={(io as Input).txHashRef}
-          lockTime={(io as AssetOutput).lockTime}
-          amounts={amounts}
-          maxWidth={addressMaxWidth}
-          flex={flex}
-        />
-      )
-
-      return IOItemWrapper !== undefined ? (
-        <IOItemWrapper key={`${io.address}-${i}`}>{IOAddressLink}</IOItemWrapper>
-      ) : (
-        IOAddressLink
-      )
-    })}
-  </>
-)
+  return (
+    <>
+      {inputs.map((input, i) =>
+        !input.address
+          ? null
+          : renderLink(
+              <AddressLink
+                address={input.address}
+                txHashRef={input.txHashRef}
+                amounts={getAmounts(input)}
+                maxWidth={addressMaxWidth}
+                flex={flex}
+              />,
+              input.address,
+              i
+            )
+      )}
+      {outputs.map((output, i) =>
+        !output.address
+          ? null
+          : renderLink(
+              <AddressLink
+                address={output.address}
+                lockTime={(output as AssetOutput).lockTime}
+                amounts={getAmounts(output)}
+                maxWidth={addressMaxWidth}
+                flex={flex}
+              />,
+              output.address,
+              i
+            )
+      )}
+    </>
+  )
+}
 
 export default TransactionIOList

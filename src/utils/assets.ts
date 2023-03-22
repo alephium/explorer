@@ -38,7 +38,10 @@ export const getAddressAssetsWithAmounts = ({
 }) => {
   const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(transaction, addressHash)
   const amount = convertToPositive(alphAmount)
-  const tokens = tokenAmounts.map((token) => ({ ...token, amount: convertToPositive(token.amount) }))
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
+  const tokenAssets = tokenAmounts.map((token) => ({
+    ...token,
+    ...getAssetInfo({ assetId: token.id, networkType }),
+    amount: convertToPositive(token.amount)
+  }))
   return amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 }
