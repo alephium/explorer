@@ -104,7 +104,7 @@ const AddressLinkBase = ({
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
-          <ExternalLink size={12} />
+          <ExternalLink size={10} />
         </TxLink>
       )}
       {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}

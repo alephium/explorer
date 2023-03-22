@@ -55,7 +55,7 @@ const Amount = ({
   let amount = ''
 
   if (!unknownToken) {
-    amount = getAmount(value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision)
+    amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
 
     if (amount) {
       if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
@@ -80,7 +80,9 @@ const Amount = ({
     <span
       className={className}
       tabIndex={tabIndex ?? -1}
-      data-tip={!fullPrecision && value && getAmount(value, isFiat, decimals, nbOfDecimalsToShow, true)}
+      data-tip={
+        !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+      }
     >
       {prefix}
       {value !== undefined &&
@@ -99,13 +101,7 @@ const Amount = ({
   )
 }
 
-const getAmount = (
-  value: AmountProps['value'],
-  isFiat?: boolean,
-  decimals?: number,
-  nbOfDecimalsToShow?: number,
-  fullPrecision?: boolean
-) =>
+const getAmount = ({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision }: AmountProps) =>
   value !== undefined
     ? isFiat && typeof value === 'number'
       ? formatFiatAmountForDisplay(value)

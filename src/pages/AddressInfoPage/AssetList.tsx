@@ -94,7 +94,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             <TokenSymbol>
               {asset.symbol ?? (
                 <UnknownTokenId>
-                  <UnknownTokenIdText hash={asset.id} />
+                  <HashEllipsed hash={asset.id} />
                 </UnknownTokenId>
               )}
             </TokenSymbol>
@@ -195,9 +195,4 @@ const NoAssetsMessage = styled.div`
 
 const UnknownTokenId = styled.div`
   display: flex;
-`
-
-const UnknownTokenIdText = styled(HashEllipsed)`
-  overflow: hidden;
-  text-overflow: ellipsis;
 `

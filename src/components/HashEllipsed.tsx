@@ -34,7 +34,7 @@ const HashEllipsed = ({ hash, disableCopy = false, className, ...props }: HashEl
     <HashContainer>
       <Ellipsed text={hash} {...props} />
     </HashContainer>
-    {!disableCopy && <CopyButton textToCopy={hash} tooltip="Copy hash" className={className} />}
+    {!disableCopy && <CopyButton textToCopy={hash} tooltip="Copy hash" className={className} hasBackground />}
   </Container>
 )
 
@@ -44,11 +44,6 @@ const CopyButton = styled(ClipboardButton)`
   position: absolute;
   right: 0;
   display: none;
-  background-color: ${({ theme }) => theme.bg.accent};
-  padding: 3px;
-  border-radius: 4px;
-  min-height: 17px;
-  min-width: 17px;
 `
 
 const HashContainer = styled.div`
@@ -66,7 +61,7 @@ const Container = styled.div`
 
   &:hover {
     ${CopyButton} {
-      display: block;
+      display: inline-flex;
     }
 
     ${HashContainer} {
