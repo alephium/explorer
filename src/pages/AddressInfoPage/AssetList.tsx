@@ -50,22 +50,18 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
     <div className={className}>
       {isLoading ? (
         <SkeletonLoader heightInPx={250} />
-      ) : (
+      ) : assets && assets?.length > 0 ? (
         <>
-          {assets && assets?.length > 0 ? (
-            <>
-              <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-              {
-                {
-                  tokens: <TokenList limit={limit} assets={assets} />,
-                  nfts: <NFTList />
-                }[currentTab.value]
-              }
-            </>
-          ) : (
-            <NoAssetsMessage>No assets yet</NoAssetsMessage>
-          )}
+          <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
+          {
+            {
+              tokens: <TokenList limit={limit} assets={assets} />,
+              nfts: <NFTList />
+            }[currentTab.value]
+          }
         </>
+      ) : (
+        <NoAssetsMessage>No assets yet</NoAssetsMessage>
       )}
     </div>
   )

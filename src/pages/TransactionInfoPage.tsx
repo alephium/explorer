@@ -159,14 +159,7 @@ const TransactionInfoPage = () => {
                       inline
                     />
                   ) : (
-                    <Badge
-                      type="minus"
-                      content={
-                        <>
-                          <span>Script execution failed</span>
-                        </>
-                      }
-                    />
+                    <Badge type="minus" content={<span>Script execution failed</span>} />
                   )
                 ) : (
                   <Badge
