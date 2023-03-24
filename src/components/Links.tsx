@@ -104,7 +104,7 @@ const AddressLinkBase = ({
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
-          <ExternalLink size={12} />
+          <ExternalLink size={10} />
         </TxLink>
       )}
       {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}
@@ -119,8 +119,6 @@ const AddressLinkBase = ({
 
 export const AddressLink = styled(AddressLinkBase)`
   padding: 3px 0;
-  display: flex;
-  width: 100%;
   display: flex;
 
   ${({ flex }) =>
@@ -168,5 +166,5 @@ const StyledLink = styled(Link)`
 `
 
 const LockIcon = styled(LockTimeIcon)`
-  margin-left: 10px;
+  margin-left: 5px;
 `

@@ -66,7 +66,10 @@ export default createGlobalStyle`
     cursor: pointer;
 
     &:hover {
-      color: ${({ theme }) => colord(theme.global.accent).lighten(0.1).toHex()};;
+      color: ${({ theme }) =>
+        theme.name === 'dark'
+          ? colord(theme.global.accent).lighten(0.1).toHex()
+          : colord(theme.global.accent).darken(0.2).toHex()};
     }
   }
 

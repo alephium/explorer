@@ -19,15 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
+import _ from 'lodash'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
+import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
+import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
-import { AddressLink, SimpleLink } from '@/components/Links'
+import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -36,8 +39,10 @@ import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
+import { getAssetInfo } from '@/utils/assets'
 
 type ParamTypes = {
   id: string
@@ -45,7 +50,7 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
+  const { client, networkType } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<Transaction>()
   const [txBlock, setTxBlock] = useState<BlockEntryLite>()
   const [txChain, setTxChain] = useState<PerChainHeight>()
@@ -86,11 +91,12 @@ const TransactionInfoPage = () => {
 
         setTxInfoStatus(status)
         setTxInfoError(error.detail || error.message || 'Unknown error')
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchTransactionInfo()
-    setLoading(false)
   }, [client, id])
 
   // Initial fetch
@@ -118,6 +124,15 @@ const TransactionInfoPage = () => {
     BigInt(0)
   )
 
+  const tokenInfos = _(
+    txInfo?.inputs?.map((i) => i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType }) || { id: t.id }))
+  )
+    .flatten()
+    .uniqBy('id')
+    .compact()
+    .sortBy('name')
+    .value()
+
   return (
     <Section>
       <SectionTitle title="Transaction" />
@@ -132,16 +147,20 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <span>Status</span>
                 {isTxConfirmed(txInfo) ? (
-                  <Badge
-                    type="plus"
-                    content={
-                      <span>
-                        <Check style={{ marginRight: 5 }} size={15} />
-                        Success
-                      </span>
-                    }
-                    inline
-                  />
+                  txInfo.scriptExecutionOk ? (
+                    <Badge
+                      type="plus"
+                      content={
+                        <span>
+                          <Check style={{ marginRight: 5 }} size={15} />
+                          Success
+                        </span>
+                      }
+                      inline
+                    />
+                  ) : (
+                    <Badge type="minus" content={<span>Script execution failed</span>} />
+                  )
                 ) : (
                   <Badge
                     type="neutral"
@@ -186,21 +205,24 @@ const TransactionInfoPage = () => {
               )}
               {isTxConfirmed(txInfo) && (
                 <TableRow>
+                  <span>Assets</span>
+                  <AssetLogos>
+                    {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
+                    {tokenInfos.map((i) => (
+                      <AssetLogo key={i.id} asset={i} size={20} showTooltip />
+                    ))}
+                  </AssetLogos>
+                </TableRow>
+              )}
+              {isTxConfirmed(txInfo) && (
+                <TableRow>
                   <span>Inputs</span>
                   <div>
-                    {txInfo.inputs && txInfo.inputs.length > 0
-                      ? txInfo.inputs.map(
-                          (v, i) =>
-                            v.address && (
-                              <AddressLink
-                                address={v.address}
-                                txHashRef={v.txHashRef}
-                                key={i}
-                                amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount ?? 0) }]}
-                              />
-                            )
-                        )
-                      : 'Block Rewards'}
+                    {txInfo.inputs && txInfo.inputs.length > 0 ? (
+                      <TransactionIOList inputs={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      'Block Rewards'
+                    )}
                   </div>
                 </TableRow>
               )}
@@ -208,16 +230,11 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>Outputs</span>
                   <div>
-                    {txInfo.outputs
-                      ? txInfo.outputs.map((v, i) => (
-                          <AddressLink
-                            address={v.address}
-                            key={i}
-                            amounts={[{ id: ALPH.id, amount: BigInt(v.attoAlphAmount) }]}
-                            txHashRef={v.spent}
-                          />
-                        ))
-                      : '-'}
+                    {txInfo.outputs ? (
+                      <TransactionIOList outputs={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      '-'
+                    )}
                   </div>
                 </TableRow>
               )}
@@ -235,7 +252,7 @@ const TransactionInfoPage = () => {
                 <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
               </TableRow>
               <TableRow>
-                <b>Total Value</b>
+                <b>Total ALPH Value</b>
                 <Badge type="neutralHighlight" amount={totalAmount} />
               </TableRow>
             </TableBody>
@@ -260,5 +277,18 @@ const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight
 
   return confirmations
 }
+
+const IOItemContainer = styled.div`
+  padding: 5px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
+`
+
+const AssetLogos = styled.div`
+  display: flex;
+  gap: 10px;
+`
 
 export default TransactionInfoPage

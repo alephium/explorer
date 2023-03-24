@@ -16,10 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calcTxAmountsDeltaForAddress, getDirection, isConsolidationTx } from '@alephium/sdk'
-import { AssetOutput } from '@alephium/sdk/api/alephium'
-import { Input, Output, Transaction } from '@alephium/sdk/api/explorer'
-import { ALPH } from '@alephium/token-list'
+import { getDirection, isConsolidationTx } from '@alephium/sdk'
+import { Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { FC } from 'react'
@@ -35,11 +33,11 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getAssetInfo } from '@/utils/assets'
-import { convertToPositive } from '@/utils/numbers'
+import { getAddressAssetsWithAmounts } from '@/utils/assets'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -55,12 +53,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
   const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
 
-  const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(t, addressHash)
-
-  const amount = convertToPositive(alphAmount)
-  const tokens = tokenAmounts.map((token) => ({ ...token, amount: convertToPositive(token.amount) }))
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+  const assets = getAddressAssetsWithAmounts({ transaction: t, addressHash, networkType })
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -99,34 +92,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     )
   }
 
-  const renderInputOutputDetails = (ioList: Input[] | Output[]) =>
-    ioList.map((io, i) => {
-      const amounts = [{ id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) }]
-
-      if (io.tokens) {
-        amounts.push(...io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })))
-      }
-      return (
-        io.address && (
-          <IODetailsContainer key={`${io.address}-${i}`}>
-            <AddressLink
-              address={io.address}
-              txHashRef={(io as Input).txHashRef}
-              lockTime={(io as AssetOutput).lockTime}
-              amounts={amounts}
-              maxWidth="180px"
-              flex
-            />
-          </IODetailsContainer>
-        )
-      )
-    })
-
   return (
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
           <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
+          {!t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
         <HashAndTimestamp>
@@ -170,7 +141,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
               <TableRow>
                 <IODetailList>
                   {t.inputs && t.inputs.length > 0 ? (
-                    renderInputOutputDetails(t.inputs)
+                    <TransactionIOList
+                      inputs={t.inputs}
+                      IOItemWrapper={IODetailsContainer}
+                      addressMaxWidth="180px"
+                      flex
+                    />
                   ) : (
                     <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
                   )}
@@ -180,7 +156,16 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                   <ArrowRight size={12} />
                 </span>
 
-                <IODetailList>{t.outputs && renderInputOutputDetails(t.outputs)}</IODetailList>
+                <IODetailList>
+                  {t.outputs && (
+                    <TransactionIOList
+                      outputs={t.outputs}
+                      IOItemWrapper={IODetailsContainer}
+                      addressMaxWidth="180px"
+                      flex
+                    />
+                  )}
+                </IODetailList>
               </TableRow>
             </TableBody>
           </Table>
@@ -222,6 +207,7 @@ const IconContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 `
 
 const HashAndTimestamp = styled.div`
@@ -253,4 +239,18 @@ const IODetailsContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
+`
+
+const FailedTXBubble = styled.div`
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+  background-color: ${({ theme }) => theme.global.alert};
+  color: white;
+  top: -7px;
+  right: -7px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
 `

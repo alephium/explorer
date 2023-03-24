@@ -50,22 +50,18 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
     <div className={className}>
       {isLoading ? (
         <SkeletonLoader heightInPx={250} />
-      ) : (
+      ) : assets && assets?.length > 0 ? (
         <>
-          {assets && assets?.length > 0 ? (
-            <>
-              <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-              {
-                {
-                  tokens: <TokenList limit={limit} assets={assets} />,
-                  nfts: <NFTList />
-                }[currentTab.value]
-              }
-            </>
-          ) : (
-            <NoAssetsMessage>No assets yet</NoAssetsMessage>
-          )}
+          <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
+          {
+            {
+              tokens: <TokenList limit={limit} assets={assets} />,
+              nfts: <NFTList />
+            }[currentTab.value]
+          }
         </>
+      ) : (
+        <NoAssetsMessage>No assets yet</NoAssetsMessage>
       )}
     </div>
   )
@@ -94,7 +90,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             <TokenSymbol>
               {asset.symbol ?? (
                 <UnknownTokenId>
-                  <UnknownTokenIdText hash={asset.id} />
+                  <HashEllipsed hash={asset.id} />
                 </UnknownTokenId>
               )}
             </TokenSymbol>
@@ -105,7 +101,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
               suffix={asset.symbol}
               decimals={asset.decimals}
               unknownToken={!asset.symbol}
-              hideSuffix
+              hideSuffix={!asset.symbol}
             />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
@@ -195,9 +191,4 @@ const NoAssetsMessage = styled.div`
 
 const UnknownTokenId = styled.div`
   display: flex;
-`
-
-const UnknownTokenIdText = styled(HashEllipsed)`
-  overflow: hidden;
-  text-overflow: ellipsis;
 `

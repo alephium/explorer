@@ -37,6 +37,8 @@ const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCod
 )
 
 export default styled(HighlightedCell)`
+  display: flex;
+  align-items: center;
   font-weight: 600 !important;
   color: ${({ theme }) => theme.global.highlight};
   word-wrap: break-word;

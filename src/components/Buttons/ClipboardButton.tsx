@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Check, Copy } from 'lucide-react'
 import { MouseEvent, useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { useGlobalContext } from '@/contexts/global'
 
 interface ClipboardButtonProps {
   textToCopy: string
   tooltip?: string
+  hasBackground?: boolean
   className?: string
 }
 
@@ -66,30 +67,46 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
     }
   }, [hasBeenCopied, setSnackbarMessage])
 
-  if (!hasBeenCopied) {
-    return (
-      <StyledClipboardIcon
-        size={15}
-        data-tip={tooltip || 'Copy to clipboard'}
-        onClick={handleClick}
-        className={className}
-      />
-    )
-  } else {
-    return <StyledCheckIcon size={15} className={className} />
-  }
+  return (
+    <div className={className}>
+      {!hasBeenCopied ? (
+        <StyledClipboardIcon data-tip={tooltip || 'Copy to clipboard'} onClick={handleClick} />
+      ) : (
+        <StyledCheckIcon />
+      )}
+    </div>
+  )
 }
 
-export default ClipboardButton
-
-const StyledClipboardIcon = styled(Copy)`
-  display: inline;
+export default styled(ClipboardButton)`
+  display: inline-flex;
+  align-items: center;
   margin-left: 10px;
   cursor: pointer;
+
+  & svg {
+    width: 1em;
+    height: 1em;
+  }
+
+  ${({ hasBackground }) =>
+    hasBackground &&
+    css`
+      background-color: ${({ theme }) => theme.bg.accent};
+      padding: 3px;
+      border-radius: 4px;
+
+      & svg {
+        width: 0.8em;
+        height: 0.8em;
+      }
+    `}
+`
+
+const StyledClipboardIcon = styled(Copy)`
   stroke: currentColor;
 `
 
 const StyledCheckIcon = styled(Check)`
-  margin-left: 10px;
   color: ${({ theme }) => theme.global.valid};
 `

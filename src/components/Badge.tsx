@@ -55,6 +55,7 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
     case 'minus':
       backgroundColor = 'rgba(243, 113, 93, 0.1)'
       color = theme.global.alert
+      borderColor = colord(theme.global.alert).alpha(0.15).toHex()
       break
     case 'neutral':
       backgroundColor = theme.bg.tertiary
