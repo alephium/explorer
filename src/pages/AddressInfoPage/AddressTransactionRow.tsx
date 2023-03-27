@@ -67,10 +67,10 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         .value()
 
       return (
-        <AccountsSummaryContainer>
+        <div>
           <AddressLink address={outputs[0]} maxWidth="250px" />
           {outputs.length > 1 && ` (+ ${outputs.length - 1})`}
-        </AccountsSummaryContainer>
+        </div>
       )
     }
   }
@@ -83,10 +83,10 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
       .value()
 
     return inputs.length > 0 ? (
-      <AccountsSummaryContainer>
+      <div>
         {inputs[0] && <AddressLink address={inputs[0]} maxWidth="250px" />}
         {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
-      </AccountsSummaryContainer>
+      </div>
     ) : (
       <BlockRewardLabel>Block rewards</BlockRewardLabel>
     )
@@ -176,11 +176,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 }
 
 export default AddressTransactionRow
-
-const AccountsSummaryContainer = styled.div`
-  display: flex;
-  align-items: center;
-`
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.font.secondary};
