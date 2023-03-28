@@ -64,7 +64,7 @@ export default styled(InfoGrid)`
   grid-gap: 1px;
   flex: 1;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(2, 1fr);
   }
 `

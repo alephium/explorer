@@ -71,7 +71,7 @@ const StyledTable = styled.table<TableProps>`
   table-layout: fixed;
   white-space: nowrap;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     ${({ scrollable, bodyOnly }) =>
       scrollable
         ? css`
@@ -119,7 +119,7 @@ const StyledTable = styled.table<TableProps>`
     &:first-child {
       padding-left: 20px;
 
-      @media ${deviceBreakPoints.mobile} {
+      @media ${deviceBreakPoints.tablet} {
         padding-left: 12px;
       }
 
