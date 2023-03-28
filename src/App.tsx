@@ -148,7 +148,7 @@ const ContentWrapper = styled.main`
   flex-direction: column;
   max-width: 1200px;
 
-  @media ${deviceBreakPoints.mobile} {
+  @media ${deviceBreakPoints.tablet} {
     width: 100%;
     justify-self: flex-start;
   }

@@ -30,11 +30,11 @@ interface TimestampExpandButtonProps {
 const config: Record<OnOff, { Icon: (props: LucideProps) => JSX.Element; tooltipContent: string }> = {
   on: {
     Icon: ChevronsRightLeft,
-    tooltipContent: 'Switch to simple format'
+    tooltipContent: 'Switch to simple time'
   },
   off: {
     Icon: ChevronsLeftRight,
-    tooltipContent: 'Switch to complete format'
+    tooltipContent: 'Switch to precise time'
   }
 }
 

@@ -16,6 +16,4 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type OnOff = 'on' | 'off'
-
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+export const convertToPositive = (num: bigint): bigint => (num < 0 ? num * BigInt(-1) : num)

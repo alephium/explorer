@@ -55,6 +55,7 @@ declare module 'styled-components' {
       accent: string
       complementary: string
       alert: string
+      warning: string
       valid: string
       highlight: string
       highlightGradient: string

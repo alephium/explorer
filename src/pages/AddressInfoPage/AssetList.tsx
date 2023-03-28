@@ -22,7 +22,7 @@ import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import ClipboardButton from '@/components/Buttons/ClipboardButton'
+import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
@@ -50,22 +50,18 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
     <div className={className}>
       {isLoading ? (
         <SkeletonLoader heightInPx={250} />
-      ) : (
+      ) : assets && assets?.length > 0 ? (
         <>
-          {assets && assets?.length > 0 ? (
-            <>
-              <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-              {
-                {
-                  tokens: <TokenList limit={limit} assets={assets} />,
-                  nfts: <NFTList />
-                }[currentTab.value]
-              }
-            </>
-          ) : (
-            <NoAssetsMessage>No assets yet</NoAssetsMessage>
-          )}
+          <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
+          {
+            {
+              tokens: <TokenList limit={limit} assets={assets} />,
+              nfts: <NFTList />
+            }[currentTab.value]
+          }
         </>
+      ) : (
+        <NoAssetsMessage>No assets yet</NoAssetsMessage>
       )}
     </div>
   )
@@ -94,20 +90,25 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
             <TokenSymbol>
               {asset.symbol ?? (
                 <UnknownTokenId>
-                  <UnknownTokenIdText>{asset.id}</UnknownTokenIdText>
-                  <TokenIdClipboardButton textToCopy={asset.id} />
+                  <HashEllipsed hash={asset.id} />
                 </UnknownTokenId>
               )}
             </TokenSymbol>
           </NameColumn>
           <TableCellAmount>
-            <TokenAmount value={asset.balance} suffix={asset.symbol ?? '?'} decimals={asset.decimals} />
+            <TokenAmount
+              value={asset.balance}
+              suffix={asset.symbol}
+              decimals={asset.decimals}
+              unknownToken={!asset.symbol}
+              hideSuffix={!asset.symbol}
+            />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
                 {'Available '}
                 <Amount
                   value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol ?? '?'}
+                  suffix={asset.symbol}
                   color={theme.font.tertiary}
                   decimals={asset.decimals}
                 />
@@ -138,7 +139,7 @@ export default styled(AssetList)`
 
 const AssetRow = styled.div`
   display: flex;
-  padding: 20px;
+  padding: 15px 20px;
   align-items: center;
 
   &:not(:last-child) {
@@ -152,7 +153,7 @@ const AssetLogoStyled = styled(AssetLogo)`
 
 const TokenName = styled.span`
   font-size: 14px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -160,7 +161,6 @@ const TokenName = styled.span`
 
 const TokenSymbol = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 11px;
   max-width: 150px;
 `
 
@@ -191,14 +191,4 @@ const NoAssetsMessage = styled.div`
 
 const UnknownTokenId = styled.div`
   display: flex;
-`
-
-const UnknownTokenIdText = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-
-const TokenIdClipboardButton = styled(ClipboardButton)`
-  flex-shrink: 0;
-  width: 10px;
 `

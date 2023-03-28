@@ -24,12 +24,13 @@ import { DATE_TIME_FORMAT } from '@/utils/strings'
 interface LockTimeIconProps {
   timestamp: number
   className?: string
+  color?: string
 }
 
-const LockTimeIcon = ({ timestamp, className }: LockTimeIconProps) => {
+const LockTimeIcon = ({ timestamp, color, className }: LockTimeIconProps) => {
   const unlocksOn = dayjs(timestamp).format(DATE_TIME_FORMAT)
 
-  return <Lock data-tip={`Unlocks on ${unlocksOn}`} size="13px" className={className} />
+  return <Lock data-tip={`Unlocks on ${unlocksOn}`} size="13px" className={className} color={color} />
 }
 
 export default LockTimeIcon
