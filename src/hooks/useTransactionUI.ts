@@ -56,10 +56,10 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       pending: theme.font.secondary
     }[infoType],
     iconBgColor: {
-      in: colord(theme.global.valid).alpha(0.1).toRgbString(),
-      out: colord(theme.font.highlight).alpha(0.1).toRgbString(),
-      move: colord(theme.font.secondary).alpha(0.1).toRgbString(),
-      pending: colord(theme.font.secondary).alpha(0.1).toRgbString()
+      in: colord(theme.global.valid).alpha(0.12).toRgbString(),
+      out: colord(theme.font.highlight).alpha(0.12).toRgbString(),
+      move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
+      pending: colord(theme.font.secondary).alpha(0.12).toRgbString()
     }[infoType]
   }
 }

@@ -44,7 +44,7 @@ interface AddressTransactionRowProps {
   addressHash: string
 }
 
-const directionIconSize = 15
+const directionIconSize = 13
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
@@ -96,7 +96,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     <>
       <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} strokeWidth={2} color={iconColor} />
+          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
           {!t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
