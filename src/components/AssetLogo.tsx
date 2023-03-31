@@ -66,11 +66,11 @@ const AssetLogoPlaceholder = styled.div<{ size: number }>`
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
   flex-shrink: 0;
-  padding: 15%;
+  padding: 12%;
 `
 
 const LogoImage = styled.img`
   width: 100%;
   height: 100%;
-  padding: 15%;
+  padding: 12%;
 `

@@ -16,24 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FC } from 'react'
 import styled from 'styled-components'
 
 import ClipboardButton from '../Buttons/ClipboardButton'
 import QRCodeButton from '../Buttons/QRCodeButton'
+import Ellipsed from '../Ellipsed'
 
 interface HighlightedCellProps {
+  children: string
   textToCopy?: string
   qrCodeContent?: string
   className?: string
 }
 
-const HighlightedCell: FC<HighlightedCellProps> = ({ children, textToCopy, qrCodeContent, className }) => (
-  <span className={className}>
-    <span>{children}</span>
+const HighlightedCell = ({ children, textToCopy, qrCodeContent, className }: HighlightedCellProps) => (
+  <div className={className}>
+    <Ellipsed text={children} />
     {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
     {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
-  </span>
+  </div>
 )
 
 export default styled(HighlightedCell)`
@@ -41,7 +42,4 @@ export default styled(HighlightedCell)`
   align-items: center;
   font-weight: 600 !important;
   color: ${({ theme }) => theme.global.highlight};
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  overflow: hidden;
 `
