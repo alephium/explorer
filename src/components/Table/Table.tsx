@@ -116,6 +116,14 @@ const StyledTable = styled.table<TableProps>`
         width: 65%;
       `}
 
+    @media ${deviceBreakPoints.tablet} {
+      ${({ bodyOnly }) =>
+        bodyOnly &&
+        css`
+          width: 100%;
+        `}
+    }
+
     &:first-child {
       padding-left: 20px;
 
