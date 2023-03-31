@@ -201,7 +201,12 @@ const HomePage = () => {
                   blockList.blocks?.map((b) => (
                     <TableRow key={b.hash} linkTo={`blocks/${b.hash}`}>
                       <BlockHeight>{b.height.toString()}</BlockHeight>
-                      <Timestamp timeInMs={b.timestamp} customFormat="HH:MM:ss" />
+                      <Timestamp
+                        timeInMs={b.timestamp}
+                        customFormat={
+                          dayjs(b.timestamp).date() !== dayjs().date() ? 'HH:mm:ss (DD/MM/YYYY)' : 'HH:mm:ss'
+                        }
+                      />
                       <span>{b.txNumber}</span>
                       <span>
                         {b.chainFrom} → {b.chainTo}
