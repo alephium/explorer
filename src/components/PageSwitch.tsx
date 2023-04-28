@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -36,6 +36,7 @@ const PageSwitch = ({
   const currentPage = parseInt(useQueryParams('p') || '1')
   const navigate = useNavigate()
   const location = useLocation()
+  const [isSettingPageManually, setIsSettingPageManually] = useState(false)
 
   const locationSearch = useMemo(() => new URLSearchParams(location.search), [location.search])
 
