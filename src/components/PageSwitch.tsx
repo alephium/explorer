@@ -16,13 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import TextButton from '@/components/Buttons/TextButton'
+import useOnClickOutside from '@/hooks/useOnClickOutside'
 import useQueryParams from '@/hooks/useQueryParams'
+
+const manualInputHeight = 30
 
 const PageSwitch = ({
   elementsPerPage = 20,
@@ -37,11 +41,33 @@ const PageSwitch = ({
   const navigate = useNavigate()
   const location = useLocation()
   const [isSettingPageManually, setIsSettingPageManually] = useState(false)
+  const [manuallySetPage, setManuallySetPage] = useState<number | ''>(currentPage)
+
+  const manualPageInputRef = useRef<HTMLInputElement>(null)
 
   const locationSearch = useMemo(() => new URLSearchParams(location.search), [location.search])
 
+  useOnClickOutside({ ref: manualPageInputRef, handler: () => setIsSettingPageManually(false) })
+
   const handlePageSwitch = (direction: 'previous' | 'next') => {
     setPageNumber(direction === 'previous' ? currentPage - 1 : currentPage + 1)
+  }
+
+  const handlePageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === '') setManuallySetPage('')
+
+    const pageNumber = parseInt(e.target.value)
+
+    if (!pageNumber) return
+
+    setManuallySetPage(pageNumber)
+  }
+
+  const handlePageInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && manuallySetPage) {
+      setPageNumber(manuallySetPage)
+      setIsSettingPageManually(false)
+    }
   }
 
   const setPageNumber = useCallback(
@@ -73,10 +99,21 @@ const PageSwitch = ({
         <ChevronLeft />
         <span>Previous</span>
       </TextButton>
-      <PageNumbers>
-        {currentPage}
-        {totalNumberOfPages && <TotalNumberOfPages>{` / ${totalNumberOfPages}`}</TotalNumberOfPages>}
-      </PageNumbers>
+      {isSettingPageManually ? (
+        <PageManualInput
+          step={1}
+          value={manuallySetPage}
+          ref={manualPageInputRef}
+          onChange={handlePageInputChange}
+          onKeyDown={handlePageInputKeyDown}
+          autoFocus
+        />
+      ) : (
+        <PageNumbers onClick={() => setIsSettingPageManually(true)}>
+          {currentPage}
+          {totalNumberOfPages && <TotalNumberOfPages>{` / ${totalNumberOfPages}`}</TotalNumberOfPages>}
+        </PageNumbers>
+      )}
       <TextButton
         disabled={
           totalNumberOfPages
@@ -98,17 +135,40 @@ const SwitchContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 25px;
+  margin-top: 10px;
+  height: ${manualInputHeight}px;
 `
 
 const PageNumbers = styled.div`
-  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
   text-align: center;
   font-weight: 600;
+  height: ${manualInputHeight}px;
+  margin: 5px;
+  border: 1px solid transparent;
+  transition: all 0.1s ease-out;
+
+  &:hover {
+    border-radius: 9px;
+    border: 1px solid ${({ theme }) => theme.border.primary};
+    background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.8).toHex()};
+  }
 `
 
 const TotalNumberOfPages = styled.span`
   color: ${({ theme }) => theme.font.secondary};
+`
+
+const PageManualInput = styled.input`
+  height: ${manualInputHeight};
+  padding: 5px;
+  border-radius: 9px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  width: 80px;
+  margin: 0 10px;
+  text-align: center;
 `
 
 export default PageSwitch

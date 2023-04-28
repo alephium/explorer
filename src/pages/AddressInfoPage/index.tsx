@@ -109,7 +109,7 @@ const TransactionInfoPage = () => {
         const currentPageTransactionData = await fetchAddressTransactions(client, id, pageNumber)
 
         setAddressTransactions(currentPageTransactionData)
-        setAddressLatestActivity(firstPageTransactionData.transactions[0].timestamp)
+        setAddressLatestActivity(firstPageTransactionData.transactions[0]?.timestamp)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({
