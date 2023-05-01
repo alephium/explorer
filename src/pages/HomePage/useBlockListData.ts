@@ -24,6 +24,7 @@ import { useGlobalContext } from '@/contexts/global'
 const useBlockListData = (currentPageNumber: number) => {
   const [blockList, setBlockList] = useState<ListBlocks>()
   const [manualLoading, setManualLoading] = useState(false)
+  const [page, setPage] = useState(currentPageNumber)
 
   const { client } = useGlobalContext()
 
@@ -35,11 +36,16 @@ const useBlockListData = (currentPageNumber: number) => {
 
       manualFetch && setManualLoading(true)
 
-      const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 8 })
+      try {
+        const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 8 })
 
-      if (data) {
-        console.log('Number of block fetched: ' + data.blocks?.length)
-        setBlockList(data)
+        if (data) {
+          console.log('Number of block fetched: ' + data.blocks?.length)
+          setBlockList(data)
+          setPage(pageNumber)
+        }
+      } catch (e) {
+        setPage(1)
       }
 
       manualFetch && setManualLoading(false)
@@ -52,7 +58,7 @@ const useBlockListData = (currentPageNumber: number) => {
     getBlocks(currentPageNumber, true)
   }, [getBlocks, currentPageNumber])
 
-  return { getBlocks, blockPageLoading: manualLoading, data: { blockList } }
+  return { getBlocks, blockPageLoading: manualLoading, data: { blockList }, page }
 }
 
 export default useBlockListData
