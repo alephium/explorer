@@ -105,8 +105,6 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
       </TextButton>
       {isSettingPageManually ? (
         <PageManualInput
-          step={1}
-          type="number"
           value={manuallySetPage}
           ref={manualPageInputRef}
           onChange={handlePageInputChange}
