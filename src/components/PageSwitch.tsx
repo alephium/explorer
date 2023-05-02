@@ -24,20 +24,19 @@ import styled from 'styled-components'
 
 import TextButton from '@/components/Buttons/TextButton'
 import useOnClickOutside from '@/hooks/useOnClickOutside'
-import useQueryParams from '@/hooks/useQueryParams'
+import usePageNumber from '@/hooks/usePageNumber'
 
 const manualInputHeight = 30
+const defaultElementsPerPage = 20
 
-const PageSwitch = ({
-  elementsPerPage = 20,
-  totalNumberOfElements,
-  numberOfElementsLoaded
-}: {
+interface PageSwitchProps {
+  totalNumberOfElements: number
   elementsPerPage?: number
-  totalNumberOfElements?: number
   numberOfElementsLoaded?: number
-}) => {
-  const currentPage = parseInt(useQueryParams('p') || '1')
+}
+
+const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLoaded }: PageSwitchProps) => {
+  const currentPage = usePageNumber()
   const navigate = useNavigate()
   const location = useLocation()
   const [isSettingPageManually, setIsSettingPageManually] = useState(false)
@@ -78,7 +77,8 @@ const PageSwitch = ({
     [locationSearch, navigate]
   )
 
-  const totalNumberOfPages = totalNumberOfElements && Math.ceil(totalNumberOfElements / elementsPerPage)
+  const totalNumberOfPages =
+    totalNumberOfElements && Math.ceil(totalNumberOfElements / (elementsPerPage || defaultElementsPerPage))
 
   // Redirect if page number is incorrect
   useEffect(() => {
@@ -91,6 +91,10 @@ const PageSwitch = ({
     }
   }, [currentPage, setPageNumber, totalNumberOfPages])
 
+  useEffect(() => {
+    setManuallySetPage(currentPage)
+  }, [currentPage])
+
   if (totalNumberOfElements === 0) return null
 
   return (
@@ -101,7 +105,6 @@ const PageSwitch = ({
       </TextButton>
       {isSettingPageManually ? (
         <PageManualInput
-          step={1}
           value={manuallySetPage}
           ref={manualPageInputRef}
           onChange={handlePageInputChange}

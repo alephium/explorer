@@ -21,7 +21,7 @@ import { IntervalType } from '@alephium/sdk/api/explorer'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import styled, { css } from 'styled-components'
 
@@ -57,6 +57,7 @@ const HomePage = () => {
   const { width } = useWindowSize()
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
+
   const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
 
   const [timeInterval, setTimeInterval] = useState(IntervalType.Daily)
@@ -64,7 +65,8 @@ const HomePage = () => {
   const {
     getBlocks,
     blockPageLoading,
-    data: { blockList }
+    data: { blockList },
+    page
   } = useBlockListData(currentPageNumber)
 
   const {
@@ -89,6 +91,10 @@ const HomePage = () => {
     10 * 1000,
     !isAppVisible
   )
+
+  useEffect(() => {
+    if (page !== currentPageNumber) getBlocks(page, false)
+  }, [currentPageNumber, getBlocks, page])
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, '', 'hash')
 
@@ -216,7 +222,7 @@ const HomePage = () => {
               </TableBody>
             </BlockListTable>
           </Content>
-          <PageSwitch totalNumberOfElements={blockList?.total} elementsPerPage={blockList?.blocks?.length} />
+          {blockList?.total && <PageSwitch totalNumberOfElements={blockList.total} elementsPerPage={8} />}
         </LatestsBlocks>
       </MainContent>
       <Waves />
