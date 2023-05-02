@@ -63,6 +63,7 @@ const TransactionInfoPage = () => {
 
   const [addressData, setAddressData] = useState<AddressDataResult>()
   const [addressTransactions, setAddressTransactions] = useState<AddressTransactionsResult>()
+  const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
 
   const [addressDataLoading, setAddressDataLoading] = useState(true)
   const [txLoading, setTxLoading] = useState(true)
@@ -104,8 +105,11 @@ const TransactionInfoPage = () => {
       setTxLoading(true)
       setAddressTransactions(undefined)
       try {
-        const transactionsData = await fetchAddressTransactions(client, id, pageNumber)
-        setAddressTransactions(transactionsData)
+        const firstPageTransactionData = await fetchAddressTransactions(client, id, 1)
+        const currentPageTransactionData = await fetchAddressTransactions(client, id, pageNumber)
+
+        setAddressTransactions(currentPageTransactionData)
+        setAddressLatestActivity(firstPageTransactionData.transactions[0]?.timestamp)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({
@@ -156,7 +160,6 @@ const TransactionInfoPage = () => {
   const lockedBalance = addressData?.details.lockedBalance
   const txNumber = addressData?.details.txNumber
   const txList = addressTransactions?.transactions
-  const latestActivityDate = txList?.[0]?.timestamp
 
   const assets = (addressData?.tokens.map((t) => ({
     ...t,
@@ -204,8 +207,8 @@ const TransactionInfoPage = () => {
           <InfoGrid.Cell
             label="Latest activity"
             value={
-              latestActivityDate ? (
-                <Timestamp timeInMs={latestActivityDate} forceFormat="low" />
+              addressLatestActivity ? (
+                <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
               ) : !txLoading ? (
                 'No activity yet'
               ) : undefined
@@ -234,7 +237,7 @@ const TransactionInfoPage = () => {
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txLoading}>
-        {txList && txList.length ? (
+        {txList?.length ? (
           <>
             <TableHeader
               headerTitles={[
