@@ -131,17 +131,14 @@ const SearchInput = styled.input`
   height: 100%;
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: 12px;
-  padding: 0 20px;
+  padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};
   z-index: 10;
 
   &:focus,
   &:active {
-    box-shadow: ${({ theme }) => theme.shadow.tertiary}, inset;
-    background: linear-gradient(${({ theme }) => `${theme.bg.secondary}, ${theme.bg.secondary}`}) padding-box,
-      ${({ theme }) => theme.global.accent};
-    border: 2px solid transparent;
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.global.accent};
     z-index: 10;
   }
 `
