@@ -16,12 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getDirection, isConsolidationTx } from '@alephium/sdk'
 import { Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import { FC } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -37,7 +36,7 @@ import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getAddressAssetsWithAmounts } from '@/utils/assets'
+import { getTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
   transaction: Transaction
@@ -49,11 +48,11 @@ const directionIconSize = 13
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const { networkType } = useGlobalContext()
+  const theme = useTheme()
 
-  const infoType = isConsolidationTx(t) ? 'move' : getDirection(t, addressHash)
-  const { amountTextColor, amountSign, Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
-
-  const assets = getAddressAssetsWithAmounts({ transaction: t, addressHash, networkType })
+  const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
+  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const isMoved = infoType === 'move'
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -113,21 +112,23 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
         <Badge
           type="neutralHighlight"
-          content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : 'From'}
+          content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : infoType === 'swap' ? 'Swap' : 'From'}
           floatRight
           minWidth={60}
         />
 
         {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
-        <AmountCell color={amountTextColor}>
+        <AmountCell>
           {assets.map(({ id, amount, symbol, decimals }) => (
             <Amount
               key={id}
               value={amount}
-              prefix={amountSign}
+              highlight={!isMoved}
+              showPlusMinus={!isMoved}
+              color={isMoved ? theme.font.secondary : undefined}
               suffix={symbol}
               decimals={decimals}
-              unknownToken={!symbol}
+              isUnknownToken={!symbol}
             />
           ))}
         </AmountCell>
@@ -187,11 +188,10 @@ const BlockRewardInputLabel = styled(BlockRewardLabel)`
   text-align: center;
 `
 
-const AmountCell = styled.span<{ color: string }>`
+const AmountCell = styled.span`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  color: ${({ color }) => color};
   font-weight: 600;
 `
 
