@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
 import { FC } from 'react'
@@ -94,7 +93,7 @@ const AddressLinkBase = ({
         value={amount.amount}
         suffix={assetInfo?.symbol}
         decimals={assetInfo?.decimals}
-        unknownToken={amount.id !== ALPH.id && !assetInfo?.symbol} // ALPH ID isn't part of token list for now?
+        isUnknownToken={!assetInfo?.symbol}
       />
     )
   }

@@ -52,7 +52,7 @@ export const lightTheme: DefaultTheme = {
   },
   global: {
     accent: '#5981f3',
-    complementary: '#FF5D51',
+    complementary: '#d969bf',
     alert: '#ed4a34',
     warning: '#FFB800',
     valid: '#0ea670',
@@ -92,7 +92,7 @@ export const darkTheme: DefaultTheme = {
   },
   global: {
     accent: '#598BED',
-    complementary: '#FF5D51',
+    complementary: '#eb88d6',
     alert: '#ed4a34',
     warning: '#FFB800',
     valid: '#45d5ab',
