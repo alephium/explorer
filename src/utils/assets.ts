@@ -21,4 +21,4 @@ import TokensMetadata, { ALPH } from '@alephium/token-list'
 import { NetworkType } from '@/types/network'
 
 export const getAssetInfo = ({ assetId, networkType }: { assetId: string; networkType: NetworkType }) =>
-  assetId === ALPH.id ? ALPH : TokensMetadata[networkType].tokens.find((tm) => tm.id === assetId)
+  assetId === ALPH.id ? ALPH : TokensMetadata[networkType].tokens.tokens.find((tm) => tm.id === assetId)
