@@ -53,7 +53,7 @@ export default styled(AssetLogo)`
   ${({ asset, theme }) =>
     asset.id === ALPH.id
       ? css`
-          padding: 5px;
+          padding: 0.2rem;
           background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
         `
       : !asset.logoURI &&
