@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressToGroup, calculateAmountWorth, getHumanReadableError, TOTAL_NUMBER_OF_GROUPS } from '@alephium/sdk'
+import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
+import { groupOfAddress } from '@alephium/web3'
 import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
@@ -154,7 +155,7 @@ const TransactionInfoPage = () => {
 
   if (!id) return null
 
-  const addressGroup = addressToGroup(id, TOTAL_NUMBER_OF_GROUPS)
+  const addressGroup = groupOfAddress(id)
 
   const totalBalance = addressData?.details.balance
   const lockedBalance = addressData?.details.lockedBalance
