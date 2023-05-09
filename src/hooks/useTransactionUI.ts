@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TransactionInfoType } from '@alephium/sdk'
 import { colord } from 'colord'
-import { ArrowDown, ArrowLeftRight, ArrowUp, ArrowUpDown, CircleEllipsis } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat } from 'lucide-react'
 import { useTheme } from 'styled-components'
 
 export const useTransactionUI = (infoType: TransactionInfoType) => {
@@ -37,21 +37,21 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       out: ArrowUp,
       move: ArrowLeftRight,
       pending: CircleEllipsis,
-      swap: ArrowUpDown
+      swap: Repeat
     }[infoType],
     iconColor: {
       in: theme.global.valid,
       out: theme.font.highlight,
       move: theme.font.secondary,
       pending: theme.font.secondary,
-      swap: theme.font.secondary
+      swap: theme.global.complementary
     }[infoType],
     iconBgColor: {
       in: colord(theme.global.valid).alpha(0.12).toRgbString(),
       out: colord(theme.font.highlight).alpha(0.12).toRgbString(),
       move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.12).toRgbString(),
-      swap: colord(theme.font.secondary).alpha(0.12).toRgbString()
+      swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
     }[infoType]
   }
 }

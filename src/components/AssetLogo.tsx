@@ -36,7 +36,7 @@ const AssetLogo = ({ asset, size, showTooltip, className }: AssetLogoProps) => (
     ) : asset.id === ALPH.id ? (
       <LogoImage src={AlephiumLogoSVG} />
     ) : (
-      <Ghost size={size * 0.7} />
+      <Ghost size={size * 0.6} />
     )}
   </div>
 )
