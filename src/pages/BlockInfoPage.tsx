@@ -20,7 +20,7 @@ import { APIError } from '@alephium/sdk'
 import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
 import { ArrowRight } from 'lucide-react'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
