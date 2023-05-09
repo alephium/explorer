@@ -33,6 +33,8 @@ export default defineConfig({
       define: {
         global: 'globalThis'
       },
+      target: 'es2020',
+      supported: { bigint: true },
       // Enable esbuild polyfill plugins
       plugins: [
         NodeGlobalsPolyfillPlugin({
@@ -42,6 +44,9 @@ export default defineConfig({
       ]
     },
     include: ['@alephium/sdk'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
+  },
+  build: {
+    target: 'es2020'
   },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
   test: {
