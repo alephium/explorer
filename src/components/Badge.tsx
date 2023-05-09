@@ -27,18 +27,14 @@ interface BadgeProps {
   type: BadgeType
   content?: JSX.Element | string | undefined
   amount?: string | bigint | undefined
-  prefix?: string
   inline?: boolean
   floatRight?: boolean
   minWidth?: number
   className?: string
 }
 
-const Badge = ({ content, className, amount, prefix }: BadgeProps) => (
-  <div className={className}>
-    {prefix && <span>{prefix}</span>}
-    {amount ? <Amount value={BigInt(amount)} /> : content}
-  </div>
+const Badge = ({ content, className, amount }: BadgeProps) => (
+  <div className={className}>{amount ? <Amount value={BigInt(amount)} /> : content}</div>
 )
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
