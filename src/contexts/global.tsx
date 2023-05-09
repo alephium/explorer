@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExplorerClient } from '@alephium/sdk'
-import { createContext, FC, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { ThemeType } from '@/styles/themes'
@@ -71,7 +71,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
       console.info(`
         • DEVELOPMENT MODE •
 
-        Using local env. variables if available. 
+        Using local env. variables if available.
         You can set them using a .env file placed at the project's root.
 
         - Backend URL: ${url}

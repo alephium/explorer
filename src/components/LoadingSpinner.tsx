@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Loader } from 'lucide-react'
-import { CSSProperties, FC } from 'react'
+import { CSSProperties } from 'react'
 import styled from 'styled-components'
 
 interface LoadingSpinnerProps {

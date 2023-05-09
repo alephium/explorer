@@ -16,15 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
+type LucideIconType = (props: LucideProps) => JSX.Element
 
-const NotificationBar: FC<{ className?: string }> = ({ className, children }) => (
-  <div className={className}>{children}</div>
-)
-
-export default styled(NotificationBar)`
-  width: 100%;
-  font-size: 1rem;
-  text-align: center;
-  padding: 20px;
-`
+type FC<P = unknown> = React.FC<React.PropsWithChildren<P>>
