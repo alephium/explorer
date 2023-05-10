@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TransactionDirection, TransactionInfoType } from '@alephium/sdk'
 import { AddressBalance, Token } from '@alephium/sdk/api/explorer'
 import { TokenInfo } from '@alephium/token-list'
+import { Optional } from '@alephium/web3'
 import { Output } from '@alephium/web3/dist/src/api/api-explorer'
-
-import { PartialBy } from '@/types/generics'
 
 // TODO: Add in SDK?
 export type TokenBalances = AddressBalance & { id: Token['id'] }
@@ -34,13 +33,13 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
 }
 
 // TODO: Add in SDK?
-export type Asset = TokenDisplayBalances & PartialBy<TokenInfo, 'symbol' | 'name'>
+export type Asset = TokenDisplayBalances & Optional<TokenInfo, 'symbol' | 'name'>
 
 // TODO: Add in SDK?
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 
 // TODO: Add to SDK?
-export type TransactionInfoAsset = PartialBy<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
+export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
   Required<AssetAmount>
 
 // TODO: Add to SDK?
