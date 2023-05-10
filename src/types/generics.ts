@@ -17,6 +17,3 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 export type OnOff = 'on' | 'off'
-
-// TODO: Add in SDK?
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
