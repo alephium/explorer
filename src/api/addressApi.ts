@@ -24,7 +24,8 @@ export const fetchAddressData = async (
   client: ExplorerProvider,
   addressHash: AddressHash
 ): Promise<AddressDataResult> => {
-  const details = await client.addresses.getAddressesAddress(addressHash)
+  const balances = await client.addresses.getAddressesAddressBalance(addressHash)
+  const txNumber = await client.addresses.getAddressesAddressTotalTransactions(addressHash)
   const tokenIds = await client.addresses.getAddressesAddressTokens(addressHash)
 
   const tokens = await Promise.all(
@@ -38,7 +39,10 @@ export const fetchAddressData = async (
 
   return {
     hash: addressHash,
-    details,
+    details: {
+      ...balances,
+      txNumber
+    },
     tokens
   }
 }
