@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { AssetOutput, BlockEntryLite, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
+import { explorer } from '@alephium/web3'
 import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -51,10 +51,10 @@ const BlockInfoPage = () => {
   const { client } = useGlobalContext()
   const navigate = useNavigate()
 
-  const [blockInfo, setBlockInfo] = useState<BlockEntryLite>()
+  const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
   const [blockInfoError, setBlockInfoError] = useState('')
   const [blockInfoStatus, setBlockInfoStatus] = useState<number>()
-  const [txList, setTxList] = useState<Transaction[]>()
+  const [txList, setTxList] = useState<explorer.Transaction[]>()
   const [txListStatus, setTxListStatus] = useState<number>()
 
   const [infoLoading, setInfoLoading] = useState(true)
@@ -68,9 +68,8 @@ const BlockInfoPage = () => {
       if (!client || !id) return
       setInfoLoading(true)
       try {
-        const { data, status } = await client.blocks.getBlocksBlockHash(id)
+        const data = await client.blocks.getBlocksBlockHash(id)
         if (data) setBlockInfo(data)
-        setBlockInfoStatus(status)
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
@@ -89,11 +88,10 @@ const BlockInfoPage = () => {
       if (!client || !id) return
       setTxLoading(true)
       try {
-        const { data, status } = await client.blocks.getBlocksBlockHashTransactions(id, {
+        const data = await client.blocks.getBlocksBlockHashTransactions(id, {
           page: currentPageNumber
         })
         if (data) setTxList(data)
-        setTxListStatus(status)
       } catch (e) {
         console.error(e)
         const { status } = e as APIError
@@ -111,7 +109,7 @@ const BlockInfoPage = () => {
 
     const redirectToTransactionIfExists = async () => {
       try {
-        const { data } = await client.transactions.getTransactionsTransactionHash(id)
+        const data = await client.transactions.getTransactionsTransactionHash(id)
         if (data) navigate(`/transactions/${id}`)
       } catch (error) {
         console.error(error)
@@ -121,7 +119,7 @@ const BlockInfoPage = () => {
     redirectToTransactionIfExists()
   }, [blockInfo, id, client, blockInfoError, navigate])
 
-  return !infoLoading && (!blockInfo || blockInfoStatus !== 200) ? (
+  return !infoLoading && (!blockInfo || (blockInfoStatus && blockInfoStatus !== 200)) ? (
     <InlineErrorMessage message={blockInfoError} code={blockInfoStatus} />
   ) : (
     <Section>
@@ -157,7 +155,7 @@ const BlockInfoPage = () => {
       </Table>
 
       {blockInfo?.mainChain ? (
-        !txLoading && (!txList || txListStatus !== 200) ? (
+        !txLoading && (!txList || (txListStatus && txListStatus !== 200)) ? (
           <InlineErrorMessage message="An error occured while fetching transactions" code={txListStatus} />
         ) : (
           <>
@@ -197,12 +195,12 @@ const BlockInfoPage = () => {
 }
 
 interface TransactionRowProps {
-  transaction: Transaction
+  transaction: explorer.Transaction
 }
 
 const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   const t = transaction
-  const outputs = t.outputs as AssetOutput[]
+  const outputs = t.outputs as explorer.AssetOutput[]
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
 
   const totalAmount = outputs?.reduce<bigint>((acc, o) => acc + BigInt(o.attoAlphAmount), BigInt(0))

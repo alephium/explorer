@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { APIError } from '@alephium/sdk'
-import { AssetOutput, BlockEntryLite, Output, PerChainHeight, Transaction } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
+import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -51,9 +51,9 @@ type ParamTypes = {
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, networkType } = useGlobalContext()
-  const [txInfo, setTxInfo] = useState<Transaction>()
-  const [txBlock, setTxBlock] = useState<BlockEntryLite>()
-  const [txChain, setTxChain] = useState<PerChainHeight>()
+  const [txInfo, setTxInfo] = useState<explorer.Transaction>()
+  const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
+  const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -66,22 +66,20 @@ const TransactionInfoPage = () => {
       setLoading(true)
 
       try {
-        const { data, status } = await client.transactions.getTransactionsTransactionHash(id)
-        const tx = data as Transaction
+        const data = await client.transactions.getTransactionsTransactionHash(id)
+        const tx = data as explorer.Transaction
 
         if (tx) setTxInfo(tx)
 
-        setTxInfoStatus(status)
-
         if (!isTxConfirmed(tx)) return
 
-        const { data: block } = await client.blocks.getBlocksBlockHash(tx.blockHash)
-        const { data: chainHeights } = await client.infos.getInfosHeights()
+        const block = await client.blocks.getBlocksBlockHash(tx.blockHash)
+        const chainHeights = await client.infos.getInfosHeights()
 
         setTxBlock(block)
 
         const chain = chainHeights.find(
-          (c: PerChainHeight) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
+          (c: explorer.PerChainHeight) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
         )
 
         setTxChain(chain)
@@ -117,10 +115,10 @@ const TransactionInfoPage = () => {
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<Output> | undefined = txInfo?.outputs
+  const outputs: Array<explorer.Output> | undefined = txInfo?.outputs
 
   const totalAmount = outputs?.reduce<bigint>(
-    (acc, o) => acc + BigInt((o as Output).attoAlphAmount ?? (o as AssetOutput).attoAlphAmount),
+    (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
     BigInt(0)
   )
 
@@ -267,9 +265,10 @@ const TransactionInfoPage = () => {
   )
 }
 
-const isTxConfirmed = (tx: Transaction): tx is Transaction => (tx as Transaction).blockHash !== undefined
+const isTxConfirmed = (tx: explorer.Transaction): tx is explorer.Transaction =>
+  (tx as explorer.Transaction).blockHash !== undefined
 
-const computeConfirmations = (txBlock?: BlockEntryLite, txChain?: PerChainHeight): number => {
+const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
   let confirmations = 0
 
   if (txBlock && txChain) {

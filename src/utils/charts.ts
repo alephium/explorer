@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { IntervalType } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 
 import { formatNumberForDisplay } from './strings'
@@ -35,12 +35,12 @@ export const formatYAxis =
   }
 
 export const formatXAxis =
-  (type: XAxisType, timeInterval: IntervalType) =>
+  (type: XAxisType, timeInterval: explorer.IntervalType) =>
   (value: string | string[]): string => {
     const _value = Array.isArray(value) ? (value.length > 0 ? value[0] : '') : value
     if (type === 'datetime') {
       if (typeof _value == 'string' || typeof _value == 'number') {
-        return timeInterval === IntervalType.Daily ? dayjs(_value).format('D') : dayjs(_value).format('hh')
+        return timeInterval === explorer.IntervalType.Daily ? dayjs(_value).format('D') : dayjs(_value).format('hh')
       }
     }
     return _value

@@ -16,19 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressInfo, Transaction } from '@alephium/sdk/api/explorer'
-
-import { TokenBalances } from './assets'
+import { TokenBalances } from '@alephium/sdk'
+import { explorer } from '@alephium/web3'
 
 export type AddressHash = string
 
 export type AddressDataResult = {
   hash: AddressHash
-  details: AddressInfo
+  details: explorer.AddressInfo
   tokens: TokenBalances[]
 }
 
 export type AddressTransactionsResult = {
   addressHash: AddressHash
-  transactions: Transaction[]
+  transactions: explorer.Transaction[]
 }

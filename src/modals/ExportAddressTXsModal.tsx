@@ -53,7 +53,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
     })
 
     try {
-      const res = await client?.addresses.getAddressesAddressExportTransactionsCsv(
+      const data = await client?.addresses.getAddressesAddressExportTransactionsCsv(
         addressHash,
         {
           fromTs: timePeriods[timePeriodValue].from,
@@ -65,9 +65,9 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
         }
       )
 
-      if (!res?.data) throw 'Something wrong happened while fetching the data.'
+      if (!data) throw 'Something wrong happened while fetching the data.'
 
-      startCSVFileDownload(res.data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
+      startCSVFileDownload(data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
 
       setSnackbarMessage({
         text: 'Your CSV has been successfully downloaded.',

@@ -8,9 +8,9 @@
   },
   "homepage": "/",
   "dependencies": {
-    "@alephium/sdk": "0.6.4",
+    "@alephium/sdk": "0.7.0-rc.2",
     "@alephium/token-list": "^0.0.7",
-    "@alephium/web3": "0.11.2",
+    "@alephium/web3": "0.12.0",
     "apexcharts": "^3.35.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",

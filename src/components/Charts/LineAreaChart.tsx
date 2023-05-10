@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { IntervalType } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import { colord } from 'colord'
 import dayjs from 'dayjs'
 import Chart from 'react-apexcharts'
@@ -36,7 +36,7 @@ interface LineAreaChartProps {
   colors: [string, string]
   yAxisType: YAxisType
   xAxisType: XAxisType
-  timeInterval: IntervalType
+  timeInterval: explorer.IntervalType
   unit: string
 }
 
@@ -130,7 +130,7 @@ const LineAreaChart = ({
               border-bottom: 1px solid ${theme.border.secondary};
             ">
               ${
-                timeInterval === IntervalType.Daily
+                timeInterval === explorer.IntervalType.Daily
                   ? dayjs(new Date(categories[dataPointIndex])).format('DD/MM/YYYY')
                   : dayjs(categories[dataPointIndex]).format('ddd, hh:ss')
               }

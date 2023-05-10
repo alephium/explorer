@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { HttpResponse, IntervalType } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -47,13 +47,15 @@ type StatsVectorData = { [key in StatVectorKeys]: StatVector }
 const statScalarDefault = { value: 0, isLoading: true }
 const statVectorDefault = { value: { categories: [], series: [] }, isLoading: true }
 
-const getTimeIntervals = (timeInterval: IntervalType) => ({
+const getTimeIntervals = (timeInterval: explorer.IntervalType) => ({
   from:
-    timeInterval === IntervalType.Daily ? dayjs().subtract(1, 'month').valueOf() : dayjs().subtract(2, 'day').valueOf(),
+    timeInterval === explorer.IntervalType.Daily
+      ? dayjs().subtract(1, 'month').valueOf()
+      : dayjs().subtract(2, 'day').valueOf(),
   to: dayjs().valueOf()
 })
 
-const useStatisticsData = (timeInterval: IntervalType) => {
+const useStatisticsData = (timeInterval: explorer.IntervalType) => {
   const { client } = useGlobalContext()
 
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
@@ -81,30 +83,26 @@ const useStatisticsData = (timeInterval: IntervalType) => {
   const fetchStatistics = useCallback(() => {
     if (!client) return
 
-    const fetchAndUpdateStatsScalar = async (
-      key: StatScalarKeys,
-      fetchCall: () => Promise<HttpResponse<string | number>>
-    ) => {
-      await fetchCall()
-        .then((res) => res.text())
-        .then((text) => updateStatsScalar(key, parseInt(text)))
+    const fetchAndUpdateStatsScalar = async (key: StatScalarKeys, fetchCall: () => Promise<number>) => {
+      const num = await fetchCall()
+      updateStatsScalar(key, num)
     }
 
     const fetchHashrateData = async () => {
       const now = new Date().getTime()
       const yesterday = now - ONE_DAY
 
-      const { data } = await client.charts.getChartsHashrates({
+      const data = await client.charts.getChartsHashrates({
         fromTs: yesterday,
         toTs: now,
-        'interval-type': IntervalType.Hourly
+        'interval-type': explorer.IntervalType.Hourly
       })
 
       if (data && data.length > 0) updateStatsScalar('hashrate', Number(data[data.length - 1].value))
     }
 
     const fetchBlocksData = async () => {
-      const { data } = await client.infos.getInfosHeights()
+      const data = await client.infos.getInfosHeights()
       if (data && data.length > 0)
         updateStatsScalar(
           'totalBlocks',
@@ -113,14 +111,14 @@ const useStatisticsData = (timeInterval: IntervalType) => {
     }
 
     const fetchAvgBlockTimeData = async () => {
-      const { data } = await client.infos.getInfosAverageBlockTimes()
+      const data = await client.infos.getInfosAverageBlockTimes()
       if (data && data.length > 0)
         updateStatsScalar('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
     }
 
     const fetchTxVectorData = async () => {
       const timeIntervals = getTimeIntervals(timeInterval)
-      const { data } = await client.charts.getChartsTransactionsCount({
+      const data = await client.charts.getChartsTransactionsCount({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
         'interval-type': timeInterval
@@ -145,7 +143,7 @@ const useStatisticsData = (timeInterval: IntervalType) => {
     const fetchHashrateVectorData = async () => {
       const timeIntervals = getTimeIntervals(timeInterval)
 
-      const { data } = await client.charts.getChartsHashrates({
+      const data = await client.charts.getChartsHashrates({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
         'interval-type': timeInterval
