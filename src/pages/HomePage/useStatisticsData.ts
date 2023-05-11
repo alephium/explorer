@@ -83,9 +83,9 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
   const fetchStatistics = useCallback(() => {
     if (!client) return
 
-    const fetchAndUpdateStatsScalar = async (key: StatScalarKeys, fetchCall: () => Promise<number>) => {
-      const num = await fetchCall()
-      updateStatsScalar(key, num)
+    const fetchAndUpdateStatsScalar = async (key: StatScalarKeys, fetchCall: () => Promise<string>) => {
+      const result = await fetchCall()
+      if (result) updateStatsScalar(key, parseInt(result))
     }
 
     const fetchHashrateData = async () => {
