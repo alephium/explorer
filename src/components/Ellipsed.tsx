@@ -29,9 +29,7 @@ const createHandleResize =
   () => {
     if (el?.current === null) return
 
-    if (charWidth.current === undefined) {
-      charWidth.current = el.current.scrollWidth / text.length
-    }
+    charWidth.current = el.current.scrollWidth / text.length
 
     const visibleChars = Math.floor(el.current.clientWidth / charWidth.current)
     const half = visibleChars / 2
@@ -39,9 +37,9 @@ const createHandleResize =
     setText(
       visibleChars >= text.length
         ? text
-        : text.slice(0, Math.floor(half)) +
-            (visibleChars == text.length ? '' : '...') +
-            text.slice(-Math.ceil(half) + 3)
+        : text.slice(0, Math.floor(half) - 2) +
+            (visibleChars === text.length ? '' : '...') +
+            text.slice(-Math.ceil(half) + 2)
     )
   }
 
