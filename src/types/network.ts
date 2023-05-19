@@ -18,4 +18,4 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 export const networkTypes = ['testnet', 'mainnet'] as const
 
-export type NetworkType = typeof networkTypes[number]
+export type NetworkType = (typeof networkTypes)[number]
