@@ -16,17 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TransactionDirection, TransactionInfoType } from '@alephium/sdk'
 import { AddressBalance, Token } from '@alephium/sdk/api/explorer'
 import { TokenInfo } from '@alephium/token-list'
+import { Optional } from '@alephium/web3'
+import { Output } from '@alephium/web3/dist/src/api/api-explorer'
 
+// TODO: Add in SDK?
 export type TokenBalances = AddressBalance & { id: Token['id'] }
 
+// TODO: Add in SDK?
 // Same as TokenBalances, but amounts are in BigInt, useful for display purposes
 export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
   balance: bigint
   lockedBalance: bigint
 }
 
-export type Asset = TokenDisplayBalances & TokenInfo
+// TODO: Add in SDK?
+export type Asset = TokenDisplayBalances & Optional<TokenInfo, 'symbol' | 'name'>
 
+// TODO: Add in SDK?
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
+
+// TODO: Add to SDK?
+export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
+  Required<AssetAmount>
+
+// TODO: Add to SDK?
+export type TransactionInfo = {
+  assets: TransactionInfoAsset[]
+  direction: TransactionDirection
+  infoType: TransactionInfoType
+  outputs: Output[]
+  lockTime?: Date
+}
