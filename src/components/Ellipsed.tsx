@@ -57,14 +57,12 @@ const Ellipsed = ({ text, className }: EllipsedProps) => {
 
   useEffect(() => {
     handleResize()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text])
+  }, [handleResize, text])
 
   useEffect(() => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [handleResize])
 
   return (
     <div ref={el} key={text} className={className} data-tip={text}>
