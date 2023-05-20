@@ -207,10 +207,12 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <span>Assets</span>
                   <AssetLogos>
-                    {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
-                    {tokenInfos.map((i) => (
-                      <AssetLogo key={i.id} asset={i} size={20} showTooltip />
-                    ))}
+                    <>
+                      {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
+                      {tokenInfos.map((i) => (
+                        <AssetLogo key={i.id} asset={i} size={20} showTooltip />
+                      ))}
+                    </>
                   </AssetLogos>
                 </TableRow>
               )}

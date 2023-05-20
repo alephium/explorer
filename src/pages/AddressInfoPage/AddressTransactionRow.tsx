@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Transaction } from '@alephium/sdk/api/explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
-import { FC } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'

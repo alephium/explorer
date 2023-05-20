@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { createContext, FC, useContext, useEffect } from 'react'
+import { createContext, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { SectionContext } from '../Section'

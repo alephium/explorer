@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { createContext, useEffect } from 'react'
-import { FC } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 

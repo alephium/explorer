@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
-import { FC } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 

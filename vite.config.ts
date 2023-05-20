@@ -18,35 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /// <reference types="vitest" />
 
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  optimizeDeps: {
-    esbuildOptions: {
-      // Node.js global to browser globalThis
-      define: {
-        global: 'globalThis'
-      },
-      target: 'es2020',
-      supported: { bigint: true },
-      // Enable esbuild polyfill plugins
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          buffer: true
-        }),
-        NodeModulesPolyfillPlugin()
-      ]
-    },
-    include: ['@alephium/sdk'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
-  },
-  build: {
-    target: 'es2020'
+  resolve: {
+    alias: {
+      events: 'rollup-plugin-node-polyfills/polyfills/events'
+    }
   },
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
   test: {

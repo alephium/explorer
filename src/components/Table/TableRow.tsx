@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { Children, FC } from 'react'
+import { Children } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
