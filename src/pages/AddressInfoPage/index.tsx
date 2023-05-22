@@ -142,7 +142,7 @@ const TransactionInfoPage = () => {
 
     const fetch = async () => {
       setLoadings((p) => ({ ...p, assets: true }))
-      setAddressBalance(undefined)
+      setAddressAssets(undefined)
       try {
         const assets = await fetchAddressAssets(client, id)
         setAddressAssets(assets)
@@ -262,9 +262,7 @@ const TransactionInfoPage = () => {
           />
           <InfoGrid.Cell
             label="Nb. of transactions"
-            value={
-              txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.transactions ? 0 : undefined
-            }
+            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.txNumber ? 0 : undefined}
           />
           <InfoGrid.Cell label="Nb. of assets" value={!loadings.assets ? assets.length : undefined} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />

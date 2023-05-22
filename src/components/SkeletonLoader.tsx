@@ -16,16 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CSSProperties } from 'react'
 import styled from 'styled-components'
 
-export default styled.div<{ heightInPx: number }>`
-  min-height: ${({ heightInPx }) => heightInPx}px;
+interface SkeletonLoaderProps {
+  height?: string
+  width?: string
+  style?: CSSProperties
+  className?: string
+}
+
+const SkeletonLoader = ({ className, style }: SkeletonLoaderProps) => (
+  <div className={className} style={style}>
+    <AnimatedBackground />
+  </div>
+)
+
+export default styled(SkeletonLoader)`
+  background-color: rgba(255, 255, 255, 0.05);
+  width: ${({ width }) => width || '100%'};
+  height: ${({ height }) => height || '20px'};
+  border-radius: 9px;
+  overflow: hidden;
+`
+
+const AnimatedBackground = styled.div`
   width: 100%;
-  border-radius: 12px;
-  backdrop-filter: blur(20px);
-  border: ${({ theme }) => `1px solid ${theme.border.secondary}`};
-  background: ${({ theme }) => theme.bg.primary};
-  background: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
+  height: 100%;
+
+  background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
   background-size: 400% 400%;
   animation: gradientAnimation 1.5s ease-in-out infinite;
 
