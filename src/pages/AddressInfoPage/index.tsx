@@ -26,7 +26,12 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { fetchAddressData, fetchAddressTransactions } from '@/api/addressApi'
+import {
+  fetchAddressAssets,
+  fetchAddressBalance,
+  fetchAddressTransactionNumber,
+  fetchAddressTransactions
+} from '@/api/addressApi'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -44,7 +49,12 @@ import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
+import {
+  AddressAssetsResult,
+  AddressBalanceResult,
+  AddressTransactionNumberResult,
+  AddressTransactionsResult
+} from '@/types/addresses'
 import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
@@ -61,12 +71,18 @@ const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
 
-  const [addressData, setAddressData] = useState<AddressDataResult>()
+  const [addressBalance, setAddressBalance] = useState<AddressBalanceResult>()
+  const [addressTransactionNumber, setAddressTransactionNumber] = useState<AddressTransactionNumberResult>()
+  const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
   const [addressTransactions, setAddressTransactions] = useState<AddressTransactionsResult>()
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
 
-  const [addressDataLoading, setAddressDataLoading] = useState(true)
-  const [txLoading, setTxLoading] = useState(true)
+  const [loadings, setLoadings] = useState({
+    balance: true,
+    txNumber: true,
+    assets: true,
+    transactions: true
+  })
 
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
 
@@ -79,19 +95,19 @@ const TransactionInfoPage = () => {
     if (!client || !id) return
 
     const fetch = async () => {
-      setAddressDataLoading(true)
-      setAddressData(undefined)
+      setLoadings((p) => ({ ...p, balance: true }))
+      setAddressBalance(undefined)
       try {
-        const addressData = await fetchAddressData(client, id)
-        setAddressData(addressData)
+        const balance = await fetchAddressBalance(client, id)
+        setAddressBalance(balance)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching address data'),
+          text: getHumanReadableError(error, 'Error while fetching address balance'),
           type: 'alert'
         })
       } finally {
-        setAddressDataLoading(false)
+        setLoadings((p) => ({ ...p, balance: false }))
       }
     }
 
@@ -102,7 +118,53 @@ const TransactionInfoPage = () => {
     if (!client || !id) return
 
     const fetch = async () => {
-      setTxLoading(true)
+      setLoadings((p) => ({ ...p, txNumber: true }))
+      setAddressBalance(undefined)
+      try {
+        const txNumber = await fetchAddressTransactionNumber(client, id)
+        setAddressTransactionNumber(txNumber)
+      } catch (error) {
+        console.error(error)
+        setSnackbarMessage({
+          text: getHumanReadableError(error, "Error while fetching address' transaction number"),
+          type: 'alert'
+        })
+      } finally {
+        setLoadings((p) => ({ ...p, txNumber: false }))
+      }
+    }
+
+    fetch()
+  }, [client, id, setSnackbarMessage])
+
+  useEffect(() => {
+    if (!client || !id) return
+
+    const fetch = async () => {
+      setLoadings((p) => ({ ...p, assets: true }))
+      setAddressBalance(undefined)
+      try {
+        const assets = await fetchAddressAssets(client, id)
+        setAddressAssets(assets)
+      } catch (error) {
+        console.error(error)
+        setSnackbarMessage({
+          text: getHumanReadableError(error, "Error while fetching address' assets"),
+          type: 'alert'
+        })
+      } finally {
+        setLoadings((p) => ({ ...p, assets: false }))
+      }
+    }
+
+    fetch()
+  }, [client, id, setSnackbarMessage])
+
+  useEffect(() => {
+    if (!client || !id) return
+
+    const fetch = async () => {
+      setLoadings((p) => ({ ...p, transactions: true }))
       setAddressTransactions(undefined)
       try {
         const firstPageTransactionData = await fetchAddressTransactions(client, id, 1)
@@ -117,7 +179,7 @@ const TransactionInfoPage = () => {
           type: 'alert'
         })
       } finally {
-        setTxLoading(false)
+        setLoadings((p) => ({ ...p, transactions: false }))
       }
     }
 
@@ -131,7 +193,7 @@ const TransactionInfoPage = () => {
 
     const getAddressWorth = async () => {
       try {
-        const balance = addressData?.details.balance
+        const balance = addressBalance?.balance
         if (!balance) return
 
         const price = await fetchAssetPrice('alephium')
@@ -147,7 +209,7 @@ const TransactionInfoPage = () => {
     }
 
     getAddressWorth()
-  }, [addressData?.details.balance, setSnackbarMessage])
+  }, [addressBalance?.balance, setSnackbarMessage])
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
@@ -156,16 +218,16 @@ const TransactionInfoPage = () => {
 
   const addressGroup = groupOfAddress(id)
 
-  const totalBalance = addressData?.details.balance
-  const lockedBalance = addressData?.details.lockedBalance
-  const txNumber = addressData?.details.txNumber
+  const totalBalance = addressBalance?.balance
+  const lockedBalance = addressBalance?.lockedBalance
+  const txNumber = addressTransactionNumber?.txNumber
   const txList = addressTransactions?.transactions
 
-  const assets = (addressData?.tokens.map((t) => ({
-    ...t,
-    balance: BigInt(t.balance),
-    lockedBalance: BigInt(t.lockedBalance),
-    ...getAssetInfo({ assetId: t.id, networkType })
+  const assets = (addressAssets?.assets.map((a) => ({
+    ...a,
+    balance: BigInt(a.balance),
+    lockedBalance: BigInt(a.lockedBalance),
+    ...getAssetInfo({ assetId: a.id, networkType })
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
@@ -200,16 +262,18 @@ const TransactionInfoPage = () => {
           />
           <InfoGrid.Cell
             label="Nb. of transactions"
-            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !addressDataLoading ? 0 : undefined}
+            value={
+              txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.transactions ? 0 : undefined
+            }
           />
-          <InfoGrid.Cell label="Nb. of assets" value={!addressDataLoading ? assets.length : undefined} />
+          <InfoGrid.Cell label="Nb. of assets" value={!loadings.assets ? assets.length : undefined} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
             value={
               addressLatestActivity ? (
                 <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
-              ) : !txLoading ? (
+              ) : !loadings.transactions ? (
                 'No activity yet'
               ) : undefined
             }
@@ -224,7 +288,7 @@ const TransactionInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList assets={sortBy(assets, 'name')} isLoading={addressDataLoading} />
+      <AssetList assets={sortBy(assets, 'name')} isLoading={loadings.assets} />
 
       <SectionHeader>
         <h2>Transactions</h2>
@@ -236,7 +300,7 @@ const TransactionInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={txLoading}>
+      <Table hasDetails main scrollable isLoading={loadings.transactions}>
         {txList?.length ? (
           <>
             <TableHeader
