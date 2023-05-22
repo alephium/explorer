@@ -48,20 +48,19 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
 
   return (
     <div className={className}>
+      <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
       {isLoading ? (
-        <SkeletonLoader heightInPx={250} />
+        <EmptyListContainer>
+          <SkeletonLoader height="60px" />
+          <SkeletonLoader height="60px" />
+        </EmptyListContainer>
       ) : assets && assets?.length > 0 ? (
-        <>
-          <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-          {
-            {
-              tokens: <TokenList limit={limit} assets={assets} />,
-              nfts: <NFTList />
-            }[currentTab.value]
-          }
-        </>
+        {
+          tokens: <TokenList limit={limit} assets={assets} />,
+          nfts: <NFTList />
+        }[currentTab.value]
       ) : (
-        <NoAssetsMessage>No assets yet</NoAssetsMessage>
+        <EmptyListContainer>No assets yet</EmptyListContainer>
       )}
     </div>
   )
@@ -182,7 +181,10 @@ const NameColumn = styled(Column)`
   margin-right: 50px;
 `
 
-const NoAssetsMessage = styled.div`
+const EmptyListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
