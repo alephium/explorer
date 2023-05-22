@@ -22,6 +22,7 @@ import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'sty
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
+import TableBody from './TableBody'
 import TableRow from './TableRow'
 
 interface TableProps {
@@ -48,13 +49,21 @@ const Table: FC<TableProps> = ({ children, isLoading, ...props }) => {
     </TableWrapper>
   ) : (
     <TableWrapper {...props} ref={tableRef}>
-      <StyledTable {...props}>
-        <FakeTableHeader />
-        {['l1', 'l2', 'l3'].map((v) => (
-          <TableRow key={v}>
-            <SkeletonLoader height="50px" />
-          </TableRow>
-        ))}
+      <StyledTable {...props} minHeight={150}>
+        {!props.bodyOnly && (
+          <thead>
+            <tr>
+              <FakeTableHeader />
+            </tr>
+          </thead>
+        )}
+        <TableBody>
+          {['l1', 'l2', 'l3'].map((v) => (
+            <TableRow key={v}>
+              <SkeletonLoader height="50px" />
+            </TableRow>
+          ))}
+        </TableBody>
       </StyledTable>
     </TableWrapper>
   )
@@ -174,7 +183,7 @@ const StyledTable = styled.table<TableProps>`
   }
 `
 
-const FakeTableHeader = styled.div`
+const FakeTableHeader = styled.th`
   background-color: ${({ theme }) => theme.bg.background2};
   height: 50px;
 `
