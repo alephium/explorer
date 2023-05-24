@@ -3,8 +3,8 @@
   "version": "1.6.8",
   "private": true,
   "engines": {
-    "node": ">=14",
-    "npm": ">=7.24.2"
+    "node": ">=16",
+    "npm": ">=8"
   },
   "homepage": "/",
   "dependencies": {
