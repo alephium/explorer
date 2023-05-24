@@ -85,7 +85,7 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
 
     const fetchAndUpdateStatsScalar = async (key: StatScalarKeys, fetchCall: () => Promise<number>) => {
       const result = await fetchCall()
-      if (result) updateStatsScalar(key, result)
+      if (result) updateStatsScalar(key, typeof result === 'string' ? parseInt(result) : result)
     }
 
     const fetchHashrateData = async () => {
