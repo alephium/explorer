@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExplorerProvider, throttledFetch } from '@alephium/web3'
-import { createContext, FC, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { ThemeType } from '@/styles/themes'
