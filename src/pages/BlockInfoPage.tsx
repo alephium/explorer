@@ -52,8 +52,10 @@ const BlockInfoPage = () => {
   const navigate = useNavigate()
 
   const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
-  const [blockInfoError, setBlockInfoError] = useState('')
-  const [blockInfoStatus, setBlockInfoStatus] = useState<number>()
+  const [blockInfoError, setBlockInfoError] = useState<{
+    message: string
+    code: number
+  }>()
   const [txList, setTxList] = useState<explorer.Transaction[]>()
   const [txListStatus, setTxListStatus] = useState<number>()
 
@@ -73,8 +75,10 @@ const BlockInfoPage = () => {
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
-        setBlockInfoError(error.detail || error.message || 'Unknown error')
-        setBlockInfoStatus(status)
+        setBlockInfoError({
+          message: error.detail || error.message || 'Unknown error',
+          code: status
+        })
       }
       setInfoLoading(false)
     }
@@ -119,8 +123,8 @@ const BlockInfoPage = () => {
     redirectToTransactionIfExists()
   }, [blockInfo, id, client, blockInfoError, navigate])
 
-  return !infoLoading && (!blockInfo || (blockInfoStatus && blockInfoStatus !== 200)) ? (
-    <InlineErrorMessage message={blockInfoError} code={blockInfoStatus} />
+  return !infoLoading && !blockInfo && blockInfoError ? (
+    <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
       <SectionTitle title="Block" isLoading={infoLoading || txLoading} />
