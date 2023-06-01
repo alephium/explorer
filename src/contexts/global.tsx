@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ExplorerClient } from '@alephium/sdk'
+import { ExplorerProvider, throttledFetch } from '@alephium/web3'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
@@ -27,7 +27,7 @@ import { NetworkType, networkTypes } from '@/types/network'
 import { SnackbarMessage } from '@/types/ui'
 
 interface GlobalContextInterface {
-  client: ExplorerClient | undefined
+  client: ExplorerProvider | undefined
   networkType: NetworkType
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
@@ -50,7 +50,7 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<ExplorerClient>()
+  const [client, setClient] = useState<ExplorerProvider>()
   const [networkType, setNetworkType] = useState<NetworkType>('mainnet')
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
@@ -90,7 +90,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
     }
 
     try {
-      setClient(new ExplorerClient({ baseUrl: url }))
+      setClient(new ExplorerProvider(url, undefined, throttledFetch(5)))
     } catch (error) {
       throw new Error('Could not create explorer client')
     }

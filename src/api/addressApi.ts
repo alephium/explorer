@@ -16,20 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerClient } from '@alephium/sdk'
+import { ExplorerProvider } from '@alephium/web3'
 
 import { AddressDataResult, AddressHash, AddressTransactionsResult } from '@/types/addresses'
 
 export const fetchAddressData = async (
-  client: ExplorerClient,
+  client: ExplorerProvider,
   addressHash: AddressHash
 ): Promise<AddressDataResult> => {
-  const { data: details } = await client.getAddressDetails(addressHash)
-  const { data: tokenIds } = await client.addresses.getAddressesAddressTokens(addressHash)
+  const balances = await client.addresses.getAddressesAddressBalance(addressHash)
+  const txNumber = await client.addresses.getAddressesAddressTotalTransactions(addressHash)
+  const tokenIds = await client.addresses.getAddressesAddressTokens(addressHash)
 
   const tokens = await Promise.all(
     tokenIds.map((id) =>
-      client.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(({ data }) => ({
+      client.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
         id,
         ...data
       }))
@@ -38,17 +39,20 @@ export const fetchAddressData = async (
 
   return {
     hash: addressHash,
-    details,
+    details: {
+      ...balances,
+      txNumber
+    },
     tokens
   }
 }
 
 export const fetchAddressTransactions = async (
-  client: ExplorerClient,
+  client: ExplorerProvider,
   addressHash: AddressHash,
   page: number
 ): Promise<AddressTransactionsResult> => {
-  const { data: transactions } = await client.getAddressTransactions(addressHash, page)
+  const transactions = await client.addresses.getAddressesAddressTransactions(addressHash, { page })
 
   return {
     addressHash,

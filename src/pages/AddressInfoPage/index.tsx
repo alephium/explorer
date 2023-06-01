@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
+import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
 import { sortBy } from 'lodash'
@@ -45,7 +45,6 @@ import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressDataResult, AddressTransactionsResult } from '@/types/addresses'
-import { Asset } from '@/types/assets'
 import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 

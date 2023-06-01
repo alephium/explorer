@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addApostrophes } from '@alephium/sdk'
-import { IntervalType } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
@@ -60,7 +60,7 @@ const HomePage = () => {
 
   const [detailsCardOpen, setDetailsCardOpen] = useState<VectorStatisticsKey>()
 
-  const [timeInterval, setTimeInterval] = useState(IntervalType.Daily)
+  const [timeInterval, setTimeInterval] = useState(explorer.IntervalType.Daily)
 
   const {
     getBlocks,
@@ -102,8 +102,8 @@ const HomePage = () => {
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `Transactions per ${timeInterval === IntervalType.Daily ? 'day' : 'hour'}`,
-    hashrateVector: `Hashrate per ${timeInterval === IntervalType.Daily ? 'day' : 'hour'}`
+    txVector: `Transactions per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`,
+    hashrateVector: `Hashrate per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`
   }
 
   return (
@@ -120,14 +120,14 @@ const HomePage = () => {
             <h2>Our numbers</h2>
             <TimeIntervalSwitch>
               <TimeIntervalButton
-                isSelected={timeInterval === IntervalType.Daily}
-                onClick={() => setTimeInterval(IntervalType.Daily)}
+                isSelected={timeInterval === explorer.IntervalType.Daily}
+                onClick={() => setTimeInterval(explorer.IntervalType.Daily)}
               >
                 Daily
               </TimeIntervalButton>
               <TimeIntervalButton
-                isSelected={timeInterval === IntervalType.Hourly}
-                onClick={() => setTimeInterval(IntervalType.Hourly)}
+                isSelected={timeInterval === explorer.IntervalType.Hourly}
+                onClick={() => setTimeInterval(explorer.IntervalType.Hourly)}
               >
                 Hourly
               </TimeIntervalButton>

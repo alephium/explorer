@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import styled, { useTheme } from 'styled-components'
@@ -38,7 +38,7 @@ import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { getTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
-  transaction: Transaction
+  transaction: explorer.Transaction
   addressHash: string
 }
 

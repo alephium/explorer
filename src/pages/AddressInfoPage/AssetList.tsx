@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset } from '@alephium/sdk'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import styled, { useTheme } from 'styled-components'
@@ -27,7 +28,6 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { AddressHash } from '@/types/addresses'
-import { Asset } from '@/types/assets'
 
 interface AssetListProps {
   assets?: Asset[]

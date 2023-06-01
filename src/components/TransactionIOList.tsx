@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, Output } from '@alephium/sdk/api/explorer'
 import { ALPH } from '@alephium/token-list'
+import { explorer } from '@alephium/web3'
 import { ReactElement, ReactNode } from 'react'
 
 import { AddressLink } from './Links'
 
 interface TransactionIOListProps {
-  inputs?: Input[]
-  outputs?: Output[]
+  inputs?: explorer.Input[]
+  outputs?: explorer.Output[]
   flex?: boolean
   addressMaxWidth?: string
   IOItemWrapper?: ({ children }: { children: ReactNode }) => ReactElement
@@ -37,7 +37,7 @@ const TransactionIOList = ({
   addressMaxWidth,
   IOItemWrapper
 }: TransactionIOListProps) => {
-  const getAmounts = (io: Input | Output) => [
+  const getAmounts = (io: explorer.Input | explorer.Output) => [
     { id: ALPH.id, amount: BigInt(io.attoAlphAmount ?? 0) },
     ...(io.tokens ? io.tokens.map((t) => ({ id: t.id, amount: BigInt(t.amount) })) : [])
   ]
@@ -72,7 +72,7 @@ const TransactionIOList = ({
           : renderLink(
               <AddressLink
                 address={output.address}
-                lockTime={(output as AssetOutput).lockTime}
+                lockTime={(output as explorer.AssetOutput).lockTime}
                 amounts={getAmounts(output)}
                 maxWidth={addressMaxWidth}
                 flex={flex}

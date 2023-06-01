@@ -17,24 +17,30 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AssetAmount,
   calcTxAmountsDeltaForAddress,
   getDirection,
   isConsolidationTx,
+  isSwap,
   TransactionDirection,
+  TransactionInfo,
   TransactionInfoType
 } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { AssetOutput, Output, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer } from '@alephium/web3'
 
-import { AssetAmount, TransactionInfo } from '@/types/assets'
 import { NetworkType } from '@/types/network'
 import { getAssetInfo } from '@/utils/assets'
 
-export const getTransactionInfo = (tx: Transaction, addressHash: string, networkType: NetworkType): TransactionInfo => {
+export const getTransactionInfo = (
+  tx: explorer.Transaction,
+  addressHash: string,
+  networkType: NetworkType
+): TransactionInfo => {
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
-  let outputs: Output[] = []
+  let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
   let tokens: Required<AssetAmount>[] = []
 
@@ -56,7 +62,8 @@ export const getTransactionInfo = (tx: Transaction, addressHash: string, network
   }
 
   lockTime = outputs.reduce(
-    (a, b) => (a > new Date((b as AssetOutput).lockTime ?? 0) ? a : new Date((b as AssetOutput).lockTime ?? 0)),
+    (a, b) =>
+      a > new Date((b as explorer.AssetOutput).lockTime ?? 0) ? a : new Date((b as explorer.AssetOutput).lockTime ?? 0),
     new Date(0)
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
@@ -71,13 +78,4 @@ export const getTransactionInfo = (tx: Transaction, addressHash: string, network
     outputs,
     lockTime
   }
-}
-
-// TODO: Add in SDK?
-const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]) => {
-  const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
-  const allAmountsArePositive = allAmounts.every((amount) => amount >= 0)
-  const allAmountsAreNegative = allAmounts.every((amount) => amount <= 0)
-
-  return !allAmountsArePositive && !allAmountsAreNegative
 }

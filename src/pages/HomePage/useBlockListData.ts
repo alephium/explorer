@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ListBlocks } from '@alephium/sdk/api/explorer'
+import { explorer } from '@alephium/web3'
 import { useCallback, useEffect, useState } from 'react'
 
 import { useGlobalContext } from '@/contexts/global'
 
 const useBlockListData = (currentPageNumber: number) => {
-  const [blockList, setBlockList] = useState<ListBlocks>()
+  const [blockList, setBlockList] = useState<explorer.ListBlocks>()
   const [manualLoading, setManualLoading] = useState(false)
   const [page, setPage] = useState(currentPageNumber)
 
@@ -37,7 +37,7 @@ const useBlockListData = (currentPageNumber: number) => {
       manualFetch && setManualLoading(true)
 
       try {
-        const { data } = await client.blocks.getBlocks({ page: pageNumber, limit: 8 })
+        const data = await client.blocks.getBlocks({ page: pageNumber, limit: 8 })
 
         if (data) {
           console.log('Number of block fetched: ' + data.blocks?.length)
