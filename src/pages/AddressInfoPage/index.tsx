@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
+import { AddressBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
@@ -26,12 +27,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import {
-  fetchAddressAssets,
-  fetchAddressBalance,
-  fetchAddressTransactionNumber,
-  fetchAddressTransactions
-} from '@/api/addressApi'
+import { fetchAddressAssets } from '@/api/addressApi'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -49,12 +45,7 @@ import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import {
-  AddressAssetsResult,
-  AddressBalanceResult,
-  AddressTransactionNumberResult,
-  AddressTransactionsResult
-} from '@/types/addresses'
+import { AddressAssetsResult } from '@/types/addresses'
 import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
@@ -71,10 +62,10 @@ const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
 
-  const [addressBalance, setAddressBalance] = useState<AddressBalanceResult>()
-  const [addressTransactionNumber, setAddressTransactionNumber] = useState<AddressTransactionNumberResult>()
+  const [addressBalance, setAddressBalance] = useState<AddressBalance>()
+  const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
   const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
-  const [addressTransactions, setAddressTransactions] = useState<AddressTransactionsResult>()
+  const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
 
   const [loadings, setLoadings] = useState({
@@ -98,7 +89,7 @@ const TransactionInfoPage = () => {
       setLoadings((p) => ({ ...p, balance: true }))
       setAddressBalance(undefined)
       try {
-        const balance = await fetchAddressBalance(client, id)
+        const balance = await client.addresses.getAddressesAddressBalance(id)
         setAddressBalance(balance)
       } catch (error) {
         console.error(error)
@@ -121,7 +112,7 @@ const TransactionInfoPage = () => {
       setLoadings((p) => ({ ...p, txNumber: true }))
       setAddressBalance(undefined)
       try {
-        const txNumber = await fetchAddressTransactionNumber(client, id)
+        const txNumber = await client.addresses.getAddressesAddressTotalTransactions(id)
         setAddressTransactionNumber(txNumber)
       } catch (error) {
         console.error(error)
@@ -167,11 +158,13 @@ const TransactionInfoPage = () => {
       setLoadings((p) => ({ ...p, transactions: true }))
       setAddressTransactions(undefined)
       try {
-        const firstPageTransactionData = await fetchAddressTransactions(client, id, 1)
-        const currentPageTransactionData = await fetchAddressTransactions(client, id, pageNumber)
+        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
+        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
+          page: pageNumber
+        })
 
         setAddressTransactions(currentPageTransactionData)
-        setAddressLatestActivity(firstPageTransactionData.transactions[0]?.timestamp)
+        setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
       } catch (error) {
         console.error(error)
         setSnackbarMessage({
@@ -220,8 +213,8 @@ const TransactionInfoPage = () => {
 
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
-  const txNumber = addressTransactionNumber?.txNumber
-  const txList = addressTransactions?.transactions
+  const txNumber = addressTransactionNumber
+  const txList = addressTransactions
 
   const assets = (addressAssets?.assets.map((a) => ({
     ...a,

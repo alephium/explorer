@@ -18,38 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ExplorerProvider } from '@alephium/web3'
 
-import {
-  AddressAssetsResult,
-  AddressBalanceResult,
-  AddressHash,
-  AddressTransactionNumberResult,
-  AddressTransactionsResult
-} from '@/types/addresses'
-
-export const fetchAddressBalance = async (
-  client: ExplorerProvider,
-  addressHash: AddressHash
-): Promise<AddressBalanceResult> => {
-  const balances = await client.addresses.getAddressesAddressBalance(addressHash)
-
-  return {
-    addressHash,
-    balance: balances.balance,
-    lockedBalance: balances.lockedBalance
-  }
-}
-
-export const fetchAddressTransactionNumber = async (
-  client: ExplorerProvider,
-  addressHash: AddressHash
-): Promise<AddressTransactionNumberResult> => {
-  const txNumber = await client.addresses.getAddressesAddressTotalTransactions(addressHash)
-
-  return {
-    addressHash,
-    txNumber
-  }
-}
+import { AddressAssetsResult, AddressHash, AddressTransactionsResult } from '@/types/addresses'
 
 export const fetchAddressAssets = async (
   client: ExplorerProvider,
@@ -69,18 +38,5 @@ export const fetchAddressAssets = async (
   return {
     addressHash,
     assets: tokens
-  }
-}
-
-export const fetchAddressTransactions = async (
-  client: ExplorerProvider,
-  addressHash: AddressHash,
-  page: number
-): Promise<AddressTransactionsResult> => {
-  const transactions = await client.addresses.getAddressesAddressTransactions(addressHash, { page })
-
-  return {
-    addressHash,
-    transactions
   }
 }
