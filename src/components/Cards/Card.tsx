@@ -28,8 +28,8 @@ export interface CardProps extends HTMLMotionProps<'div'> {
   className?: string
 }
 
-const Card = ({ label, className, children, isLoading, ...props }: CardProps) => (
-  <Container className={className} initial={false} {...props}>
+const Card = ({ label, children, isLoading, ...props }: CardProps) => (
+  <Container initial={false} {...props}>
     <header>
       <LabelText>{label}</LabelText>
     </header>
