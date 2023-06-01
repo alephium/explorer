@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ExplorerProvider } from '@alephium/web3'
 
-import { AddressAssetsResult, AddressHash, AddressTransactionsResult } from '@/types/addresses'
+import { AddressAssetsResult, AddressHash } from '@/types/addresses'
 
 export const fetchAddressAssets = async (
   client: ExplorerProvider,

@@ -20,9 +20,8 @@ import { motion } from 'framer-motion'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import LoadingSpinner from '@/components/LoadingSpinner'
-import { deviceBreakPoints } from '@/styles/globalStyles'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 interface InfoGridProps {
   children: ReactNode
