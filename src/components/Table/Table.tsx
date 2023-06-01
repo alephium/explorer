@@ -16,11 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import styled, { css, DefaultTheme, FlattenInterpolation, ThemeProps } from 'styled-components'
 
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+
+import TableBody from './TableBody'
+import TableRow from './TableRow'
 
 interface TableProps {
   main?: boolean
@@ -37,21 +40,32 @@ export interface TDStyle {
   style: FlattenInterpolation<ThemeProps<DefaultTheme>>
 }
 
-const Table: FC<TableProps> = ({ children, isLoading, minHeight = 300, ...props }) => {
-  const [height, setHeight] = useState(minHeight)
+const Table: FC<TableProps> = ({ children, isLoading, ...props }) => {
   const tableRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const clientHeight = tableRef.current && tableRef.current.clientHeight
-    clientHeight && clientHeight > minHeight && setHeight(clientHeight)
-  }, [minHeight])
 
   return !isLoading ? (
     <TableWrapper {...props} ref={tableRef}>
       <StyledTable {...props}>{children}</StyledTable>
     </TableWrapper>
   ) : (
-    <SkeletonLoader heightInPx={height} />
+    <TableWrapper {...props} ref={tableRef}>
+      <StyledTable {...props} minHeight={150}>
+        {!props.bodyOnly && (
+          <thead>
+            <tr>
+              <FakeTableHeader />
+            </tr>
+          </thead>
+        )}
+        <TableBody>
+          {['l1', 'l2', 'l3'].map((v) => (
+            <TableRow key={v}>
+              <SkeletonLoader height="50px" />
+            </TableRow>
+          ))}
+        </TableBody>
+      </StyledTable>
+    </TableWrapper>
   )
 }
 
@@ -167,6 +181,11 @@ const StyledTable = styled.table<TableProps>`
       }
     }
   }
+`
+
+const FakeTableHeader = styled.th`
+  background-color: ${({ theme }) => theme.bg.background2};
+  height: 50px;
 `
 
 export default Table

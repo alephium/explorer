@@ -28,17 +28,14 @@ export interface CardProps extends HTMLMotionProps<'div'> {
   className?: string
 }
 
-const Card = ({ label, className, children, isLoading, ...props }: CardProps) =>
-  isLoading ? (
-    <SkeletonLoader heightInPx={150} />
-  ) : (
-    <Container className={className} initial={false} {...props}>
-      <header>
-        <LabelText>{label}</LabelText>
-      </header>
-      <Content>{children}</Content>
-    </Container>
-  )
+const Card = ({ label, children, isLoading, ...props }: CardProps) => (
+  <Container initial={false} {...props}>
+    <header>
+      <LabelText>{label}</LabelText>
+    </header>
+    {isLoading ? <SkeletonLoader height="150px" /> : <Content>{children}</Content>}
+  </Container>
+)
 
 export default Card
 

@@ -37,9 +37,9 @@ const createHandleResize =
     setText(
       visibleChars >= text.length
         ? text
-        : text.slice(0, Math.floor(half) - 3) +
+        : text.slice(0, Math.floor(half) - 2) +
             (visibleChars === text.length ? '' : '...') +
-            text.slice(-Math.ceil(half) + 3)
+            text.slice(-Math.ceil(half) + 2)
     )
   }
 

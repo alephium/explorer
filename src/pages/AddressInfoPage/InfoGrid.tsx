@@ -22,6 +22,7 @@ import styled from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface InfoGridProps {
   children: ReactNode
@@ -47,7 +48,7 @@ const GridCell = ({ label, value, sublabel, className }: GridCellProps) => (
         {value}
       </Value>
     ) : (
-      <LoadingSpinner />
+      <SkeletonLoader height="27px" width="100px" />
     )}
     {sublabel && <Sublabel>{sublabel}</Sublabel>}
   </CellContainer>

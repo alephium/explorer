@@ -21,10 +21,20 @@ import { explorer } from '@alephium/web3'
 
 export type AddressHash = string
 
-export type AddressDataResult = {
-  hash: AddressHash
-  details: explorer.AddressInfo
-  tokens: TokenBalances[]
+export type AddressBalanceResult = {
+  addressHash: AddressHash
+  balance: string
+  lockedBalance: string
+}
+
+export type AddressAssetsResult = {
+  addressHash: AddressHash
+  assets: TokenBalances[]
+}
+
+export type AddressTransactionNumberResult = {
+  addressHash: AddressHash
+  txNumber: number
 }
 
 export type AddressTransactionsResult = {

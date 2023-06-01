@@ -135,7 +135,7 @@ const TransactionInfoPage = () => {
     <Section>
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
-        <Table bodyOnly isLoading={loading} minHeight={450}>
+        <Table bodyOnly isLoading={loading}>
           {txInfo && (
             <TableBody>
               <TableRow>
