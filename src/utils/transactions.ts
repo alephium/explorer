@@ -21,6 +21,7 @@ import {
   calcTxAmountsDeltaForAddress,
   getDirection,
   isConsolidationTx,
+  isMempoolTx,
   isSwap,
   TransactionDirection,
   TransactionInfo,
@@ -28,12 +29,13 @@ import {
 } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
+import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { NetworkType } from '@/types/network'
 import { getAssetInfo } from '@/utils/assets'
 
 export const getTransactionInfo = (
-  tx: explorer.Transaction,
+  tx: Transaction | MempoolTransaction,
   addressHash: string,
   networkType: NetworkType
 ): TransactionInfo => {
@@ -56,6 +58,9 @@ export const getTransactionInfo = (
   } else if (isSwap(amount, tokens)) {
     direction = 'swap'
     infoType = 'swap'
+  } else if (isMempoolTx(tx)) {
+    direction = getDirection(tx, addressHash)
+    infoType = 'pending'
   } else {
     direction = getDirection(tx, addressHash)
     infoType = direction

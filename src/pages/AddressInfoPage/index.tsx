@@ -19,11 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
-import { AddressBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
+import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -42,6 +43,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
 import { useGlobalContext } from '@/contexts/global'
+import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -61,11 +63,13 @@ const TransactionInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
+  const isAppVisible = usePageVisibility()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
   const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
   const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
   const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
+  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>()
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
 
   const [loadings, setLoadings] = useState({
@@ -150,6 +154,21 @@ const TransactionInfoPage = () => {
 
     fetch()
   }, [client, id, setSnackbarMessage])
+
+  // Mempool tx check
+  useInterval(
+    () => {
+      if (!client || !id) return
+
+      const fetchMempoolTxs = async () => {
+        const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
+        setAddressMempoolTransactions(mempoolTxs)
+      }
+      fetchMempoolTxs()
+    },
+    5000,
+    !isAppVisible
+  )
 
   useEffect(() => {
     if (!client || !id) return
@@ -292,7 +311,7 @@ const TransactionInfoPage = () => {
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={loadings.transactions}>
-        {txList?.length ? (
+        {txList?.length || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
               headerTitles={[
@@ -311,11 +330,14 @@ const TransactionInfoPage = () => {
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
-              {txList
-                .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                .map((t, i) => (
+              {addressMempoolTransactions &&
+                addressMempoolTransactions.map((t, i) => (
                   <AddressTransactionRow transaction={t} addressHash={id} key={i} />
                 ))}
+              {txList &&
+                txList
+                  .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
+                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={id} key={i} />)}
             </TableBody>
           </>
         ) : (
