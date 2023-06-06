@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { Ghost } from 'lucide-react'
+import { HelpCircle } from 'lucide-react'
 import styled, { css } from 'styled-components'
 
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
@@ -37,7 +37,7 @@ const AssetLogo = ({ asset, size, showTooltip, className }: AssetLogoProps) => (
     ) : asset.id === ALPH.id ? (
       <LogoImage src={AlephiumLogoSVG} />
     ) : (
-      <Ghost size={size * 0.6} />
+      <HelpCircle size={size * 0.6} />
     )}
   </div>
 )
