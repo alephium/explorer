@@ -21,14 +21,14 @@ import { ExplorerProvider } from '@alephium/web3'
 import { AddressAssetsResult, AddressHash } from '@/types/addresses'
 
 export const fetchAddressAssets = async (
-  client: ExplorerProvider,
+  backendClient: ExplorerProvider,
   addressHash: AddressHash
 ): Promise<AddressAssetsResult> => {
-  const tokenIds = await client.addresses.getAddressesAddressTokens(addressHash)
+  const tokenIds = await backendClient.addresses.getAddressesAddressTokens(addressHash)
 
   const tokens = await Promise.all(
     tokenIds.map((id) =>
-      client.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
+      backendClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
         id,
         ...data
       }))

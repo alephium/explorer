@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ExplorerProvider, throttledFetch } from '@alephium/web3'
+import { ExplorerProvider, NodeProvider, throttledFetch } from '@alephium/web3'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
@@ -26,19 +26,21 @@ import { OnOff } from '@/types/generics'
 import { NetworkType, networkTypes } from '@/types/network'
 import { SnackbarMessage } from '@/types/ui'
 
+type Clients = { explorer: ExplorerProvider; node: NodeProvider }
+
 export interface GlobalContextInterface {
-  client: ExplorerProvider | undefined
+  clients?: Clients
   networkType: NetworkType
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
-  snackbarMessage: SnackbarMessage | undefined
+  snackbarMessage?: SnackbarMessage
   setSnackbarMessage: (message?: SnackbarMessage) => void
   timestampPrecisionMode: OnOff
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
 export const GlobalContext = createContext<GlobalContextInterface>({
-  client: undefined,
+  clients: undefined,
   networkType: 'mainnet',
   currentTheme: 'light',
   switchTheme: () => null,
@@ -50,7 +52,7 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<ExplorerProvider>()
+  const [clients, setClients] = useState<Clients>()
   const [networkType, setNetworkType] = useState<NetworkType>('mainnet')
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
@@ -60,12 +62,14 @@ export const GlobalContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     // Check and apply environment variables
-    let url: string | null | undefined = (window as any).VITE_BACKEND_URL
+    let backendUrl: string | null | undefined = (window as any).VITE_BACKEND_URL
+    let nodeUrl: string | null | undefined = (window as any).VITE_NODE_URL
 
     let netType = (window as any).VITE_NETWORK_TYPE as NetworkType
 
-    if (!url) {
-      url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
+    if (!backendUrl || !nodeUrl) {
+      backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
+      nodeUrl = import.meta.env.VITE_NODE_URL || 'http://localhost:12973'
       netType = (import.meta.env.VITE_NETWORK_TYPE || 'testnet') as NetworkType
 
       console.info(`
@@ -74,13 +78,18 @@ export const GlobalContextProvider: FC = ({ children }) => {
         Using local env. variables if available.
         You can set them using a .env file placed at the project's root.
 
-        - Backend URL: ${url}
+        - Backend URL: ${backendUrl}
+        - Node URL: ${nodeUrl}
         - Network Type: ${netType}
       `)
     }
 
-    if (!url) {
+    if (!backendUrl) {
       throw new Error('The VITE_BACKEND_URL environment variable must be defined')
+    }
+
+    if (!nodeUrl) {
+      throw new Error('The VITE_NODE_URL environment variable must be defined')
     }
 
     if (!netType) {
@@ -90,7 +99,10 @@ export const GlobalContextProvider: FC = ({ children }) => {
     }
 
     try {
-      setClient(new ExplorerProvider(url, undefined, throttledFetch(5)))
+      setClients({
+        explorer: new ExplorerProvider(backendUrl, undefined, throttledFetch(5)),
+        node: new NodeProvider(nodeUrl, undefined, throttledFetch(5))
+      })
     } catch (error) {
       throw new Error('Could not create explorer client')
     }
@@ -109,7 +121,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
-        client,
+        clients,
         networkType,
         currentTheme: themeName as ThemeType,
         switchTheme: setThemeName as (arg0: ThemeType) => void,

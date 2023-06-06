@@ -48,7 +48,7 @@ type ParamTypes = {
 
 const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
+  const { clients } = useGlobalContext()
   const navigate = useNavigate()
 
   const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
@@ -67,10 +67,10 @@ const BlockInfoPage = () => {
   // Block info
   useEffect(() => {
     const fetchBlockInfo = async () => {
-      if (!client || !id) return
+      if (!clients || !id) return
       setInfoLoading(true)
       try {
-        const data = await client.blocks.getBlocksBlockHash(id)
+        const data = await clients.explorer.blocks.getBlocksBlockHash(id)
         if (data) setBlockInfo(data)
       } catch (e) {
         console.error(e)
@@ -84,15 +84,15 @@ const BlockInfoPage = () => {
     }
 
     fetchBlockInfo()
-  }, [client, id])
+  }, [clients, id])
 
   // Block transactions
   useEffect(() => {
     const fetchTransactions = async () => {
-      if (!client || !id) return
+      if (!clients || !id) return
       setTxLoading(true)
       try {
-        const data = await client.blocks.getBlocksBlockHashTransactions(id, {
+        const data = await clients.explorer.blocks.getBlocksBlockHashTransactions(id, {
           page: currentPageNumber
         })
         if (data) setTxList(data)
@@ -105,15 +105,15 @@ const BlockInfoPage = () => {
     }
 
     fetchTransactions()
-  }, [id, currentPageNumber, client])
+  }, [id, currentPageNumber, clients])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
-    if (!client || !blockInfoError || !id) return
+    if (!clients || !blockInfoError || !id) return
 
     const redirectToTransactionIfExists = async () => {
       try {
-        const data = await client.transactions.getTransactionsTransactionHash(id)
+        const data = await clients.explorer.transactions.getTransactionsTransactionHash(id)
         if (data) navigate(`/transactions/${id}`)
       } catch (error) {
         console.error(error)
@@ -121,7 +121,7 @@ const BlockInfoPage = () => {
     }
 
     redirectToTransactionIfExists()
-  }, [blockInfo, id, client, blockInfoError, navigate])
+  }, [blockInfo, id, clients, blockInfoError, navigate])
 
   return !infoLoading && !blockInfo && blockInfoError ? (
     <InlineErrorMessage {...blockInfoError} />

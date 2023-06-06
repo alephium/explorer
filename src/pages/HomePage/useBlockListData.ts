@@ -26,18 +26,18 @@ const useBlockListData = (currentPageNumber: number) => {
   const [manualLoading, setManualLoading] = useState(false)
   const [page, setPage] = useState(currentPageNumber)
 
-  const { client } = useGlobalContext()
+  const { clients } = useGlobalContext()
 
   const getBlocks = useCallback(
     async (pageNumber: number, manualFetch?: boolean) => {
-      if (!client) return
+      if (!clients) return
 
       console.log('Fetching blocks...')
 
       manualFetch && setManualLoading(true)
 
       try {
-        const data = await client.blocks.getBlocks({ page: pageNumber, limit: 8 })
+        const data = await clients.explorer.blocks.getBlocks({ page: pageNumber, limit: 8 })
 
         if (data) {
           console.log('Number of block fetched: ' + data.blocks?.length)
@@ -50,7 +50,7 @@ const useBlockListData = (currentPageNumber: number) => {
 
       manualFetch && setManualLoading(false)
     },
-    [client]
+    [clients]
   )
 
   // Fetching Data when page number changes or page loads initially

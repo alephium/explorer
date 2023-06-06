@@ -50,7 +50,7 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client, networkType } = useGlobalContext()
+  const { clients, networkType } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<explorer.Transaction>()
   const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
   const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
@@ -61,20 +61,20 @@ const TransactionInfoPage = () => {
 
   const getTxInfo = useCallback(async () => {
     const fetchTransactionInfo = async () => {
-      if (!client || !id) return
+      if (!clients || !id) return
 
       setLoading(true)
 
       try {
-        const data = await client.transactions.getTransactionsTransactionHash(id)
+        const data = await clients.explorer.transactions.getTransactionsTransactionHash(id)
         const tx = data as explorer.Transaction
 
         if (tx) setTxInfo(tx)
 
         if (!isTxConfirmed(tx)) return
 
-        const block = await client.blocks.getBlocksBlockHash(tx.blockHash)
-        const chainHeights = await client.infos.getInfosHeights()
+        const block = await clients.explorer.blocks.getBlocksBlockHash(tx.blockHash)
+        const chainHeights = await clients.explorer.infos.getInfosHeights()
 
         setTxBlock(block)
 
@@ -95,7 +95,7 @@ const TransactionInfoPage = () => {
     }
 
     fetchTransactionInfo()
-  }, [client, id])
+  }, [clients, id])
 
   // Initial fetch
   useEffect(() => {

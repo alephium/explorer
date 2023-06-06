@@ -68,7 +68,7 @@ type SingleStringArgFunctions<T> = {
 const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
-  const { client, setSnackbarMessage, networkType } = useGlobalContext()
+  const { clients, setSnackbarMessage, networkType } = useGlobalContext()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
 
@@ -97,7 +97,7 @@ const AddressInfoPage = () => {
       apiCallName?: SingleStringArgFunctions<ExplorerProvider['addresses']>,
       customApiCall?: () => Promise<T>
     ) => {
-      if (!client || !id) return
+      if (!clients || !id) return
 
       setLoadings((p) => ({ ...p, [fetchedEntity]: true }))
       setStateAction(undefined)
@@ -105,7 +105,7 @@ const AddressInfoPage = () => {
       try {
         const result = customApiCall
           ? await customApiCall()
-          : apiCallName && ((await client.addresses[apiCallName](id, {})) as T)
+          : apiCallName && ((await clients.explorer.addresses[apiCallName](id, {})) as T)
         setStateAction(result)
       } catch (error) {
         displayError(setSnackbarMessage, error, `Error while fetching ${fetchedEntity}`)
@@ -113,29 +113,31 @@ const AddressInfoPage = () => {
         setLoadings((p) => ({ ...p, [fetchedEntity]: false }))
       }
     },
-    [client, id, setSnackbarMessage]
+    [clients, id, setSnackbarMessage]
   )
 
   const fetchTransactions = useCallback(
     () =>
-      client &&
+      clients &&
       id &&
       fetchDataGeneric('transactions', setAddressTransactions, undefined, async () => {
-        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
+        const currentPageTransactionData = await clients.explorer.addresses.getAddressesAddressTransactions(id, {
           page: pageNumber
         })
-        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
+        const firstPageTransactionData = await clients.explorer.addresses.getAddressesAddressTransactions(id, {
+          page: 1
+        })
         setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
 
         return currentPageTransactionData
       }),
-    [client, fetchDataGeneric, id, pageNumber]
+    [clients, fetchDataGeneric, id, pageNumber]
   )
 
   const fetchMempoolTxs = async () => {
-    if (!client || !id) return
+    if (!clients || !id) return
 
-    const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
+    const mempoolTxs = await clients.explorer.addresses.getAddressesAddressMempoolTransactions(id)
 
     // Fetch settled TXs if mempool tx list length changed
     if (addressMempoolTransactions && addressMempoolTransactions.length > mempoolTxs.length) {
@@ -149,13 +151,13 @@ const AddressInfoPage = () => {
 
   // Fetch on mount
   useEffect(() => {
-    if (client && id) {
+    if (clients && id) {
       fetchDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
       fetchDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
-      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(client, id))
+      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(clients.explorer, id))
       fetchTransactions()
     }
-  }, [client, fetchDataGeneric, fetchTransactions, id, pageNumber])
+  }, [clients, fetchDataGeneric, fetchTransactions, id, pageNumber])
 
   // Mempool tx check
   useInterval(fetchMempoolTxs, 5000, !isAppVisible)
