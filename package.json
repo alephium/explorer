@@ -8,7 +8,7 @@
   },
   "homepage": "/",
   "dependencies": {
-    "@alephium/sdk": "v0.7.2-rc.0",
+    "@alephium/sdk": "v0.7.2",
     "@alephium/token-list": "^0.0.7",
     "@alephium/web3": "0.12.2",
     "apexcharts": "^3.35.0",
