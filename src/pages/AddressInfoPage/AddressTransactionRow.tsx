@@ -102,7 +102,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
         <HashAndTimestamp>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
-          {(!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}
+          {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
 
         <Assets>
