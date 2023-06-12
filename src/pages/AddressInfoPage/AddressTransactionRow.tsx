@@ -146,7 +146,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
           <AmountCell>
-            {assets?.map(({ id, amount, symbol, decimals }) => (
+            {assets?.map(({ id, amount, symbol, decimals, verified }) => (
               <Amount
                 key={id}
                 value={amount}
@@ -155,7 +155,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 color={isMoved ? theme.font.secondary : undefined}
                 suffix={symbol}
                 decimals={decimals}
-                isUnknownToken={!symbol}
+                isUnknownToken={!verified}
               />
             ))}
           </AmountCell>

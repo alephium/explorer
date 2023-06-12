@@ -74,18 +74,19 @@ export const getTransactionInfo = async (
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const tokenAssets = [
+  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokens] : tokens
+
+  const assetsWithMetadata = [
     ...(await Promise.all(
-      tokens.map(async (token) => ({
+      assets.map(async (token) => ({
         ...token,
         ...(await getAssetMetadata({ assetId: token.id, networkType, nodeClient }))
       }))
     ))
   ]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   return {
-    assets,
+    assets: assetsWithMetadata,
     direction,
     infoType,
     outputs,

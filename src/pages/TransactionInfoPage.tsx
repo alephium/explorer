@@ -86,13 +86,13 @@ const TransactionInfoPage = () => {
         setTxChain(chain)
 
         // Metadata
-        const assetIds = _(tx.inputs).map('tokens').compact().flatten().map('id').value()
+        const assetIds = _(tx.inputs).map('tokens').compact().flatten().map('id').uniq().value()
 
         const assetsMetadata = await Promise.all(
           assetIds.map(async (id) => await getAssetMetadata({ assetId: id, networkType, nodeClient: clients?.node }))
         )
 
-        setAssetsData(sortBy(assetsMetadata, 'name'))
+        setAssetsData(sortBy(assetsMetadata, [(a) => !a.verified, 'name']))
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError

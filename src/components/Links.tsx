@@ -116,7 +116,13 @@ const AddressLinkBase = ({
         <AmountsContainer flex={flex}>
           <Amounts>
             {assetsData.map((a) => (
-              <Amount key={a.id} value={a.amount} suffix={a.symbol} decimals={a.decimals} isUnknownToken={!a.symbol} />
+              <Amount
+                key={a.id}
+                value={a.amount}
+                suffix={a.symbol}
+                decimals={a.decimals}
+                isUnknownToken={!a.verified}
+              />
             ))}
           </Amounts>
         </AmountsContainer>

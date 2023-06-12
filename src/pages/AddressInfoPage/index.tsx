@@ -194,15 +194,17 @@ const AddressInfoPage = () => {
   const txNumber = addressTransactionNumber
   const txList = addressTransactions
 
-  const assets = (addressAssets?.assets.map((a) => ({
+  let assets = (addressAssets?.assets.map((a) => ({
     ...a,
     balance: BigInt(a.balance),
     lockedBalance: BigInt(a.lockedBalance)
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
+    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance), verified: true })
   }
+
+  assets = sortBy(assets, [(a) => !a.verified, 'name'])
 
   return (
     <Section>
@@ -256,7 +258,7 @@ const AddressInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList assets={sortBy(assets, 'name')} isLoading={loadings.assets} />
+      <AssetList assets={assets} isLoading={loadings.assets} />
 
       <SectionHeader>
         <h2>Transactions</h2>

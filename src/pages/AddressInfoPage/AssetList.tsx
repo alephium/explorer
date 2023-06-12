@@ -99,7 +99,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
               value={asset.balance}
               suffix={asset.symbol}
               decimals={asset.decimals}
-              isUnknownToken={!asset.symbol}
+              isUnknownToken={!asset.verified}
             />
             {asset.lockedBalance > 0 ? (
               <TokenAmountSublabel>
@@ -109,6 +109,7 @@ const TokenList = ({ assets, limit, className }: TokenListProps) => {
                   suffix={asset.symbol}
                   color={theme.font.tertiary}
                   decimals={asset.decimals}
+                  isUnknownToken={!asset.verified}
                 />
               </TokenAmountSublabel>
             ) : !asset.name ? (
