@@ -48,7 +48,6 @@ import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressAssetsResult } from '@/types/addresses'
-import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -154,10 +153,10 @@ const AddressInfoPage = () => {
     if (clients && id) {
       fetchDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
       fetchDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
-      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(clients.explorer, id))
+      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(clients, id, networkType))
       fetchTransactions()
     }
-  }, [clients, fetchDataGeneric, fetchTransactions, id, pageNumber])
+  }, [clients, fetchDataGeneric, fetchTransactions, id, networkType, pageNumber])
 
   // Mempool tx check
   useInterval(fetchMempoolTxs, 5000, !isAppVisible)
@@ -198,8 +197,7 @@ const AddressInfoPage = () => {
   const assets = (addressAssets?.assets.map((a) => ({
     ...a,
     balance: BigInt(a.balance),
-    lockedBalance: BigInt(a.lockedBalance),
-    ...getAssetInfo({ assetId: a.id, networkType })
+    lockedBalance: BigInt(a.lockedBalance)
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {

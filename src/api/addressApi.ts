@@ -16,21 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ExplorerProvider } from '@alephium/web3'
-
+import { Clients } from '@/contexts/global'
 import { AddressAssetsResult, AddressHash } from '@/types/addresses'
+import { NetworkType } from '@/types/network'
+import { getAssetMetadata } from '@/utils/assets'
 
 export const fetchAddressAssets = async (
-  backendClient: ExplorerProvider,
-  addressHash: AddressHash
+  clients: Clients,
+  addressHash: AddressHash,
+  networkType: NetworkType
 ): Promise<AddressAssetsResult> => {
-  const tokenIds = await backendClient.addresses.getAddressesAddressTokens(addressHash)
+  const tokenIds = await clients.explorer.addresses.getAddressesAddressTokens(addressHash)
 
   const tokens = await Promise.all(
-    tokenIds.map((id) =>
-      backendClient.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
-        id,
-        ...data
+    tokenIds.map(async (id) =>
+      clients.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(async (data) => ({
+        ...data,
+        ...(await getAssetMetadata({ assetId: id, networkType, nodeClient: clients.node }))
       }))
     )
   )

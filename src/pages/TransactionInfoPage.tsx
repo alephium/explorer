@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError } from '@alephium/sdk'
+import { APIError, AssetInfo } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import _ from 'lodash'
+import _, { sortBy } from 'lodash'
 import { Check } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
@@ -42,7 +42,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
-import { getAssetInfo } from '@/utils/assets'
+import { getAssetMetadata } from '@/utils/assets'
 
 type ParamTypes = {
   id: string
@@ -56,6 +56,7 @@ const TransactionInfoPage = () => {
   const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
+  const [assetsData, setAssetsData] = useState<AssetInfo[]>([])
   const [loading, setLoading] = useState(true)
   const isAppVisible = usePageVisibility()
 
@@ -83,6 +84,15 @@ const TransactionInfoPage = () => {
         )
 
         setTxChain(chain)
+
+        // Metadata
+        const assetIds = _(tx.inputs).map('tokens').compact().flatten().map('id').value()
+
+        const assetsMetadata = await Promise.all(
+          assetIds.map(async (id) => await getAssetMetadata({ assetId: id, networkType, nodeClient: clients?.node }))
+        )
+
+        setAssetsData(sortBy(assetsMetadata, 'name'))
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError
@@ -95,7 +105,7 @@ const TransactionInfoPage = () => {
     }
 
     fetchTransactionInfo()
-  }, [clients, id])
+  }, [clients, id, networkType])
 
   // Initial fetch
   useEffect(() => {
@@ -121,15 +131,6 @@ const TransactionInfoPage = () => {
     (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
     BigInt(0)
   )
-
-  const tokenInfos = _(
-    txInfo?.inputs?.map((i) => i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType }) || { id: t.id }))
-  )
-    .flatten()
-    .uniqBy('id')
-    .compact()
-    .sortBy('name')
-    .value()
 
   return (
     <Section>
@@ -207,8 +208,8 @@ const TransactionInfoPage = () => {
                   <AssetLogos>
                     <>
                       {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
-                      {tokenInfos.map((i) => (
-                        <AssetLogo key={i.id} asset={i} size={20} showTooltip />
+                      {assetsData.map((a) => (
+                        <AssetLogo key={a.id} asset={a} size={20} showTooltip />
                       ))}
                     </>
                   </AssetLogos>

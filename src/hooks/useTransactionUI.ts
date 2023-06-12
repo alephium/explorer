@@ -23,8 +23,16 @@ import { useTheme } from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
 
-export const useTransactionUI = (infoType: TransactionInfoType) => {
+export const useTransactionUI = (infoType?: TransactionInfoType) => {
   const theme = useTheme()
+
+  if (!infoType)
+    return {
+      label: 'Loading',
+      Icon: LoadingSpinner,
+      iconColor: theme.font.secondary,
+      iconBgColor: colord(theme.font.secondary).alpha(0.12).toRgbString()
+    }
 
   return {
     label: {

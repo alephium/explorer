@@ -20,6 +20,7 @@ import { isMempoolTx } from '@alephium/sdk'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -47,13 +48,27 @@ const directionIconSize = 13
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
-  const { networkType } = useGlobalContext()
+  const { networkType, clients } = useGlobalContext()
   const theme = useTheme()
 
-  const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
-  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const [txInfo, setTxInfo] = useState<Awaited<ReturnType<typeof getTransactionInfo>>>()
+
+  const infoType = txInfo?.infoType
+  const assets = txInfo?.assets
   const isMoved = infoType === 'move'
+
+  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
   const isPending = isMempoolTx(t)
+
+  useEffect(() => {
+    if (!clients) return
+
+    const fetch = async () => {
+      setTxInfo(await getTransactionInfo(t, addressHash, networkType, clients.node))
+    }
+
+    fetch()
+  }, [addressHash, clients, networkType, t])
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -96,7 +111,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     <>
       <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
+          {Icon && <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />}
           {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
@@ -106,7 +121,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         </HashAndTimestamp>
 
         <Assets>
-          {assets.map((a) => (
+          {assets?.map((a) => (
             <AssetLogo key={a.id} asset={a} size={21} showTooltip />
           ))}
         </Assets>
@@ -131,7 +146,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
           <AmountCell>
-            {assets.map(({ id, amount, symbol, decimals }) => (
+            {assets?.map(({ id, amount, symbol, decimals }) => (
               <Amount
                 key={id}
                 value={amount}

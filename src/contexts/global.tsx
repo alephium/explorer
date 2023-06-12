@@ -26,7 +26,7 @@ import { OnOff } from '@/types/generics'
 import { NetworkType, networkTypes } from '@/types/network'
 import { SnackbarMessage } from '@/types/ui'
 
-type Clients = { explorer: ExplorerProvider; node: NodeProvider }
+export type Clients = { explorer: ExplorerProvider; node: NodeProvider }
 
 export interface GlobalContextInterface {
   clients?: Clients

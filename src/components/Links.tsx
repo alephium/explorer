@@ -16,16 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetAmount } from '@alephium/sdk'
+import { AssetAmount, AssetInfo } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import { ExternalLink } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
 import { useGlobalContext } from '@/contexts/global'
-import { getAssetInfo } from '@/utils/assets'
+import { getAssetMetadata } from '@/utils/assets'
 import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
@@ -79,23 +80,28 @@ const AddressLinkBase = ({
   flex,
   className
 }: AddressLinkProps) => {
-  const { networkType } = useGlobalContext()
+  const { networkType, clients } = useGlobalContext()
   const theme = useTheme()
+  const [assetsData, setAssetsData] = useState<(Partial<AssetInfo> & AssetAmount)[]>([])
+
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
-  const renderAmount = (amount: AssetAmount) => {
-    const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
+  useEffect(() => {
+    const getMetadata = async () => {
+      if (!clients?.node || !amounts) return
 
-    return (
-      <Amount
-        key={amount.id}
-        value={amount.amount}
-        suffix={assetInfo?.symbol}
-        decimals={assetInfo?.decimals}
-        isUnknownToken={!assetInfo?.symbol}
-      />
-    )
-  }
+      const metadata = await Promise.all(
+        amounts.map(async (a) => ({
+          ...(await getAssetMetadata({ assetId: a.id, networkType, nodeClient: clients?.node })),
+          ...a
+        }))
+      )
+
+      setAssetsData(metadata)
+    }
+
+    getMetadata()
+  }, [amounts, clients?.node, networkType])
 
   return (
     <div className={className}>
@@ -108,7 +114,11 @@ const AddressLinkBase = ({
       {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}
       {amounts !== undefined && (
         <AmountsContainer flex={flex}>
-          <Amounts>{amounts.map(renderAmount)}</Amounts>
+          <Amounts>
+            {assetsData.map((a) => (
+              <Amount key={a.id} value={a.amount} suffix={a.symbol} decimals={a.decimals} isUnknownToken={!a.symbol} />
+            ))}
+          </Amounts>
         </AmountsContainer>
       )}
     </div>
