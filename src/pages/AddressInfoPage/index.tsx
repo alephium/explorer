@@ -42,7 +42,7 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import { useGlobalContext } from '@/contexts/global'
+import { GlobalContextInterface, useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
@@ -61,7 +61,7 @@ type ParamTypes = {
 
 type FetchedEntity = 'balance' | 'txNumber' | 'assets' | 'transactions'
 
-const TransactionInfoPage = () => {
+const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
@@ -95,11 +95,7 @@ const TransactionInfoPage = () => {
       const txNumber = await client.addresses.getAddressesAddressTotalTransactions(id)
       setAddressTransactionNumber(txNumber)
     } catch (error) {
-      console.error(error)
-      setSnackbarMessage({
-        text: getHumanReadableError(error, "Error while fetching address' transaction number"),
-        type: 'alert'
-      })
+      displayError(setSnackbarMessage, error, "Error while fetching address' transaction number")
     } finally {
       setLoadings((p) => ({ ...p, txNumber: false }))
     }
@@ -119,11 +115,7 @@ const TransactionInfoPage = () => {
       setAddressTransactions(currentPageTransactionData)
       setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
     } catch (error) {
-      console.error(error)
-      setSnackbarMessage({
-        text: getHumanReadableError(error, "Error while fetching address' transactions"),
-        type: 'alert'
-      })
+      displayError(setSnackbarMessage, error, "Error while fetching address' latest activity")
     } finally {
       setLoadings((p) => ({ ...p, transactions: false }))
     }
@@ -138,11 +130,7 @@ const TransactionInfoPage = () => {
       const balance = await client.addresses.getAddressesAddressBalance(id)
       setAddressBalance(balance)
     } catch (error) {
-      console.error(error)
-      setSnackbarMessage({
-        text: getHumanReadableError(error, 'Error while fetching address balance'),
-        type: 'alert'
-      })
+      displayError(setSnackbarMessage, error, 'Error while fetching address balance')
     } finally {
       setLoadings((p) => ({ ...p, balance: false }))
     }
@@ -157,11 +145,7 @@ const TransactionInfoPage = () => {
       const assets = await fetchAddressAssets(client, id)
       setAddressAssets(assets)
     } catch (error) {
-      console.error(error)
-      setSnackbarMessage({
-        text: getHumanReadableError(error, "Error while fetching address' assets"),
-        type: 'alert'
-      })
+      displayError(setSnackbarMessage, error, "Error while fetching address' assets")
     } finally {
       setLoadings((p) => ({ ...p, assets: false }))
     }
@@ -208,11 +192,7 @@ const TransactionInfoPage = () => {
         setAddressTransactions(currentPageTransactionData)
         setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
       } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, "Error while fetching address' transactions"),
-          type: 'alert'
-        })
+        displayError(setSnackbarMessage, error, "Error while fetching address' transactions")
       } finally {
         setLoadings((p) => ({ ...p, transactions: false }))
       }
@@ -235,11 +215,7 @@ const TransactionInfoPage = () => {
 
         setAddressWorth(calculateAmountWorth(BigInt(balance), price))
       } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching fiat price'),
-          type: 'alert'
-        })
+        displayError(setSnackbarMessage, error, 'Error while fetching fiat price')
       }
     }
 
@@ -378,6 +354,21 @@ const TransactionInfoPage = () => {
     </Section>
   )
 }
+
+export default AddressInfoPage
+
+const displayError = (
+  setSnackbarMessage: GlobalContextInterface['setSnackbarMessage'],
+  error: unknown,
+  errorMsg: string
+) => {
+  console.error(error)
+  setSnackbarMessage({
+    text: getHumanReadableError(error, errorMsg),
+    type: 'alert'
+  })
+}
+
 const TxListCustomStyles: TDStyle[] = [
   {
     tdPos: 6,
@@ -435,5 +426,3 @@ const NoTxsMessage = styled.tr`
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
 `
-
-export default TransactionInfoPage
