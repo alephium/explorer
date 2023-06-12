@@ -30,13 +30,20 @@ export const getAssetMetadata = async ({
   assetId: string
   networkType: NetworkType
   nodeClient: NodeProvider
-}): Promise<AssetInfo> => {
+}): Promise<Partial<AssetInfo>> => {
   const knownTokenData =
     assetId === ALPH.id ? ALPH : TokensMetadata[networkType].tokens.tokens.find((tm) => tm.id === assetId)
 
   if (knownTokenData) {
     return { ...knownTokenData, verified: true }
   } else {
-    return { id: assetId, ...(await nodeClient.fetchStdTokenMetaData(assetId)), verified: false }
+    try {
+      const stdTokenMetadata = await nodeClient.fetchStdTokenMetaData(assetId)
+      return { id: assetId, ...stdTokenMetadata, verified: false }
+    } catch (e) {
+      // We still want to display the asset even though we couldn't fetch data from the node
+      console.error(e)
+      return { id: assetId, name: '', verified: false }
+    }
   }
 }

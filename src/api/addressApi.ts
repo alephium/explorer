@@ -26,19 +26,30 @@ export const fetchAddressAssets = async (
   addressHash: AddressHash,
   networkType: NetworkType
 ): Promise<AddressAssetsResult> => {
-  const tokenIds = await clients.explorer.addresses.getAddressesAddressTokens(addressHash)
+  try {
+    const tokenIds = await clients.explorer.addresses.getAddressesAddressTokens(addressHash)
 
-  const tokens = await Promise.all(
-    tokenIds.map(async (id) =>
-      clients.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then(async (data) => ({
-        ...data,
-        ...(await getAssetMetadata({ assetId: id, networkType, nodeClient: clients.node }))
-      }))
+    const tokens = await Promise.all(
+      tokenIds.map(async (id) => {
+        const tokenWithBalance = await clients.explorer.addresses.getAddressesAddressTokensTokenIdBalance(
+          addressHash,
+          id
+        )
+        const tokenMetadata = await getAssetMetadata({ assetId: id, networkType, nodeClient: clients.node })
+
+        return {
+          ...tokenWithBalance,
+          ...tokenMetadata
+        }
+      })
     )
-  )
 
-  return {
-    addressHash,
-    assets: tokens
+    return {
+      addressHash,
+      assets: tokens
+    }
+  } catch (e) {
+    console.error(e)
+    throw new Error(e as string)
   }
 }
