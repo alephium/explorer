@@ -70,6 +70,7 @@ const AddressInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
   const isAppVisible = usePageVisibility()
+  const pageNumber = usePageNumber()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
   const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
@@ -79,7 +80,6 @@ const AddressInfoPage = () => {
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
-  const pageNumber = usePageNumber()
 
   const knownPendingTxs = useRef<MempoolTransaction[]>([])
 
