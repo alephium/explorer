@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { groupOfAddress } from '@alephium/web3'
+import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
 import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { sortBy, unionBy } from 'lodash'
 import { FileDown } from 'lucide-react'
@@ -61,6 +61,10 @@ type ParamTypes = {
 
 type FetchedEntity = 'balance' | 'txNumber' | 'assets' | 'transactions'
 
+type SingleStringArgFunctions<T> = {
+  [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
+}[keyof T]
+
 const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
@@ -86,70 +90,47 @@ const AddressInfoPage = () => {
     transactions: true
   })
 
-  const fetchTransactionNumber = useCallback(async () => {
-    if (!client || !id) return
+  const fetchDataGeneric = useCallback(
+    async <T,>(
+      fetchedEntity: FetchedEntity,
+      setStateAction: (value: T | undefined) => void,
+      apiCallName?: SingleStringArgFunctions<ExplorerProvider['addresses']>,
+      customApiCall?: () => Promise<T>
+    ) => {
+      if (!client || !id) return
 
-    setLoadings((p) => ({ ...p, txNumber: true }))
-    setAddressTransactionNumber(undefined)
-    try {
-      const txNumber = await client.addresses.getAddressesAddressTotalTransactions(id)
-      setAddressTransactionNumber(txNumber)
-    } catch (error) {
-      displayError(setSnackbarMessage, error, "Error while fetching address' transaction number")
-    } finally {
-      setLoadings((p) => ({ ...p, txNumber: false }))
-    }
-  }, [client, id, setSnackbarMessage])
+      setLoadings((p) => ({ ...p, [fetchedEntity]: true }))
+      setStateAction(undefined)
 
-  const fetchTransactions = useCallback(async () => {
-    if (!client || !id) return
+      try {
+        const result = customApiCall
+          ? await customApiCall()
+          : apiCallName && ((await client.addresses[apiCallName](id, {})) as T)
+        setStateAction(result)
+      } catch (error) {
+        displayError(setSnackbarMessage, error, `Error while fetching ${fetchedEntity}`)
+      } finally {
+        setLoadings((p) => ({ ...p, [fetchedEntity]: false }))
+      }
+    },
+    [client, id, setSnackbarMessage]
+  )
 
-    setLoadings((p) => ({ ...p, transactions: true }))
-    setAddressTransactions(undefined)
-    try {
-      const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
-      const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
-        page: pageNumber
-      })
+  const fetchTransactions = useCallback(
+    () =>
+      client &&
+      id &&
+      fetchDataGeneric('transactions', setAddressTransactions, undefined, async () => {
+        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
+          page: pageNumber
+        })
+        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
+        setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
 
-      setAddressTransactions(currentPageTransactionData)
-      setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
-    } catch (error) {
-      displayError(setSnackbarMessage, error, "Error while fetching address' latest activity")
-    } finally {
-      setLoadings((p) => ({ ...p, transactions: false }))
-    }
-  }, [client, id, pageNumber, setSnackbarMessage])
-
-  const fetchBalance = useCallback(async () => {
-    if (!client || !id) return
-
-    setLoadings((p) => ({ ...p, balance: true }))
-    setAddressBalance(undefined)
-    try {
-      const balance = await client.addresses.getAddressesAddressBalance(id)
-      setAddressBalance(balance)
-    } catch (error) {
-      displayError(setSnackbarMessage, error, 'Error while fetching address balance')
-    } finally {
-      setLoadings((p) => ({ ...p, balance: false }))
-    }
-  }, [client, id, setSnackbarMessage])
-
-  const fetchAssets = useCallback(async () => {
-    if (!client || !id) return
-
-    setLoadings((p) => ({ ...p, assets: true }))
-    setAddressAssets(undefined)
-    try {
-      const assets = await fetchAddressAssets(client, id)
-      setAddressAssets(assets)
-    } catch (error) {
-      displayError(setSnackbarMessage, error, "Error while fetching address' assets")
-    } finally {
-      setLoadings((p) => ({ ...p, assets: false }))
-    }
-  }, [client, id, setSnackbarMessage])
+        return currentPageTransactionData
+      }),
+    [client, fetchDataGeneric, id, pageNumber]
+  )
 
   const fetchMempoolTxs = async () => {
     if (!client || !id) return
@@ -168,38 +149,16 @@ const AddressInfoPage = () => {
 
   // Fetch on mount
   useEffect(() => {
-    fetchBalance()
-    fetchTransactionNumber()
-    fetchTransactions()
-    fetchAssets()
-  }, [fetchAssets, fetchBalance, fetchTransactionNumber, fetchTransactions])
+    if (client && id) {
+      fetchDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
+      fetchDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
+      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(client, id))
+      fetchTransactions()
+    }
+  }, [client, fetchDataGeneric, fetchTransactions, id, pageNumber])
 
   // Mempool tx check
   useInterval(fetchMempoolTxs, 5000, !isAppVisible)
-
-  useEffect(() => {
-    if (!client || !id) return
-
-    const fetch = async () => {
-      setLoadings((p) => ({ ...p, transactions: true }))
-      setAddressTransactions(undefined)
-      try {
-        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
-        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
-          page: pageNumber
-        })
-
-        setAddressTransactions(currentPageTransactionData)
-        setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
-      } catch (error) {
-        displayError(setSnackbarMessage, error, "Error while fetching address' transactions")
-      } finally {
-        setLoadings((p) => ({ ...p, transactions: false }))
-      }
-    }
-
-    fetch()
-  }, [client, id, pageNumber, setSnackbarMessage])
 
   // Asset price (appox).
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
