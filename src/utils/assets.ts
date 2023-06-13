@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetInfo } from '@alephium/sdk'
 import TokensMetadata, { ALPH } from '@alephium/token-list'
-import { NodeProvider } from '@alephium/web3'
+import { NodeProvider, Optional } from '@alephium/web3'
 
 import { NetworkType } from '@/types/network'
 
@@ -30,7 +30,7 @@ export const getAssetMetadata = async ({
   assetId: string
   networkType: NetworkType
   nodeClient: NodeProvider
-}): Promise<Partial<AssetInfo>> => {
+}): Promise<Optional<AssetInfo, 'symbol' | 'decimals' | 'name'>> => {
   const knownTokenData =
     assetId === ALPH.id ? ALPH : TokensMetadata[networkType].tokens.tokens.find((tm) => tm.id === assetId)
 
@@ -43,7 +43,7 @@ export const getAssetMetadata = async ({
     } catch (e) {
       // We still want to display the asset even though we couldn't fetch data from the node
       console.error(e)
-      return { id: assetId, name: '', verified: false }
+      return { id: assetId, verified: false }
     }
   }
 }
