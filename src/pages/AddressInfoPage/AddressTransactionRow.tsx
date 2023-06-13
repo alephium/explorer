@@ -52,12 +52,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const theme = useTheme()
 
   const [txInfo, setTxInfo] = useState<Awaited<ReturnType<typeof getTransactionInfo>>>()
+  const { Icon, iconColor, iconBgColor } = useTransactionUI(txInfo?.infoType)
 
   const infoType = txInfo?.infoType
   const assets = txInfo?.assets
-  const isMoved = infoType === 'move'
 
-  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
 
   useEffect(() => {
