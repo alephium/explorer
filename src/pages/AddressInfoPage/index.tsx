@@ -201,10 +201,10 @@ const AddressInfoPage = () => {
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance), verified: true })
+    assets.unshift({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance), verified: true })
   }
 
-  assets = sortBy(assets, [(a) => !a.verified, 'name'])
+  assets = sortBy(assets, [(a) => !a.verified, (a) => a.name?.toLowerCase()])
 
   return (
     <Section>
