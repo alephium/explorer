@@ -42,7 +42,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
-import { getAssetMetadata } from '@/utils/assets'
+import { getAssetListMetadata } from '@/utils/assets'
 
 type ParamTypes = {
   id: string
@@ -56,7 +56,7 @@ const TransactionInfoPage = () => {
   const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
-  const [assetsData, setAssetsData] = useState<AssetInfo[]>([])
+  const [assetsData, setAssetsData] = useState<Pick<AssetInfo, 'id'>[]>([])
   const [loading, setLoading] = useState(true)
   const isAppVisible = usePageVisibility()
 
@@ -88,11 +88,9 @@ const TransactionInfoPage = () => {
         // Metadata
         const assetIds = _(tx.inputs).map('tokens').compact().flatten().map('id').uniq().value()
 
-        const assetsMetadata = await Promise.all(
-          assetIds.map(async (id) => await getAssetMetadata({ assetId: id, networkType, nodeClient: clients?.node }))
-        )
+        const assetsMetadata = await getAssetListMetadata({ assetIds, networkType, nodeClient: clients?.node })
 
-        setAssetsData(sortBy(assetsMetadata, [(a) => !a.verified, 'name']))
+        setAssetsData(sortBy(assetsMetadata, [(a) => !a.verified, (a) => a.name?.toLowerCase()]))
       } catch (e) {
         console.error(e)
         const { error, status } = e as APIError

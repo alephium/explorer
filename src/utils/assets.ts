@@ -47,3 +47,14 @@ export const getAssetMetadata = async ({
     }
   }
 }
+
+export const getAssetListMetadata = async ({
+  assetIds,
+  networkType,
+  nodeClient
+}: {
+  assetIds: string[]
+  networkType: NetworkType
+  nodeClient: NodeProvider
+}): Promise<Optional<AssetInfo, 'symbol' | 'decimals' | 'name'>[]> =>
+  await Promise.all(assetIds.map(async (id) => await getAssetMetadata({ assetId: id, networkType, nodeClient })))
