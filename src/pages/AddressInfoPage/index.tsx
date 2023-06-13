@@ -42,7 +42,7 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import { GlobalContextInterface, useGlobalContext } from '@/contexts/global'
+import { GlobalContextValue, useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
@@ -319,7 +319,7 @@ const AddressInfoPage = () => {
 export default AddressInfoPage
 
 const displayError = (
-  setSnackbarMessage: GlobalContextInterface['setSnackbarMessage'],
+  setSnackbarMessage: GlobalContextValue['setSnackbarMessage'],
   error: unknown,
   errorMsg: string
 ) => {

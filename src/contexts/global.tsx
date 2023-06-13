@@ -28,7 +28,7 @@ import { SnackbarMessage } from '@/types/ui'
 
 export type Clients = { explorer: ExplorerProvider; node: NodeProvider }
 
-export interface GlobalContextInterface {
+export interface GlobalContextValue {
   clients?: Clients
   networkType: NetworkType
   currentTheme: ThemeType
@@ -39,7 +39,7 @@ export interface GlobalContextInterface {
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
-export const GlobalContext = createContext<GlobalContextInterface>({
+export const GlobalContext = createContext<GlobalContextValue>({
   clients: undefined,
   networkType: 'mainnet',
   currentTheme: 'light',
