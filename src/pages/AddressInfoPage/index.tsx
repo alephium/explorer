@@ -20,7 +20,7 @@ import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sd
 import { ALPH } from '@alephium/token-list'
 import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
 import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { sortBy, unionBy } from 'lodash'
+import { isEqual, map, sortBy, unionBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -76,12 +76,10 @@ const AddressInfoPage = () => {
   const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
   const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
   const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
-  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>()
+  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
-
-  const knownPendingTxs = useRef<MempoolTransaction[]>([])
 
   const [loadings, setLoadings] = useState<{ [key in FetchedEntity]: boolean }>({
     balance: true,
@@ -132,20 +130,27 @@ const AddressInfoPage = () => {
     [client, fetchDataGeneric, id, pageNumber]
   )
 
-  const fetchMempoolTxs = async () => {
-    if (!client || !id) return
+  const fetchMempoolTxs = useCallback(
+    async (shouldTriggerTxFetch = true) => {
+      if (!client || !id) return
 
-    const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
+      try {
+        const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
+        const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
 
-    // Fetch settled TXs if mempool tx list length changed
-    if (addressMempoolTransactions && addressMempoolTransactions.length > mempoolTxs.length) {
-      fetchTransactions()
-    }
+        if (mempoolTxs.length > 0 && mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))) return
 
-    knownPendingTxs.current = unionBy(knownPendingTxs.current, addressMempoolTransactions, 'hash')
+        if (shouldTriggerTxFetch && addressMempoolTransactions.length > mempoolTxs.length) {
+          await fetchTransactions()
+        }
 
-    setAddressMempoolTransactions(mempoolTxs)
-  }
+        setAddressMempoolTransactions(mempoolTxs)
+      } catch (e) {
+        displayError(setSnackbarMessage, e, `Error while fetching pending transactions`)
+      }
+    },
+    [addressMempoolTransactions, client, fetchTransactions, id, setSnackbarMessage]
+  )
 
   // Fetch on mount
   useEffect(() => {
@@ -157,8 +162,12 @@ const AddressInfoPage = () => {
     }
   }, [client, fetchDataGeneric, fetchTransactions, id, pageNumber])
 
+  useEffect(() => {
+    fetchMempoolTxs(false)
+  }, [fetchMempoolTxs])
+
   // Mempool tx check
-  useInterval(fetchMempoolTxs, 5000, !isAppVisible)
+  useInterval(fetchMempoolTxs, 10000, !isAppVisible)
 
   // Asset price (appox).
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
