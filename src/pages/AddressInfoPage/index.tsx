@@ -20,10 +20,10 @@ import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sd
 import { ALPH } from '@alephium/token-list'
 import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
 import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { isEqual, map, sortBy, unionBy } from 'lodash'
+import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -59,7 +59,7 @@ type ParamTypes = {
   id: string
 }
 
-type FetchedEntity = 'balance' | 'txNumber' | 'assets' | 'transactions'
+type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'transactions'
 
 type SingleStringArgFunctions<T> = {
   [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
@@ -81,34 +81,31 @@ const AddressInfoPage = () => {
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
-  const [loadings, setLoadings] = useState<{ [key in FetchedEntity]: boolean }>({
+  const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
     balance: true,
     txNumber: true,
     assets: true,
     transactions: true
   })
 
-  const fetchDataGeneric = useCallback(
+  const fetchAddressDataGeneric = useCallback(
     async <T,>(
-      fetchedEntity: FetchedEntity,
-      setStateAction: (value: T | undefined) => void,
-      apiCallName?: SingleStringArgFunctions<ExplorerProvider['addresses']>,
-      customApiCall?: () => Promise<T>
+      addressPropName: AddressPropertyName,
+      setAddressProp: (value: T | undefined) => void,
+      apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
     ) => {
       if (!client || !id) return
 
-      setLoadings((p) => ({ ...p, [fetchedEntity]: true }))
-      setStateAction(undefined)
+      setLoadings((p) => ({ ...p, [addressPropName]: true }))
+      setAddressProp(undefined)
 
       try {
-        const result = customApiCall
-          ? await customApiCall()
-          : apiCallName && ((await client.addresses[apiCallName](id, {})) as T)
-        setStateAction(result)
+        const result = typeof apiCall === 'string' ? ((await client.addresses[apiCall](id, {})) as T) : await apiCall()
+        setAddressProp(result)
       } catch (error) {
-        displayError(setSnackbarMessage, error, `Error while fetching ${fetchedEntity}`)
+        displayError(setSnackbarMessage, error, `Error while fetching ${addressPropName}`)
       } finally {
-        setLoadings((p) => ({ ...p, [fetchedEntity]: false }))
+        setLoadings((p) => ({ ...p, [addressPropName]: false }))
       }
     },
     [client, id, setSnackbarMessage]
@@ -118,7 +115,7 @@ const AddressInfoPage = () => {
     () =>
       client &&
       id &&
-      fetchDataGeneric('transactions', setAddressTransactions, undefined, async () => {
+      fetchAddressDataGeneric('transactions', setAddressTransactions, async () => {
         const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
           page: pageNumber
         })
@@ -127,7 +124,7 @@ const AddressInfoPage = () => {
 
         return currentPageTransactionData
       }),
-    [client, fetchDataGeneric, id, pageNumber]
+    [client, fetchAddressDataGeneric, id, pageNumber]
   )
 
   const fetchMempoolTxs = useCallback(
@@ -155,12 +152,12 @@ const AddressInfoPage = () => {
   // Fetch on mount
   useEffect(() => {
     if (client && id) {
-      fetchDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
-      fetchDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
-      fetchDataGeneric('assets', setAddressAssets, undefined, async () => fetchAddressAssets(client, id))
+      fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
+      fetchAddressDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
+      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(client, id))
       fetchTransactions()
     }
-  }, [client, fetchDataGeneric, fetchTransactions, id, pageNumber])
+  }, [client, fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
 
   useEffect(() => {
     fetchMempoolTxs(false)
