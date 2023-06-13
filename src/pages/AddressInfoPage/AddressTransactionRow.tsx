@@ -203,6 +203,7 @@ const TableRowStyled = styled(TableRow)<{ pending: boolean }>`
       }
       background-color: ${theme.bg.secondary};
       border-bottom: 1px solid ${theme.border.secondary};
+      cursor: initial;
 
       @keyframes opacity-breathing {
         0% {
