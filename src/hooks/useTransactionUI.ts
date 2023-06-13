@@ -54,6 +54,13 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.12).toRgbString(),
       swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
+    }[infoType],
+    badgeText: {
+      move: 'Moved',
+      out: 'To',
+      swap: 'Swap',
+      pending: 'Pending',
+      in: 'From'
     }[infoType]
   }
 }

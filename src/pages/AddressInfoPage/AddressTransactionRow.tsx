@@ -51,7 +51,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const theme = useTheme()
 
   const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
-  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
 
@@ -111,22 +111,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           ))}
         </Assets>
 
-        <Badge
-          type="neutralHighlight"
-          content={
-            infoType === 'move'
-              ? 'Moved'
-              : infoType === 'out'
-              ? 'To'
-              : infoType === 'swap'
-              ? 'Swap'
-              : infoType === 'pending'
-              ? 'Pending'
-              : 'From'
-          }
-          floatRight
-          minWidth={60}
-        />
+        <Badge type="neutralHighlight" content={badgeText} floatRight minWidth={60} />
 
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
@@ -197,13 +182,14 @@ const TableRowStyled = styled(TableRow)<{ pending: boolean }>`
   ${({ pending, theme }) =>
     pending &&
     css`
+      background-color: ${theme.bg.secondary};
+      border-bottom: 1px solid ${theme.border.secondary};
+      cursor: initial;
+
       > * {
         opacity: 0.5;
         animation: opacity-breathing 2s ease infinite;
       }
-      background-color: ${theme.bg.secondary};
-      border-bottom: 1px solid ${theme.border.secondary};
-      cursor: initial;
 
       @keyframes opacity-breathing {
         0% {
