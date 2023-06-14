@@ -26,7 +26,7 @@ import { OnOff } from '@/types/generics'
 import { NetworkType, networkTypes } from '@/types/network'
 import { SnackbarMessage } from '@/types/ui'
 
-interface GlobalContextInterface {
+export interface GlobalContextInterface {
   client: ExplorerProvider | undefined
   networkType: NetworkType
   currentTheme: ThemeType

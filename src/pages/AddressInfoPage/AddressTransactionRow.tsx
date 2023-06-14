@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { explorer } from '@alephium/web3'
+import { isMempoolTx } from '@alephium/sdk'
+import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -38,7 +39,7 @@ import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { getTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
-  transaction: explorer.Transaction
+  transaction: Transaction | MempoolTransaction
   addressHash: string
 }
 
@@ -50,8 +51,9 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const theme = useTheme()
 
   const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
-  const { Icon, iconColor, iconBgColor } = useTransactionUI(infoType)
+  const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
   const isMoved = infoType === 'move'
+  const isPending = isMempoolTx(t)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -92,15 +94,15 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
   return (
     <>
-      <TableRow key={t.hash} isActive={detailOpen} onClick={toggleDetail}>
+      <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
           <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
-          {!t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
+          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
         <HashAndTimestamp>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
-          {(t.timestamp && <Timestamp timeInMs={t.timestamp} />) || '-'}
+          {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
 
         <Assets>
@@ -109,73 +111,99 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           ))}
         </Assets>
 
-        <Badge
-          type="neutralHighlight"
-          content={infoType === 'move' ? 'Moved' : infoType === 'out' ? 'To' : infoType === 'swap' ? 'Swap' : 'From'}
-          floatRight
-          minWidth={60}
-        />
+        <Badge type="neutralHighlight" content={badgeText} floatRight minWidth={60} />
 
-        {infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts()}
-        <AmountCell>
-          {assets.map(({ id, amount, symbol, decimals }) => (
-            <Amount
-              key={id}
-              value={amount}
-              highlight={!isMoved}
-              showPlusMinus={!isMoved}
-              color={isMoved ? theme.font.secondary : undefined}
-              suffix={symbol}
-              decimals={decimals}
-              isUnknownToken={!symbol}
-            />
-          ))}
-        </AmountCell>
-        <DetailToggle isOpen={detailOpen} />
-      </TableRow>
-      <TableDetailsRow openCondition={detailOpen}>
-        <AnimatedCell colSpan={7}>
-          <Table>
-            <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
-            <TableBody>
-              <TableRow>
-                <IODetailList>
-                  {t.inputs && t.inputs.length > 0 ? (
-                    <TransactionIOList
-                      inputs={t.inputs}
-                      IOItemWrapper={IODetailsContainer}
-                      addressMaxWidth="180px"
-                      flex
-                    />
-                  ) : (
-                    <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
-                  )}
-                </IODetailList>
+        {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
+        {!isPending && (
+          <AmountCell>
+            {assets.map(({ id, amount, symbol, decimals }) => (
+              <Amount
+                key={id}
+                value={amount}
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                color={isMoved ? theme.font.secondary : undefined}
+                suffix={symbol}
+                decimals={decimals}
+                isUnknownToken={!symbol}
+              />
+            ))}
+          </AmountCell>
+        )}
+        {!isPending && <DetailToggle isOpen={detailOpen} />}
+      </TableRowStyled>
+      {!isPending && (
+        <TableDetailsRow openCondition={detailOpen}>
+          <AnimatedCell colSpan={7}>
+            <Table>
+              <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
+              <TableBody>
+                <TableRow>
+                  <IODetailList>
+                    {t.inputs && t.inputs.length > 0 ? (
+                      <TransactionIOList
+                        inputs={t.inputs}
+                        IOItemWrapper={IODetailsContainer}
+                        addressMaxWidth="180px"
+                        flex
+                      />
+                    ) : (
+                      <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
+                    )}
+                  </IODetailList>
 
-                <span style={{ textAlign: 'center' }}>
-                  <ArrowRight size={12} />
-                </span>
+                  <span style={{ textAlign: 'center' }}>
+                    <ArrowRight size={12} />
+                  </span>
 
-                <IODetailList>
-                  {t.outputs && (
-                    <TransactionIOList
-                      outputs={t.outputs}
-                      IOItemWrapper={IODetailsContainer}
-                      addressMaxWidth="180px"
-                      flex
-                    />
-                  )}
-                </IODetailList>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </AnimatedCell>
-      </TableDetailsRow>
+                  <IODetailList>
+                    {t.outputs && (
+                      <TransactionIOList
+                        outputs={t.outputs}
+                        IOItemWrapper={IODetailsContainer}
+                        addressMaxWidth="180px"
+                        flex
+                      />
+                    )}
+                  </IODetailList>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </AnimatedCell>
+        </TableDetailsRow>
+      )}
     </>
   )
 }
 
 export default AddressTransactionRow
+
+const TableRowStyled = styled(TableRow)<{ pending: boolean }>`
+  ${({ pending, theme }) =>
+    pending &&
+    css`
+      background-color: ${theme.bg.secondary};
+      border-bottom: 1px solid ${theme.border.secondary};
+      cursor: initial;
+
+      > * {
+        opacity: 0.5;
+        animation: opacity-breathing 2s ease infinite;
+      }
+
+      @keyframes opacity-breathing {
+        0% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0.4;
+        }
+      }
+    `}
+`
 
 const BlockRewardLabel = styled.span`
   color: ${({ theme }) => theme.font.secondary};

@@ -18,8 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TransactionInfoType } from '@alephium/sdk'
 import { colord } from 'colord'
-import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat } from 'lucide-react'
+import { ArrowDown, ArrowLeftRight, ArrowUp, Repeat } from 'lucide-react'
 import { useTheme } from 'styled-components'
+
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export const useTransactionUI = (infoType: TransactionInfoType) => {
   const theme = useTheme()
@@ -36,7 +38,7 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       in: ArrowDown,
       out: ArrowUp,
       move: ArrowLeftRight,
-      pending: CircleEllipsis,
+      pending: LoadingSpinner,
       swap: Repeat
     }[infoType],
     iconColor: {
@@ -52,6 +54,13 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       move: colord(theme.font.secondary).alpha(0.12).toRgbString(),
       pending: colord(theme.font.secondary).alpha(0.12).toRgbString(),
       swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
+    }[infoType],
+    badgeText: {
+      move: 'Moved',
+      out: 'To',
+      swap: 'Swap',
+      pending: 'Pending',
+      in: 'From'
     }[infoType]
   }
 }

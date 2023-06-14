@@ -18,12 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { groupOfAddress } from '@alephium/web3'
-import { AddressBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
+import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -41,7 +42,8 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import { useGlobalContext } from '@/contexts/global'
+import { GlobalContextInterface, useGlobalContext } from '@/contexts/global'
+import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -57,127 +59,112 @@ type ParamTypes = {
   id: string
 }
 
-const TransactionInfoPage = () => {
+type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'transactions'
+
+type SingleStringArgFunctions<T> = {
+  [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
+}[keyof T]
+
+const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
   const { client, setSnackbarMessage, networkType } = useGlobalContext()
+  const isAppVisible = usePageVisibility()
+  const pageNumber = usePageNumber()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
   const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
   const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
   const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
+  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
+  const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
+  const [exportModalShown, setExportModalShown] = useState(false)
 
-  const [loadings, setLoadings] = useState({
+  const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
     balance: true,
     txNumber: true,
     assets: true,
     transactions: true
   })
 
-  const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
+  const fetchAddressDataGeneric = useCallback(
+    async <T,>(
+      addressPropName: AddressPropertyName,
+      setAddressProp: (value: T | undefined) => void,
+      apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
+    ) => {
+      if (!client || !id) return
 
-  const [exportModalShown, setExportModalShown] = useState(false)
+      setLoadings((p) => ({ ...p, [addressPropName]: true }))
+      setAddressProp(undefined)
 
-  // Default page
-  const pageNumber = usePageNumber()
-
-  useEffect(() => {
-    if (!client || !id) return
-
-    const fetch = async () => {
-      setLoadings((p) => ({ ...p, balance: true }))
-      setAddressBalance(undefined)
       try {
-        const balance = await client.addresses.getAddressesAddressBalance(id)
-        setAddressBalance(balance)
+        const result = typeof apiCall === 'string' ? ((await client.addresses[apiCall](id, {})) as T) : await apiCall()
+        setAddressProp(result)
       } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching address balance'),
-          type: 'alert'
-        })
+        displayError(setSnackbarMessage, error, `Error while fetching ${addressPropName}`)
       } finally {
-        setLoadings((p) => ({ ...p, balance: false }))
+        setLoadings((p) => ({ ...p, [addressPropName]: false }))
       }
-    }
+    },
+    [client, id, setSnackbarMessage]
+  )
 
-    fetch()
-  }, [client, id, setSnackbarMessage])
-
-  useEffect(() => {
-    if (!client || !id) return
-
-    const fetch = async () => {
-      setLoadings((p) => ({ ...p, txNumber: true }))
-      setAddressBalance(undefined)
-      try {
-        const txNumber = await client.addresses.getAddressesAddressTotalTransactions(id)
-        setAddressTransactionNumber(txNumber)
-      } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, "Error while fetching address' transaction number"),
-          type: 'alert'
-        })
-      } finally {
-        setLoadings((p) => ({ ...p, txNumber: false }))
-      }
-    }
-
-    fetch()
-  }, [client, id, setSnackbarMessage])
-
-  useEffect(() => {
-    if (!client || !id) return
-
-    const fetch = async () => {
-      setLoadings((p) => ({ ...p, assets: true }))
-      setAddressAssets(undefined)
-      try {
-        const assets = await fetchAddressAssets(client, id)
-        setAddressAssets(assets)
-      } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, "Error while fetching address' assets"),
-          type: 'alert'
-        })
-      } finally {
-        setLoadings((p) => ({ ...p, assets: false }))
-      }
-    }
-
-    fetch()
-  }, [client, id, setSnackbarMessage])
-
-  useEffect(() => {
-    if (!client || !id) return
-
-    const fetch = async () => {
-      setLoadings((p) => ({ ...p, transactions: true }))
-      setAddressTransactions(undefined)
-      try {
-        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
+  const fetchTransactions = useCallback(
+    () =>
+      client &&
+      id &&
+      fetchAddressDataGeneric('transactions', setAddressTransactions, async () => {
         const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
           page: pageNumber
         })
-
-        setAddressTransactions(currentPageTransactionData)
+        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
         setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
-      } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, "Error while fetching address' transactions"),
-          type: 'alert'
-        })
-      } finally {
-        setLoadings((p) => ({ ...p, transactions: false }))
-      }
-    }
 
-    fetch()
-  }, [client, id, pageNumber, setSnackbarMessage])
+        return currentPageTransactionData
+      }),
+    [client, fetchAddressDataGeneric, id, pageNumber]
+  )
+
+  const fetchMempoolTxs = useCallback(
+    async (shouldTriggerTxFetch = true) => {
+      if (!client || !id) return
+
+      try {
+        const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
+        const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
+
+        if (mempoolTxs.length > 0 && mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))) return
+
+        if (shouldTriggerTxFetch && addressMempoolTransactions.length > mempoolTxs.length) {
+          await fetchTransactions()
+        }
+
+        setAddressMempoolTransactions(mempoolTxs)
+      } catch (e) {
+        displayError(setSnackbarMessage, e, `Error while fetching pending transactions`)
+      }
+    },
+    [addressMempoolTransactions, client, fetchTransactions, id, setSnackbarMessage]
+  )
+
+  // Fetch on mount
+  useEffect(() => {
+    if (client && id) {
+      fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
+      fetchAddressDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
+      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(client, id))
+      fetchTransactions()
+    }
+  }, [client, fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
+
+  useEffect(() => {
+    fetchMempoolTxs(false)
+  }, [fetchMempoolTxs])
+
+  // Mempool tx check
+  useInterval(fetchMempoolTxs, 10000, !isAppVisible)
 
   // Asset price (appox).
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
@@ -193,11 +180,7 @@ const TransactionInfoPage = () => {
 
         setAddressWorth(calculateAmountWorth(BigInt(balance), price))
       } catch (error) {
-        console.error(error)
-        setSnackbarMessage({
-          text: getHumanReadableError(error, 'Error while fetching fiat price'),
-          type: 'alert'
-        })
+        displayError(setSnackbarMessage, error, 'Error while fetching fiat price')
       }
     }
 
@@ -292,7 +275,7 @@ const TransactionInfoPage = () => {
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={loadings.transactions}>
-        {txList?.length ? (
+        {txList?.length || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
               headerTitles={[
@@ -311,11 +294,14 @@ const TransactionInfoPage = () => {
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
-              {txList
-                .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                .map((t, i) => (
+              {addressMempoolTransactions &&
+                addressMempoolTransactions.map((t, i) => (
                   <AddressTransactionRow transaction={t} addressHash={id} key={i} />
                 ))}
+              {txList &&
+                txList
+                  .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
+                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={id} key={i} />)}
             </TableBody>
           </>
         ) : (
@@ -332,6 +318,20 @@ const TransactionInfoPage = () => {
       <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>
   )
+}
+
+export default AddressInfoPage
+
+const displayError = (
+  setSnackbarMessage: GlobalContextInterface['setSnackbarMessage'],
+  error: unknown,
+  errorMsg: string
+) => {
+  console.error(error)
+  setSnackbarMessage({
+    text: getHumanReadableError(error, errorMsg),
+    type: 'alert'
+  })
 }
 
 const TxListCustomStyles: TDStyle[] = [
@@ -391,5 +391,3 @@ const NoTxsMessage = styled.tr`
   background-color: ${({ theme }) => theme.bg.secondary};
   padding: 15px 20px;
 `
-
-export default TransactionInfoPage
