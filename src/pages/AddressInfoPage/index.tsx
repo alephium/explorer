@@ -135,7 +135,11 @@ const AddressInfoPage = () => {
         const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
         const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
 
-        if (mempoolTxs.length > 0 && mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))) return
+        if (
+          addressMempoolTransactions.length === mempoolTxs.length &&
+          mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))
+        )
+          return
 
         if (shouldTriggerTxFetch && addressMempoolTransactions.length > mempoolTxs.length) {
           await fetchTransactions()
