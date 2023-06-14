@@ -11,6 +11,7 @@
     "@alephium/sdk": "0.7.2",
     "@alephium/token-list": "^0.0.7",
     "@alephium/web3": "0.12.2",
+    "@reduxjs/toolkit": "^1.9.5",
     "apexcharts": "^3.35.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
