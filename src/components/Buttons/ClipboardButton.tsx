@@ -21,7 +21,7 @@ import { MouseEvent, useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled, { css } from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useSnackbar } from '@/hooks/useSnackbar'
 
 interface ClipboardButtonProps {
   textToCopy: string
@@ -32,7 +32,7 @@ interface ClipboardButtonProps {
 
 const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProps) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
-  const { setSnackbarMessage } = useGlobalContext()
+  const { displaySnackbar } = useSnackbar()
 
   const handleClick = (e: MouseEvent) => {
     e.stopPropagation()
@@ -53,8 +53,8 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
     let interval: ReturnType<typeof setInterval>
 
     if (hasBeenCopied) {
+      displaySnackbar({ text: 'Copied to clipboard.', type: 'info' })
       ReactTooltip.rebuild()
-      setSnackbarMessage({ text: 'Copied to clipboard!', type: 'info' })
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
@@ -65,7 +65,7 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
         clearInterval(interval)
       }
     }
-  }, [hasBeenCopied, setSnackbarMessage])
+  }, [displaySnackbar, hasBeenCopied])
 
   return (
     <div className={className}>

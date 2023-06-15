@@ -16,11 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { useContext } from 'react'
 
-export interface SnackbarMessage {
-  text: string
-  type: 'info' | 'alert' | 'success'
-  Icon?: ReactNode
-  duration?: number
-}
+import { SnackbarContext } from '@/components/Snackbar/SnackbarProvider'
+
+export const useSnackbar = () => useContext(SnackbarContext)

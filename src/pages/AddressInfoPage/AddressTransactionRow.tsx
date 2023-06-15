@@ -22,6 +22,7 @@ import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import styled, { css, useTheme } from 'styled-components'
 
+import client from '@/api/client'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -33,7 +34,6 @@ import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
-import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { getTransactionInfo } from '@/utils/transactions'
@@ -47,10 +47,9 @@ const directionIconSize = 13
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
-  const { networkType } = useGlobalContext()
   const theme = useTheme()
 
-  const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
+  const { assets, infoType } = getTransactionInfo(t, addressHash, client.networkType)
   const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)

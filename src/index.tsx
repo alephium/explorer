@@ -45,18 +45,14 @@ if (browserIsOld) {
   )
 } else {
   import('./App').then(({ default: App }) => {
-    import('./contexts/global').then(({ GlobalContextProvider }) => {
-      ReactDOM.render(
-        <Router>
-          <StateProvider store={store}>
-            <GlobalContextProvider>
-              <App />
-            </GlobalContextProvider>
-          </StateProvider>
-        </Router>,
-        document.getElementById('root')
-      )
-    })
+    ReactDOM.render(
+      <Router>
+        <StateProvider store={store}>
+          <App />
+        </StateProvider>
+      </Router>,
+      document.getElementById('root')
+    )
   })
 }
 

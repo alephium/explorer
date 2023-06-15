@@ -43,9 +43,9 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import { GlobalContextInterface, useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressAssetsResult } from '@/types/addresses'
@@ -69,9 +69,9 @@ type SingleStringArgFunctions<T> = {
 const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
-  const { setSnackbarMessage } = useGlobalContext()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
+  const { displaySnackbar } = useSnackbar()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
   const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
@@ -89,6 +89,17 @@ const AddressInfoPage = () => {
     transactions: true
   })
 
+  const displayError = useCallback(
+    (error: unknown, errorMsg: string) => {
+      console.error(error)
+      displaySnackbar({
+        text: getHumanReadableError(error, errorMsg),
+        type: 'alert'
+      })
+    },
+    [displaySnackbar]
+  )
+
   const fetchAddressDataGeneric = useCallback(
     async <T,>(
       addressPropName: AddressPropertyName,
@@ -105,12 +116,12 @@ const AddressInfoPage = () => {
           typeof apiCall === 'string' ? ((await client.explorer.addresses[apiCall](id, {})) as T) : await apiCall()
         setAddressProp(result)
       } catch (error) {
-        displayError(setSnackbarMessage, error, `Error while fetching ${addressPropName}`)
+        displayError(error, `Error while fetching ${addressPropName}`)
       } finally {
         setLoadings((p) => ({ ...p, [addressPropName]: false }))
       }
     },
-    [id, setSnackbarMessage]
+    [displayError, id]
   )
 
   const fetchTransactions = useCallback(
@@ -150,10 +161,10 @@ const AddressInfoPage = () => {
 
         setAddressMempoolTransactions(mempoolTxs)
       } catch (e) {
-        displayError(setSnackbarMessage, e, `Error while fetching pending transactions`)
+        displayError(e, `Error while fetching pending transactions`)
       }
     },
-    [addressMempoolTransactions, fetchTransactions, id, setSnackbarMessage]
+    [addressMempoolTransactions, displayError, fetchTransactions, id]
   )
 
   // Fetch on mount
@@ -187,12 +198,12 @@ const AddressInfoPage = () => {
 
         setAddressWorth(calculateAmountWorth(BigInt(balance), price))
       } catch (error) {
-        displayError(setSnackbarMessage, error, 'Error while fetching fiat price')
+        displayError(error, 'Error while fetching fiat price')
       }
     }
 
     getAddressWorth()
-  }, [addressBalance?.balance, setSnackbarMessage])
+  }, [addressBalance?.balance, displayError])
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
@@ -330,18 +341,6 @@ const AddressInfoPage = () => {
 }
 
 export default AddressInfoPage
-
-const displayError = (
-  setSnackbarMessage: GlobalContextInterface['setSnackbarMessage'],
-  error: unknown,
-  errorMsg: string
-) => {
-  console.error(error)
-  setSnackbarMessage({
-    text: getHumanReadableError(error, errorMsg),
-    type: 'alert'
-  })
-}
 
 const TxListCustomStyles: TDStyle[] = [
   {

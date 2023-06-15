@@ -22,7 +22,7 @@ import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import { checkAddressValidity, checkHexStringValidity } from '@/utils/strings'
 
 interface SearchBarProps {
@@ -32,7 +32,8 @@ interface SearchBarProps {
 const SearchBar = ({ className }: SearchBarProps) => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
-  const { setSnackbarMessage } = useGlobalContext()
+  const { displaySnackbar } = useSnackbar()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const navigate = useNavigate()
@@ -82,13 +83,13 @@ const SearchBar = ({ className }: SearchBarProps) => {
           redirect(`/transactions/${word}`)
         }
       } else {
-        setSnackbarMessage({ text: 'There seems to be an error in the hash format.', type: 'info' })
+        displaySnackbar({ text: 'There seems to be an error in the hash format.', type: 'info' })
       }
     } else {
       if (checkAddressValidity(word)) {
         redirect(`/addresses/${word}`)
       } else {
-        setSnackbarMessage({ text: 'There seems to be an error in the address format.', type: 'info' })
+        displaySnackbar({ text: 'There seems to be an error in the address format.', type: 'info' })
       }
     }
   }

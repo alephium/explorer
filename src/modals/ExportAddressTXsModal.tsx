@@ -23,12 +23,13 @@ import { Check } from 'lucide-react'
 import { ComponentProps, useCallback, useState } from 'react'
 import styled from 'styled-components'
 
+import client from '@/api/client'
 import Button from '@/components/Buttons/Button'
 import HighlightedHash from '@/components/HighlightedHash'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
-import { useGlobalContext } from '@/contexts/global'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 type TimePeriodValue = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
@@ -38,14 +39,14 @@ interface ExportAddressTXsModalProps extends Omit<ComponentProps<typeof Modal>, 
 }
 
 const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
-  const { client, setSnackbarMessage } = useGlobalContext()
+  const { displaySnackbar } = useSnackbar()
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
 
   const getCSVFile = useCallback(async () => {
     onClose()
 
-    setSnackbarMessage({
+    displaySnackbar({
       text: "Your CSV is being compiled in the background (don't close the explorer)...",
       type: 'info',
       Icon: <LoadingSpinner size={20} style={{ color: 'inherit' }} />,
@@ -53,7 +54,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
     })
 
     try {
-      const data = await client?.addresses.getAddressesAddressExportTransactionsCsv(
+      const data = await client.explorer.addresses.getAddressesAddressExportTransactionsCsv(
         addressHash,
         {
           fromTs: timePeriods[timePeriodValue].from,
@@ -69,7 +70,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
 
       startCSVFileDownload(data, `${addressHash}__${timePeriodValue}__${dayjs().format('DD-MM-YYYY')}`)
 
-      setSnackbarMessage({
+      displaySnackbar({
         text: 'Your CSV has been successfully downloaded.',
         type: 'success',
         Icon: <Check size={14} />
@@ -82,15 +83,13 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
         parsedError.error = JSON.parse(parsedError.error as string) // we received a "text" format, need to parse the JSON
       }
 
-      setSnackbarMessage(undefined) // remove previously set message
-
-      setSnackbarMessage({
+      displaySnackbar({
         text: getHumanReadableError(parsedError, 'Problem while downloading the CSV file'),
         type: 'alert',
         duration: 5000
       })
     }
-  }, [addressHash, client?.addresses, onClose, setSnackbarMessage, timePeriodValue])
+  }, [addressHash, displaySnackbar, onClose, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
