@@ -27,7 +27,7 @@ interface SettingsState {
 }
 
 const initialState: SettingsState = {
-  theme: 'light',
+  theme: localStorage.getItem('theme') as ThemeType,
   timestampPrecisionMode: 'off'
 }
 
@@ -36,7 +36,9 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     themeToggled(state, action: PayloadAction<ThemeType>) {
-      state.theme = action.payload
+      const themeValue = action.payload
+      state.theme = themeValue
+      localStorage.setItem('theme', themeValue)
     }
   }
 })
