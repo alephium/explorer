@@ -34,6 +34,8 @@ import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
 import { SnackbarMessage } from '@/types/ui'
 
+import { useAppSelector } from './hooks/redux'
+
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
 
@@ -56,14 +58,15 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const { snackbarMessage, currentTheme } = useGlobalContext()
+  const { snackbarMessage } = useGlobalContext()
+  const theme = useAppSelector((s) => s.global.theme)
   const navigate = useNavigate()
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
 
   return (
-    <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
       <MainContainer>
         <AnimateSharedLayout>

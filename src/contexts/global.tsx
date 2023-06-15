@@ -25,17 +25,13 @@ import { OnOff } from '@/types/generics'
 import { SnackbarMessage } from '@/types/ui'
 
 export interface GlobalContextInterface {
-  currentTheme: ThemeType
-  switchTheme: (arg0: ThemeType) => void
+  timestampPrecisionMode: OnOff
   snackbarMessage: SnackbarMessage | undefined
   setSnackbarMessage: (message?: SnackbarMessage) => void
-  timestampPrecisionMode: OnOff
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
 export const GlobalContext = createContext<GlobalContextInterface>({
-  currentTheme: 'light',
-  switchTheme: () => null,
   snackbarMessage: undefined,
   setSnackbarMessage: () => null,
   timestampPrecisionMode: 'off',
@@ -43,7 +39,6 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 })
 
 export const GlobalContextProvider: FC = ({ children }) => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
@@ -61,8 +56,6 @@ export const GlobalContextProvider: FC = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
-        currentTheme: themeName as ThemeType,
-        switchTheme: setThemeName as (arg0: ThemeType) => void,
         snackbarMessage,
         setSnackbarMessage,
         timestampPrecisionMode,

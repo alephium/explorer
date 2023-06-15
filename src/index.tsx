@@ -19,11 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import './fonts/index.css'
 
 import ReactDOM from 'react-dom'
+import { Provider as StateProvider } from 'react-redux'
 import { BrowserRouter as Router } from 'react-router-dom'
 
 import NotificationBar from '@/components/NotificationBar'
 
 import * as serviceWorker from './serviceWorker'
+import { store } from './store/store'
 import { isFlexGapSupported } from './utils/browserSupport'
 
 let browserIsOld = !isFlexGapSupported()
@@ -46,9 +48,11 @@ if (browserIsOld) {
     import('./contexts/global').then(({ GlobalContextProvider }) => {
       ReactDOM.render(
         <Router>
-          <GlobalContextProvider>
-            <App />
-          </GlobalContextProvider>
+          <StateProvider store={store}>
+            <GlobalContextProvider>
+              <App />
+            </GlobalContextProvider>
+          </StateProvider>
         </Router>,
         document.getElementById('root')
       )

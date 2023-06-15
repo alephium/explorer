@@ -23,6 +23,8 @@ import styled from 'styled-components'
 
 import { useGlobalContext } from '@/contexts/global'
 import { ThemeType } from '@/styles/themes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { themeToggled } from '@/store/settingsSlice'
 
 interface ThemeSwitcherProps {
   className?: string
@@ -41,21 +43,26 @@ const toggleVariants = {
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
-  const { currentTheme, switchTheme } = useGlobalContext()
+  const theme = useAppSelector((s) => s.global.theme)
+  const dispatch = useAppDispatch()
+
+  const handleThemeSwitch = (theme: ThemeType) => {
+    dispatch(themeToggled(theme))
+  }
 
   return (
-    <StyledThemeSwitcher onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')} className={className}>
+    <StyledThemeSwitcher onClick={() => handleThemeSwitch(theme === 'light' ? 'dark' : 'light')} className={className}>
       <ToggleContent>
         <ToggleIcon>
-          <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} />
+          <Sun onClick={() => handleThemeSwitch('light')} color={getButtonColor(theme, 'light')} size={18} />
         </ToggleIcon>
         <ToggleIcon>
-          <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} />
+          <Moon onClick={() => handleThemeSwitch('dark')} color={getButtonColor(theme, 'dark')} size={18} />
         </ToggleIcon>
       </ToggleContent>
       <ToggleFloatingIndicator
         variants={toggleVariants}
-        animate={currentTheme}
+        animate={theme}
         transition={{ duration: 0.5, type: 'spring' }}
       />
     </StyledThemeSwitcher>
