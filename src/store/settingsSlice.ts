@@ -28,20 +28,25 @@ interface SettingsState {
 
 const initialState: SettingsState = {
   theme: localStorage.getItem('theme') as ThemeType,
-  timestampPrecisionMode: 'off'
+  timestampPrecisionMode: localStorage.getItem('timestampPrecisionMode') as OnOff
 }
 
 const settingsSlice = createSlice({
-  name: 'global',
+  name: 'settings',
   initialState,
   reducers: {
     themeToggled(state, action: PayloadAction<ThemeType>) {
       const themeValue = action.payload
       state.theme = themeValue
       localStorage.setItem('theme', themeValue)
+    },
+    timestampPrecisionModeChanged(state, action: PayloadAction<OnOff>) {
+      const mode = action.payload
+      state.timestampPrecisionMode = mode
+      localStorage.setItem('timestampPrecisionMode', mode)
     }
   }
 })
 
-export const { themeToggled } = settingsSlice.actions
+export const { themeToggled, timestampPrecisionModeChanged } = settingsSlice.actions
 export default settingsSlice

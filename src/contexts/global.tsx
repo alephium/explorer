@@ -19,31 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useContext, useEffect, useState } from 'react'
 
-import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
-import { ThemeType } from '@/styles/themes'
-import { OnOff } from '@/types/generics'
 import { SnackbarMessage } from '@/types/ui'
 
 export interface GlobalContextInterface {
-  timestampPrecisionMode: OnOff
   snackbarMessage: SnackbarMessage | undefined
   setSnackbarMessage: (message?: SnackbarMessage) => void
-  setTimestampPrecisionMode: (status: OnOff) => void
 }
 
 export const GlobalContext = createContext<GlobalContextInterface>({
   snackbarMessage: undefined,
-  setSnackbarMessage: () => null,
-  timestampPrecisionMode: 'off',
-  setTimestampPrecisionMode: () => null
+  setSnackbarMessage: () => null
 })
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
-  const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
-    'timestampPrecisionMode',
-    'off'
-  )
 
   // Remove snackbar popup
   useEffect(() => {
@@ -57,9 +46,7 @@ export const GlobalContextProvider: FC = ({ children }) => {
     <GlobalContext.Provider
       value={{
         snackbarMessage,
-        setSnackbarMessage,
-        timestampPrecisionMode,
-        setTimestampPrecisionMode
+        setSnackbarMessage
       }}
     >
       {children}

@@ -20,7 +20,8 @@ import { ChevronsLeftRight, ChevronsRightLeft, LucideProps } from 'lucide-react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { timestampPrecisionModeChanged } from '@/store/settingsSlice'
 import { OnOff } from '@/types/generics'
 
 interface TimestampExpandButtonProps {
@@ -39,10 +40,11 @@ const config: Record<OnOff, { Icon: (props: LucideProps) => JSX.Element; tooltip
 }
 
 const TimestampExpandButton = ({ className }: TimestampExpandButtonProps) => {
-  const { timestampPrecisionMode, setTimestampPrecisionMode } = useGlobalContext()
+  const timestampPrecisionMode = useAppSelector((s) => s.settings.timestampPrecisionMode)
+  const dispatch = useAppDispatch()
 
   const handleClick = () => {
-    setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
+    dispatch(timestampPrecisionModeChanged(timestampPrecisionMode === 'on' ? 'off' : 'on'))
     ReactTooltip.hide()
   }
   const { Icon, tooltipContent } = config[timestampPrecisionMode]

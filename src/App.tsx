@@ -59,7 +59,7 @@ dayjs.updateLocale('en', {
 
 const App = () => {
   const { snackbarMessage } = useGlobalContext()
-  const theme = useAppSelector((s) => s.global.theme)
+  const theme = useAppSelector((s) => s.settings.theme)
   const navigate = useNavigate()
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
