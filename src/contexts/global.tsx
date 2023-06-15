@@ -17,18 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ExplorerProvider, throttledFetch } from '@alephium/web3'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { ThemeType } from '@/styles/themes'
 import { OnOff } from '@/types/generics'
-import { NetworkType, networkTypes } from '@/types/network'
 import { SnackbarMessage } from '@/types/ui'
 
 export interface GlobalContextInterface {
-  client: ExplorerProvider | undefined
-  networkType: NetworkType
   currentTheme: ThemeType
   switchTheme: (arg0: ThemeType) => void
   snackbarMessage: SnackbarMessage | undefined
@@ -38,8 +34,6 @@ export interface GlobalContextInterface {
 }
 
 export const GlobalContext = createContext<GlobalContextInterface>({
-  client: undefined,
-  networkType: 'mainnet',
   currentTheme: 'light',
   switchTheme: () => null,
   snackbarMessage: undefined,
@@ -50,53 +44,11 @@ export const GlobalContext = createContext<GlobalContextInterface>({
 
 export const GlobalContextProvider: FC = ({ children }) => {
   const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
-  const [client, setClient] = useState<ExplorerProvider>()
-  const [networkType, setNetworkType] = useState<NetworkType>('mainnet')
   const [snackbarMessage, setSnackbarMessage] = useState<SnackbarMessage | undefined>()
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
     'off'
   )
-
-  useEffect(() => {
-    // Check and apply environment variables
-    let url: string | null | undefined = (window as any).VITE_BACKEND_URL
-
-    let netType = (window as any).VITE_NETWORK_TYPE as NetworkType
-
-    if (!url) {
-      url = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
-      netType = (import.meta.env.VITE_NETWORK_TYPE || 'testnet') as NetworkType
-
-      console.info(`
-        • DEVELOPMENT MODE •
-
-        Using local env. variables if available.
-        You can set them using a .env file placed at the project's root.
-
-        - Backend URL: ${url}
-        - Network Type: ${netType}
-      `)
-    }
-
-    if (!url) {
-      throw new Error('The VITE_BACKEND_URL environment variable must be defined')
-    }
-
-    if (!netType) {
-      throw new Error('The VITE_NETWORK_TYPE environment variable must be defined')
-    } else if (!networkTypes.includes(netType)) {
-      throw new Error('Value of the VITE_NETWORK_TYPE environment variable is invalid')
-    }
-
-    try {
-      setClient(new ExplorerProvider(url, undefined, throttledFetch(5)))
-    } catch (error) {
-      throw new Error('Could not create explorer client')
-    }
-
-    setNetworkType(netType)
-  }, [])
 
   // Remove snackbar popup
   useEffect(() => {
@@ -109,8 +61,6 @@ export const GlobalContextProvider: FC = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
-        client,
-        networkType,
         currentTheme: themeName as ThemeType,
         switchTheme: setThemeName as (arg0: ThemeType) => void,
         snackbarMessage,

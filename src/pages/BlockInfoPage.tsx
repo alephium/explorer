@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import client from '@/api/client'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, TightLink } from '@/components/Links'
@@ -37,7 +38,6 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
-import { useGlobalContext } from '@/contexts/global'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
@@ -48,7 +48,6 @@ type ParamTypes = {
 
 const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client } = useGlobalContext()
   const navigate = useNavigate()
 
   const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
@@ -67,10 +66,11 @@ const BlockInfoPage = () => {
   // Block info
   useEffect(() => {
     const fetchBlockInfo = async () => {
-      if (!client || !id) return
+      if (!id) return
+
       setInfoLoading(true)
       try {
-        const data = await client.blocks.getBlocksBlockHash(id)
+        const data = await client.explorer.blocks.getBlocksBlockHash(id)
         if (data) setBlockInfo(data)
       } catch (e) {
         console.error(e)
@@ -84,7 +84,7 @@ const BlockInfoPage = () => {
     }
 
     fetchBlockInfo()
-  }, [client, id])
+  }, [id])
 
   // Block transactions
   useEffect(() => {
@@ -92,7 +92,7 @@ const BlockInfoPage = () => {
       if (!client || !id) return
       setTxLoading(true)
       try {
-        const data = await client.blocks.getBlocksBlockHashTransactions(id, {
+        const data = await client.explorer.blocks.getBlocksBlockHashTransactions(id, {
           page: currentPageNumber
         })
         if (data) setTxList(data)
@@ -105,7 +105,7 @@ const BlockInfoPage = () => {
     }
 
     fetchTransactions()
-  }, [id, currentPageNumber, client])
+  }, [id, currentPageNumber])
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
@@ -113,7 +113,7 @@ const BlockInfoPage = () => {
 
     const redirectToTransactionIfExists = async () => {
       try {
-        const data = await client.transactions.getTransactionsTransactionHash(id)
+        const data = await client.explorer.transactions.getTransactionsTransactionHash(id)
         if (data) navigate(`/transactions/${id}`)
       } catch (error) {
         console.error(error)
@@ -121,7 +121,7 @@ const BlockInfoPage = () => {
     }
 
     redirectToTransactionIfExists()
-  }, [blockInfo, id, client, blockInfoError, navigate])
+  }, [blockInfo, id, blockInfoError, navigate])
 
   return !infoLoading && !blockInfo && blockInfoError ? (
     <InlineErrorMessage {...blockInfoError} />

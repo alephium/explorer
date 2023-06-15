@@ -29,6 +29,7 @@ import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import { fetchAddressAssets } from '@/api/addressApi'
+import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -68,7 +69,7 @@ type SingleStringArgFunctions<T> = {
 const AddressInfoPage = () => {
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
-  const { client, setSnackbarMessage, networkType } = useGlobalContext()
+  const { setSnackbarMessage } = useGlobalContext()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
 
@@ -94,13 +95,14 @@ const AddressInfoPage = () => {
       setAddressProp: (value: T | undefined) => void,
       apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
     ) => {
-      if (!client || !id) return
+      if (!id) return
 
       setLoadings((p) => ({ ...p, [addressPropName]: true }))
       setAddressProp(undefined)
 
       try {
-        const result = typeof apiCall === 'string' ? ((await client.addresses[apiCall](id, {})) as T) : await apiCall()
+        const result =
+          typeof apiCall === 'string' ? ((await client.explorer.addresses[apiCall](id, {})) as T) : await apiCall()
         setAddressProp(result)
       } catch (error) {
         displayError(setSnackbarMessage, error, `Error while fetching ${addressPropName}`)
@@ -108,23 +110,24 @@ const AddressInfoPage = () => {
         setLoadings((p) => ({ ...p, [addressPropName]: false }))
       }
     },
-    [client, id, setSnackbarMessage]
+    [id, setSnackbarMessage]
   )
 
   const fetchTransactions = useCallback(
     () =>
-      client &&
       id &&
       fetchAddressDataGeneric('transactions', setAddressTransactions, async () => {
-        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
+        const currentPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(id, {
           page: pageNumber
         })
-        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
+        const firstPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(id, {
+          page: 1
+        })
         setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
 
         return currentPageTransactionData
       }),
-    [client, fetchAddressDataGeneric, id, pageNumber]
+    [fetchAddressDataGeneric, id, pageNumber]
   )
 
   const fetchMempoolTxs = useCallback(
@@ -133,7 +136,7 @@ const AddressInfoPage = () => {
 
       try {
         const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
-        const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
+        const mempoolTxs = await client.explorer.addresses.getAddressesAddressMempoolTransactions(id)
 
         if (
           addressMempoolTransactions.length === mempoolTxs.length &&
@@ -150,7 +153,7 @@ const AddressInfoPage = () => {
         displayError(setSnackbarMessage, e, `Error while fetching pending transactions`)
       }
     },
-    [addressMempoolTransactions, client, fetchTransactions, id, setSnackbarMessage]
+    [addressMempoolTransactions, fetchTransactions, id, setSnackbarMessage]
   )
 
   // Fetch on mount
@@ -158,10 +161,10 @@ const AddressInfoPage = () => {
     if (client && id) {
       fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
       fetchAddressDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
-      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(client, id))
+      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(id))
       fetchTransactions()
     }
-  }, [client, fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
+  }, [fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
 
   useEffect(() => {
     fetchMempoolTxs(false)
@@ -207,7 +210,7 @@ const AddressInfoPage = () => {
     ...a,
     balance: BigInt(a.balance),
     lockedBalance: BigInt(a.lockedBalance),
-    ...getAssetInfo({ assetId: a.id, networkType })
+    ...getAssetInfo({ assetId: a.id, networkType: client.networkType })
   })) ?? []) as Asset[]
 
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
@@ -238,7 +241,9 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell
             label="Fiat price"
-            value={networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'}
+            value={
+              client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
+            }
           />
           <InfoGrid.Cell
             label="Nb. of transactions"

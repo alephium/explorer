@@ -25,11 +25,13 @@ import { NetworkType, networkTypes } from '@/types/network'
 export class Client {
   explorer: ExplorerProvider
   node: NodeProvider
+  networkType: NetworkType
 
   constructor() {
-    const { node, explorer } = this.getClients()
+    const { node, explorer, networkType } = this.getClients()
     this.node = node
     this.explorer = explorer
+    this.networkType = networkType
   }
 
   private getClients() {
@@ -71,7 +73,8 @@ export class Client {
 
     return {
       node: new NodeProvider(nodeUrl, undefined, throttledFetch(5)),
-      explorer: new ExplorerProvider(explorerUrl, undefined, throttledFetch(5))
+      explorer: new ExplorerProvider(explorerUrl, undefined, throttledFetch(5)),
+      networkType: netType
     }
   }
 }

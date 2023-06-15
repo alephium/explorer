@@ -22,9 +22,9 @@ import { ExternalLink } from 'lucide-react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import client from '@/api/client'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
-import { useGlobalContext } from '@/contexts/global'
 import { getAssetInfo } from '@/utils/assets'
 import { smartHash } from '@/utils/strings'
 
@@ -79,12 +79,11 @@ const AddressLinkBase = ({
   flex,
   className
 }: AddressLinkProps) => {
-  const { networkType } = useGlobalContext()
   const theme = useTheme()
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
   const renderAmount = (amount: AssetAmount) => {
-    const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
+    const assetInfo = getAssetInfo({ assetId: amount.id, networkType: client.networkType })
 
     return (
       <Amount

@@ -26,6 +26,7 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
+import client from '@/api/client'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -40,7 +41,6 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
-import { useGlobalContext } from '@/contexts/global'
 import useInterval from '@/hooks/useInterval'
 import { getAssetInfo } from '@/utils/assets'
 
@@ -50,7 +50,6 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client, networkType } = useGlobalContext()
   const [txInfo, setTxInfo] = useState<explorer.Transaction>()
   const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
   const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
@@ -61,20 +60,20 @@ const TransactionInfoPage = () => {
 
   const getTxInfo = useCallback(async () => {
     const fetchTransactionInfo = async () => {
-      if (!client || !id) return
+      if (!id) return
 
       setLoading(true)
 
       try {
-        const data = await client.transactions.getTransactionsTransactionHash(id)
+        const data = await client.explorer.transactions.getTransactionsTransactionHash(id)
         const tx = data as explorer.Transaction
 
         if (tx) setTxInfo(tx)
 
         if (!isTxConfirmed(tx)) return
 
-        const block = await client.blocks.getBlocksBlockHash(tx.blockHash)
-        const chainHeights = await client.infos.getInfosHeights()
+        const block = await client.explorer.blocks.getBlocksBlockHash(tx.blockHash)
+        const chainHeights = await client.explorer.infos.getInfosHeights()
 
         setTxBlock(block)
 
@@ -95,7 +94,7 @@ const TransactionInfoPage = () => {
     }
 
     fetchTransactionInfo()
-  }, [client, id])
+  }, [id])
 
   // Initial fetch
   useEffect(() => {
@@ -123,7 +122,9 @@ const TransactionInfoPage = () => {
   )
 
   const tokenInfos = _(
-    txInfo?.inputs?.map((i) => i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType }) || { id: t.id }))
+    txInfo?.inputs?.map((i) =>
+      i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType: client.networkType }) || { id: t.id })
+    )
   )
     .flatten()
     .uniqBy('id')
