@@ -22,10 +22,10 @@ import { ExternalLink } from 'lucide-react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import client from '@/api/client'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
-import { getAssetInfo } from '@/utils/assets'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
 import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
@@ -80,18 +80,19 @@ const AddressLinkBase = ({
   className
 }: AddressLinkProps) => {
   const theme = useTheme()
+  const assetsInfo = useAppSelector(selectAllAssetsInfo)
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
   const renderAmount = (amount: AssetAmount) => {
-    const assetInfo = getAssetInfo({ assetId: amount.id, networkType: client.networkType })
+    const info = assetsInfo.find((i) => i.id === amount.id)
 
     return (
       <Amount
         key={amount.id}
         value={amount.amount}
-        suffix={assetInfo?.symbol}
-        decimals={assetInfo?.decimals}
-        isUnknownToken={!assetInfo?.symbol}
+        suffix={info?.symbol}
+        decimals={info?.decimals}
+        isUnknownToken={!info?.name}
       />
     )
   }
