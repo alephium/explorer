@@ -22,7 +22,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { themeToggled } from '@/store/settingsSlice'
+import { themeToggled } from '@/store/settings/settingsSlice'
 import { ThemeType } from '@/styles/themes'
 
 interface ThemeSwitcherProps {

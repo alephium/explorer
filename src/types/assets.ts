@@ -16,20 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { configureStore } from '@reduxjs/toolkit'
-import { setupListeners } from '@reduxjs/toolkit/dist/query'
+// TODO: Same as the desktop wallet
 
-import assetsSlice from './assets/assetsSlice'
-import settingsSlice from './settings/settingsSlice'
+import { Asset, AssetAmount } from '@alephium/sdk'
+import { TokenMetaData } from '@alephium/web3'
 
-export const store = configureStore({
-  reducer: {
-    [settingsSlice.name]: settingsSlice.reducer,
-    [assetsSlice.name]: assetsSlice.reducer
-  }
-})
+export type AssetAmountInputType = AssetAmount & { amountInput?: string }
 
-setupListeners(store.dispatch)
+export type TokenMetadataWithId = TokenMetaData & { id: Asset['id'] }
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type TokenBasicMetadata = Omit<TokenMetadataWithId, 'totalSupply'>

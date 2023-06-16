@@ -43,13 +43,15 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
+import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressAssetsResult } from '@/types/addresses'
-import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -72,15 +74,18 @@ const AddressInfoPage = () => {
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
+  const dispatch = useAppDispatch()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
-  const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
+  const [txNumber, setTxNumber] = useState<number>()
   const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
-  const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
+  const [txList, setTxList] = useState<Transaction[]>()
   const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
+
+  const assetsInfo = useAppSelector(selectAllAssetsInfo)
 
   const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
     balance: true,
@@ -127,7 +132,7 @@ const AddressInfoPage = () => {
   const fetchTransactions = useCallback(
     () =>
       id &&
-      fetchAddressDataGeneric('transactions', setAddressTransactions, async () => {
+      fetchAddressDataGeneric('transactions', setTxList, async () => {
         const currentPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(id, {
           page: pageNumber
         })
@@ -171,7 +176,7 @@ const AddressInfoPage = () => {
   useEffect(() => {
     if (client && id) {
       fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
-      fetchAddressDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
+      fetchAddressDataGeneric('txNumber', setTxNumber, 'getAddressesAddressTotalTransactions')
       fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(id))
       fetchTransactions()
     }
@@ -184,7 +189,7 @@ const AddressInfoPage = () => {
   // Mempool tx check
   useInterval(fetchMempoolTxs, 10000, !isAppVisible)
 
-  // Asset price (appox).
+  // Asset price
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
   useEffect(() => {
     setAddressWorth(undefined)
@@ -205,28 +210,37 @@ const AddressInfoPage = () => {
     getAddressWorth()
   }, [addressBalance?.balance, displayError])
 
+  // Asset info
+  let assets = (addressAssets?.assets.map((a) => ({
+    ...a,
+    balance: BigInt(a.balance),
+    lockedBalance: BigInt(a.lockedBalance),
+    ...assetsInfo.find((i) => i.id === a.id)
+  })) ?? []) as Asset[]
+
+  const totalBalance = addressBalance?.balance
+  const lockedBalance = addressBalance?.lockedBalance
+
+  if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
+    assets.unshift({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
+  }
+
+  assets = sortBy(assets, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
+
+  const unknownAssets = assets.filter((a) => !a.name)
+
+  useEffect(() => {
+    if (unknownAssets.length > 0) {
+      dispatch(syncUnknownTokensInfo(unknownAssets.map((a) => a.id)))
+    }
+  }, [dispatch, unknownAssets])
+
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
 
   if (!id) return null
 
   const addressGroup = groupOfAddress(id)
-
-  const totalBalance = addressBalance?.balance
-  const lockedBalance = addressBalance?.lockedBalance
-  const txNumber = addressTransactionNumber
-  const txList = addressTransactions
-
-  const assets = (addressAssets?.assets.map((a) => ({
-    ...a,
-    balance: BigInt(a.balance),
-    lockedBalance: BigInt(a.lockedBalance),
-    ...getAssetInfo({ assetId: a.id, networkType: client.networkType })
-  })) ?? []) as Asset[]
-
-  if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
-  }
 
   return (
     <Section>

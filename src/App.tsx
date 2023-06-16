@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimateSharedLayout } from 'framer-motion'
+import { useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -33,7 +34,8 @@ import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
 
 import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
-import { useAppSelector } from './hooks/redux'
+import { useAppDispatch, useAppSelector } from './hooks/redux'
+import { syncNetworkTokensInfo } from './store/assets/assetsActions'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -59,9 +61,15 @@ dayjs.updateLocale('en', {
 const App = () => {
   const theme = useAppSelector((s) => s.settings.theme)
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
+
+  // Fetch assets info
+  useEffect(() => {
+    dispatch(syncNetworkTokensInfo())
+  }, [dispatch])
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

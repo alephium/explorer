@@ -16,20 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { configureStore } from '@reduxjs/toolkit'
-import { setupListeners } from '@reduxjs/toolkit/dist/query'
+import { RootState } from '../store'
+import { assetsInfoAdapter } from './assetsAdapter'
 
-import assetsSlice from './assets/assetsSlice'
-import settingsSlice from './settings/settingsSlice'
-
-export const store = configureStore({
-  reducer: {
-    [settingsSlice.name]: settingsSlice.reducer,
-    [assetsSlice.name]: assetsSlice.reducer
-  }
-})
-
-setupListeners(store.dispatch)
-
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export const { selectAll: selectAllAssetsInfo, selectById: selectAssetInfoById } =
+  assetsInfoAdapter.getSelectors<RootState>((state) => state.assetsInfo)

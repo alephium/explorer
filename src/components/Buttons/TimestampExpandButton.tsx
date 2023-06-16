@@ -21,7 +21,7 @@ import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { timestampPrecisionModeChanged } from '@/store/settingsSlice'
+import { timestampPrecisionModeChanged } from '@/store/settings/settingsSlice'
 import { OnOff } from '@/types/generics'
 
 interface TimestampExpandButtonProps {

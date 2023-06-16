@@ -16,20 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { configureStore } from '@reduxjs/toolkit'
-import { setupListeners } from '@reduxjs/toolkit/dist/query'
+import { AssetInfo } from '@alephium/sdk'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import assetsSlice from './assets/assetsSlice'
-import settingsSlice from './settings/settingsSlice'
-
-export const store = configureStore({
-  reducer: {
-    [settingsSlice.name]: settingsSlice.reducer,
-    [assetsSlice.name]: assetsSlice.reducer
-  }
+export const assetsInfoAdapter = createEntityAdapter<AssetInfo>({
+  sortComparer: (a, b) => a.name.localeCompare(b.name)
 })
-
-setupListeners(store.dispatch)
-
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
