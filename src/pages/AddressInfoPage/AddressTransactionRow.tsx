@@ -22,7 +22,6 @@ import _ from 'lodash'
 import { ArrowRight } from 'lucide-react'
 import styled, { css, useTheme } from 'styled-components'
 
-import client from '@/api/client'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -36,7 +35,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getTransactionInfo } from '@/utils/transactions'
+import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
   transaction: Transaction | MempoolTransaction
@@ -49,7 +48,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
 
-  const { assets, infoType } = getTransactionInfo(t, addressHash, client.networkType)
+  const { assets, infoType } = useTransactionInfo(t, addressHash)
   const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)

@@ -31,14 +31,12 @@ import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { NetworkType } from '@/types/network'
-import { getAssetInfo } from '@/utils/assets'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
 
-export const getTransactionInfo = (
-  tx: Transaction | MempoolTransaction,
-  addressHash: string,
-  networkType: NetworkType
-): TransactionInfo => {
+export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string): TransactionInfo => {
+  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
@@ -73,7 +71,7 @@ export const getTransactionInfo = (
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
+  const tokenAssets = [...tokens.map((token) => ({ ...token, ...assetsInfo.find((i) => i.id === token.id) }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   return {

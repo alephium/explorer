@@ -41,8 +41,9 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
+import { useAppSelector } from '@/hooks/redux'
 import useInterval from '@/hooks/useInterval'
-import { getAssetInfo } from '@/utils/assets'
+import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
 
 type ParamTypes = {
   id: string
@@ -50,12 +51,15 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
+  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+
   const [txInfo, setTxInfo] = useState<explorer.Transaction>()
   const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
   const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
   const [txInfoStatus, setTxInfoStatus] = useState<number>()
   const [txInfoError, setTxInfoError] = useState('')
   const [loading, setLoading] = useState(true)
+
   const isAppVisible = usePageVisibility()
 
   const getTxInfo = useCallback(async () => {
@@ -121,11 +125,7 @@ const TransactionInfoPage = () => {
     BigInt(0)
   )
 
-  const tokenInfos = _(
-    txInfo?.inputs?.map((i) =>
-      i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType: client.networkType }) || { id: t.id })
-    )
-  )
+  const tokenInfos = _(txInfo?.inputs?.map((i) => i.tokens?.map((t) => assetsInfo.find((a) => a.id === t.id))))
     .flatten()
     .uniqBy('id')
     .compact()

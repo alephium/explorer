@@ -221,11 +221,11 @@ const AddressInfoPage = () => {
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
+  assets = sortBy(assets, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
+
   if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
     assets.unshift({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
   }
-
-  assets = sortBy(assets, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
 
   const unknownAssets = assets.filter((a) => !a.name)
 
