@@ -17,34 +17,110 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Asset } from '@alephium/sdk'
+import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
+import client from '@/api/client'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { AddressHash } from '@/types/addresses'
+import { AssetBase } from '@/types/assets'
+import { sortBy } from 'lodash'
+import { ALPH } from '@alephium/token-list'
 
 interface AssetListProps {
-  assets?: Asset[]
+  addressHash: AddressHash
+  addressBalance?: AddressBalance
+  assets?: AssetBase[]
   limit?: number
   isLoading: boolean
-  addressHash?: AddressHash
   tokensTabTitle?: string
   nftsTabTitle?: string
   className?: string
 }
 
-const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, className }: AssetListProps) => {
+const AssetList = ({
+  addressHash,
+  addressBalance,
+  assets,
+  limit,
+  isLoading,
+  tokensTabTitle,
+  nftsTabTitle,
+  className
+}: AssetListProps) => {
   const tabs = [
     { value: 'tokens', label: tokensTabTitle ?? 'Tokens' },
     { value: 'nfts', label: nftsTabTitle ?? 'NFTs' }
   ]
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
+
+  const assetsInfo = {
+    fungibleTokens: useAppSelector(selectAllFungibleTokensMetadata),
+    nfts: useAppSelector(selectAllFungibleTokensMetadata)
+  }
+
+  const [tokenBalances, setTokenBalances] = useState<(AddressBalance & { id: string })[]>([])
+
+  // Fetch tokens balances
+  useEffect(() => {
+    const fetchTokenBalances = async () => {
+      if (!assets) return
+
+      const balances = await Promise.all(
+        assets
+          .filter((a) => a.type === 'fungible')
+          .map(async (a) => ({
+            id: a.id,
+            ...(await client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, a.id))
+          }))
+      )
+      setTokenBalances(balances)
+    }
+    fetchTokenBalances()
+  }, [addressHash, assets])
+
+  // Merge asset infos
+  let tokensWithBalance = (tokenBalances.map((a) => ({
+    ...a,
+    balance: BigInt(a.balance),
+    lockedBalance: BigInt(a.lockedBalance),
+    ...assetsInfo.fungibleTokens.find((i) => i.id === a.id)
+  })) ?? []) as Asset[]
+
+  tokensWithBalance = sortBy(tokensWithBalance, [
+    (t) => !t.verified,
+    (t) => t.verified === undefined,
+    (t) => t.name?.toLowerCase(),
+    'id'
+  ])
+
+  if (addressBalance && parseInt(addressBalance.balance) > 0) {
+    tokensWithBalance.unshift({
+      ...ALPH,
+      balance: BigInt(addressBalance.balance),
+      lockedBalance: BigInt(addressBalance.lockedBalance)
+    })
+  }
+
+  /*
+  const unknownAssets = assets.filter((a) => !a.name)
+
+  useEffect(() => {
+    if (!unknownAssetsSynced.current && unknownAssets.length > 0) {
+      dispatch(syncUnknownAssetsInfo(unknownAssets.map((a) => a.id)))
+      unknownAssetsSynced.current = true
+    }
+  }, [dispatch, unknownAssets])
+  */
 
   return (
     <div className={className}>
@@ -56,7 +132,7 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
         </EmptyListContainer>
       ) : assets && assets?.length > 0 ? (
         {
-          tokens: <TokenList limit={limit} assets={assets} />,
+          tokens: <TokenList limit={limit} tokens={tokensWithBalance} />,
           nfts: <NFTList />
         }[currentTab.value]
       ) : (
@@ -67,17 +143,17 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
 }
 
 interface TokenListProps {
-  assets?: Asset[]
+  tokens?: Asset[]
   limit?: number
   className?: string
 }
 
-const TokenList = ({ assets, limit, className }: TokenListProps) => {
+const TokenList = ({ tokens, limit, className }: TokenListProps) => {
   const theme = useTheme()
 
-  if (!assets) return null
+  if (!tokens) return null
 
-  const displayedAssets = limit ? assets.slice(0, limit) : assets
+  const displayedAssets = limit ? tokens.slice(0, limit) : tokens
 
   return (
     <motion.div className={className}>

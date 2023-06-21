@@ -16,14 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
 import { TokenList } from '@alephium/token-list'
 import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { uniq } from 'lodash'
 
 import client from '@/api/client'
-import { FungibleTokenMetadataStored, isFungibleTokenMetadata, isNFTMetadata, NFTMetadataStored } from '@/types/assets'
+import {
+  AssetBase,
+  FungibleTokenMetadataStored,
+  isFungibleTokenMetadata,
+  isNFTMetadata,
+  NFTMetadataStored
+} from '@/types/assets'
 
 export const syncNetworkFungibleTokensInfo = createAsyncThunk('assets/syncNetworkTokensInfo', async () => {
   let metadata = undefined
@@ -46,26 +50,22 @@ export const syncNetworkFungibleTokensInfo = createAsyncThunk('assets/syncNetwor
 export const syncUnknownAssetsInfo = createAsyncThunk(
   'assets/syncUnknownTokensInfo',
   async (
-    unknownTokenIds: Asset['id'][]
+    unknownAssets: AssetBase[]
   ): Promise<{ fungibleTokens: FungibleTokenMetadataStored[]; nfts: NFTMetadataStored[] }> => {
-    const filteredTokens = uniq(unknownTokenIds)
-
     const results = await Promise.allSettled(
-      filteredTokens.map(async (id) => {
-        const tokenStd = await client.node.guessStdTokenType(id)
-
+      unknownAssets.map(async (a) => {
         let fungibleTokenMetadata: Partial<FungibleTokenMetaData> = {}
         let NFTMetadata: Partial<NFTMetaData> = {}
 
-        if (tokenStd === 'fungible') {
+        if (a.type === 'fungible') {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { totalSupply, ...rest } = await client.node.fetchFungibleTokenMetaData(id)
+          const { totalSupply, ...rest } = await client.node.fetchFungibleTokenMetaData(a.id)
           fungibleTokenMetadata = rest
-        } else if (tokenStd === 'non-fungible') {
-          NFTMetadata = await client.node.fetchNFTMetaData(id)
+        } else if (a.type === 'non-fungible') {
+          NFTMetadata = await client.node.fetchNFTMetaData(a.id)
         }
 
-        return { id, verified: false, ...fungibleTokenMetadata, ...NFTMetadata }
+        return { id: a.id, verified: false, ...fungibleTokenMetadata, ...NFTMetadata }
       })
     )
 

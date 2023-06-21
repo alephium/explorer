@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// TODO: Same as the desktop wallet
-
-import { AssetAmount } from '@alephium/sdk'
 import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
 
-type AssetType = 'fungible' | 'non-fungible'
+export type AssetType = 'fungible' | 'non-fungible' | undefined
 
-export type AssetAmountInputType = AssetAmount & { amountInput?: string }
+export type AssetBase = { id: string; type: AssetType }
 
 export type FungibleTokenMetadataStored = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
 

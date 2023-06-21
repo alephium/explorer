@@ -16,24 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressAssetsResult, AddressHash } from '@/types/addresses'
+import { AddressHash } from '@/types/addresses'
+import { AssetBase } from '@/types/assets'
 
 import client from './client'
 
-export const fetchAddressAssets = async (addressHash: AddressHash): Promise<AddressAssetsResult> => {
-  const tokenIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
+export const fetchAddressAssets = async (addressHash: AddressHash): Promise<AssetBase[]> => {
+  const assetIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
 
-  const tokens = await Promise.all(
-    tokenIds.map((id) =>
-      client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, id).then((data) => ({
-        id,
-        ...data
-      }))
-    )
+  return await Promise.all(
+    assetIds.map(async (id) => {
+      const type = await client.node.guessStdTokenType(id)
+      return { id, type }
+    })
   )
-
-  return {
-    addressHash,
-    assets: tokens
-  }
 }

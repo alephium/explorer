@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
+import { Asset, calculateAmountWorth, getHumanReadableError, TokenDisplayBalances } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
 import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -51,7 +51,7 @@ import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
 import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { AddressAssetsResult } from '@/types/addresses'
+import { AssetBase } from '@/types/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -62,7 +62,7 @@ type ParamTypes = {
   id: string
 }
 
-type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'transactions'
+type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'txList'
 
 type SingleStringArgFunctions<T> = {
   [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
@@ -70,30 +70,25 @@ type SingleStringArgFunctions<T> = {
 
 const AddressInfoPage = () => {
   const theme = useTheme()
-  const { id } = useParams<ParamTypes>()
+  const { id: addressHash } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
-  const dispatch = useAppDispatch()
 
   const [addressBalance, setAddressBalance] = useState<AddressBalance>()
   const [txNumber, setTxNumber] = useState<number>()
-  const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
+  const [addressAssets, setAddressAssets] = useState<AssetBase[]>()
   const [txList, setTxList] = useState<Transaction[]>()
   const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
   const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
-  const unknownAssetsSynced = useRef(false)
-
-  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
-
   const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
     balance: true,
     txNumber: true,
-    assets: true,
-    transactions: true
+    txList: true,
+    assets: true
   })
 
   const displayError = useCallback(
@@ -113,14 +108,16 @@ const AddressInfoPage = () => {
       setAddressProp: (value: T | undefined) => void,
       apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
     ) => {
-      if (!id) return
+      if (!addressHash) return
 
       setLoadings((p) => ({ ...p, [addressPropName]: true }))
       setAddressProp(undefined)
 
       try {
         const result =
-          typeof apiCall === 'string' ? ((await client.explorer.addresses[apiCall](id, {})) as T) : await apiCall()
+          typeof apiCall === 'string'
+            ? ((await client.explorer.addresses[apiCall](addressHash, {})) as T)
+            : await apiCall()
         setAddressProp(result)
       } catch (error) {
         displayError(error, `Error while fetching ${addressPropName}`)
@@ -128,33 +125,36 @@ const AddressInfoPage = () => {
         setLoadings((p) => ({ ...p, [addressPropName]: false }))
       }
     },
-    [displayError, id]
+    [displayError, addressHash]
   )
 
   const fetchTransactions = useCallback(
     () =>
-      id &&
-      fetchAddressDataGeneric('transactions', setTxList, async () => {
-        const currentPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(id, {
-          page: pageNumber
-        })
-        const firstPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(id, {
+      addressHash &&
+      fetchAddressDataGeneric('txList', setTxList, async () => {
+        const currentPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(
+          addressHash,
+          {
+            page: pageNumber
+          }
+        )
+        const firstPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
           page: 1
         })
         setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
 
         return currentPageTransactionData
       }),
-    [fetchAddressDataGeneric, id, pageNumber]
+    [fetchAddressDataGeneric, addressHash, pageNumber]
   )
 
   const fetchMempoolTxs = useCallback(
     async (shouldTriggerTxFetch = true) => {
-      if (!client || !id) return
+      if (!client || !addressHash) return
 
       try {
         const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
-        const mempoolTxs = await client.explorer.addresses.getAddressesAddressMempoolTransactions(id)
+        const mempoolTxs = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
 
         if (
           addressMempoolTransactions.length === mempoolTxs.length &&
@@ -171,18 +171,18 @@ const AddressInfoPage = () => {
         displayError(e, `Error while fetching pending transactions`)
       }
     },
-    [addressMempoolTransactions, displayError, fetchTransactions, id]
+    [addressMempoolTransactions, displayError, fetchTransactions, addressHash]
   )
 
   // Fetch on mount
   useEffect(() => {
-    if (client && id) {
+    if (addressHash) {
       fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
       fetchAddressDataGeneric('txNumber', setTxNumber, 'getAddressesAddressTotalTransactions')
-      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(id))
+      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(addressHash))
       fetchTransactions()
     }
-  }, [fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
+  }, [fetchAddressDataGeneric, fetchTransactions, addressHash, pageNumber])
 
   useEffect(() => {
     fetchMempoolTxs(false)
@@ -212,42 +212,23 @@ const AddressInfoPage = () => {
     getAddressWorth()
   }, [addressBalance?.balance, displayError])
 
-  // Asset info
-  let assets = (addressAssets?.assets.map((a) => ({
-    ...a,
-    balance: BigInt(a.balance),
-    lockedBalance: BigInt(a.lockedBalance),
-    ...assetsInfo.find((i) => i.id === a.id)
-  })) ?? []) as Asset[]
-
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
-  assets = sortBy(assets, [(a) => !a.verified, (a) => a.verified === undefined, (a) => a.name?.toLowerCase(), 'id'])
-
-  if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets.unshift({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
-  }
-
-  const unknownAssets = assets.filter((a) => !a.name)
-
-  useEffect(() => {
-    if (!unknownAssetsSynced.current && unknownAssets.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownAssets.map((a) => a.id)))
-      unknownAssetsSynced.current = true
-    }
-  }, [dispatch, unknownAssets])
+  const nbOfAssets = !loadings.assets
+    ? addressAssets && addressAssets?.length + (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
+    : undefined
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
 
-  if (!id) return null
+  if (!addressHash) return null
 
-  const addressGroup = groupOfAddress(id)
+  const addressGroup = groupOfAddress(addressHash)
 
   return (
     <Section>
-      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} textToCopy={id} />} />
+      <SectionTitle title="Address" subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />} />
       <InfoGridAndQR>
         <InfoGrid>
           <InfoGrid.Cell
@@ -277,21 +258,21 @@ const AddressInfoPage = () => {
             label="Nb. of transactions"
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.txNumber ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={!loadings.assets ? assets.length : undefined} />
+          <InfoGrid.Cell label="Nb. of assets" value={nbOfAssets} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
             value={
               addressLatestActivity ? (
                 <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
-              ) : !loadings.transactions ? (
+              ) : !loadings.txList ? (
                 'No activity yet'
               ) : undefined
             }
           />
         </InfoGrid>
         <QRCodeCell>
-          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.font.primary} />
+          <QRCode size={130} value={addressHash} bgColor="transparent" fgColor={theme.font.primary} />
         </QRCodeCell>
       </InfoGridAndQR>
 
@@ -299,7 +280,12 @@ const AddressInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList assets={sortBy(assets, 'name')} isLoading={loadings.assets} />
+      <AssetList
+        addressBalance={addressBalance}
+        addressHash={addressHash}
+        assets={addressAssets}
+        isLoading={loadings.assets}
+      />
 
       <SectionHeader>
         <h2>Transactions</h2>
@@ -311,7 +297,7 @@ const AddressInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={loadings.transactions}>
+      <Table hasDetails main scrollable isLoading={loadings.txList}>
         {txList?.length || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
@@ -333,12 +319,12 @@ const AddressInfoPage = () => {
             <TableBody tdStyles={TxListCustomStyles}>
               {addressMempoolTransactions &&
                 addressMempoolTransactions.map((t, i) => (
-                  <AddressTransactionRow transaction={t} addressHash={id} key={i} />
+                  <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} />
                 ))}
               {txList &&
                 txList
                   .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={id} key={i} />)}
+                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} />)}
             </TableBody>
           </>
         ) : (
@@ -352,7 +338,7 @@ const AddressInfoPage = () => {
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
 
-      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>
   )
 }
