@@ -18,9 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ExplorerProvider, NodeProvider, throttledFetch } from '@alephium/web3'
+import { ExplorerProvider, NodeProvider } from '@alephium/web3'
+import fetchRetry from 'fetch-retry'
 
 import { NetworkType, networkTypes } from '@/types/network'
+
+const exponentialBackoffFetchRetry = fetchRetry(fetch, {
+  retryOn: [429],
+  retries: 3,
+  retryDelay: (attempt) => Math.pow(2, attempt) * 1000
+})
 
 export class Client {
   explorer: ExplorerProvider
@@ -72,8 +79,8 @@ export class Client {
     }
 
     return {
-      node: new NodeProvider(nodeUrl, undefined, throttledFetch(5)),
-      explorer: new ExplorerProvider(explorerUrl, undefined, throttledFetch(5)),
+      node: new NodeProvider(nodeUrl, undefined, exponentialBackoffFetchRetry),
+      explorer: new ExplorerProvider(explorerUrl, undefined, exponentialBackoffFetchRetry),
       networkType: netType
     }
   }
