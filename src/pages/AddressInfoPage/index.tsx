@@ -23,7 +23,7 @@ import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/
 import { sortBy } from 'lodash'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -48,8 +48,8 @@ import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
-import { syncUnknownTokensInfo } from '@/store/assets/assetsActions'
-import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
+import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
+import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressAssetsResult } from '@/types/addresses'
 import { formatNumberForDisplay } from '@/utils/strings'
@@ -85,7 +85,9 @@ const AddressInfoPage = () => {
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
-  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+  const unknownAssetsSynced = useRef(false)
+
+  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
 
   const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
     balance: true,
@@ -230,8 +232,9 @@ const AddressInfoPage = () => {
   const unknownAssets = assets.filter((a) => !a.name)
 
   useEffect(() => {
-    if (unknownAssets.length > 0) {
-      dispatch(syncUnknownTokensInfo(unknownAssets.map((a) => a.id)))
+    if (!unknownAssetsSynced.current && unknownAssets.length > 0) {
+      dispatch(syncUnknownAssetsInfo(unknownAssets.map((a) => a.id)))
+      unknownAssetsSynced.current = true
     }
   }, [dispatch, unknownAssets])
 

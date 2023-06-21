@@ -16,18 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetInfo } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { hexToString } from '@alephium/web3'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { syncNetworkTokensInfo, syncUnknownTokensInfo } from './assetsActions'
-import { assetsInfoAdapter } from './assetsAdapter'
+import { FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
 
-const initialState: EntityState<AssetInfo> = assetsInfoAdapter.addOne(assetsInfoAdapter.getInitialState(), {
-  ...ALPH,
-  verified: true
-})
+import { syncNetworkFungibleTokensInfo, syncUnknownAssetsInfo } from './assetsMetadataActions'
+import { fungibleTokensMetadataAdapter, nftsMetadataAdapter } from './assetsMetadataAdapter'
+
+interface AssetMetadataState {
+  fungibleTokens: EntityState<FungibleTokenMetadataStored>
+  nfts: EntityState<NFTMetadataStored>
+}
+
+const initialState: AssetMetadataState = {
+  fungibleTokens: fungibleTokensMetadataAdapter.addOne(fungibleTokensMetadataAdapter.getInitialState(), {
+    ...ALPH,
+    verified: true
+  }),
+  nfts: nftsMetadataAdapter.getInitialState()
+}
 
 const assetsSlice = createSlice({
   name: 'assetsInfo',
@@ -35,12 +43,12 @@ const assetsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncNetworkTokensInfo.fulfilled, (state, action) => {
+      .addCase(syncNetworkFungibleTokensInfo.fulfilled, (state, action) => {
         const metadata = action.payload
 
         if (metadata) {
-          assetsInfoAdapter.upsertMany(
-            state,
+          fungibleTokensMetadataAdapter.upsertMany(
+            state.fungibleTokens,
             metadata.tokens.map((tokenInfo) => ({
               ...tokenInfo,
               verified: true
@@ -48,21 +56,13 @@ const assetsSlice = createSlice({
           )
         }
       })
-      .addCase(syncUnknownTokensInfo.fulfilled, (state, action) => {
+      .addCase(syncUnknownAssetsInfo.fulfilled, (state, action) => {
         const metadata = action.payload
 
-        if (metadata) {
-          assetsInfoAdapter.upsertMany(
-            state,
-            metadata.map((token) => ({
-              id: token.id,
-              name: hexToString(token.name),
-              symbol: hexToString(token.symbol),
-              decimals: token.decimals,
-              verified: false
-            }))
-          )
-        }
+        if (!metadata) return
+
+        fungibleTokensMetadataAdapter.upsertMany(state.fungibleTokens, metadata.fungibleTokens)
+        nftsMetadataAdapter.upsertMany(state.nfts, metadata.nfts)
       })
   }
 })

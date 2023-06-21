@@ -43,7 +43,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useAppSelector } from '@/hooks/redux'
 import useInterval from '@/hooks/useInterval'
-import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
+import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 
 type ParamTypes = {
   id: string
@@ -51,7 +51,7 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
 
   const [txInfo, setTxInfo] = useState<explorer.Transaction>()
   const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()

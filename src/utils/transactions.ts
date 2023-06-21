@@ -32,10 +32,10 @@ import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
+import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 
 export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string): TransactionInfo => {
-  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection

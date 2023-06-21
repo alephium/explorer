@@ -9,7 +9,7 @@
   "homepage": "/",
   "dependencies": {
     "@alephium/sdk": "0.7.2",
-    "@alephium/token-list": "^0.0.7",
+    "@alephium/token-list": "^0.0.8",
     "@alephium/web3": "0.13.0",
     "@reduxjs/toolkit": "^1.9.5",
     "apexcharts": "^3.35.0",

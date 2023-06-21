@@ -35,7 +35,7 @@ import { darkTheme, lightTheme } from '@/styles/themes'
 
 import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
 import { useAppDispatch, useAppSelector } from './hooks/redux'
-import { syncNetworkTokensInfo } from './store/assets/assetsActions'
+import { syncNetworkFungibleTokensInfo } from './store/assetsMetadata/assetsMetadataActions'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -68,7 +68,7 @@ const App = () => {
 
   // Fetch assets info
   useEffect(() => {
-    dispatch(syncNetworkTokensInfo())
+    dispatch(syncNetworkFungibleTokensInfo())
   }, [dispatch])
 
   return (

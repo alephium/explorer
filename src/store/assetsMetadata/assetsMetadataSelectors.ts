@@ -17,7 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { RootState } from '../store'
-import { assetsInfoAdapter } from './assetsAdapter'
+import { fungibleTokensMetadataAdapter, nftsMetadataAdapter } from './assetsMetadataAdapter'
 
-export const { selectAll: selectAllAssetsInfo, selectById: selectAssetInfoById } =
-  assetsInfoAdapter.getSelectors<RootState>((state) => state.assetsInfo)
+export const { selectAll: selectAllFungibleTokensMetadata } = fungibleTokensMetadataAdapter.getSelectors<RootState>(
+  (state) => state.assetsInfo.fungibleTokens
+)
+
+export const { selectAll: selectAllNFTsMetadata } = nftsMetadataAdapter.getSelectors<RootState>(
+  (state) => state.assetsInfo.nfts
+)

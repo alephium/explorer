@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
-import assetsSlice from './assets/assetsSlice'
+import assetsSlice from './assetsMetadata/assetsMetadataSlice'
 import settingsSlice from './settings/settingsSlice'
 
 export const store = configureStore({

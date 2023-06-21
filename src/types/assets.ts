@@ -18,11 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // TODO: Same as the desktop wallet
 
-import { Asset, AssetAmount } from '@alephium/sdk'
-import { TokenMetaData } from '@alephium/web3'
+import { AssetAmount } from '@alephium/sdk'
+import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
+
+type AssetType = 'fungible' | 'non-fungible'
 
 export type AssetAmountInputType = AssetAmount & { amountInput?: string }
 
-export type TokenMetadataWithId = TokenMetaData & { id: Asset['id'] }
+export type FungibleTokenMetadataStored = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
 
-export type TokenBasicMetadata = Omit<TokenMetadataWithId, 'totalSupply'>
+export type NFTMetadataStored = NFTMetaData & { id: string; verified: boolean }
+
+export const isFungibleTokenMetadata = (
+  meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>
+): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
+
+export const isNFTMetadata = (meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>): meta is NFTMetaData =>
+  (meta as NFTMetaData).collectionAddress !== undefined

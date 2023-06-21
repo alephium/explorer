@@ -25,7 +25,7 @@ import styled, { css, useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAssetsInfo } from '@/store/assets/assetsSelectors'
+import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
@@ -80,7 +80,7 @@ const AddressLinkBase = ({
   className
 }: AddressLinkProps) => {
   const theme = useTheme()
-  const assetsInfo = useAppSelector(selectAllAssetsInfo)
+  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
   const renderAmount = (amount: AssetAmount) => {
