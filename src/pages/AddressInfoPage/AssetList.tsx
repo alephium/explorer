@@ -17,8 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Asset } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { motion } from 'framer-motion'
+import { differenceBy, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -29,12 +31,11 @@ import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
+import { selectAllFungibleTokensMetadata, selectAllNFTsMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase } from '@/types/assets'
-import { sortBy } from 'lodash'
-import { ALPH } from '@alephium/token-list'
+import { AssetBase, NFTMetadataStored } from '@/types/assets'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -61,11 +62,14 @@ const AssetList = ({
     { value: 'tokens', label: tokensTabTitle ?? 'Tokens' },
     { value: 'nfts', label: nftsTabTitle ?? 'NFTs' }
   ]
+
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
-  const assetsInfo = {
+  const dispatch = useAppDispatch()
+
+  const assetsMetadata = {
     fungibleTokens: useAppSelector(selectAllFungibleTokensMetadata),
-    nfts: useAppSelector(selectAllFungibleTokensMetadata)
+    nfts: useAppSelector(selectAllNFTsMetadata)
   }
 
   const [tokenBalances, setTokenBalances] = useState<(AddressBalance & { id: string })[]>([])
@@ -88,12 +92,12 @@ const AssetList = ({
     fetchTokenBalances()
   }, [addressHash, assets])
 
-  // Merge asset infos
+  // Merge token metadata
   let tokensWithBalance = (tokenBalances.map((a) => ({
     ...a,
     balance: BigInt(a.balance),
     lockedBalance: BigInt(a.lockedBalance),
-    ...assetsInfo.fungibleTokens.find((i) => i.id === a.id)
+    ...assetsMetadata.fungibleTokens.find((i) => i.id === a.id)
   })) ?? []) as Asset[]
 
   tokensWithBalance = sortBy(tokensWithBalance, [
@@ -103,7 +107,7 @@ const AssetList = ({
     'id'
   ])
 
-  if (addressBalance && parseInt(addressBalance.balance) > 0) {
+  if (addressBalance && BigInt(addressBalance.balance) > 0) {
     tokensWithBalance.unshift({
       ...ALPH,
       balance: BigInt(addressBalance.balance),
@@ -111,16 +115,27 @@ const AssetList = ({
     })
   }
 
-  /*
-  const unknownAssets = assets.filter((a) => !a.name)
+  const unknownTokens = tokensWithBalance.filter((a) => !a.name)
 
+  // Sync unknown tokens
   useEffect(() => {
-    if (!unknownAssetsSynced.current && unknownAssets.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownAssets.map((a) => a.id)))
-      unknownAssetsSynced.current = true
+    if (unknownTokens.length > 0) {
+      dispatch(syncUnknownAssetsInfo(unknownTokens.map((a) => ({ id: a.id, type: 'fungible' }))))
     }
-  }, [dispatch, unknownAssets])
-  */
+  }, [dispatch, unknownTokens])
+
+  const unknownNFTs = differenceBy(
+    assets?.filter((a) => a.type === 'non-fungible'),
+    assetsMetadata.nfts,
+    'id'
+  )
+
+  // Sync unknown NFTs
+  useEffect(() => {
+    if (unknownNFTs.length > 0) {
+      dispatch(syncUnknownAssetsInfo(unknownNFTs.map((a) => ({ id: a.id, type: 'non-fungible' }))))
+    }
+  }, [dispatch, unknownNFTs])
 
   return (
     <div className={className}>
@@ -130,10 +145,10 @@ const AssetList = ({
           <SkeletonLoader height="60px" />
           <SkeletonLoader height="60px" />
         </EmptyListContainer>
-      ) : assets && assets?.length > 0 ? (
+      ) : tokensWithBalance.length > 0 ? (
         {
           tokens: <TokenList limit={limit} tokens={tokensWithBalance} />,
-          nfts: <NFTList />
+          nfts: <NFTList nfts={assetsMetadata.nfts} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
@@ -153,41 +168,41 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
 
   if (!tokens) return null
 
-  const displayedAssets = limit ? tokens.slice(0, limit) : tokens
+  const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 
   return (
     <motion.div className={className}>
-      {displayedAssets.map((asset) => (
-        <AssetRow key={asset.id}>
-          <AssetLogoStyled asset={asset} size={30} />
+      {displayedTokens.map((token) => (
+        <AssetRow key={token.id}>
+          <AssetLogoStyled asset={token} size={30} />
           <NameColumn>
-            <TokenName>{asset.name || 'Unknown token'}</TokenName>
+            <TokenName>{token.name || 'Unknown token'}</TokenName>
             <TokenSymbol>
-              {asset.symbol ?? (
+              {token.symbol ?? (
                 <UnknownTokenId>
-                  <HashEllipsed hash={asset.id} />
+                  <HashEllipsed hash={token.id} />
                 </UnknownTokenId>
               )}
             </TokenSymbol>
           </NameColumn>
           <TableCellAmount>
             <TokenAmount
-              value={asset.balance}
-              suffix={asset.symbol}
-              decimals={asset.decimals}
-              isUnknownToken={!asset.symbol}
+              value={token.balance}
+              suffix={token.symbol}
+              decimals={token.decimals}
+              isUnknownToken={!token.symbol}
             />
-            {asset.lockedBalance > 0 ? (
+            {token.lockedBalance > 0 ? (
               <TokenAmountSublabel>
                 {'Available '}
                 <Amount
-                  value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol}
+                  value={token.balance - token.lockedBalance}
+                  suffix={token.symbol}
                   color={theme.font.tertiary}
-                  decimals={asset.decimals}
+                  decimals={token.decimals}
                 />
               </TokenAmountSublabel>
-            ) : !asset.name ? (
+            ) : !token.name ? (
               <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
             ) : undefined}
           </TableCellAmount>
@@ -197,9 +212,13 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
   )
 }
 
-const NFTList = () => (
+const NFTList = ({ nfts }: { nfts: NFTMetadataStored[] }) => (
   <motion.div style={{ padding: 30 }}>
-    <div>Coming soon.</div>
+    {nfts.map((nft) => (
+      <NFTContainer key={nft.id}>
+        <NFTPicture />
+      </NFTContainer>
+    ))}
   </motion.div>
 )
 
@@ -268,4 +287,12 @@ const EmptyListContainer = styled.div`
 
 const UnknownTokenId = styled.div`
   display: flex;
+`
+const NFTContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const NFTPicture = styled.div`
+  height: 300px;
 `
