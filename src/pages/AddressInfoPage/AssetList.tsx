@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
+import { Asset, TokenDisplayBalances } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { differenceBy, sortBy } from 'lodash'
+import { difference, differenceBy, filter, groupBy, map, sortBy, xor, xorBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -37,7 +37,7 @@ import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActi
 import { selectAllFungibleTokensMetadata, selectAllNFTsMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase, NFTFile, NFTMetadataStored } from '@/types/assets'
+import { AssetBase, FungibleTokenMetadataStored, NFTFile, NFTMetadataStored } from '@/types/assets'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -61,48 +61,59 @@ const AssetList = ({
   className
 }: AssetListProps) => {
   const tabs = [
-    { value: 'tokens', label: tokensTabTitle ?? 'Tokens' },
+    { value: 'tokens', label: tokensTabTitle ?? `Tokens` },
     { value: 'nfts', label: nftsTabTitle ?? 'NFTs' }
   ]
-
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
   const dispatch = useAppDispatch()
 
-  const assetsMetadata = {
+  const [tokensWithBalances, setTokensWithBalances] = useState<(AddressBalance & AssetBase)[]>([])
+
+  const allAssetsMetadata = {
     fungibleTokens: useAppSelector(selectAllFungibleTokensMetadata),
     nfts: useAppSelector(selectAllNFTsMetadata)
   }
 
-  const [tokenBalances, setTokenBalances] = useState<(AddressBalance & { id: string })[]>([])
-
   // Fetch tokens balances
   useEffect(() => {
     const fetchTokenBalances = async () => {
-      if (!assets) return
+      if (isLoading || !assets) return
 
       const balances = await Promise.all(
         assets
-          .filter((a) => a.type === 'fungible')
+          ?.filter((a) => a.type === 'fungible')
           .map(async (a) => ({
-            id: a.id,
+            ...a,
             ...(await client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, a.id))
           }))
       )
-      setTokenBalances(balances)
+      setTokensWithBalances(balances)
     }
     fetchTokenBalances()
-  }, [addressHash, assets])
+  }, [addressHash, assets, isLoading])
 
-  // Merge token metadata
-  let tokensWithBalance = (tokenBalances.map((a) => ({
-    ...a,
-    balance: BigInt(a.balance),
-    lockedBalance: BigInt(a.lockedBalance),
-    ...assetsMetadata.fungibleTokens.find((i) => i.id === a.id)
-  })) ?? []) as Asset[]
+  // Merge token metadata and balances
+  let tokensWithBalanceAndMetadata = tokensWithBalances.reduce(
+    (acc: (TokenDisplayBalances & AssetBase & FungibleTokenMetadataStored)[], t) => {
+      const metadata = allAssetsMetadata.fungibleTokens.find((i) => i.id === t.id)
 
-  tokensWithBalance = sortBy(tokensWithBalance, [
+      if (metadata) {
+        acc.push({ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) })
+      }
+
+      return acc
+    },
+    []
+  )
+
+  const unknownTokens = differenceBy(
+    tokensWithBalances,
+    filter(tokensWithBalanceAndMetadata, ({ name }) => !!name),
+    'id'
+  )
+
+  tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
     (t) => !t.verified,
     (t) => t.verified === undefined,
     (t) => t.name?.toLowerCase(),
@@ -110,32 +121,40 @@ const AssetList = ({
   ])
 
   if (addressBalance && BigInt(addressBalance.balance) > 0) {
-    tokensWithBalance.unshift({
+    tokensWithBalanceAndMetadata.unshift({
       ...ALPH,
       balance: BigInt(addressBalance.balance),
-      lockedBalance: BigInt(addressBalance.lockedBalance)
+      lockedBalance: BigInt(addressBalance.lockedBalance),
+      type: 'fungible',
+      verified: true
     })
   }
 
-  const unknownTokens = tokensWithBalance.filter((a) => !a.name)
+  // Merge NFTs metadata
+
+  const nfts = assets?.filter((a) => a.type === 'non-fungible') || []
+
+  const nftsWithMetadata = nfts?.reduce((acc: (AssetBase & NFTMetadataStored)[], nft) => {
+    const metadata = allAssetsMetadata.nfts.find((i) => i.id === nft.id)
+    if (metadata) {
+      acc.push({ ...nft, ...metadata })
+    }
+    return acc
+  }, [])
 
   // Sync unknown tokens
   useEffect(() => {
     if (unknownTokens.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownTokens.map((a) => ({ id: a.id, type: 'fungible' }))))
+      dispatch(syncUnknownAssetsInfo(unknownTokens.map(({ id, type }) => ({ id, type }))))
     }
   }, [dispatch, unknownTokens])
 
-  const unknownNFTs = differenceBy(
-    assets?.filter((a) => a.type === 'non-fungible'),
-    assetsMetadata.nfts,
-    'id'
-  )
+  const unknownNFTs = differenceBy(nfts, allAssetsMetadata.nfts, 'id')
 
   // Sync unknown NFTs
   useEffect(() => {
     if (unknownNFTs.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownNFTs.map((a) => ({ id: a.id, type: 'non-fungible' }))))
+      dispatch(syncUnknownAssetsInfo(unknownNFTs.map(({ id, type }) => ({ id, type }))))
     }
   }, [dispatch, unknownNFTs])
 
@@ -147,10 +166,10 @@ const AssetList = ({
           <SkeletonLoader height="60px" />
           <SkeletonLoader height="60px" />
         </EmptyListContainer>
-      ) : tokensWithBalance.length > 0 ? (
+      ) : tokensWithBalanceAndMetadata.length > 0 || nftsWithMetadata.length > 0 ? (
         {
-          tokens: <TokenList limit={limit} tokens={tokensWithBalance} />,
-          nfts: <NFTList nfts={assetsMetadata.nfts} />
+          tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
+          nfts: nftsWithMetadata && <NFTList nfts={nftsWithMetadata} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
