@@ -36,6 +36,7 @@ import { darkTheme, lightTheme } from '@/styles/themes'
 import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
 import { useAppDispatch, useAppSelector } from './hooks/redux'
 import { syncNetworkFungibleTokensInfo } from './store/assetsMetadata/assetsMetadataActions'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -63,6 +64,8 @@ const App = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
+  const queryClient = new QueryClient()
+
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
 
@@ -73,30 +76,32 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-      <SnackbarProvider>
-        <GlobalStyle />
-        <MainContainer>
-          <AnimateSharedLayout>
-            <AppHeader />
-            <ContentContainer>
-              <ContentWrapper>
-                <Content>
-                  <Routes>
-                    <Route path="/" element={<HomeSection />} />
-                    <Route path="/blocks/:id" element={<BlockInfoSection />} />
-                    <Route path="/addresses/:id" element={<AddressInfoSection />} />
-                    <Route path="/transactions/:id" element={<TransactionInfoSection />} />
-                    <Route path="*" element={<PageNotFound />} />
-                  </Routes>
-                </Content>
-              </ContentWrapper>
-            </ContentContainer>
-          </AnimateSharedLayout>
-          <AppFooter />
-          <SnackbarAnchor id="snackbar-anchor" />
-        </MainContainer>
-        <Background />
-      </SnackbarProvider>
+      <QueryClientProvider client={queryClient}>
+        <SnackbarProvider>
+          <GlobalStyle />
+          <MainContainer>
+            <AnimateSharedLayout>
+              <AppHeader />
+              <ContentContainer>
+                <ContentWrapper>
+                  <Content>
+                    <Routes>
+                      <Route path="/" element={<HomeSection />} />
+                      <Route path="/blocks/:id" element={<BlockInfoSection />} />
+                      <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                      <Route path="/transactions/:id" element={<TransactionInfoSection />} />
+                      <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                  </Content>
+                </ContentWrapper>
+              </ContentContainer>
+            </AnimateSharedLayout>
+            <AppFooter />
+            <SnackbarAnchor id="snackbar-anchor" />
+          </MainContainer>
+          <Background />
+        </SnackbarProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   )
 }

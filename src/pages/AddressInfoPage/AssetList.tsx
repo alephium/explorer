@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { differenceBy, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -34,8 +35,9 @@ import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
 import { selectAllFungibleTokensMetadata, selectAllNFTsMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
+import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase, NFTMetadataStored } from '@/types/assets'
+import { AssetBase, NFTFile, NFTMetadataStored } from '@/types/assets'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -212,15 +214,39 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
   )
 }
 
-const NFTList = ({ nfts }: { nfts: NFTMetadataStored[] }) => (
-  <motion.div style={{ padding: 30 }}>
+interface NFTListProps {
+  nfts: NFTMetadataStored[]
+}
+
+const NFTList = ({ nfts }: NFTListProps) => (
+  <NFTListStyled>
     {nfts.map((nft) => (
-      <NFTContainer key={nft.id}>
-        <NFTPicture />
-      </NFTContainer>
+      <NFTItem key={nft.id} nft={nft} />
     ))}
-  </motion.div>
+  </NFTListStyled>
 )
+
+interface NFTItemProps {
+  nft: NFTMetadataStored
+}
+
+const NFTItem = ({ nft }: NFTItemProps) => {
+  const { data: nftData } = useQuery<NFTFile>({
+    queryKey: ['nftData', nft.id],
+    queryFn: () => fetch(nft.tokenUri).then((res) => res.json())
+  })
+
+  const desc = nftData?.description
+  const cutDesc = desc && desc?.length > 500 ? nftData?.description.substring(0, 300) + '...' : desc
+
+  return (
+    <NFTItemStyled>
+      <NFTPicture src={nftData?.image} alt={nftData?.description} />
+      <NFTName>{nftData?.name}</NFTName>
+      <NFTDescription>{cutDesc}</NFTDescription>
+    </NFTItemStyled>
+  )
+}
 
 export default styled(AssetList)`
   margin-bottom: 35px;
@@ -288,11 +314,42 @@ const EmptyListContainer = styled.div`
 const UnknownTokenId = styled.div`
   display: flex;
 `
-const NFTContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+
+const NFTListStyled = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  padding: 15px;
+
+  @media ${deviceBreakPoints.tablet} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media ${deviceBreakPoints.mobile} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media ${deviceBreakPoints.tiny} {
+    grid-template-columns: repeat(1, 1fr);
+  }
 `
 
-const NFTPicture = styled.div`
-  height: 300px;
+const NFTItemStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 350px;
+  background-color: ${({ theme }) => theme.bg.background1};
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `
+
+const NFTPicture = styled.img`
+  max-width: 100%;
+  height: 75%;
+  object-fit: cover;
+`
+
+const NFTName = styled.h2``
+
+const NFTDescription = styled.span``

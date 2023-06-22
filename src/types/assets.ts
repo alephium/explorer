@@ -26,6 +26,12 @@ export type FungibleTokenMetadataStored = Omit<FungibleTokenMetaData, 'totalSupp
 
 export type NFTMetadataStored = NFTMetaData & { id: string; verified: boolean }
 
+export type NFTFile = {
+  name: string
+  description: string
+  image: string
+}
+
 export const isFungibleTokenMetadata = (
   meta: Partial<FungibleTokenMetaData> | Partial<NFTMetaData>
 ): meta is FungibleTokenMetaData => (meta as FungibleTokenMetaData).name !== undefined
