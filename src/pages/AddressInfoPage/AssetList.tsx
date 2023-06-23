@@ -16,28 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, TokenDisplayBalances } from '@alephium/sdk'
+import { TokenDisplayBalances } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQueries, useQuery } from '@tanstack/react-query'
-import { motion } from 'framer-motion'
-import { difference, differenceBy, filter, groupBy, map, sortBy, xor, xorBy } from 'lodash'
+import { useQueries } from '@tanstack/react-query'
+import _, { differenceBy, filter, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import client from '@/api/client'
-import Amount from '@/components/Amount'
-import AssetLogo from '@/components/AssetLogo'
-import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import TableCellAmount from '@/components/Table/TableCellAmount'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
 import { selectAllFungibleTokensMetadata, selectAllNFTsMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
-import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase, FungibleTokenMetadataStored, NFTFile, NFTMetadataStored } from '@/types/assets'
+import { AssetBase, FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
+
+import NFTList from './NFTList'
+import TokenList from './TokenList'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -74,22 +71,22 @@ const AssetList = ({
   }
 
   // Fetch tokens balances
-  const tokensWithBalances = useQueries({
-    queries: assets
-      .filter((a) => a.type === 'fungible')
-      .map((t) => ({
-        queryKey: ['tokensBalance', t.id],
-        queryFn: () =>
-          client.explorer.addresses
-            .getAddressesAddressTokensTokenIdBalance(addressHash, t.id)
-            .then((r) => ({ ...t, ...r }))
-      }))
-  }).reduce<(AddressBalance & AssetBase)[]>((acc, { data }) => {
-    if (data) {
-      acc.push(data)
-    }
-    return acc
-  }, [])
+  const tokensWithBalances = _(
+    useQueries({
+      queries: assets
+        .filter((a) => a.type === 'fungible')
+        .map((t) => ({
+          queryKey: ['tokensBalance', t.id],
+          queryFn: () =>
+            client.explorer.addresses
+              .getAddressesAddressTokensTokenIdBalance(addressHash, t.id)
+              .then((r) => ({ ...t, ...r }))
+        }))
+    })
+  )
+    .map('data')
+    .compact()
+    .value()
 
   // Merge token metadata and balances
   let tokensWithBalanceAndMetadata = tokensWithBalances.reduce(
@@ -178,147 +175,12 @@ const AssetList = ({
   )
 }
 
-interface TokenListProps {
-  tokens?: Asset[]
-  limit?: number
-  className?: string
-}
-
-const TokenList = ({ tokens, limit, className }: TokenListProps) => {
-  const theme = useTheme()
-
-  if (!tokens) return null
-
-  const displayedTokens = limit ? tokens.slice(0, limit) : tokens
-
-  return (
-    <motion.div className={className}>
-      {displayedTokens.map((token) => (
-        <AssetRow key={token.id}>
-          <AssetLogoStyled asset={token} size={30} />
-          <NameColumn>
-            <TokenName>{token.name || 'Unknown token'}</TokenName>
-            <TokenSymbol>
-              {token.symbol ?? (
-                <UnknownTokenId>
-                  <HashEllipsed hash={token.id} />
-                </UnknownTokenId>
-              )}
-            </TokenSymbol>
-          </NameColumn>
-          <TableCellAmount>
-            <TokenAmount
-              value={token.balance}
-              suffix={token.symbol}
-              decimals={token.decimals}
-              isUnknownToken={!token.symbol}
-            />
-            {token.lockedBalance > 0 ? (
-              <TokenAmountSublabel>
-                {'Available '}
-                <Amount
-                  value={token.balance - token.lockedBalance}
-                  suffix={token.symbol}
-                  color={theme.font.tertiary}
-                  decimals={token.decimals}
-                />
-              </TokenAmountSublabel>
-            ) : !token.name ? (
-              <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
-            ) : undefined}
-          </TableCellAmount>
-        </AssetRow>
-      ))}
-    </motion.div>
-  )
-}
-
-interface NFTListProps {
-  nfts: NFTMetadataStored[]
-}
-
-const NFTList = ({ nfts }: NFTListProps) => (
-  <NFTListStyled>
-    {nfts.map((nft) => (
-      <NFTItem key={nft.id} nft={nft} />
-    ))}
-  </NFTListStyled>
-)
-
-interface NFTItemProps {
-  nft: NFTMetadataStored
-}
-
-const NFTItem = ({ nft }: NFTItemProps) => {
-  const { data: nftData } = useQuery<NFTFile>({
-    queryKey: ['nftData', nft.id],
-    queryFn: () => fetch(nft.tokenUri).then((res) => res.json())
-  })
-
-  const desc = nftData?.description
-  const cutDesc = desc && desc?.length > 500 ? nftData?.description.substring(0, 300) + '...' : desc
-
-  return (
-    <NFTItemStyled>
-      <NFTPicture src={nftData?.image} alt={nftData?.description} />
-      <NFTName>{nftData?.name}</NFTName>
-      <NFTDescription>{cutDesc}</NFTDescription>
-    </NFTItemStyled>
-  )
-}
-
 export default styled(AssetList)`
   margin-bottom: 35px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
   border-radius: 12px;
-`
-
-const AssetRow = styled.div`
-  display: flex;
-  padding: 15px 20px;
-  align-items: center;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  }
-`
-
-const AssetLogoStyled = styled(AssetLogo)`
-  margin-right: 20px;
-`
-
-const TokenName = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-
-const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  max-width: 150px;
-`
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
-const TokenAmount = styled(Amount)`
-  font-size: 14px;
-`
-
-const TokenAmountSublabel = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 11px;
-`
-
-const NameColumn = styled(Column)`
-  margin-right: 50px;
 `
 
 const EmptyListContainer = styled.div`
@@ -329,46 +191,3 @@ const EmptyListContainer = styled.div`
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
 `
-
-const UnknownTokenId = styled.div`
-  display: flex;
-`
-
-const NFTListStyled = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  padding: 15px;
-
-  @media ${deviceBreakPoints.tablet} {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @media ${deviceBreakPoints.mobile} {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media ${deviceBreakPoints.tiny} {
-    grid-template-columns: repeat(1, 1fr);
-  }
-`
-
-const NFTItemStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 350px;
-  background-color: ${({ theme }) => theme.bg.background1};
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-`
-
-const NFTPicture = styled.img`
-  max-width: 100%;
-  height: 75%;
-  object-fit: cover;
-`
-
-const NFTName = styled.h2``
-
-const NFTDescription = styled.span``
