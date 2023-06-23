@@ -278,7 +278,7 @@ const AddressInfoPage = () => {
       <AssetList
         addressBalance={addressBalance}
         addressHash={addressHash}
-        assets={addressAssets}
+        assets={addressAssets || []}
         isLoading={loadings.assets}
       />
 

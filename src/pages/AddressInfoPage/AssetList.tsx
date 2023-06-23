@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, TokenDisplayBalances } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { difference, differenceBy, filter, groupBy, map, sortBy, xor, xorBy } from 'lodash'
 import { useEffect, useState } from 'react'
@@ -42,7 +42,7 @@ import { AssetBase, FungibleTokenMetadataStored, NFTFile, NFTMetadataStored } fr
 interface AssetListProps {
   addressHash: AddressHash
   addressBalance?: AddressBalance
-  assets?: AssetBase[]
+  assets: AssetBase[]
   limit?: number
   isLoading: boolean
   tokensTabTitle?: string
@@ -68,34 +68,34 @@ const AssetList = ({
 
   const dispatch = useAppDispatch()
 
-  const [tokensWithBalances, setTokensWithBalances] = useState<(AddressBalance & AssetBase)[]>([])
-
   const allAssetsMetadata = {
     fungibleTokens: useAppSelector(selectAllFungibleTokensMetadata),
     nfts: useAppSelector(selectAllNFTsMetadata)
   }
 
   // Fetch tokens balances
-  useEffect(() => {
-    const fetchTokenBalances = async () => {
-      if (isLoading || !assets) return
-
-      const balances = await Promise.all(
-        assets
-          ?.filter((a) => a.type === 'fungible')
-          .map(async (a) => ({
-            ...a,
-            ...(await client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, a.id))
-          }))
-      )
-      setTokensWithBalances(balances)
+  const tokensWithBalances = useQueries({
+    queries: assets
+      .filter((a) => a.type === 'fungible')
+      .map((t) => ({
+        queryKey: ['tokensBalance', t.id],
+        queryFn: () =>
+          client.explorer.addresses
+            .getAddressesAddressTokensTokenIdBalance(addressHash, t.id)
+            .then((r) => ({ ...t, ...r }))
+      }))
+  }).reduce<(AddressBalance & AssetBase)[]>((acc, { data }) => {
+    if (data) {
+      acc.push(data)
     }
-    fetchTokenBalances()
-  }, [addressHash, assets, isLoading])
+    return acc
+  }, [])
 
   // Merge token metadata and balances
   let tokensWithBalanceAndMetadata = tokensWithBalances.reduce(
     (acc: (TokenDisplayBalances & AssetBase & FungibleTokenMetadataStored)[], t) => {
+      if (!t) return acc
+
       const metadata = allAssetsMetadata.fungibleTokens.find((i) => i.id === t.id)
 
       if (metadata) {
@@ -134,7 +134,7 @@ const AssetList = ({
 
   const nfts = assets?.filter((a) => a.type === 'non-fungible') || []
 
-  const nftsWithMetadata = nfts?.reduce((acc: (AssetBase & NFTMetadataStored)[], nft) => {
+  const nftsWithMetadata = nfts.reduce<(AssetBase & NFTMetadataStored)[]>((acc, nft) => {
     const metadata = allAssetsMetadata.nfts.find((i) => i.id === nft.id)
     if (metadata) {
       acc.push({ ...nft, ...metadata })
