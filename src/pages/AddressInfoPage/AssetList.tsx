@@ -69,25 +69,19 @@ const AssetList = ({
 
   const unverifiedTokensMetadata = mapQueriesData(
     useQueries({
-      queries: fungibleTokenIds?.map((id) => ({
-        ...assetsQueries.metadata.unverifiedFungibleToken(id),
-        enabled: fungibleTokenIds?.length > 0
-      }))
+      queries: fungibleTokenIds?.map((id) => assetsQueries.metadata.unverifiedFungibleToken(id))
     })
   )
 
   const unverifiedNFTsMetadata = mapQueriesData(
     useQueries({
-      queries: NFTIds?.map((id) => ({ ...assetsQueries.metadata.unverifiedNFT(id), enabled: NFTIds?.length > 0 }))
+      queries: NFTIds?.map((id) => assetsQueries.metadata.unverifiedNFT(id))
     })
   )
 
   const tokenBalances = mapQueriesData(
     useQueries({
-      queries: fungibleTokenIds?.map((id) => ({
-        ...assetsQueries.balances.addressToken(addressHash, id),
-        enabled: fungibleTokenIds?.length > 0
-      }))
+      queries: fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id))
     })
   )
 
