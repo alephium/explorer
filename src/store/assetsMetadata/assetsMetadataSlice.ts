@@ -21,7 +21,7 @@ import { createSlice, EntityState } from '@reduxjs/toolkit'
 
 import { FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
 
-import { syncNetworkFungibleTokensInfo, syncUnknownAssetsInfo } from './assetsMetadataActions'
+import { syncUnknownAssetsInfo } from './assetsMetadataActions'
 import { fungibleTokensMetadataAdapter, nftsMetadataAdapter } from './assetsMetadataAdapter'
 
 interface AssetMetadataState {
@@ -42,28 +42,14 @@ const assetsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder
-      .addCase(syncNetworkFungibleTokensInfo.fulfilled, (state, action) => {
-        const metadata = action.payload
+    builder.addCase(syncUnknownAssetsInfo.fulfilled, (state, action) => {
+      const metadata = action.payload
 
-        if (metadata) {
-          fungibleTokensMetadataAdapter.upsertMany(
-            state.fungibleTokens,
-            metadata.tokens.map((tokenInfo) => ({
-              ...tokenInfo,
-              verified: true
-            }))
-          )
-        }
-      })
-      .addCase(syncUnknownAssetsInfo.fulfilled, (state, action) => {
-        const metadata = action.payload
+      if (!metadata) return
 
-        if (!metadata) return
-
-        fungibleTokensMetadataAdapter.upsertMany(state.fungibleTokens, metadata.fungibleTokens)
-        nftsMetadataAdapter.upsertMany(state.nfts, metadata.nfts)
-      })
+      fungibleTokensMetadataAdapter.upsertMany(state.fungibleTokens, metadata.fungibleTokens)
+      nftsMetadataAdapter.upsertMany(state.nfts, metadata.nfts)
+    })
   }
 })
 

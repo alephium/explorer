@@ -11,6 +11,7 @@
     "@alephium/sdk": "0.7.2",
     "@alephium/token-list": "^0.0.8",
     "@alephium/web3": "0.13.0",
+    "@lukemorales/query-key-factory": "^1.3.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-query": "^4.29.15",
     "apexcharts": "^3.35.0",

@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { AnimateSharedLayout } from 'framer-motion'
-import { useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -34,9 +34,7 @@ import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
 
 import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
-import { useAppDispatch, useAppSelector } from './hooks/redux'
-import { syncNetworkFungibleTokensInfo } from './store/assetsMetadata/assetsMetadataActions'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useAppSelector } from './hooks/redux'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -62,17 +60,11 @@ dayjs.updateLocale('en', {
 const App = () => {
   const theme = useAppSelector((s) => s.settings.theme)
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   const queryClient = new QueryClient()
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
-
-  // Fetch assets info
-  useEffect(() => {
-    dispatch(syncNetworkFungibleTokensInfo())
-  }, [dispatch])
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

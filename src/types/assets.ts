@@ -16,13 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TokenInfo } from '@alephium/token-list'
 import { FungibleTokenMetaData, NFTMetaData } from '@alephium/web3'
 
-export type AssetType = 'fungible' | 'non-fungible' | undefined
+export type AssetType = 'fungible' | 'non-fungible' | 'undefined'
 
 export type AssetBase = { id: string; type: AssetType }
 
 export type FungibleTokenMetadataStored = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
+
+export type VerifiedFungibleTokenMetadata = TokenInfo & { verified: true }
 
 export type NFTMetadataStored = NFTMetaData & { id: string; verified: boolean }
 

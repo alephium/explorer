@@ -16,22 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenDisplayBalances } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQueries } from '@tanstack/react-query'
-import _, { differenceBy, filter, sortBy } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useQueries, useQuery } from '@tanstack/react-query'
+import { find, flatMap, sortBy } from 'lodash'
+import { useState } from 'react'
 import styled from 'styled-components'
 
+import { assetsQueries } from '@/api/assetsApi'
 import client from '@/api/client'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { syncUnknownAssetsInfo } from '@/store/assetsMetadata/assetsMetadataActions'
-import { selectAllFungibleTokensMetadata, selectAllNFTsMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase, FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
+import { AssetBase } from '@/types/assets'
+import { mapQueriesData } from '@/utils/api'
+import { getCategorizedAssetIds } from '@/utils/assets'
 
 import NFTList from './NFTList'
 import TokenList from './TokenList'
@@ -39,7 +38,7 @@ import TokenList from './TokenList'
 interface AssetListProps {
   addressHash: AddressHash
   addressBalance?: AddressBalance
-  assets: AssetBase[]
+  assets?: AssetBase[]
   limit?: number
   isLoading: boolean
   tokensTabTitle?: string
@@ -63,52 +62,46 @@ const AssetList = ({
   ]
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
-  const dispatch = useAppDispatch()
+  const { fungibleTokenIds, NFTIds, unknownAssetIds } = getCategorizedAssetIds(assets)
 
-  const allAssetsMetadata = {
-    fungibleTokens: useAppSelector(selectAllFungibleTokensMetadata),
-    nfts: useAppSelector(selectAllNFTsMetadata)
-  }
+  const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
+  const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => fungibleTokenIds.includes(m.id)) || []
 
-  // Fetch tokens balances
-  const tokensWithBalances = _(
+  const unverifiedTokensMetadata = mapQueriesData(
     useQueries({
-      queries: assets
-        .filter((a) => a.type === 'fungible')
-        .map((t) => ({
-          queryKey: ['tokensBalance', t.id],
-          queryFn: () =>
-            client.explorer.addresses
-              .getAddressesAddressTokensTokenIdBalance(addressHash, t.id)
-              .then((r) => ({ ...t, ...r }))
-        }))
+      queries: fungibleTokenIds?.map((id) => ({
+        ...assetsQueries.metadata.unverifiedFungibleToken(id),
+        enabled: fungibleTokenIds?.length > 0
+      }))
     })
   )
-    .map('data')
-    .compact()
-    .value()
 
-  // Merge token metadata and balances
-  let tokensWithBalanceAndMetadata = tokensWithBalances.reduce(
-    (acc: (TokenDisplayBalances & AssetBase & FungibleTokenMetadataStored)[], t) => {
-      if (!t) return acc
-
-      const metadata = allAssetsMetadata.fungibleTokens.find((i) => i.id === t.id)
-
-      if (metadata) {
-        acc.push({ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) })
-      }
-
-      return acc
-    },
-    []
+  const unverifiedNFTsMetadata = mapQueriesData(
+    useQueries({
+      queries: NFTIds?.map((id) => ({ ...assetsQueries.metadata.unverifiedNFT(id), enabled: NFTIds?.length > 0 }))
+    })
   )
 
-  const unknownTokens = differenceBy(
-    tokensWithBalances,
-    filter(tokensWithBalanceAndMetadata, ({ name }) => !!name),
-    'id'
+  const tokenBalances = mapQueriesData(
+    useQueries({
+      queries: fungibleTokenIds?.map((id) => ({
+        ...assetsQueries.balances.addressToken(addressHash, id),
+        enabled: fungibleTokenIds?.length > 0
+      }))
+    })
   )
+
+  let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
+    if (!t) return []
+
+    const metadata = find([...verifiedTokensMetadata, ...unverifiedTokensMetadata], { id: t.id })
+
+    if (metadata) {
+      return [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }]
+    }
+
+    return []
+  })
 
   tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
     (t) => !t.verified,
@@ -117,43 +110,15 @@ const AssetList = ({
     'id'
   ])
 
+  // Add ALPH
   if (addressBalance && BigInt(addressBalance.balance) > 0) {
     tokensWithBalanceAndMetadata.unshift({
       ...ALPH,
       balance: BigInt(addressBalance.balance),
       lockedBalance: BigInt(addressBalance.lockedBalance),
-      type: 'fungible',
       verified: true
     })
   }
-
-  // Merge NFTs metadata
-
-  const nfts = assets?.filter((a) => a.type === 'non-fungible') || []
-
-  const nftsWithMetadata = nfts.reduce<(AssetBase & NFTMetadataStored)[]>((acc, nft) => {
-    const metadata = allAssetsMetadata.nfts.find((i) => i.id === nft.id)
-    if (metadata) {
-      acc.push({ ...nft, ...metadata })
-    }
-    return acc
-  }, [])
-
-  // Sync unknown tokens
-  useEffect(() => {
-    if (unknownTokens.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownTokens.map(({ id, type }) => ({ id, type }))))
-    }
-  }, [dispatch, unknownTokens])
-
-  const unknownNFTs = differenceBy(nfts, allAssetsMetadata.nfts, 'id')
-
-  // Sync unknown NFTs
-  useEffect(() => {
-    if (unknownNFTs.length > 0) {
-      dispatch(syncUnknownAssetsInfo(unknownNFTs.map(({ id, type }) => ({ id, type }))))
-    }
-  }, [dispatch, unknownNFTs])
 
   return (
     <div className={className}>
@@ -163,10 +128,10 @@ const AssetList = ({
           <SkeletonLoader height="60px" />
           <SkeletonLoader height="60px" />
         </EmptyListContainer>
-      ) : tokensWithBalanceAndMetadata.length > 0 || nftsWithMetadata.length > 0 ? (
+      ) : tokensWithBalanceAndMetadata.length > 0 || unverifiedNFTsMetadata.length > 0 ? (
         {
           tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
-          nfts: nftsWithMetadata && <NFTList nfts={nftsWithMetadata} />
+          nfts: unverifiedNFTsMetadata && <NFTList nfts={unverifiedNFTsMetadata} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
