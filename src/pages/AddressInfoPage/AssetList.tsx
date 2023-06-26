@@ -85,8 +85,6 @@ const AssetList = ({
     })
   )
 
-  const yo = useQueriesData(fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id)))
-
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
     if (!t) return []
 

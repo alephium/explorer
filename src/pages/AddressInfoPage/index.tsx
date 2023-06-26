@@ -17,16 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
-import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
-import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { groupOfAddress } from '@alephium/web3'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { fetchAddressAssets } from '@/api/addressApi'
+import { addressQueries } from '@/api/addressApi'
 import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
@@ -41,12 +41,10 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { AssetBase } from '@/types/assets'
 import { getCategorizedAssetIds } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
@@ -58,134 +56,50 @@ type ParamTypes = {
   id: string
 }
 
-type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'txList'
-
-type SingleStringArgFunctions<T> = {
-  [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
-}[keyof T]
-
 const AddressInfoPage = () => {
   const theme = useTheme()
-  const { id: addressHash } = useParams<ParamTypes>()
+  const { id: addressHash = '' } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
 
-  const [addressBalance, setAddressBalance] = useState<AddressBalance>()
-  const [txNumber, setTxNumber] = useState<number>()
-  const [addressAssets, setAddressAssets] = useState<AssetBase[]>()
-  const [txList, setTxList] = useState<Transaction[]>()
-  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
-  const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
-  const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
-    balance: true,
-    txNumber: true,
-    txList: true,
-    assets: true
+  const { data: addressBalance } = useQuery({
+    ...addressQueries.balance.details(addressHash),
+    enabled: !!addressHash
   })
 
-  const displayError = useCallback(
-    (error: unknown, errorMsg: string) => {
-      console.error(error)
-      displaySnackbar({
-        text: getHumanReadableError(error, errorMsg),
-        type: 'alert'
-      })
-    },
-    [displaySnackbar]
-  )
+  const {
+    data: txList,
+    isLoading: txListLoading,
+    refetch: refetchTxList
+  } = useQuery({
+    ...addressQueries.transactions.settled(addressHash, pageNumber),
+    enabled: !!addressHash,
+    keepPreviousData: true
+  })
 
-  const fetchAddressDataGeneric = useCallback(
-    async <T,>(
-      addressPropName: AddressPropertyName,
-      setAddressProp: (value: T | undefined) => void,
-      apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
-    ) => {
-      if (!addressHash) return
+  console.log(txList)
 
-      setLoadings((p) => ({ ...p, [addressPropName]: true }))
-      setAddressProp(undefined)
+  const { data: addressMempoolTransactions } = useQuery({
+    ...addressQueries.transactions.mempool(addressHash),
+    enabled: !!addressHash,
+    refetchInterval: isAppVisible && pageNumber === 1 ? 10000 : undefined
+  })
 
-      try {
-        const result =
-          typeof apiCall === 'string'
-            ? ((await client.explorer.addresses[apiCall](addressHash, {})) as T)
-            : await apiCall()
-        setAddressProp(result)
-      } catch (error) {
-        displayError(error, `Error while fetching ${addressPropName}`)
-      } finally {
-        setLoadings((p) => ({ ...p, [addressPropName]: false }))
-      }
-    },
-    [displayError, addressHash]
-  )
+  const { data: txNumber, isLoading: txNumberLoading } = useQuery({
+    ...addressQueries.transactions.txNumber(addressHash),
+    enabled: !!addressHash
+  })
 
-  const fetchTransactions = useCallback(
-    () =>
-      addressHash &&
-      fetchAddressDataGeneric('txList', setTxList, async () => {
-        const currentPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(
-          addressHash,
-          {
-            page: pageNumber
-          }
-        )
-        const firstPageTransactionData = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-          page: 1
-        })
-        setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
+  const { data: addressAssets, isLoading: assetsLoading } = useQuery({
+    ...addressQueries.assets.all(addressHash),
+    enabled: !!addressHash
+  })
 
-        return currentPageTransactionData
-      }),
-    [fetchAddressDataGeneric, addressHash, pageNumber]
-  )
-
-  const fetchMempoolTxs = useCallback(
-    async (shouldTriggerTxFetch = true) => {
-      if (!client || !addressHash) return
-
-      try {
-        const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
-        const mempoolTxs = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
-
-        if (
-          addressMempoolTransactions.length === mempoolTxs.length &&
-          mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))
-        )
-          return
-
-        if (shouldTriggerTxFetch && addressMempoolTransactions.length > mempoolTxs.length) {
-          await fetchTransactions()
-        }
-
-        setAddressMempoolTransactions(mempoolTxs)
-      } catch (e) {
-        displayError(e, `Error while fetching pending transactions`)
-      }
-    },
-    [addressMempoolTransactions, displayError, fetchTransactions, addressHash]
-  )
-
-  // Fetch on mount
-  useEffect(() => {
-    if (addressHash) {
-      fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
-      fetchAddressDataGeneric('txNumber', setTxNumber, 'getAddressesAddressTotalTransactions')
-      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(addressHash))
-      fetchTransactions()
-    }
-  }, [fetchAddressDataGeneric, fetchTransactions, addressHash, pageNumber])
-
-  useEffect(() => {
-    fetchMempoolTxs(false)
-  }, [fetchMempoolTxs])
-
-  // Mempool tx check
-  useInterval(fetchMempoolTxs, 10000, !isAppVisible)
+  const addressLatestActivity = txList?.[0].timestamp
 
   // Asset price
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
@@ -200,13 +114,17 @@ const AddressInfoPage = () => {
         const price = await fetchAssetPrice('alephium')
 
         setAddressWorth(calculateAmountWorth(BigInt(balance), price))
-      } catch (error) {
-        displayError(error, 'Error while fetching fiat price')
+      } catch (e) {
+        console.error(e)
+        displaySnackbar({
+          text: getHumanReadableError(e, 'Error while fetching fiat worth'),
+          type: 'alert'
+        })
       }
     }
 
     getAddressWorth()
-  }, [addressBalance?.balance, displayError])
+  }, [addressBalance?.balance, displaySnackbar])
 
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
@@ -255,7 +173,7 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell
             label="Nb. of transactions"
-            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.txNumber ? 0 : undefined}
+            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label="Nb. of assets" value={nbOfKnownAssets} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
@@ -264,7 +182,7 @@ const AddressInfoPage = () => {
             value={
               addressLatestActivity ? (
                 <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
-              ) : !loadings.txList ? (
+              ) : !txListLoading ? (
                 'No activity yet'
               ) : undefined
             }
@@ -283,7 +201,7 @@ const AddressInfoPage = () => {
         addressBalance={addressBalance}
         addressHash={addressHash}
         assets={addressAssets}
-        isLoading={loadings.assets}
+        isLoading={assetsLoading}
       />
 
       <SectionHeader>
@@ -296,8 +214,8 @@ const AddressInfoPage = () => {
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={loadings.txList}>
-        {txList?.length || addressMempoolTransactions?.length ? (
+      <Table hasDetails main scrollable isLoading={txListLoading}>
+        {(!txListLoading && txList?.length) || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
               headerTitles={[

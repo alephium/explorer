@@ -16,12 +16,46 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { createQueryKeyStore } from '@lukemorales/query-key-factory'
+
 import { AddressHash } from '@/types/addresses'
 import { AssetBase } from '@/types/assets'
 
 import client from './client'
 
-export const fetchAddressAssets = async (addressHash: AddressHash): Promise<AssetBase[]> => {
+export const addressQueries = createQueryKeyStore({
+  balance: {
+    details: (addressHash: string) => ({
+      queryKey: [addressHash],
+      queryFn: () => client.explorer.addresses.getAddressesAddressBalance(addressHash)
+    })
+  },
+  transactions: {
+    settled: (addressHash: string, pageNumber: number) => ({
+      queryKey: [addressHash, pageNumber],
+      queryFn: () =>
+        client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+          page: pageNumber
+        })
+    }),
+    mempool: (addressHash: string) => ({
+      queryKey: [addressHash],
+      queryFn: () => client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
+    }),
+    txNumber: (addressHash: string) => ({
+      queryKey: [addressHash],
+      queryFn: () => client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+    })
+  },
+  assets: {
+    all: (addressHash: string) => ({
+      queryKey: [addressHash],
+      queryFn: () => fetchAddressAssets(addressHash)
+    })
+  }
+})
+
+const fetchAddressAssets = async (addressHash: AddressHash): Promise<AssetBase[]> => {
   const assetIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
 
   return await Promise.all(
