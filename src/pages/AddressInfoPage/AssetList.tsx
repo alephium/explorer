@@ -67,22 +67,13 @@ const AssetList = ({
   const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
   const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => fungibleTokenIds.includes(m.id)) || []
 
-  const unverifiedTokensMetadata = mapQueriesData(
-    useQueries({
-      queries: fungibleTokenIds?.map((id) => assetsQueries.metadata.unverifiedFungibleToken(id))
-    })
+  const unverifiedTokensMetadata = useQueriesData(
+    fungibleTokenIds?.map((id) => assetsQueries.metadata.unverifiedFungibleToken(id))
   )
+  const unverifiedNFTsMetadata = useQueriesData(NFTIds?.map((id) => assetsQueries.metadata.unverifiedNFT(id)))
 
-  const unverifiedNFTsMetadata = mapQueriesData(
-    useQueries({
-      queries: NFTIds?.map((id) => assetsQueries.metadata.unverifiedNFT(id))
-    })
-  )
-
-  const tokenBalances = mapQueriesData(
-    useQueries({
-      queries: fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id))
-    })
+  const tokenBalances = useQueriesData(
+    fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id))
   )
 
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {

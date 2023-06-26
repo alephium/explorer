@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { groupOfAddress } from '@alephium/web3'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useEffect, useState } from 'react'
@@ -80,8 +80,6 @@ const AddressInfoPage = () => {
     enabled: !!addressHash,
     keepPreviousData: true
   })
-
-  console.log(txList)
 
   const { data: addressMempoolTransactions } = useQuery({
     ...addressQueries.transactions.mempool(addressHash),
