@@ -16,7 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { UseQueryResult } from '@tanstack/react-query'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { compact, map } from 'lodash'
 
 export const mapQueriesData = <T>(res: UseQueryResult<T>[]) => compact(map(res, 'data'))
+
+export const useQueriesData = <T>(queries: Parameters<typeof useQueries>[number]['queries']) =>
+  mapQueriesData(useQueries<T>({ queries }))

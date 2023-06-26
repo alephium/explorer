@@ -29,7 +29,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { AddressHash } from '@/types/addresses'
 import { AssetBase } from '@/types/assets'
-import { mapQueriesData } from '@/utils/api'
+import { mapQueriesData, useQueriesData } from '@/utils/api'
 import { getCategorizedAssetIds } from '@/utils/assets'
 
 import NFTList from './NFTList'
@@ -84,6 +84,8 @@ const AssetList = ({
       queries: fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id))
     })
   )
+
+  const yo = useQueriesData(fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id)))
 
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
     if (!t) return []
