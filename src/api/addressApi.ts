@@ -31,11 +31,12 @@ export const addressQueries = createQueryKeyStore({
     })
   },
   transactions: {
-    settled: (addressHash: string, pageNumber: number) => ({
-      queryKey: [addressHash, pageNumber],
+    settled: (addressHash: string, pageNumber: number, limit?: number) => ({
+      queryKey: [addressHash, pageNumber, limit],
       queryFn: () =>
         client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-          page: pageNumber
+          page: pageNumber,
+          limit
         })
     }),
     mempool: (addressHash: string) => ({

@@ -81,6 +81,11 @@ const AddressInfoPage = () => {
     keepPreviousData: true
   })
 
+  const { data: latestTransaction, isLoading: latestTransactionLoading } = useQuery({
+    ...addressQueries.transactions.settled(addressHash, 1, 1),
+    enabled: !!addressHash
+  })
+
   const { data: addressMempoolTransactions } = useQuery({
     ...addressQueries.transactions.mempool(addressHash),
     enabled: !!addressHash,
@@ -97,7 +102,7 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const addressLatestActivity = txList?.[0].timestamp
+  const addressLatestActivity = latestTransaction?.[0].timestamp
 
   // Asset price
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
