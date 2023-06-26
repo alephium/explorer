@@ -47,6 +47,7 @@ import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { AssetBase } from '@/types/assets'
+import { getCategorizedAssetIds } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
 
 import AddressTransactionRow from './AddressTransactionRow'
@@ -210,9 +211,12 @@ const AddressInfoPage = () => {
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
-  const nbOfAssets = !loadings.assets
-    ? addressAssets && addressAssets?.length + (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
-    : undefined
+  const categorizedAssetIds = getCategorizedAssetIds(addressAssets)
+
+  const nbOfKnownAssets =
+    categorizedAssetIds.fungibleTokenIds.length +
+    categorizedAssetIds.NFTIds.length +
+    (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
@@ -253,7 +257,7 @@ const AddressInfoPage = () => {
             label="Nb. of transactions"
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.txNumber ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={nbOfAssets} />
+          <InfoGrid.Cell label="Nb. of assets" value={nbOfKnownAssets} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"

@@ -62,7 +62,7 @@ const AssetList = ({
   ]
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
-  const { fungibleTokenIds, NFTIds, unknownAssetIds } = getCategorizedAssetIds(assets)
+  const { fungibleTokenIds, NFTIds } = getCategorizedAssetIds(assets)
 
   const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
   const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => fungibleTokenIds.includes(m.id)) || []

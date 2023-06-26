@@ -20,20 +20,25 @@ import { groupBy, map, mapValues } from 'lodash'
 
 import { AssetBase, AssetType } from '@/types/assets'
 
-const assetTypeMap: Record<AssetType, string> = {
+type AssetTypeMapValues = 'fungibleTokenIds' | 'NFTIds' | 'unknownAssetIds'
+
+const assetTypeMap: Record<AssetType, AssetTypeMapValues> = {
   fungible: 'fungibleTokenIds',
   'non-fungible': 'NFTIds',
-  undefined: 'unknownAssetIds'
+  unknown: 'unknownAssetIds'
 }
 
-export const getCategorizedAssetIds = (assets?: AssetBase[]) => {
-  // Use assetTypeMap to create an object with each key mapping to an empty array
-  if (!assets) {
-    return Object.fromEntries(Object.values(assetTypeMap).map((key) => [key, []]))
-  }
+type AssetIdCategories = Record<AssetTypeMapValues, string[]>
 
-  return mapValues(
+export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategories => {
+  const categorizedAssets = mapValues(
     groupBy(assets, (asset) => assetTypeMap[asset.type]),
     (assetsGroup) => map(assetsGroup, 'id')
   )
+
+  return {
+    fungibleTokenIds: categorizedAssets.fungibleTokenIds || [],
+    NFTIds: categorizedAssets.NFTIds || [],
+    unknownAssetIds: categorizedAssets.unknownAssetIds || []
+  }
 }

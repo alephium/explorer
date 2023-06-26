@@ -27,7 +27,7 @@ export const fetchAddressAssets = async (addressHash: AddressHash): Promise<Asse
   return await Promise.all(
     assetIds.map(async (id) => {
       const type = await client.node.guessStdTokenType(id)
-      return { id, type }
+      return { id, type: type ?? 'unknown' }
     })
   )
 }
