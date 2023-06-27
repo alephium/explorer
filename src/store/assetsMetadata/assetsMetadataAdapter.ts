@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
+import { FungibleTokenMetadata, NFTMetadataStored } from '@/types/assets'
 
-export const fungibleTokensMetadataAdapter = createEntityAdapter<FungibleTokenMetadataStored>({
+export const fungibleTokensMetadataAdapter = createEntityAdapter<FungibleTokenMetadata>({
   sortComparer: (a, b) => a.name.localeCompare(b.name)
 })
 

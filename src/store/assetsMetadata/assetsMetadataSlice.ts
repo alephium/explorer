@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { createSlice, EntityState } from '@reduxjs/toolkit'
 
-import { FungibleTokenMetadataStored, NFTMetadataStored } from '@/types/assets'
+import { FungibleTokenMetadata, NFTMetadataStored } from '@/types/assets'
 
 import { syncUnknownAssetsInfo } from './assetsMetadataActions'
 import { fungibleTokensMetadataAdapter, nftsMetadataAdapter } from './assetsMetadataAdapter'
 
 interface AssetMetadataState {
-  fungibleTokens: EntityState<FungibleTokenMetadataStored>
+  fungibleTokens: EntityState<FungibleTokenMetadata>
   nfts: EntityState<NFTMetadataStored>
 }
 

@@ -23,9 +23,13 @@ export type AssetType = 'fungible' | 'non-fungible' | 'unknown'
 
 export type AssetBase = { id: string; type: AssetType }
 
-export type FungibleTokenMetadataStored = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
+export type FungibleTokenMetadata = Omit<FungibleTokenMetaData, 'totalSupply'> & { id: string; verified: boolean }
 
-export type VerifiedFungibleTokenMetadata = TokenInfo & { verified: true }
+export type VerifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: true }
+
+export type UnverifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; verified: false }
+
+export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungible'; verified: false }
 
 export type NFTMetadataStored = NFTMetaData & { id: string; verified: boolean }
 

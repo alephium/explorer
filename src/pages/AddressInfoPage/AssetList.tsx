@@ -18,19 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQueries, useQuery } from '@tanstack/react-query'
 import { find, flatMap, sortBy } from 'lodash'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { assetsQueries } from '@/api/assetsApi'
-import client from '@/api/client'
+import { assetsQueries } from '@/api/assets/assetsApi'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
+import { useQueriesData } from '@/hooks/useQueriesData'
 import { AddressHash } from '@/types/addresses'
-import { AssetBase } from '@/types/assets'
-import { mapQueriesData, useQueriesData } from '@/utils/api'
-import { getCategorizedAssetIds } from '@/utils/assets'
 
 import NFTList from './NFTList'
 import TokenList from './TokenList'
@@ -38,7 +35,7 @@ import TokenList from './TokenList'
 interface AssetListProps {
   addressHash: AddressHash
   addressBalance?: AddressBalance
-  assets?: AssetBase[]
+  assetIds?: string[]
   limit?: number
   isLoading: boolean
   tokensTabTitle?: string
@@ -49,7 +46,7 @@ interface AssetListProps {
 const AssetList = ({
   addressHash,
   addressBalance,
-  assets,
+  assetIds,
   limit,
   isLoading,
   tokensTabTitle,
@@ -62,24 +59,16 @@ const AssetList = ({
   ]
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
-  const { fungibleTokenIds, NFTIds } = getCategorizedAssetIds(assets)
-
-  const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
-  const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => fungibleTokenIds.includes(m.id)) || []
-
-  const unverifiedTokensMetadata = useQueriesData(
-    fungibleTokenIds?.map((id) => assetsQueries.metadata.unverifiedFungibleToken(id))
-  )
-  const unverifiedNFTsMetadata = useQueriesData(NFTIds?.map((id) => assetsQueries.metadata.unverifiedNFT(id)))
+  const { fungibleTokens, nfts } = useAssetsMetadata(assetIds)
 
   const tokenBalances = useQueriesData(
-    fungibleTokenIds?.map((id) => assetsQueries.balances.addressToken(addressHash, id))
+    fungibleTokens.map((a) => assetsQueries.balances.addressToken(addressHash, a.id))
   )
 
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
     if (!t) return []
 
-    const metadata = find([...verifiedTokensMetadata, ...unverifiedTokensMetadata], { id: t.id })
+    const metadata = find(fungibleTokens, { id: t.id })
 
     if (metadata) {
       return [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }]
@@ -91,7 +80,7 @@ const AssetList = ({
   tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
     (t) => !t.verified,
     (t) => t.verified === undefined,
-    (t) => t.name?.toLowerCase(),
+    (t) => t.name.toLowerCase(),
     'id'
   ])
 
@@ -99,6 +88,7 @@ const AssetList = ({
   if (addressBalance && BigInt(addressBalance.balance) > 0) {
     tokensWithBalanceAndMetadata.unshift({
       ...ALPH,
+      type: 'fungible',
       balance: BigInt(addressBalance.balance),
       lockedBalance: BigInt(addressBalance.lockedBalance),
       verified: true
@@ -113,10 +103,10 @@ const AssetList = ({
           <SkeletonLoader height="60px" />
           <SkeletonLoader height="60px" />
         </EmptyListContainer>
-      ) : tokensWithBalanceAndMetadata.length > 0 || unverifiedNFTsMetadata.length > 0 ? (
+      ) : tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
         {
           tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
-          nfts: unverifiedNFTsMetadata && <NFTList nfts={unverifiedNFTsMetadata} />
+          nfts: nfts && <NFTList nfts={nfts} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>

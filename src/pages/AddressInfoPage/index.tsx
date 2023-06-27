@@ -26,7 +26,8 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { addressQueries } from '@/api/addressApi'
+import { addressQueries } from '@/api/address/addressApi'
+import { assetsQueries } from '@/api/assets/assetsApi'
 import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
@@ -42,6 +43,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
+import { useQueriesData } from '@/hooks/useQueriesData'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -81,7 +83,7 @@ const AddressInfoPage = () => {
     keepPreviousData: true
   })
 
-  const { data: latestTransaction, isLoading: latestTransactionLoading } = useQuery({
+  const { data: latestTransaction } = useQuery({
     ...addressQueries.transactions.settled(addressHash, 1, 1),
     enabled: !!addressHash
   })
@@ -97,10 +99,14 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const { data: addressAssets, isLoading: assetsLoading } = useQuery({
+  const { data: addressAssetIds = [], isLoading: assetsLoading } = useQuery({
     ...addressQueries.assets.all(addressHash),
     enabled: !!addressHash
   })
+
+  const addressAssets = useQueriesData(addressAssetIds?.map((id) => assetsQueries.type.details(id)))
+
+  const categorizedAssetIds = getCategorizedAssetIds(addressAssets)
 
   const addressLatestActivity = latestTransaction?.[0].timestamp
 
@@ -131,8 +137,6 @@ const AddressInfoPage = () => {
 
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
-
-  const categorizedAssetIds = getCategorizedAssetIds(addressAssets)
 
   const nbOfKnownAssets =
     categorizedAssetIds.fungibleTokenIds.length +
@@ -203,7 +207,7 @@ const AddressInfoPage = () => {
       <AssetList
         addressBalance={addressBalance}
         addressHash={addressHash}
-        assets={addressAssets}
+        assetIds={addressAssetIds}
         isLoading={assetsLoading}
       />
 

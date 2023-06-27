@@ -22,7 +22,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import client from '@/api/client'
 import {
   AssetBase,
-  FungibleTokenMetadataStored,
+  FungibleTokenMetadata,
   isFungibleTokenMetadata,
   isNFTMetadata,
   NFTMetadataStored
@@ -32,7 +32,7 @@ export const syncUnknownAssetsInfo = createAsyncThunk(
   'assets/syncUnknownTokensInfo',
   async (
     unknownAssets: AssetBase[]
-  ): Promise<{ fungibleTokens: FungibleTokenMetadataStored[]; nfts: NFTMetadataStored[] }> => {
+  ): Promise<{ fungibleTokens: FungibleTokenMetadata[]; nfts: NFTMetadataStored[] }> => {
     const results = await Promise.allSettled(
       unknownAssets.map(async (a) => {
         let fungibleTokenMetadata: Partial<FungibleTokenMetaData> = {}
@@ -52,7 +52,7 @@ export const syncUnknownAssetsInfo = createAsyncThunk(
 
     return (
       results.filter(({ status }) => status === 'fulfilled') as PromiseFulfilledResult<
-        FungibleTokenMetadataStored | NFTMetadataStored
+        FungibleTokenMetadata | NFTMetadataStored
       >[]
     ).reduce(
       (acc, v) => {
@@ -64,7 +64,7 @@ export const syncUnknownAssetsInfo = createAsyncThunk(
           return acc
         }
       },
-      { fungibleTokens: [] as FungibleTokenMetadataStored[], nfts: [] as NFTMetadataStored[] }
+      { fungibleTokens: [] as FungibleTokenMetadata[], nfts: [] as NFTMetadataStored[] }
     )
   }
 )

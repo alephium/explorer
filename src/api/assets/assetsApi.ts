@@ -19,28 +19,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenList } from '@alephium/token-list'
 import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
-import { VerifiedFungibleTokenMetadata } from '@/types/assets'
+import {
+  AssetBase,
+  UnverifiedFungibleTokenMetadata,
+  UnverifiedNFTMetadata,
+  VerifiedFungibleTokenMetadata
+} from '@/types/assets'
 import { NetworkType } from '@/types/network'
 
-import client from './client'
+import client from '../client'
 
 export const assetsQueries = createQueryKeyStore({
+  type: {
+    details: (assetId: string) => ({
+      queryKey: [assetId],
+      queryFn: (): Promise<AssetBase> =>
+        client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r ?? 'unknown' }))
+    })
+  },
   metadata: {
     allVerifiedTokens: (network: NetworkType) => ({
       queryKey: [network],
       queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> =>
         fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then((r) =>
-          r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, verified: true })))
+          r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
         )
     }),
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: [assetId],
-      queryFn: () =>
-        client.node.fetchFungibleTokenMetaData(assetId).then((r) => ({ id: assetId, verified: false, ...r }))
+      queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
+        client.node
+          .fetchFungibleTokenMetaData(assetId)
+          .then((r) => ({ id: assetId, type: 'fungible', verified: false, ...r }))
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: [assetId],
-      queryFn: () => client.node.fetchNFTMetaData(assetId).then((r) => ({ id: assetId, verified: false, ...r }))
+      queryFn: (): Promise<UnverifiedNFTMetadata> =>
+        client.node
+          .fetchNFTMetaData(assetId)
+          .then((r) => ({ id: assetId, type: 'non-fungible', verified: false, ...r }))
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?

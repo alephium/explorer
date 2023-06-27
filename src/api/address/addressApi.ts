@@ -18,10 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
-import { AddressHash } from '@/types/addresses'
-import { AssetBase } from '@/types/assets'
-
-import client from './client'
+import client from '../client'
 
 export const addressQueries = createQueryKeyStore({
   balance: {
@@ -51,18 +48,7 @@ export const addressQueries = createQueryKeyStore({
   assets: {
     all: (addressHash: string) => ({
       queryKey: [addressHash],
-      queryFn: () => fetchAddressAssets(addressHash)
+      queryFn: () => client.explorer.addresses.getAddressesAddressTokens(addressHash)
     })
   }
 })
-
-const fetchAddressAssets = async (addressHash: AddressHash): Promise<AssetBase[]> => {
-  const assetIds = await client.explorer.addresses.getAddressesAddressTokens(addressHash)
-
-  return await Promise.all(
-    assetIds.map(async (id) => {
-      const type = await client.node.guessStdTokenType(id)
-      return { id, type: type ?? 'unknown' }
-    })
-  )
-}
