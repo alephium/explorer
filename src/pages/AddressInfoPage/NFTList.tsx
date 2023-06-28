@@ -45,7 +45,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   })
 
   const desc = nftData?.description
-  const cutDesc = desc && desc?.length > 500 ? nftData?.description.substring(0, 300) + '...' : desc
+  const cutDesc = desc && desc?.length > 500 ? nftData?.description?.substring(0, 300) + '...' : desc
 
   return (
     <NFTItemStyled>

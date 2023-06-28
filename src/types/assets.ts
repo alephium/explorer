@@ -34,9 +34,9 @@ export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungi
 export type NFTMetadataStored = NFTMetaData & { id: string; verified: boolean }
 
 export type NFTFile = {
-  name: string
-  description: string
-  image: string
+  name?: string
+  description?: string
+  image?: string
 }
 
 export const isFungibleTokenMetadata = (
