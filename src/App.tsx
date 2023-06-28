@@ -61,7 +61,13 @@ const App = () => {
   const theme = useAppSelector((s) => s.settings.theme)
   const navigate = useNavigate()
 
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false
+      }
+    }
+  })
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
