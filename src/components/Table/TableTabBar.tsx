@@ -75,7 +75,7 @@ const Tab = styled.div<{ isActive: boolean }>`
     isActive
       ? css`
           color: ${theme.font.primary};
-          background-color: ${theme.bg.primary};
+          background-color: ${theme.bg.secondary};
           border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
           font-weight: 600;
         `

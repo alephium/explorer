@@ -45,14 +45,8 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
         <AssetRow key={token.id}>
           <AssetLogoStyled asset={token} size={30} />
           <NameColumn>
-            <TokenName>{token.name || 'Unknown asset'}</TokenName>
-            <TokenSymbol>
-              {token.symbol ?? (
-                <UnknownTokenId>
-                  <HashEllipsed hash={token.id} />
-                </UnknownTokenId>
-              )}
-            </TokenSymbol>
+            <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
+            <TokenSymbol>{token.symbol ?? <UnknownAssetSublabel>Unknown asset</UnknownAssetSublabel>}</TokenSymbol>
           </NameColumn>
           <TableCellAmount>
             <TokenAmount
@@ -109,6 +103,7 @@ const TokenName = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 250px;
 `
 
 const TokenSymbol = styled.div`
@@ -129,6 +124,6 @@ const NameColumn = styled(Column)`
   margin-right: 50px;
 `
 
-const UnknownTokenId = styled.div`
+const UnknownAssetSublabel = styled.div`
   display: flex;
 `

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, flatMap, sortBy } from 'lodash'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { assetsQueries } from '@/api/assets/assetsApi'
@@ -31,6 +31,7 @@ import { AddressHash } from '@/types/addresses'
 
 import NFTList from './NFTList'
 import TokenList from './TokenList'
+import ReactTooltip from 'react-tooltip'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -97,13 +98,17 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, isLoading, cl
     return []
   })
 
-  const tabs = [
-    { value: 'tokens', label: `🪙 Tokens (${tokensWithBalanceAndMetadata.length})` },
-    { value: 'nfts', label: `🖼️ NFTs (${nfts.length})` },
-    { value: 'unknown', label: `❔ Unknown (${unknownAssetsIds.length})` }
-  ]
+  const tabs = [{ value: 'tokens', label: `🪙 Tokens (${tokensWithBalanceAndMetadata.length})` }]
+
+  if (nfts.length > 0) tabs.push({ value: 'nfts', label: `🖼️ NFTs (${nfts.length})` })
+
+  if (unknownAssetsIds.length > 0) tabs.push({ value: 'unknown', label: `❔ Unknown (${unknownAssetsIds.length})` })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
+
+  useEffect(() => {
+    currentTab && ReactTooltip.rebuild()
+  }, [currentTab])
 
   return (
     <div className={className}>
