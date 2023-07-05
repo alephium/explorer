@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Asset } from '@alephium/sdk'
+import { Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import styled, { useTheme } from 'styled-components'
 
@@ -26,7 +27,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 
 interface TokenListProps {
-  tokens?: Asset[]
+  tokens?: Optional<Asset, 'decimals'>[]
   limit?: number
   className?: string
 }
@@ -44,7 +45,7 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
         <AssetRow key={token.id}>
           <AssetLogoStyled asset={token} size={30} />
           <NameColumn>
-            <TokenName>{token.name || 'Unknown token'}</TokenName>
+            <TokenName>{token.name || 'Unknown asset'}</TokenName>
             <TokenSymbol>
               {token.symbol ?? (
                 <UnknownTokenId>

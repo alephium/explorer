@@ -104,10 +104,6 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const addressAssets = useQueriesData(addressAssetIds?.map((id) => assetsQueries.type.details(id)))
-
-  const categorizedAssetIds = getCategorizedAssetIds(addressAssets)
-
   const addressLatestActivity = latestTransaction?.[0].timestamp
 
   // Asset price
@@ -138,10 +134,7 @@ const AddressInfoPage = () => {
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
-  const nbOfKnownAssets =
-    categorizedAssetIds.fungibleTokenIds.length +
-    categorizedAssetIds.NFTIds.length +
-    (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
+  const totalNbOfAssets = addressAssetIds.length + (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
@@ -182,7 +175,7 @@ const AddressInfoPage = () => {
             label="Nb. of transactions"
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={nbOfKnownAssets} />
+          <InfoGrid.Cell label="Nb. of assets" value={totalNbOfAssets} />
           <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
           <InfoGrid.Cell
             label="Latest activity"

@@ -38,31 +38,24 @@ interface AssetListProps {
   assetIds?: string[]
   limit?: number
   isLoading: boolean
-  tokensTabTitle?: string
-  nftsTabTitle?: string
   className?: string
 }
 
-const AssetList = ({
-  addressHash,
-  addressBalance,
-  assetIds,
-  limit,
-  isLoading,
-  tokensTabTitle,
-  nftsTabTitle,
-  className
-}: AssetListProps) => {
-  const tabs = [
-    { value: 'tokens', label: tokensTabTitle ?? `Tokens` },
-    { value: 'nfts', label: nftsTabTitle ?? 'NFTs' }
-  ]
-  const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
-
+const AssetList = ({ addressHash, addressBalance, assetIds, limit, isLoading, className }: AssetListProps) => {
   const { fungibleTokens, nfts } = useAssetsMetadata(assetIds)
+
+  const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
+  const unknownAssetsIds = assetIds?.filter((id) => !knownAssetsIds.includes(id)) || []
 
   const tokenBalances = useQueriesData(
     fungibleTokens.map((a) => assetsQueries.balances.addressToken(addressHash, a.id))
+  )
+
+  const unknownAssetsBalances = useQueriesData(
+    unknownAssetsIds.map((id) => ({
+      ...assetsQueries.balances.addressToken(addressHash, id),
+      enabled: unknownAssetsIds.length > 0
+    }))
   )
 
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
@@ -79,7 +72,6 @@ const AssetList = ({
 
   tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
     (t) => !t.verified,
-    (t) => t.verified === undefined,
     (t) => t.name.toLowerCase(),
     'id'
   ])
@@ -95,6 +87,24 @@ const AssetList = ({
     })
   }
 
+  const unknownAssetsWithBalance = unknownAssetsIds?.flatMap((id) => {
+    const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
+
+    if (assetBalance) {
+      return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+    }
+
+    return []
+  })
+
+  const tabs = [
+    { value: 'tokens', label: `🪙 Tokens (${tokensWithBalanceAndMetadata.length})` },
+    { value: 'nfts', label: `🖼️ NFTs (${nfts.length})` },
+    { value: 'unknown', label: `❔ Unknown (${unknownAssetsIds.length})` }
+  ]
+
+  const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
+
   return (
     <div className={className}>
       <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
@@ -106,7 +116,8 @@ const AssetList = ({
       ) : tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
         {
           tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
-          nfts: nfts && <NFTList nfts={nfts} />
+          nfts: nfts && <NFTList nfts={nfts} />,
+          unknown: unknownAssetsWithBalance && <TokenList limit={limit} tokens={unknownAssetsWithBalance} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
