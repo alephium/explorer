@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
 
@@ -30,19 +30,23 @@ interface AssetLogoProps {
   className?: string
 }
 
-const AssetLogo = ({ asset, size, showTooltip, className }: AssetLogoProps) => (
-  <div className={className} data-tip={showTooltip && (asset.name || asset.id)}>
-    {asset.logoURI ? (
-      <LogoImage src={asset.logoURI} />
-    ) : asset.id === ALPH.id ? (
-      <LogoImage src={AlephiumLogoSVG} />
-    ) : asset.name ? (
-      <span>{asset.name.substring(0, 2)}</span>
-    ) : (
-      <HelpCircle size={size * 0.6} />
-    )}
-  </div>
-)
+const AssetLogo = ({ asset, showTooltip, className }: AssetLogoProps) => {
+  const theme = useTheme()
+
+  return (
+    <div className={className} data-tip={showTooltip && (asset.name || asset.id)}>
+      {asset.logoURI ? (
+        <LogoImage src={asset.logoURI} />
+      ) : asset.id === ALPH.id ? (
+        <LogoImage src={AlephiumLogoSVG} />
+      ) : asset.name ? (
+        <span>{asset.name.substring(0, 2)}</span>
+      ) : (
+        <HelpCircle size="100%" color={theme.global.complementary} opacity={0.5} strokeWidth={1.2} />
+      )}
+    </div>
+  )
+}
 
 export default styled(AssetLogo)`
   display: flex;

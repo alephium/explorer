@@ -17,8 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Asset } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
 import { Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
+import { AlertCircle } from 'lucide-react'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -48,6 +50,11 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
             <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
             <TokenSymbol>{token.symbol ?? <UnknownAssetSublabel>Unknown asset</UnknownAssetSublabel>}</TokenSymbol>
           </NameColumn>
+          {token.id !== ALPH.id && !token.logoURI && token.name && (
+            <UnverifiedWarningIcon data-tip="Unverified token">
+              <AlertCircle />
+            </UnverifiedWarningIcon>
+          )}
           <TableCellAmount>
             <TokenAmount
               value={token.balance}
@@ -121,9 +128,26 @@ const TokenAmountSublabel = styled.div`
 `
 
 const NameColumn = styled(Column)`
-  margin-right: 50px;
+  margin-right: 20px;
 `
 
 const UnknownAssetSublabel = styled.div`
   display: flex;
+`
+
+const UnverifiedWarningIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  width: 18px;
+  border-radius: 100%;
+  font-size: 12px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.global.warning};
+  opacity: 0.4;
+
+  &:hover {
+    opacity: 0.6;
+  }
 `

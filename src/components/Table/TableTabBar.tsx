@@ -16,11 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+
+import { deviceBreakPoints } from '@/styles/globalStyles'
 
 export interface TabItem {
   value: string
-  label: string
+  label: string | ReactNode
+  icon?: string | ReactNode
 }
 
 interface TableTabBarProps {
@@ -40,11 +44,13 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
           key={item.value}
           onClick={() => onTabChange(item)}
           onKeyPress={() => onTabChange(item)}
+          isAlone={items.length === 1}
           role="tab"
           tabIndex={0}
           aria-selected={isActive}
           isActive={isActive}
         >
+          {item.icon && <TabIcon>{item.icon}</TabIcon>}
           {item.label}
         </Tab>
       )
@@ -57,15 +63,27 @@ export default styled(TableTabBar)`
   background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
-const Tab = styled.div<{ isActive: boolean }>`
+const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   flex: 1;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   height: 55px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  ${({ isAlone }) =>
+    isAlone &&
+    css`
+      justify-content: left;
+      padding: 25px;
+      cursor: default;
+    `}
+
+  @media ${deviceBreakPoints.mobile} {
+    font-size: 13px;
+  }
 
   &:not(:last-child) {
     border-right: 1px solid ${({ theme }) => theme.border.primary};
@@ -77,7 +95,6 @@ const Tab = styled.div<{ isActive: boolean }>`
           color: ${theme.font.primary};
           background-color: ${theme.bg.secondary};
           border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-          font-weight: 600;
         `
       : css`
           color: ${theme.font.tertiary};
@@ -87,5 +104,13 @@ const Tab = styled.div<{ isActive: boolean }>`
 
   &:hover {
     color: ${({ theme }) => theme.font.primary};
+  }
+`
+
+const TabIcon = styled.div`
+  margin-right: 10px;
+
+  @media ${deviceBreakPoints.mobile} {
+    margin-right: 5px;
   }
 `

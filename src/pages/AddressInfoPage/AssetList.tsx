@@ -20,6 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, flatMap, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
+import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
 import { assetsQueries } from '@/api/assets/assetsApi'
@@ -31,7 +32,6 @@ import { AddressHash } from '@/types/addresses'
 
 import NFTList from './NFTList'
 import TokenList from './TokenList'
-import ReactTooltip from 'react-tooltip'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -98,17 +98,29 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, isLoading, cl
     return []
   })
 
-  const tabs = [{ value: 'tokens', label: `🪙 Tokens (${tokensWithBalanceAndMetadata.length})` }]
+  const tabs: TabItem[] = [
+    {
+      value: 'tokens',
+      icon: '🪙',
+      label: `Tokens (${tokensWithBalanceAndMetadata.length})`
+    }
+  ]
 
-  if (nfts.length > 0) tabs.push({ value: 'nfts', label: `🖼️ NFTs (${nfts.length})` })
+  if (nfts.length > 0) tabs.push({ value: 'nfts', label: `NFTs (${nfts.length})`, icon: '🖼️' })
 
-  if (unknownAssetsIds.length > 0) tabs.push({ value: 'unknown', label: `❔ Unknown (${unknownAssetsIds.length})` })
+  if (unknownAssetsIds.length > 0)
+    tabs.push({ value: 'unknown', label: `Unknown (${unknownAssetsIds.length})`, icon: '❔' })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 
   useEffect(() => {
     currentTab && ReactTooltip.rebuild()
   }, [currentTab])
+
+  useEffect(() => {
+    addressHash && setCurrentTab(tabs[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressHash])
 
   return (
     <div className={className}>
