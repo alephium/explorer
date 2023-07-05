@@ -19,8 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 import styled from 'styled-components'
 
+import Card3D from '@/components/Cards/Card3D'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { NFTFile, NFTMetadataStored } from '@/types/assets'
+import { getPointerRelativePositionInElement } from '@/utils/pointer'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { PointerEvent } from 'react'
 
 interface NFTListProps {
   nfts: NFTMetadataStored[]
@@ -47,12 +51,35 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   const desc = nftData?.description
   const cutDesc = desc && desc?.length > 500 ? nftData?.description?.substring(0, 300) + '...' : desc
 
+  const y = useMotionValue(0.5)
+  const x = useMotionValue(0.5)
+
+  const imagePosX = useTransform(x, [0, 1], ['3px', '-3px'], {
+    clamp: true
+  })
+  const imagePosY = useTransform(y, [0, 1], ['3px', '-3px'], {
+    clamp: true
+  })
+
+  const handlePointerMove = (pointerX: number, pointerY: number) => {
+    x.set(pointerX, true)
+    y.set(pointerY, true)
+  }
+
   return (
-    <NFTItemStyled>
-      <NFTPicture src={nftData?.image} alt={nftData?.description} />
+    <NFTCardStyled onPointerMove={handlePointerMove}>
+      <NFTPictureContainer>
+        <NFTPicture
+          style={{
+            backgroundImage: `url(${nftData?.image})`,
+            backgroundPositionX: imagePosX,
+            backgroundPositionY: imagePosY
+          }}
+        />
+      </NFTPictureContainer>
       <NFTName>{nftData?.name}</NFTName>
       <NFTDescription>{cutDesc}</NFTDescription>
-    </NFTItemStyled>
+    </NFTCardStyled>
   )
 }
 
@@ -62,7 +89,8 @@ const NFTListStyled = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 15px;
-  padding: 15px;
+  padding: 25px;
+  z-index: 0;
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(3, 1fr);
@@ -77,20 +105,22 @@ const NFTListStyled = styled.div`
   }
 `
 
-const NFTItemStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-width: 350px;
+const NFTCardStyled = styled(Card3D)`
   background-color: ${({ theme }) => theme.bg.background1};
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  z-index: 1;
 `
 
-const NFTPicture = styled.img`
+const NFTPictureContainer = styled.div`
+  border-radius: 9px;
+  overflow: hidden;
+`
+
+const NFTPicture = styled(motion.div)`
   max-width: 100%;
-  height: 75%;
+  height: 200px;
+  background-size: cover;
   object-fit: cover;
+  scale: 1.1;
 `
 
 const NFTName = styled.h2``
