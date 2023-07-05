@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
+import { hexToString } from '@alephium/web3'
 import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
 import {
@@ -48,9 +49,14 @@ export const assetsQueries = createQueryKeyStore({
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: [assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
-        client.node
-          .fetchFungibleTokenMetaData(assetId)
-          .then((r) => ({ id: assetId, type: 'fungible', verified: false, ...r }))
+        client.node.fetchFungibleTokenMetaData(assetId).then((r) => ({
+          ...r,
+          id: assetId,
+          name: hexToString(r.name),
+          symbol: hexToString(r.symbol),
+          type: 'fungible',
+          verified: false
+        }))
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: [assetId],
