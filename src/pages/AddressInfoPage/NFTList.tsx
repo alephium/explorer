@@ -17,14 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useQuery } from '@tanstack/react-query'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 import styled from 'styled-components'
 
 import Card3D from '@/components/Cards/Card3D'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { NFTFile, NFTMetadataStored } from '@/types/assets'
-import { getPointerRelativePositionInElement } from '@/utils/pointer'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { PointerEvent } from 'react'
 
 interface NFTListProps {
   nfts: NFTMetadataStored[]
@@ -88,9 +86,10 @@ export default NFTList
 const NFTListStyled = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  gap: 25px;
   padding: 25px;
   z-index: 0;
+  background-color: ${({ theme }) => theme.bg.secondary};
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(3, 1fr);
@@ -106,7 +105,7 @@ const NFTListStyled = styled.div`
 `
 
 const NFTCardStyled = styled(Card3D)`
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.primary};
   z-index: 1;
 `
 

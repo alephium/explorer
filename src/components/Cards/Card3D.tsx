@@ -55,10 +55,15 @@ const Card3D = ({ children, onPointerMove, className }: Card3DProps) => {
   }
 
   return (
-    <MotionContainer whileHover={{ zIndex: 3 }}>
+    <Card3DStyled whileHover={{ zIndex: 3 }}>
       <CardContainer
         className={className}
-        whileHover={{ translateZ: 10, borderColor: theme.font.secondary, boxShadow: '0 20px 100px rgba(0, 0, 0, 1)' }}
+        whileHover={{
+          translateZ: 10,
+          boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 50px 80px rgba(0, 0, 0, 0.3)',
+          borderWidth: 1,
+          borderColor: theme.font.primary
+        }}
         onPointerMove={handlePointerMove}
         onPointerLeave={() => {
           x.set(0.5, true)
@@ -73,11 +78,11 @@ const Card3D = ({ children, onPointerMove, className }: Card3DProps) => {
         <CardContent>{children}</CardContent>
         <StyledCursorHighlight />
       </CardContainer>
-    </MotionContainer>
+    </Card3DStyled>
   )
 }
 
-const MotionContainer = styled(motion.div)`
+const Card3DStyled = styled(motion.div)`
   display: flex;
   position: relative;
   perspective: 100px;
@@ -92,9 +97,12 @@ const CardContainer = styled(motion.div)`
   flex: 1;
   overflow: hidden;
   border-radius: 9px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-color: transparent;
+  border-style: solid;
   padding: 20px;
-  box-shadow: 0 0px 0px rgba(0, 0, 0, 1);
+  background-color: ${({ theme }) => theme.bg.primary};
+  box-shadow: ${({ theme }) =>
+    theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.2)'};
 `
 
 const StyledCursorHighlight = styled(CursorHighlight)``

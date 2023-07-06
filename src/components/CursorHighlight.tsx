@@ -71,7 +71,10 @@ const Highlight = styled(motion.div)`
   height: 100%;
   width: 100%;
   border-radius: 100%;
-  background: radial-gradient(rgba(255, 255, 255, 0.1) 0%, transparent 40%);
+  background: radial-gradient(
+    ${({ theme }) => (theme.name === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')} 0%,
+    transparent 40%
+  );
   transform: translateX(-50%) translateY(-50%);
 `
 
