@@ -72,6 +72,7 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 9px 9px 0 0;
 
   ${({ isAlone }) =>
     isAlone &&

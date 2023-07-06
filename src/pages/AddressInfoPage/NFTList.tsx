@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQuery } from '@tanstack/react-query'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import Card3D from '@/components/Cards/Card3D'
@@ -41,6 +42,8 @@ interface NFTItemProps {
 }
 
 const NFTItem = ({ nft }: NFTItemProps) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+
   const { data: nftData } = useQuery<NFTFile>({
     queryKey: ['nftData', nft.id],
     queryFn: () => fetch(nft.tokenUri).then((res) => res.json())
@@ -52,10 +55,10 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
 
-  const imagePosX = useTransform(x, [0, 1], ['3px', '-3px'], {
+  const imagePosX = useTransform(x, [0, 1], ['5px', '-5px'], {
     clamp: true
   })
-  const imagePosY = useTransform(y, [0, 1], ['3px', '-3px'], {
+  const imagePosY = useTransform(y, [0, 1], ['5px', '-5px'], {
     clamp: true
   })
 
@@ -65,13 +68,17 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   }
 
   return (
-    <NFTCardStyled onPointerMove={handlePointerMove}>
+    <NFTCardStyled onPointerMove={handlePointerMove} onCardExpansion={setIsExpanded}>
       <NFTPictureContainer>
         <NFTPicture
           style={{
             backgroundImage: `url(${nftData?.image})`,
-            backgroundPositionX: imagePosX,
-            backgroundPositionY: imagePosY
+            x: imagePosX,
+            y: imagePosY,
+            scale: 1.1
+          }}
+          animate={{
+            scale: isExpanded ? 1.1 : 1.3
           }}
         />
       </NFTPictureContainer>
@@ -112,14 +119,16 @@ const NFTCardStyled = styled(Card3D)`
 const NFTPictureContainer = styled.div`
   border-radius: 9px;
   overflow: hidden;
+  background-color: black;
 `
 
 const NFTPicture = styled(motion.div)`
   max-width: 100%;
   height: 200px;
-  background-size: cover;
-  object-fit: cover;
-  scale: 1.1;
+  background-repeat: no-repeat;
+  background-color: black;
+  background-size: contain;
+  background-position: center;
 `
 
 const NFTName = styled.h2``

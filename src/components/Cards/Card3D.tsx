@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion, useMotionValue, useTransform } from 'framer-motion'
-import { PointerEvent, ReactNode } from 'react'
+import { PointerEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 import { getPointerRelativePositionInElement } from '@/utils/pointer'
@@ -27,11 +27,14 @@ import CursorHighlight from '../CursorHighlight'
 interface Card3DProps {
   children: ReactNode
   onPointerMove?: (pointerX: number, pointerY: number) => void
+  onCardExpansion?: (isExpanded: boolean) => void
   className?: string
 }
 
-const Card3D = ({ children, onPointerMove, className }: Card3DProps) => {
+const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DProps) => {
   const theme = useTheme()
+  const [isHovered, setIsHovered] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const angle = 1
 
@@ -54,18 +57,25 @@ const Card3D = ({ children, onPointerMove, className }: Card3DProps) => {
     onPointerMove && onPointerMove(positionX, positionY)
   }
 
+  useEffect(() => {
+    onCardExpansion && onCardExpansion(isExpanded)
+  }, [isExpanded, onCardExpansion])
+
   return (
     <Card3DStyled whileHover={{ zIndex: 3 }}>
       <CardContainer
         className={className}
         whileHover={{
-          translateZ: 10,
           boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 50px 80px rgba(0, 0, 0, 0.3)',
           borderWidth: 1,
-          borderColor: theme.font.primary
+          borderColor: theme.font.primary,
+          cursor: 'pointer'
         }}
         onPointerMove={handlePointerMove}
+        onPointerEnter={() => setIsHovered(true)}
         onPointerLeave={() => {
+          setIsHovered(false)
+          setIsExpanded(false)
           x.set(0.5, true)
           y.set(0.5, true)
         }}
@@ -74,6 +84,10 @@ const Card3D = ({ children, onPointerMove, className }: Card3DProps) => {
           rotateX,
           zIndex: 0
         }}
+        animate={{
+          translateZ: isExpanded ? 30 : isHovered ? 10 : 0
+        }}
+        onClick={() => setIsExpanded((p) => !p)}
       >
         <CardContent>{children}</CardContent>
         <StyledCursorHighlight />

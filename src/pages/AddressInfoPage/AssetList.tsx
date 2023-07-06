@@ -147,7 +147,6 @@ export default styled(AssetList)`
   margin-bottom: 35px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
   border-radius: 12px;
 `
 
