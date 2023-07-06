@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useQuery } from '@tanstack/react-query'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -55,10 +55,14 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
 
-  const imagePosX = useTransform(x, [0, 1], ['5px', '-5px'], {
+  const springConfig = { damping: 10, stiffness: 100 }
+  const xSpring = useSpring(x, springConfig)
+  const ySpring = useSpring(y, springConfig)
+
+  const imagePosX = useTransform(xSpring, [0, 1], ['5px', '-5px'], {
     clamp: true
   })
-  const imagePosY = useTransform(y, [0, 1], ['5px', '-5px'], {
+  const imagePosY = useTransform(ySpring, [0, 1], ['5px', '-5px'], {
     clamp: true
   })
 

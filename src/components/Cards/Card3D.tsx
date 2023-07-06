@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { PointerEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
@@ -41,10 +41,14 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
 
-  const rotateY = useTransform(x, [0, 1], [-angle, angle], {
+  const springConfig = { damping: 10, stiffness: 100 }
+  const xSpring = useSpring(x, springConfig)
+  const ySpring = useSpring(y, springConfig)
+
+  const rotateY = useTransform(xSpring, [0, 1], [-angle, angle], {
     clamp: true
   })
-  const rotateX = useTransform(y, [0, 1], [angle, -angle], {
+  const rotateX = useTransform(ySpring, [0, 1], [angle, -angle], {
     clamp: true
   })
 
