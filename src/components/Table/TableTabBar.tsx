@@ -61,6 +61,8 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 export default styled(TableTabBar)`
   display: flex;
   background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
 `
 
 const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
@@ -72,7 +74,6 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 9px 9px 0 0;
 
   ${({ isAlone }) =>
     isAlone &&

@@ -101,6 +101,7 @@ const NFTListStyled = styled.div`
   padding: 25px;
   z-index: 0;
   background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 0 0 12px 12px;
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(3, 1fr);
