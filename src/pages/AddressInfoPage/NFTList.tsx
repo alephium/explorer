@@ -79,7 +79,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
             backgroundImage: `url(${nftData?.image})`,
             x: imagePosX,
             y: imagePosY,
-            scale: 1.1
+            scale: 1.3
           }}
           animate={{
             scale: isExpanded ? 1.1 : 1.3

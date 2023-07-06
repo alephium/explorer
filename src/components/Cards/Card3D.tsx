@@ -66,12 +66,11 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
   }, [isExpanded, onCardExpansion])
 
   return (
-    <Card3DStyled whileHover={{ zIndex: 3 }}>
+    <Card3DStyled whileHover={{ zIndex: 3 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <CardContainer
         className={className}
         whileHover={{
           boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 50px 80px rgba(0, 0, 0, 0.3)',
-          borderWidth: 1,
           borderColor: theme.font.primary,
           cursor: 'pointer'
         }}
@@ -118,6 +117,7 @@ const CardContainer = styled(motion.div)`
   border-color: transparent;
   border-style: solid;
   padding: 20px;
+  border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
   box-shadow: ${({ theme }) =>
     theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.2)'};
