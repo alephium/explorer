@@ -56,8 +56,12 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
         >
           {item.icon && <TabIcon>{item.icon}</TabIcon>}
           {item.label}
-          {item.length && ` (${item.length})`}
-          {item.loading && <LoadingSpinner size={6} style={{ opacity: 0.5 }} />}
+          {!item.loading && item.length && <Suffix>{`(${item.length})`}</Suffix>}
+          {item.loading && (
+            <Suffix>
+              <LoadingSpinner style={{ opacity: 0.5 }} size={14} />
+            </Suffix>
+          )}
         </Tab>
       )
     })}
@@ -121,4 +125,8 @@ const TabIcon = styled.div`
   @media ${deviceBreakPoints.mobile} {
     margin-right: 5px;
   }
+`
+
+const Suffix = styled.div`
+  margin-left: 4px;
 `

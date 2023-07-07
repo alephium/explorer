@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { CSSProperties } from 'react'
 import styled from 'styled-components'
 
@@ -25,11 +25,21 @@ interface LoadingSpinnerProps {
   style?: CSSProperties
 }
 
-const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => <Spinner size={size} style={style} />
+const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => (
+  <SpinnerContainer style={{ height: size, width: size }}>
+    <Spinner style={style} />
+  </SpinnerContainer>
+)
 
 export default LoadingSpinner
 
-const Spinner = styled(Loader)`
+const SpinnerContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const Spinner = styled(Loader2)`
   animation: spin 1s infinite;
   color: ${({ theme }) => theme.font.secondary};
 `

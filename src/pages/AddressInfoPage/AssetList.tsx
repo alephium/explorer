@@ -135,17 +135,22 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   return (
     <div className={className}>
       <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-      {isLoading ? (
-        <EmptyListContainer>
-          <SkeletonLoader height="60px" />
-          <SkeletonLoader height="60px" />
-        </EmptyListContainer>
-      ) : tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
-        {
-          tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
-          nfts: nfts && <NFTList nfts={nfts} />,
-          unknown: unknownAssetsWithBalance && <TokenList limit={limit} tokens={unknownAssetsWithBalance} />
-        }[currentTab.value]
+      {tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
+        <>
+          {
+            {
+              tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
+              nfts: nfts && <NFTList nfts={nfts} />,
+              unknown: unknownAssetsWithBalance && <TokenList limit={limit} tokens={unknownAssetsWithBalance} />
+            }[currentTab.value]
+          }
+          {isLoading && (
+            <LoadingRow>
+              <SkeletonLoader height="40px" width="280px" />
+              <SkeletonLoader height="25px" width="200px" />
+            </LoadingRow>
+          )}
+        </>
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
       )}
@@ -167,4 +172,12 @@ const EmptyListContainer = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
+`
+
+const LoadingRow = styled.div`
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid ${({ theme }) => theme.border.secondary};
+  align-items: center;
 `
