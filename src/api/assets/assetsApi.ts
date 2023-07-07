@@ -22,6 +22,8 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
 import {
   AssetBase,
+  NFTFile,
+  NFTMetadataStored,
   UnverifiedFungibleTokenMetadata,
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
@@ -64,6 +66,12 @@ export const assetsQueries = createQueryKeyStore({
         client.node
           .fetchNFTMetaData(assetId)
           .then((r) => ({ id: assetId, type: 'non-fungible', verified: false, ...r }))
+    })
+  },
+  nftData: {
+    details: (nftId: string, dataUri?: string) => ({
+      queryKey: [nftId],
+      queryFn: (): Promise<NFTFile> | undefined => (dataUri ? fetch(dataUri).then((res) => res.json()) : undefined)
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?

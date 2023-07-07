@@ -207,9 +207,9 @@ const TransactionInfoPage = () => {
                   <span>Assets</span>
                   <AssetLogos>
                     <>
-                      {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
+                      {totalAmount && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
                       {tokenInfos.map((i) => (
-                        <AssetLogo key={i.id} asset={i} size={20} showTooltip />
+                        <AssetLogo key={i.id} assetId={i.id} size={20} showTooltip />
                       ))}
                     </>
                   </AssetLogos>

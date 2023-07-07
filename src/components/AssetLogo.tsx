@@ -16,33 +16,48 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
 import styled, { css, useTheme } from 'styled-components'
 
+import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
+import { useQuery } from '@tanstack/react-query'
+import { assetsQueries } from '@/api/assets/assetsApi'
 
 interface AssetLogoProps {
-  asset: Pick<Asset, 'id' | 'logoURI' | 'name'>
+  assetId: string
   size: number
   showTooltip?: boolean
   className?: string
 }
 
-const AssetLogo = ({ asset, showTooltip, className }: AssetLogoProps) => {
+const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
   const theme = useTheme()
 
+  const metadata = useAssetMetadata(assetId)
+
+  const { data: nftData } = useQuery({
+    ...assetsQueries.nftData.details(metadata.id, metadata.type === 'non-fungible' ? metadata.tokenUri : undefined),
+    enabled: metadata.type === 'non-fungible'
+  })
+
+  const assetType = metadata.type
+
   return (
-    <div className={className} data-tip={showTooltip && (asset.name || asset.id)}>
-      {asset.logoURI ? (
-        <LogoImage src={asset.logoURI} />
-      ) : asset.id === ALPH.id ? (
+    <div className={className} data-tip={showTooltip && (assetType === 'fungible' ? metadata.name : metadata.id)}>
+      {assetId === ALPH.id ? (
         <LogoImage src={AlephiumLogoSVG} />
-      ) : asset.name ? (
-        <span>{asset.name.substring(0, 2)}</span>
+      ) : assetType === 'fungible' ? (
+        metadata.verified ? (
+          <LogoImage src={metadata.logoURI} />
+        ) : (
+          <span>{metadata.name.substring(0, 2)}</span>
+        )
+      ) : assetType === 'non-fungible' ? (
+        <LogoImage src={nftData?.image} />
       ) : (
-        <HelpCircle size="100%" color={theme.global.complementary} opacity={0.5} strokeWidth={1.2} />
+        <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
       )}
     </div>
   )
@@ -56,17 +71,15 @@ export default styled(AssetLogo)`
   height: ${({ size }) => size}px;
   border-radius: ${({ size }) => size}px;
   flex-shrink: 0;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 
-  ${({ asset, theme }) =>
-    asset.id === ALPH.id
-      ? css`
-          padding: 0.2rem;
-          background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
-        `
-      : !asset.logoURI &&
-        css`
-          background: ${theme.bg.tertiary};
-        `}
+  ${({ assetId }) =>
+    assetId === ALPH.id &&
+    css`
+      padding: 0.2rem;
+      background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
+    `};
 `
 
 const LogoImage = styled.img`

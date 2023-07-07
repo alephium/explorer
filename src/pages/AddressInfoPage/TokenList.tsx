@@ -47,7 +47,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
     <motion.div className={className}>
       {displayedTokens.map((token) => (
         <AssetRow key={token.id}>
-          <AssetLogoStyled asset={token} size={30} />
+          <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
             <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
             <TokenSymbol>{token.symbol ?? <UnknownAssetSublabel>Unknown asset</UnknownAssetSublabel>}</TokenSymbol>
