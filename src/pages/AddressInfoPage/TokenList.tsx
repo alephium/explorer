@@ -145,9 +145,9 @@ const UnverifiedWarningIcon = styled.div`
   font-size: 12px;
   font-weight: 800;
   color: ${({ theme }) => theme.global.warning};
-  opacity: 0.4;
+  opacity: ${({ theme }) => (theme.name === 'dark' ? 0.4 : 0.7)};
 
   &:hover {
-    opacity: 0.6;
+    opacity: ${({ theme }) => (theme.name === 'dark' ? 0.6 : 1)};
   }
 `

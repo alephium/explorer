@@ -71,7 +71,7 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
         className={className}
         whileHover={{
           boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 50px 80px rgba(0, 0, 0, 0.3)',
-          borderColor: theme.font.primary,
+          borderColor: theme.border.primary,
           cursor: 'pointer'
         }}
         onPointerMove={handlePointerMove}
