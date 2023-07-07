@@ -198,7 +198,7 @@ const AddressInfoPage = () => {
         addressBalance={addressBalance}
         addressHash={addressHash}
         assetIds={addressAssetIds}
-        isLoading={assetsLoading}
+        assetsLoading={assetsLoading}
       />
 
       <SectionHeader>

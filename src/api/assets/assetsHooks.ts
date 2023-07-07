@@ -50,22 +50,26 @@ export const useAssetMetadata = (assetId: string) => {
 }
 
 export const useAssetsMetadata = (assetIds: string[] = []) => {
-  const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
+  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery(
+    assetsQueries.metadata.allVerifiedTokens(client.networkType)
+  )
 
   const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => assetIds.includes(m.id)) || []
 
   const unverifiedAssetIds = assetIds.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
   // Classify unverified assets
-  const unverifiedAssets = useQueriesData(unverifiedAssetIds.map((id) => assetsQueries.type.details(id)))
+  const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
+    unverifiedAssetIds.map((id) => assetsQueries.type.details(id))
+  )
 
-  const unverifiedTokensMetadata = useQueriesData(
+  const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
       type === 'fungible' ? assetsQueries.metadata.unverifiedFungibleToken(id) : []
     )
   )
 
-  const unverifiedNFTsMetadata = useQueriesData(
+  const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
       type === 'non-fungible' ? assetsQueries.metadata.unverifiedNFT(id) : []
     )
@@ -73,6 +77,11 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 
   return {
     fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
-    nfts: unverifiedNFTsMetadata
+    nfts: unverifiedNFTsMetadata,
+    isLoading:
+      verifiedTokenMetadataLoading ||
+      unverifiedAssetsLoading ||
+      unverifiedTokensMetadataLoading ||
+      unverifiedNFTsMetadataLoading
   }
 }

@@ -17,8 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { QueryKey, useQueries, UseQueryOptions } from '@tanstack/react-query'
-import { compact, map } from 'lodash'
+import { reduce, some } from 'lodash'
 
 export const useQueriesData = <TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
   queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
-) => compact(map(useQueries({ queries }), 'data'))
+) =>
+  reduce(
+    useQueries({ queries }),
+    (acc, r) => ({
+      data: [...acc.data, r.data].filter((data): data is NonNullable<TQueryFnData> => data !== undefined),
+      loadingArray: [...acc.loadingArray, r.isLoading],
+      isLoading: some([acc.loadingArray, r.isLoading], (l) => l === true)
+    }),
+    { data: [] as NonNullable<TQueryFnData>[], loadingArray: [true], isLoading: true }
+  )

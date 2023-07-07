@@ -38,21 +38,23 @@ interface AssetListProps {
   addressBalance?: AddressBalance
   assetIds?: string[]
   limit?: number
-  isLoading: boolean
+  assetsLoading: boolean
   className?: string
 }
 
-const AssetList = ({ addressHash, addressBalance, assetIds, limit, isLoading, className }: AssetListProps) => {
-  const { fungibleTokens, nfts } = useAssetsMetadata(assetIds)
+const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading, className }: AssetListProps) => {
+  const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
+
+  const isLoading = assetsLoading || assetsMetadataLoading
 
   const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
   const unknownAssetsIds = assetIds?.filter((id) => !knownAssetsIds.includes(id)) || []
 
-  const tokenBalances = useQueriesData(
+  const { data: tokenBalances } = useQueriesData(
     fungibleTokens.map((a) => assetsQueries.balances.addressToken(addressHash, a.id))
   )
 
-  const unknownAssetsBalances = useQueriesData(
+  const { data: unknownAssetsBalances } = useQueriesData(
     unknownAssetsIds.map((id) => ({
       ...assetsQueries.balances.addressToken(addressHash, id),
       enabled: unknownAssetsIds.length > 0
@@ -102,14 +104,22 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, isLoading, cl
     {
       value: 'tokens',
       icon: '🪙',
-      label: `Tokens (${tokensWithBalanceAndMetadata.length})`
+      label: 'Tokens',
+      length: tokensWithBalanceAndMetadata.length,
+      loading: isLoading
     }
   ]
 
-  if (nfts.length > 0) tabs.push({ value: 'nfts', label: `NFTs (${nfts.length})`, icon: '🖼️' })
+  if (nfts.length > 0) tabs.push({ value: 'nfts', label: 'NFTs', icon: '🖼️', length: nfts.length, loading: isLoading })
 
   if (unknownAssetsIds.length > 0)
-    tabs.push({ value: 'unknown', label: `Unknown (${unknownAssetsIds.length})`, icon: '❔' })
+    tabs.push({
+      value: 'unknown',
+      label: 'Unknown',
+      icon: '❔',
+      length: unknownAssetsIds.length,
+      loading: isLoading
+    })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
 

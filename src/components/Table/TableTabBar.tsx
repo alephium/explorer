@@ -21,10 +21,14 @@ import styled, { css } from 'styled-components'
 
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
+import LoadingSpinner from '../LoadingSpinner'
+
 export interface TabItem {
   value: string
   label: string | ReactNode
   icon?: string | ReactNode
+  length?: number
+  loading?: boolean
 }
 
 interface TableTabBarProps {
@@ -52,6 +56,8 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
         >
           {item.icon && <TabIcon>{item.icon}</TabIcon>}
           {item.label}
+          {item.length && ` (${item.length})`}
+          {item.loading && <LoadingSpinner size={6} style={{ opacity: 0.5 }} />}
         </Tab>
       )
     })}
