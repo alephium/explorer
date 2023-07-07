@@ -26,15 +26,17 @@ import styled, { useTheme } from 'styled-components'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 
 interface TokenListProps {
   tokens?: Optional<Asset, 'decimals'>[]
   limit?: number
+  isLoading?: boolean
   className?: string
 }
 
-const TokenList = ({ tokens, limit, className }: TokenListProps) => {
+const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const theme = useTheme()
 
   if (!tokens) return null
@@ -78,6 +80,12 @@ const TokenList = ({ tokens, limit, className }: TokenListProps) => {
           </TableCellAmount>
         </AssetRow>
       ))}
+      {isLoading && (
+        <LoadingRow>
+          <SkeletonLoader height="40px" width="280px" />
+          <SkeletonLoader height="25px" width="200px" />
+        </LoadingRow>
+      )}
     </motion.div>
   )
 }
@@ -150,4 +158,11 @@ const UnverifiedWarningIcon = styled.div`
   &:hover {
     opacity: ${({ theme }) => (theme.name === 'dark' ? 0.6 : 1)};
   }
+`
+
+const LoadingRow = styled.div`
+  padding: 12px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `

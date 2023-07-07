@@ -25,7 +25,6 @@ import styled from 'styled-components'
 
 import { assetsQueries } from '@/api/assets/assetsApi'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { AddressHash } from '@/types/addresses'
@@ -136,21 +135,15 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     <div className={className}>
       <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
       {tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
-        <>
-          {
-            {
-              tokens: tokensWithBalanceAndMetadata && <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} />,
-              nfts: nfts && <NFTList nfts={nfts} />,
-              unknown: unknownAssetsWithBalance && <TokenList limit={limit} tokens={unknownAssetsWithBalance} />
-            }[currentTab.value]
-          }
-          {isLoading && (
-            <LoadingRow>
-              <SkeletonLoader height="40px" width="280px" />
-              <SkeletonLoader height="25px" width="200px" />
-            </LoadingRow>
-          )}
-        </>
+        {
+          tokens: tokensWithBalanceAndMetadata && (
+            <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} isLoading={isLoading} />
+          ),
+          nfts: nfts && <NFTList nfts={nfts} isLoading={isLoading} />,
+          unknown: unknownAssetsWithBalance && (
+            <TokenList limit={limit} tokens={unknownAssetsWithBalance} isLoading={isLoading} />
+          )
+        }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
       )}
@@ -172,12 +165,4 @@ const EmptyListContainer = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
-`
-
-const LoadingRow = styled.div`
-  padding: 12px 15px;
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid ${({ theme }) => theme.border.secondary};
-  align-items: center;
 `

@@ -22,18 +22,26 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import Card3D from '@/components/Cards/Card3D'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { NFTFile, NFTMetadataStored } from '@/types/assets'
 
 interface NFTListProps {
   nfts: NFTMetadataStored[]
+  isLoading?: boolean
 }
 
-const NFTList = ({ nfts }: NFTListProps) => (
+const NFTList = ({ nfts, isLoading }: NFTListProps) => (
   <NFTListStyled>
     {nfts.map((nft) => (
       <NFTItem key={nft.id} nft={nft} />
     ))}
+    {isLoading && (
+      <>
+        <SkeletonLoader height="100%" />
+        <SkeletonLoader height="100%" />
+      </>
+    )}
   </NFTListStyled>
 )
 
