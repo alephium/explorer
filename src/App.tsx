@@ -64,7 +64,8 @@ const App = () => {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
+        staleTime: 5000 // default ms before cache data is considered stale
       }
     }
   })

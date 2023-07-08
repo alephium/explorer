@@ -31,25 +31,29 @@ export const useAssetMetadata = (assetId: string) => {
 
   const { data: allVerifiedTokensMetadata } = useQuery({
     ...assetsQueries.metadata.allVerifiedTokens(client.networkType),
-    enabled: !isAlph
+    enabled: !isAlph,
+    staleTime: Infinity
   })
   const verifiedTokenMetadata = allVerifiedTokensMetadata?.find((m) => m.id === assetId)
 
   // If not a verfied token, find which type of asset it is
   const { data: assetBaseRaw } = useQuery({
     ...assetsQueries.type.details(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata
+    enabled: !isAlph && !verifiedTokenMetadata,
+    staleTime: Infinity
   })
   const assetType = assetBaseRaw?.type
 
   const { data: unverifiedNFTMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedNFT(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible'
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible',
+    staleTime: Infinity
   })
 
   const { data: unverifiedFungibleTokenMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedFungibleToken(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible'
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible',
+    staleTime: Infinity
   })
 
   if (isAlph) return { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
@@ -62,9 +66,10 @@ export const useAssetMetadata = (assetId: string) => {
 }
 
 export const useAssetsMetadata = (assetIds: string[] = []) => {
-  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery(
-    assetsQueries.metadata.allVerifiedTokens(client.networkType)
-  )
+  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery({
+    ...assetsQueries.metadata.allVerifiedTokens(client.networkType),
+    staleTime: Infinity
+  })
 
   const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => assetIds.includes(m.id)) || []
 
@@ -72,18 +77,18 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 
   // Classify unverified assets
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
-    unverifiedAssetIds.map((id) => assetsQueries.type.details(id))
+    unverifiedAssetIds.map((id) => ({ ...assetsQueries.type.details(id), staleTime: Infinity }))
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'fungible' ? assetsQueries.metadata.unverifiedFungibleToken(id) : []
+      type === 'fungible' ? { ...assetsQueries.metadata.unverifiedFungibleToken(id), staleTime: Infinity } : []
     )
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'non-fungible' ? assetsQueries.metadata.unverifiedNFT(id) : []
+      type === 'non-fungible' ? { ...assetsQueries.metadata.unverifiedNFT(id), staleTime: Infinity } : []
     )
   )
 

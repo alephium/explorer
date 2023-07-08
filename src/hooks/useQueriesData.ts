@@ -33,6 +33,6 @@ export const useQueriesData = <TQueryFnData, TError, TData, TQueryKey extends Qu
       acc.isLoading = some(acc.loadingArray, (l) => l === true)
       return acc
     },
-    { data: [] as NonNullable<TQueryFnData>[], loadingArray: [] as boolean[], isLoading: true }
+    { data: [] as NonNullable<TQueryFnData>[], loadingArray: [] as boolean[], isLoading: false }
   )
 }

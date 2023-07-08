@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 import { HelpCircle } from 'lucide-react'
+import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
 import { assetsQueries } from '@/api/assets/assetsApi'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
-import { useEffect } from 'react'
 
 interface AssetLogoProps {
   assetId: string
@@ -40,8 +40,9 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
   const metadata = useAssetMetadata(assetId)
 
   const { data: nftData } = useQuery({
-    ...assetsQueries.nftData.details(metadata.id, metadata.type === 'non-fungible' ? metadata.tokenUri : undefined),
-    enabled: metadata.type === 'non-fungible'
+    ...assetsQueries.nftData.details(metadata.type === 'non-fungible' ? metadata.tokenUri : ''),
+    enabled: metadata.type === 'non-fungible',
+    staleTime: Infinity
   })
 
   const assetType = metadata.type
@@ -68,7 +69,8 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
       <ReactTooltip
         id="picture-tooltip"
         backgroundColor="black"
-        getContent={(dataTip) => <img height={150} width={150} src={dataTip} />}
+        getContent={(dataTip) => <NFTTooltipImage height={150} width={150} src={dataTip} />}
+        effect="solid"
       />
       {!showTooltip ? null : assetType === 'non-fungible' ? (
         <ImageTooltipHolder data-for="picture-tooltip" data-tip={nftData?.image} />
@@ -118,4 +120,9 @@ const TooltipHolder = styled.div`
   bottom: 0;
   right: 0;
   left: 0;
+`
+
+const NFTTooltipImage = styled.img`
+  object-fit: contain;
+  background-color: black;
 `

@@ -39,7 +39,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '#adadad',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#d4a10d'
+    highlight: '#ea8a1d'
   },
   border: {
     primary: '#e3e3e3',
@@ -54,7 +54,7 @@ export const lightTheme: DefaultTheme = {
     accent: '#5981f3',
     complementary: '#d969bf',
     alert: '#ed4a34',
-    warning: '#FFB800',
+    warning: '#ffa600',
     valid: '#0ea670',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
@@ -79,7 +79,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
-    highlight: '#f0d590'
+    highlight: '#ffab52'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.08)',
@@ -94,8 +94,8 @@ export const darkTheme: DefaultTheme = {
     accent: '#598BED',
     complementary: '#eb88d6',
     alert: '#ed4a34',
-    warning: '#FFB800',
-    valid: '#45d5ab',
+    warning: '#ffc42d',
+    valid: '#3ed97f',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

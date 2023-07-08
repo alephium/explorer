@@ -23,6 +23,8 @@ import fetchRetry from 'fetch-retry'
 
 import { NetworkType, networkTypes } from '@/types/network'
 
+// TODO: Remove this, and rely only on Tanstack's retries.
+// I couldn't pass a simple fetch to web3, which defaults to using throttledFetch.
 const exponentialBackoffFetchRetry = fetchRetry(fetch, {
   retryOn: [429],
   retries: 3,

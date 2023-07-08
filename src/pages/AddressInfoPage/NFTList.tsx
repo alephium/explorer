@@ -25,6 +25,7 @@ import Card3D from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { NFTFile, NFTMetadataStored } from '@/types/assets'
+import { assetsQueries } from '@/api/assets/assetsApi'
 
 interface NFTListProps {
   nfts: NFTMetadataStored[]
@@ -52,10 +53,7 @@ interface NFTItemProps {
 const NFTItem = ({ nft }: NFTItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const { data: nftData } = useQuery<NFTFile>({
-    queryKey: ['nftData', nft.id],
-    queryFn: () => fetch(nft.tokenUri).then((res) => res.json())
-  })
+  const { data: nftData } = useQuery({ ...assetsQueries.nftData.details(nft.tokenUri), staleTime: Infinity })
 
   const desc = nftData?.description
   const cutDesc = desc && desc?.length > 500 ? nftData?.description?.substring(0, 300) + '...' : desc
