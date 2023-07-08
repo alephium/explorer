@@ -16,31 +16,43 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
 
 import { useQueriesData } from '@/hooks/useQueriesData'
+import { VerifiedFungibleTokenMetadata } from '@/types/assets'
 
 import client from '../client'
 import { assetsQueries } from './assetsApi'
 
 export const useAssetMetadata = (assetId: string) => {
-  const { data: allVerifiedTokensMetadata } = useQuery(assetsQueries.metadata.allVerifiedTokens(client.networkType))
+  const isAlph = assetId === ALPH.id
+
+  const { data: allVerifiedTokensMetadata } = useQuery({
+    ...assetsQueries.metadata.allVerifiedTokens(client.networkType),
+    enabled: !isAlph
+  })
   const verifiedTokenMetadata = allVerifiedTokensMetadata?.find((m) => m.id === assetId)
 
   // If not a verfied token, find which type of asset it is
-  const { data: assetBaseRaw } = useQuery({ ...assetsQueries.type.details(assetId), enabled: !verifiedTokenMetadata })
+  const { data: assetBaseRaw } = useQuery({
+    ...assetsQueries.type.details(assetId),
+    enabled: !isAlph && !verifiedTokenMetadata
+  })
   const assetType = assetBaseRaw?.type
 
   const { data: unverifiedNFTMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedNFT(assetId),
-    enabled: !verifiedTokenMetadata && assetType === 'non-fungible'
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible'
   })
 
   const { data: unverifiedFungibleTokenMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedFungibleToken(assetId),
-    enabled: !verifiedTokenMetadata && assetType === 'fungible'
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible'
   })
+
+  if (isAlph) return { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
 
   return (
     verifiedTokenMetadata ||

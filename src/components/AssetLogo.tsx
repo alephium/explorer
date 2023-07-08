@@ -17,13 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
 import { HelpCircle } from 'lucide-react'
+import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
+import { assetsQueries } from '@/api/assets/assetsApi'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
-import { useQuery } from '@tanstack/react-query'
-import { assetsQueries } from '@/api/assets/assetsApi'
+import { useEffect } from 'react'
 
 interface AssetLogoProps {
   assetId: string
@@ -44,8 +46,12 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
 
   const assetType = metadata.type
 
+  useEffect(() => {
+    nftData && ReactTooltip.rebuild()
+  }, [nftData])
+
   return (
-    <div className={className} data-tip={showTooltip && (assetType === 'fungible' ? metadata.name : metadata.id)}>
+    <div className={className}>
       {assetId === ALPH.id ? (
         <LogoImage src={AlephiumLogoSVG} />
       ) : assetType === 'fungible' ? (
@@ -59,11 +65,22 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
       ) : (
         <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
       )}
+      <ReactTooltip
+        id="picture-tooltip"
+        backgroundColor="black"
+        getContent={(dataTip) => <img height={150} width={150} src={dataTip} />}
+      />
+      {!showTooltip ? null : assetType === 'non-fungible' ? (
+        <ImageTooltipHolder data-for="picture-tooltip" data-tip={nftData?.image} />
+      ) : (
+        <TooltipHolder data-tip={assetType === 'fungible' ? metadata.name : metadata.id} />
+      )}
     </div>
   )
 }
 
 export default styled(AssetLogo)`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -85,4 +102,20 @@ export default styled(AssetLogo)`
 const LogoImage = styled.img`
   width: 100%;
   height: 100%;
+`
+
+const ImageTooltipHolder = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+`
+
+const TooltipHolder = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `
