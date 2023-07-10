@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
-import { useEffect } from 'react'
+import { CSSProperties, useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -32,7 +32,9 @@ interface AssetLogoProps {
   className?: string
 }
 
-const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
+const AssetLogo = (props: AssetLogoProps) => {
+  const { assetId, showTooltip, className } = props
+
   const theme = useTheme()
 
   const metadata = useAssetMetadata(assetId)
@@ -44,17 +46,17 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
   }, [metadata])
 
   return (
-    <div className={className}>
+    <AssetLogoStyled className={className} {...props}>
       {assetId === ALPH.id ? (
-        <LogoImage src={AlephiumLogoSVG} />
+        <FramedImage src={AlephiumLogoSVG} borderRadius="full" isAlph />
       ) : assetType === 'fungible' ? (
         metadata.verified ? (
-          <LogoImage src={metadata.logoURI} />
+          <FramedImage src={metadata.logoURI} borderRadius="full" />
         ) : (
-          <span>{metadata.name.substring(0, 2)}</span>
+          <TokenInitials>{metadata.name.substring(0, 2)}</TokenInitials>
         )
       ) : assetType === 'non-fungible' ? (
-        <LogoImage src={metadata.file?.image} />
+        <FramedImage src={metadata.file?.image} borderRadius="small" />
       ) : (
         <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
       )}
@@ -69,33 +71,64 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
       ) : (
         <TooltipHolder data-tip={assetType === 'fungible' ? metadata.name : metadata.id} />
       )}
-    </div>
+    </AssetLogoStyled>
   )
 }
 
-export default styled(AssetLogo)`
+const FramedImage = ({
+  src,
+  borderRadius,
+  isAlph
+}: {
+  src?: string
+  borderRadius: 'small' | 'full'
+  isAlph?: boolean
+}) => (
+  <ImageFrame
+    style={{ borderRadius: borderRadius === 'small' ? 3 : '100%', padding: borderRadius === 'small' ? 0 : 3 }}
+    isAlph={isAlph}
+  >
+    <Image style={{ backgroundImage: `url(${src})` }} />
+  </ImageFrame>
+)
+
+export default AssetLogo
+
+const AssetLogoStyled = styled.div<AssetLogoProps>`
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  border-radius: ${({ size }) => size}px;
   flex-shrink: 0;
+`
+
+const Image = styled.div`
+  background-size: cover;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+`
+
+const ImageFrame = styled.div<{ isAlph?: boolean }>`
   overflow: hidden;
+  height: 100%;
+  width: 100%;
   background-color: ${({ theme }) => theme.bg.tertiary};
 
-  ${({ assetId }) =>
-    assetId === ALPH.id &&
+  ${({ isAlph }) =>
+    isAlph &&
     css`
-      padding: 0.2rem;
       background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
     `};
 `
 
-const LogoImage = styled.img`
-  width: 100%;
+const TokenInitials = styled.div`
   height: 100%;
+  width: 100%;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.bg.tertiary};
 `
 
 const ImageTooltipHolder = styled.div`

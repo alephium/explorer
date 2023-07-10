@@ -20,6 +20,7 @@ import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay }
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
+import AssetLogo from './AssetLogo'
 
 interface AmountProps {
   assetId: string
@@ -62,6 +63,7 @@ const Amount = ({
   const assetType = assetMetadata.type
 
   let decimals: number | undefined, suffix: string | undefined
+  let nftPicture: string | undefined
 
   if (assetType === 'fungible') {
     decimals = assetMetadata.decimals
@@ -77,7 +79,7 @@ const Amount = ({
       }
     }
   } else if (assetType === 'non-fungible') {
-    //nftPicture = assetMetadata.
+    nftPicture = assetMetadata.file?.image
   }
 
   const [integralPart, fractionalPart] = amount.split('.')
@@ -108,12 +110,19 @@ const Amount = ({
           ) : (
             integralPart
           )}
+          <Suffix color={overrideSuffixColor ? color : undefined}>{` ${
+            isUnknownToken ? '?' : suffix ?? 'ALPH'
+          }`}</Suffix>
         </>
+      ) : assetType === 'non-fungible' ? (
+        <NFTAmount>
+          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+          <RawAmount>{integralPart}</RawAmount>
+          <AssetLogo assetId={assetId} size={15} />
+        </NFTAmount>
       ) : (
         '-'
       )}
-
-      <Suffix color={overrideSuffixColor ? color : undefined}>{` ${isUnknownToken ? '?' : suffix ?? 'ALPH'}`}</Suffix>
     </span>
   )
 }
@@ -165,4 +174,10 @@ const RawAmount = styled.div`
   text-overflow: ellipsis;
   overflow: hidden;
   vertical-align: bottom;
+`
+
+const NFTAmount = styled.div`
+  display: flex;
+  gap: 3px;
+  align-items: center;
 `
