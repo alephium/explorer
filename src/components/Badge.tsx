@@ -20,6 +20,7 @@ import { colord } from 'colord'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
+import { ALPH } from '@alephium/token-list'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 
@@ -34,7 +35,7 @@ interface BadgeProps {
 }
 
 const Badge = ({ content, className, amount }: BadgeProps) => (
-  <div className={className}>{amount ? <Amount value={BigInt(amount)} /> : content}</div>
+  <div className={className}>{amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} /> : content}</div>
 )
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {

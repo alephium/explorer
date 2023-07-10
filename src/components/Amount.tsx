@@ -19,7 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
 import styled from 'styled-components'
 
+import { useAssetMetadata } from '@/api/assets/assetsHooks'
+
 interface AmountProps {
+  assetId: string
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
@@ -38,13 +41,12 @@ interface AmountProps {
 
 const Amount = ({
   value,
-  decimals,
+  assetId,
   isFiat,
   className,
   fadeDecimals,
   fullPrecision = false,
   nbOfDecimalsToShow,
-  suffix,
   color,
   overrideSuffixColor,
   tabIndex,
@@ -55,14 +57,27 @@ const Amount = ({
   let amount = ''
   let isNegative = false
 
-  if (value !== undefined) {
-    isNegative = value < 0
-    amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, isUnknownToken })
+  const assetMetadata = useAssetMetadata(assetId)
 
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
+  const assetType = assetMetadata.type
+
+  let decimals: number | undefined, suffix: string | undefined
+
+  if (assetType === 'fungible') {
+    decimals = assetMetadata.decimals
+    suffix = assetMetadata.symbol
+
+    if (value !== undefined) {
+      isNegative = value < 0
+      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, isUnknownToken })
+
+      if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+        quantitySymbol = amount.slice(-1)
+        amount = amount.slice(0, -1)
+      }
     }
+  } else if (assetType === 'non-fungible') {
+    //nftPicture = assetMetadata.
   }
 
   const [integralPart, fractionalPart] = amount.split('.')
@@ -77,7 +92,7 @@ const Amount = ({
           : !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
       }
     >
-      {value !== undefined ? (
+      {assetType === 'fungible' ? (
         <>
           {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
           {fadeDecimals ? (
@@ -103,7 +118,14 @@ const Amount = ({
   )
 }
 
-const getAmount = ({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, isUnknownToken }: AmountProps) =>
+const getAmount = ({
+  value,
+  isFiat,
+  decimals,
+  nbOfDecimalsToShow,
+  fullPrecision,
+  isUnknownToken
+}: Partial<AmountProps>) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
     : isUnknownToken

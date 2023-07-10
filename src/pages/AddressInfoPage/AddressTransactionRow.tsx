@@ -117,6 +117,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             {assets.map(({ id, amount, symbol, decimals }) => (
               <Amount
                 key={id}
+                assetId={id}
                 value={amount}
                 highlight={!isMoved}
                 showPlusMinus={!isMoved}

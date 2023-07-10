@@ -59,6 +59,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
           )}
           <TableCellAmount>
             <TokenAmount
+              assetId={token.id}
               value={token.balance}
               suffix={token.symbol}
               decimals={token.decimals}
@@ -68,6 +69,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               <TokenAmountSublabel>
                 {'Available '}
                 <Amount
+                  assetId={token.id}
                   value={token.balance - token.lockedBalance}
                   suffix={token.symbol}
                   color={theme.font.tertiary}

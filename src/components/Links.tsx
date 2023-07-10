@@ -89,6 +89,7 @@ const AddressLinkBase = ({
     return (
       <Amount
         key={amount.id}
+        assetId={amount.id}
         value={amount.amount}
         suffix={info?.symbol}
         decimals={info?.decimals}

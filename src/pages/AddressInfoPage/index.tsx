@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
+import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { FileDown } from 'lucide-react'
@@ -147,14 +148,14 @@ const AddressInfoPage = () => {
         <InfoGrid>
           <InfoGrid.Cell
             label="ALPH balance"
-            value={totalBalance && <Amount value={BigInt(totalBalance)} />}
+            value={totalBalance && <Amount assetId={ALPH.id} value={BigInt(totalBalance)} />}
             sublabel={
               lockedBalance &&
               lockedBalance !== '0' && (
                 <Badge
                   content={
                     <span>
-                      Locked: <Amount value={BigInt(lockedBalance)} />
+                      Locked: <Amount assetId={ALPH.id} value={BigInt(lockedBalance)} />
                     </span>
                   }
                   type="neutral"
@@ -165,7 +166,9 @@ const AddressInfoPage = () => {
           <InfoGrid.Cell
             label="Fiat price"
             value={
-              client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
+              client.networkType === 'mainnet'
+                ? addressWorth && <Amount assetId={ALPH.id} value={addressWorth} isFiat suffix="$" />
+                : '-'
             }
           />
           <InfoGrid.Cell
