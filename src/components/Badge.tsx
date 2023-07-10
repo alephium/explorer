@@ -71,6 +71,7 @@ export default styled(Badge)`
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
     return css`
+      display: flex;
       color: ${color};
       background-color: ${backgroundColor};
       border: 1px solid ${borderColor};

@@ -26,7 +26,7 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { addressQueries } from '@/api/address/addressApi'
+import { addressQueries } from '@/api/addresses/addressApi'
 import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'

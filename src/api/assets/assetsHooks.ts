@@ -36,7 +36,6 @@ export const useAssetMetadata = (assetId: string) => {
   })
   const verifiedTokenMetadata = allVerifiedTokensMetadata?.find((m) => m.id === assetId)
 
-  // If not a verfied token, find which type of asset it is
   const { data: assetBaseRaw } = useQuery({
     ...assetsQueries.type.details(assetId),
     enabled: !isAlph && !verifiedTokenMetadata,
@@ -75,7 +74,6 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 
   const unverifiedAssetIds = assetIds.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
-  // Classify unverified assets
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
     unverifiedAssetIds.map((id) => ({ ...assetsQueries.type.details(id), staleTime: Infinity }))
   )

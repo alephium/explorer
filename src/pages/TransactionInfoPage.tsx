@@ -19,14 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
+import { PerChainHeight, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQuery } from '@tanstack/react-query'
 import _ from 'lodash'
 import { Check } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useRef } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
-import client from '@/api/client'
+import { queries } from '@/api'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -42,7 +44,6 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useAppSelector } from '@/hooks/redux'
-import useInterval from '@/hooks/useInterval'
 import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 
 type ParamTypes = {
@@ -52,69 +53,43 @@ type ParamTypes = {
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
-
-  const [txInfo, setTxInfo] = useState<explorer.Transaction>()
-  const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
-  const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
-  const [txInfoStatus, setTxInfoStatus] = useState<number>()
-  const [txInfoError, setTxInfoError] = useState('')
-  const [loading, setLoading] = useState(true)
-
   const isAppVisible = usePageVisibility()
 
-  const getTxInfo = useCallback(async () => {
-    const fetchTransactionInfo = async () => {
-      if (!id) return
+  const previousTransactionData = useRef<Transaction | undefined>()
 
-      setLoading(true)
+  const {
+    data: transactionData,
+    error: transactionInfoError,
+    isLoading: txInfoLoading
+  } = useQuery({
+    ...queries.transactions.detail(id || ''),
+    enabled: !!id,
+    refetchInterval:
+      isAppVisible && (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current))
+        ? 10000
+        : undefined
+  })
 
-      try {
-        const data = await client.explorer.transactions.getTransactionsTransactionHash(id)
-        const tx = data as explorer.Transaction
+  let txInfoError, txInfoErrorStatus
 
-        if (tx) setTxInfo(tx)
+  if (transactionInfoError) {
+    const e = transactionInfoError as APIError
+    txInfoError = e.error
+    txInfoErrorStatus = e.status
+  }
 
-        if (!isTxConfirmed(tx)) return
+  previousTransactionData.current = transactionData as Transaction
 
-        const block = await client.explorer.blocks.getBlocksBlockHash(tx.blockHash)
-        const chainHeights = await client.explorer.infos.getInfosHeights()
+  const txInfo = transactionData as Transaction
 
-        setTxBlock(block)
+  const { data: txBlock } = useQuery({ ...queries.blocks.detail(txInfo?.blockHash), enabled: isTxConfirmed(txInfo) })
 
-        const chain = chainHeights.find(
-          (c: explorer.PerChainHeight) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
-        )
+  const { data: chainHeights } = useQuery(queries.infos.heigths())
 
-        setTxChain(chain)
-      } catch (e) {
-        console.error(e)
-        const { error, status } = e as APIError
-
-        setTxInfoStatus(status)
-        setTxInfoError(error.detail || error.message || 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTransactionInfo()
-  }, [id])
-
-  // Initial fetch
-  useEffect(() => {
-    getTxInfo()
-  }, [getTxInfo])
-
-  // Polling when TX is unconfirmed
-  useInterval(
-    () => {
-      if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
-    },
-    15 * 1000,
-    !isAppVisible
+  const txChain = chainHeights?.find(
+    (c: PerChainHeight) => c.chainFrom === txBlock?.chainFrom && c.chainTo === txBlock.chainTo
   )
 
-  // Compute confirmations
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
@@ -136,7 +111,7 @@ const TransactionInfoPage = () => {
     <Section>
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
-        <Table bodyOnly isLoading={loading}>
+        <Table bodyOnly isLoading={txInfoLoading}>
           {txInfo && (
             <TableBody>
               <TableRow>
@@ -260,14 +235,14 @@ const TransactionInfoPage = () => {
           )}
         </Table>
       ) : (
-        <InlineErrorMessage message={txInfoError} code={txInfoStatus} />
+        <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
       )}
     </Section>
   )
 }
 
-const isTxConfirmed = (tx: explorer.Transaction): tx is explorer.Transaction =>
-  (tx as explorer.Transaction).blockHash !== undefined
+const isTxConfirmed = (tx?: explorer.Transaction): tx is explorer.Transaction =>
+  !!tx && (tx as explorer.Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
   let confirmations = 0

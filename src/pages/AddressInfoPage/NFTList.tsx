@@ -21,11 +21,11 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { assetsQueries } from '@/api/assets/assetsApi'
 import Card3D from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTFile, NFTMetadataStored } from '@/types/assets'
-import { assetsQueries } from '@/api/assets/assetsApi'
+import { NFTMetadataStored } from '@/types/assets'
 
 interface NFTListProps {
   nfts: NFTMetadataStored[]
