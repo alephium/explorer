@@ -43,8 +43,6 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 
 type ParamTypes = {
   id: string
@@ -52,7 +50,6 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
   const isAppVisible = usePageVisibility()
 
   const previousTransactionData = useRef<Transaction | undefined>()
@@ -86,6 +83,11 @@ const TransactionInfoPage = () => {
 
   const { data: chainHeights } = useQuery(queries.infos.heigths())
 
+  const assetIds = _(txInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
+    .uniq()
+    .compact()
+    .value()
+
   const txChain = chainHeights?.find(
     (c: PerChainHeight) => c.chainFrom === txBlock?.chainFrom && c.chainTo === txBlock.chainTo
   )
@@ -99,13 +101,6 @@ const TransactionInfoPage = () => {
     (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
     BigInt(0)
   )
-
-  const tokenInfos = _(txInfo?.inputs?.map((i) => i.tokens?.map((t) => assetsInfo.find((a) => a.id === t.id))))
-    .flatten()
-    .uniqBy('id')
-    .compact()
-    .sortBy('name')
-    .value()
 
   return (
     <Section>
@@ -183,8 +178,8 @@ const TransactionInfoPage = () => {
                   <AssetLogos>
                     <>
                       {totalAmount && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
-                      {tokenInfos.map((i) => (
-                        <AssetLogo key={i.id} assetId={i.id} size={20} showTooltip />
+                      {assetIds.map((id) => (
+                        <AssetLogo key={id} assetId={id} size={20} showTooltip />
                       ))}
                     </>
                   </AssetLogos>
