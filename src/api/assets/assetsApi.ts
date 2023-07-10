@@ -67,10 +67,11 @@ export const assetsQueries = createQueryKeyStore({
           .then((r) => ({ id: assetId, type: 'non-fungible', verified: false, ...r }))
     })
   },
-  nftData: {
-    details: (dataUri: string) => ({
-      queryKey: [dataUri],
-      queryFn: (): Promise<NFTFile> | undefined => fetch(dataUri).then((res) => res.json())
+  nftFile: {
+    detail: (assetId: string, dataUri: string) => ({
+      queryKey: [assetId, dataUri],
+      queryFn: (): Promise<NFTFile> | undefined =>
+        fetch(dataUri).then((res) => res.json().then((f) => ({ assetId, ...f })))
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?

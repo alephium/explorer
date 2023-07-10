@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
 
 import { useQueriesData } from '@/hooks/useQueriesData'
-import { VerifiedFungibleTokenMetadata } from '@/types/assets'
+import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
 
 import client from '../client'
 import { assetsQueries } from './assetsApi'
@@ -43,23 +43,33 @@ export const useAssetMetadata = (assetId: string) => {
   })
   const assetType = assetBaseRaw?.type
 
-  const { data: unverifiedNFTMetadata } = useQuery({
-    ...assetsQueries.metadata.unverifiedNFT(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible',
-    staleTime: Infinity
-  })
-
   const { data: unverifiedFungibleTokenMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedFungibleToken(assetId),
     enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible',
     staleTime: Infinity
   })
 
+  const { data: unverifiedNFTMetadata } = useQuery({
+    ...assetsQueries.metadata.unverifiedNFT(assetId),
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible',
+    staleTime: Infinity
+  })
+
+  const { data: nftData } = useQuery({
+    ...assetsQueries.nftFile.detail(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
+    enabled: assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri,
+    staleTime: Infinity
+  })
+
+  const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined = unverifiedNFTMetadata
+    ? { ...unverifiedNFTMetadata, file: nftData }
+    : undefined
+
   if (isAlph) return { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
 
   return (
     verifiedTokenMetadata ||
-    unverifiedNFTMetadata ||
+    unverifiedNFTMetadataWithFile ||
     unverifiedFungibleTokenMetadata || { id: assetId, type: 'unknown', verified: false }
   )
 }
@@ -90,9 +100,21 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     )
   )
 
+  const { data: NFTFiles } = useQueriesData(
+    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => ({
+      ...assetsQueries.nftFile.detail(id, tokenUri),
+      staleTime: Infinity
+    }))
+  )
+
+  const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.map((m) => ({
+    ...m,
+    file: NFTFiles.find((f) => f.assetId === m.id)
+  }))
+
   return {
     fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
-    nfts: unverifiedNFTsMetadata,
+    nfts: unverifiedNFTsMetadataWithFiles,
     isLoading:
       verifiedTokenMetadataLoading ||
       unverifiedAssetsLoading ||

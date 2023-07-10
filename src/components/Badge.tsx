@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
-import { ALPH } from '@alephium/token-list'
 
 type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
 

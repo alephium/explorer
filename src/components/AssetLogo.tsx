@@ -17,13 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { useQuery } from '@tanstack/react-query'
 import { HelpCircle } from 'lucide-react'
 import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
-import { assetsQueries } from '@/api/assets/assetsApi'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
 
@@ -39,17 +37,11 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
 
   const metadata = useAssetMetadata(assetId)
 
-  const { data: nftData } = useQuery({
-    ...assetsQueries.nftData.details(metadata.type === 'non-fungible' ? metadata.tokenUri : ''),
-    enabled: metadata.type === 'non-fungible',
-    staleTime: Infinity
-  })
-
   const assetType = metadata.type
 
   useEffect(() => {
-    nftData && ReactTooltip.rebuild()
-  }, [nftData])
+    metadata && ReactTooltip.rebuild()
+  }, [metadata])
 
   return (
     <div className={className}>
@@ -62,7 +54,7 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
           <span>{metadata.name.substring(0, 2)}</span>
         )
       ) : assetType === 'non-fungible' ? (
-        <LogoImage src={nftData?.image} />
+        <LogoImage src={metadata.file?.image} />
       ) : (
         <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
       )}
@@ -73,7 +65,7 @@ const AssetLogo = ({ assetId, showTooltip, className }: AssetLogoProps) => {
         effect="solid"
       />
       {!showTooltip ? null : assetType === 'non-fungible' ? (
-        <ImageTooltipHolder data-for="picture-tooltip" data-tip={nftData?.image} />
+        <ImageTooltipHolder data-for="picture-tooltip" data-tip={metadata.file?.image} />
       ) : (
         <TooltipHolder data-tip={assetType === 'fungible' ? metadata.name : metadata.id} />
       )}

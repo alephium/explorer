@@ -25,10 +25,10 @@ import { assetsQueries } from '@/api/assets/assetsApi'
 import Card3D from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadataStored } from '@/types/assets'
+import { NFTMetadataStored, UnverifiedNFTMetadataWithFile } from '@/types/assets'
 
 interface NFTListProps {
-  nfts: NFTMetadataStored[]
+  nfts: UnverifiedNFTMetadataWithFile[]
   isLoading?: boolean
 }
 
@@ -47,16 +47,14 @@ const NFTList = ({ nfts, isLoading }: NFTListProps) => (
 )
 
 interface NFTItemProps {
-  nft: NFTMetadataStored
+  nft: UnverifiedNFTMetadataWithFile
 }
 
 const NFTItem = ({ nft }: NFTItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const { data: nftData } = useQuery({ ...assetsQueries.nftData.details(nft.tokenUri), staleTime: Infinity })
-
-  const desc = nftData?.description
-  const cutDesc = desc && desc?.length > 500 ? nftData?.description?.substring(0, 300) + '...' : desc
+  const desc = nft.file?.description
+  const cutDesc = desc && desc?.length > 500 ? nft.file?.description?.substring(0, 300) + '...' : desc
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -82,7 +80,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
       <NFTPictureContainer>
         <NFTPicture
           style={{
-            backgroundImage: `url(${nftData?.image})`,
+            backgroundImage: `url(${nft.file?.image})`,
             x: imagePosX,
             y: imagePosY,
             scale: 1.3
@@ -92,7 +90,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
           }}
         />
       </NFTPictureContainer>
-      <NFTName>{nftData?.name}</NFTName>
+      <NFTName>{nft.file?.name}</NFTName>
       <NFTDescription>{cutDesc}</NFTDescription>
     </NFTCardStyled>
   )
