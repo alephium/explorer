@@ -177,7 +177,7 @@ const RawAmount = styled.div`
 `
 
 const NFTAmount = styled.div`
-  display: flex;
-  gap: 3px;
-  align-items: center;
+  > * {
+    display: inline-block;
+  }
 `
