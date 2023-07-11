@@ -20,6 +20,7 @@ import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay }
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
+
 import AssetLogo from './AssetLogo'
 
 interface AmountProps {
@@ -51,7 +52,6 @@ const Amount = ({
   color,
   overrideSuffixColor,
   tabIndex,
-  isUnknownToken,
   showPlusMinus = false
 }: AmountProps) => {
   let quantitySymbol = ''
@@ -61,6 +61,7 @@ const Amount = ({
   const assetMetadata = useAssetMetadata(assetId)
 
   const assetType = assetMetadata.type
+  const isUnknownToken = assetType === 'unknown'
 
   let decimals: number | undefined, suffix: string | undefined
 
@@ -69,13 +70,15 @@ const Amount = ({
     suffix = assetMetadata.symbol
 
     if (value !== undefined) {
-      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, isUnknownToken })
+      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
 
       if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
         quantitySymbol = amount.slice(-1)
         amount = amount.slice(0, -1)
       }
     }
+  } else if (assetType === 'unknown') {
+    amount = getAmount({ value, fullPrecision: true })
   }
 
   const [integralPart, fractionalPart] = amount.split('.')
@@ -86,8 +89,10 @@ const Amount = ({
       tabIndex={tabIndex ?? -1}
       data-tip={
         isUnknownToken
-          ? integralPart
-          : !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+          ? convertToPositive(value as bigint)
+          : assetType !== 'non-fungible'
+          ? !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+          : undefined
       }
     >
       {assetType === 'fungible' ? (
@@ -101,8 +106,6 @@ const Amount = ({
             </>
           ) : fractionalPart ? (
             `${integralPart}.${fractionalPart}`
-          ) : isUnknownToken ? (
-            <RawAmount>{integralPart}</RawAmount>
           ) : (
             integralPart
           )}
@@ -111,11 +114,15 @@ const Amount = ({
           }`}</Suffix>
         </>
       ) : assetType === 'non-fungible' ? (
-        <div>
+        <>
           {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
-          <RawAmount>{integralPart}</RawAmount>
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
-        </div>
+        </>
+      ) : assetType === 'unknown' ? (
+        <>
+          <RawAmount>{value?.toString()}</RawAmount>
+          <Suffix>?</Suffix>
+        </>
       ) : (
         '-'
       )}
