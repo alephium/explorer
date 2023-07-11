@@ -84,31 +84,27 @@ const Amount = ({
   const [integralPart, fractionalPart] = amount.split('.')
 
   return (
-    <span
-      className={className}
-      tabIndex={tabIndex ?? -1}
-      data-tip={
-        isUnknownToken
-          ? convertToPositive(value as bigint)
-          : assetType !== 'non-fungible'
-          ? !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
-          : undefined
-      }
-    >
+    <span className={className} tabIndex={tabIndex ?? -1}>
       {assetType === 'fungible' ? (
         <>
-          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
-          {fadeDecimals ? (
-            <>
-              <span>{integralPart}</span>
-              {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-              {quantitySymbol && <span>{quantitySymbol}</span>}
-            </>
-          ) : fractionalPart ? (
-            `${integralPart}.${fractionalPart}`
-          ) : (
-            integralPart
-          )}
+          <NumberContainer
+            data-tip={
+              !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+            }
+          >
+            {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+            {fadeDecimals ? (
+              <>
+                <span>{integralPart}</span>
+                {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+                {quantitySymbol && <span>{quantitySymbol}</span>}
+              </>
+            ) : fractionalPart ? (
+              `${integralPart}.${fractionalPart}`
+            ) : (
+              integralPart
+            )}
+          </NumberContainer>
           <Suffix color={overrideSuffixColor ? color : undefined}>{` ${
             isUnknownToken ? '?' : suffix ?? 'ALPH'
           }`}</Suffix>
@@ -120,7 +116,7 @@ const Amount = ({
         </>
       ) : assetType === 'unknown' ? (
         <>
-          <RawAmount>{value?.toString()}</RawAmount>
+          <RawAmount data-tip={convertToPositive(value as bigint)}>{value?.toString()}</RawAmount>
           <Suffix>?</Suffix>
         </>
       ) : (
@@ -161,6 +157,8 @@ export default styled(Amount)`
   white-space: nowrap;
   font-weight: 800;
 `
+
+const NumberContainer = styled.span``
 
 const Decimals = styled.span`
   opacity: 0.7;
