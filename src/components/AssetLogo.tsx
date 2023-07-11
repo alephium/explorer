@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { HelpCircle } from 'lucide-react'
-import { CSSProperties, useEffect } from 'react'
+import { useEffect } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -63,11 +63,23 @@ const AssetLogo = (props: AssetLogoProps) => {
       <ReactTooltip
         id="picture-tooltip"
         backgroundColor="black"
-        getContent={(dataTip) => <NFTTooltipImage height={150} width={150} src={dataTip} />}
+        getContent={(dataTip) => {
+          const props = JSON.parse(dataTip)
+
+          return (
+            <NFTTooltipContainer>
+              <NFTTooltipImage height={150} width={150} src={props?.src} />
+              <NFTTitle>{props?.name}</NFTTitle>
+            </NFTTooltipContainer>
+          )
+        }}
         effect="solid"
       />
       {!showTooltip ? null : assetType === 'non-fungible' ? (
-        <ImageTooltipHolder data-for="picture-tooltip" data-tip={metadata.file?.image} />
+        <ImageTooltipHolder
+          data-for="picture-tooltip"
+          data-tip={JSON.stringify({ name: metadata.file?.name, src: metadata.file?.image })}
+        />
       ) : (
         <TooltipHolder data-tip={assetType === 'fungible' ? metadata.name : metadata.id} />
       )}
@@ -147,7 +159,15 @@ const TooltipHolder = styled.div`
   left: 0;
 `
 
+const NFTTooltipContainer = styled.div``
+
 const NFTTooltipImage = styled.img`
   object-fit: contain;
   background-color: black;
+`
+
+const NFTTitle = styled.h3`
+  text-align: center;
+  color: white;
+  margin: 5px;
 `

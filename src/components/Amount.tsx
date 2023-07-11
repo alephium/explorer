@@ -56,21 +56,19 @@ const Amount = ({
 }: AmountProps) => {
   let quantitySymbol = ''
   let amount = ''
-  let isNegative = false
+  const isNegative = value && value < 0
 
   const assetMetadata = useAssetMetadata(assetId)
 
   const assetType = assetMetadata.type
 
   let decimals: number | undefined, suffix: string | undefined
-  let nftPicture: string | undefined
 
   if (assetType === 'fungible') {
     decimals = assetMetadata.decimals
     suffix = assetMetadata.symbol
 
     if (value !== undefined) {
-      isNegative = value < 0
       amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, isUnknownToken })
 
       if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
@@ -78,8 +76,6 @@ const Amount = ({
         amount = amount.slice(0, -1)
       }
     }
-  } else if (assetType === 'non-fungible') {
-    nftPicture = assetMetadata.file?.image
   }
 
   const [integralPart, fractionalPart] = amount.split('.')
@@ -115,11 +111,11 @@ const Amount = ({
           }`}</Suffix>
         </>
       ) : assetType === 'non-fungible' ? (
-        <NFTAmount>
+        <div>
           {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
           <RawAmount>{integralPart}</RawAmount>
-          <AssetLogo assetId={assetId} size={15} />
-        </NFTAmount>
+          <NFTInlineLogo assetId={assetId} size={15} showTooltip />
+        </div>
       ) : (
         '-'
       )}
@@ -176,8 +172,8 @@ const RawAmount = styled.div`
   vertical-align: bottom;
 `
 
-const NFTAmount = styled.div`
-  > * {
-    display: inline-block;
-  }
+const NFTInlineLogo = styled(AssetLogo)`
+  display: inline-block;
+  margin-left: 2px;
+  transform: translateY(3px);
 `
