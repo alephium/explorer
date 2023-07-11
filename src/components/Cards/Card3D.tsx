@@ -38,7 +38,7 @@ const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps)
 
   const baseRotation = isFlipped ? 180 : 0
 
-  const angle = 5
+  const angle = 10
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -51,6 +51,14 @@ const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps)
     clamp: true
   })
   const rotateX = useTransform(ySpring, [0, 1], [angle, -angle], {
+    clamp: true
+  })
+
+  const reflectionTranslationX = useTransform(xSpring, [0, 1], [angle * 1.5, -angle * 1.5], {
+    clamp: true
+  })
+
+  const reflectionTranslationY = useTransform(ySpring, [0, 1], [angle * 3, -angle * 3], {
     clamp: true
   })
 
@@ -91,12 +99,15 @@ const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps)
           zIndex: 0
         }}
         animate={{
-          translateZ: isHovered ? 50 : 0
+          translateZ: isHovered ? 100 : 0
         }}
         onClick={() => setIsFlipped((p) => !p)}
       >
         <CardContent>{children}</CardContent>
-        <StyledCursorHighlight />
+        <MovingReflection
+          style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}
+          animate={{ opacity: isHovered ? (theme.name === 'dark' ? 0.5 : 1) : 0 }}
+        />
       </CardContainer>
     </Card3DStyled>
   )
@@ -126,8 +137,14 @@ const CardContainer = styled(motion.div)`
     theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.1)'};
 `
 
-const StyledCursorHighlight = styled(CursorHighlight)``
-
 const CardContent = styled.div``
+
+const MovingReflection = styled(motion.div)`
+  position: absolute;
+  background: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  pointer-events: none;
+
+  inset: -50px;
+`
 
 export default Card3D
