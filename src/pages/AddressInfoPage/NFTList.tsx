@@ -76,7 +76,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   }
 
   return (
-    <NFTCardStyled onPointerMove={handlePointerMove} onCardExpansion={setIsExpanded}>
+    <NFTCardStyled onPointerMove={handlePointerMove} onCardFlip={setIsExpanded}>
       <NFTPictureContainer>
         <NFTPicture
           style={{
@@ -91,7 +91,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
         />
       </NFTPictureContainer>
       <NFTName>{nft.file?.name}</NFTName>
-      <NFTDescription>{cutDesc}</NFTDescription>
+      {isExpanded && <NFTDescription>{cutDesc}</NFTDescription>}
     </NFTCardStyled>
   )
 }

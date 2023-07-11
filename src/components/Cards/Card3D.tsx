@@ -27,16 +27,18 @@ import CursorHighlight from '../CursorHighlight'
 interface Card3DProps {
   children: ReactNode
   onPointerMove?: (pointerX: number, pointerY: number) => void
-  onCardExpansion?: (isExpanded: boolean) => void
+  onCardFlip?: (isFlipped: boolean) => void
   className?: string
 }
 
-const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DProps) => {
+const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(false)
 
-  const angle = 1
+  const baseRotation = isFlipped ? 180 : 0
+
+  const angle = 5
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -53,6 +55,7 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
   })
 
   const handlePointerMove = (e: PointerEvent) => {
+    if (isFlipped) return
     const { x: positionX, y: positionY } = getPointerRelativePositionInElement(e)
 
     x.set(positionX, true)
@@ -62,15 +65,15 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
   }
 
   useEffect(() => {
-    onCardExpansion && onCardExpansion(isExpanded)
-  }, [isExpanded, onCardExpansion])
+    onCardFlip && onCardFlip(isFlipped)
+  }, [isFlipped, onCardFlip])
 
   return (
     <Card3DStyled whileHover={{ zIndex: 3 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <CardContainer
         className={className}
         whileHover={{
-          boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 50px 80px rgba(0, 0, 0, 0.3)',
+          boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 20px 40px rgba(0, 0, 0, 0.1)',
           borderColor: theme.border.primary,
           cursor: 'pointer'
         }}
@@ -78,7 +81,7 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
         onPointerEnter={() => setIsHovered(true)}
         onPointerLeave={() => {
           setIsHovered(false)
-          setIsExpanded(false)
+          setIsFlipped(false)
           x.set(0.5, true)
           y.set(0.5, true)
         }}
@@ -88,9 +91,9 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
           zIndex: 0
         }}
         animate={{
-          translateZ: isExpanded ? 30 : isHovered ? 10 : 0
+          translateZ: isHovered ? 50 : 0
         }}
-        onClick={() => setIsExpanded((p) => !p)}
+        onClick={() => setIsFlipped((p) => !p)}
       >
         <CardContent>{children}</CardContent>
         <StyledCursorHighlight />
@@ -102,7 +105,7 @@ const Card3D = ({ children, onPointerMove, onCardExpansion, className }: Card3DP
 const Card3DStyled = styled(motion.div)`
   display: flex;
   position: relative;
-  perspective: 100px;
+  perspective: 1000px;
   transform-style: preserve-3d;
 `
 
@@ -114,13 +117,13 @@ const CardContainer = styled(motion.div)`
   flex: 1;
   overflow: hidden;
   border-radius: 9px;
-  border-color: transparent;
+  border-color: ${({ theme }) => theme.border.secondary};
   border-style: solid;
   padding: 20px;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
   box-shadow: ${({ theme }) =>
-    theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.2)'};
+    theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.1)'};
 `
 
 const StyledCursorHighlight = styled(CursorHighlight)``

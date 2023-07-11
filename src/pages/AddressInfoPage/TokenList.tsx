@@ -50,7 +50,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
             <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
-            <TokenSymbol>{token.symbol ?? <UnknownAssetSublabel>Unknown asset</UnknownAssetSublabel>}</TokenSymbol>
+            {token.symbol && <TokenSymbol>{token.symbol}</TokenSymbol>}
           </NameColumn>
           {token.id !== ALPH.id && !token.logoURI && token.name && (
             <UnverifiedWarningIcon data-tip="Unverified token">

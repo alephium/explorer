@@ -107,6 +107,9 @@ const FramedImage = ({
 export default AssetLogo
 
 const AssetLogoStyled = styled.div<AssetLogoProps>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
