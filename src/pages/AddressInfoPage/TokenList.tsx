@@ -72,7 +72,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                   assetId={token.id}
                   value={token.balance - token.lockedBalance}
                   suffix={token.symbol}
-                  color={theme.font.tertiary}
+                  color={theme.font.secondary}
                   decimals={token.decimals}
                 />
               </TokenAmountSublabel>
@@ -124,7 +124,7 @@ const TokenName = styled.span`
 `
 
 const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
+  color: ${({ theme }) => theme.font.secondary};
   max-width: 150px;
 `
 
@@ -133,16 +133,13 @@ const TokenAmount = styled(Amount)`
 `
 
 const TokenAmountSublabel = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
   font-size: 11px;
+  color: ${({ theme }) => theme.font.secondary};
+  font-weight: 400;
 `
 
 const NameColumn = styled(Column)`
   margin-right: 20px;
-`
-
-const UnknownAssetSublabel = styled.div`
-  display: flex;
 `
 
 const UnverifiedWarningIcon = styled.div`
