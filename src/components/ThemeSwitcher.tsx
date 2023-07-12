@@ -21,8 +21,7 @@ import { Moon, Sun } from 'lucide-react'
 import React from 'react'
 import styled from 'styled-components'
 
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { themeToggled } from '@/store/settings/settingsSlice'
+import { useSettings } from '@/contexts/settingsContext'
 import { ThemeType } from '@/styles/themes'
 
 interface ThemeSwitcherProps {
@@ -42,11 +41,10 @@ const toggleVariants = {
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
-  const theme = useAppSelector((s) => s.settings.theme)
-  const dispatch = useAppDispatch()
+  const { theme, switchTheme } = useSettings()
 
   const handleThemeSwitch = (theme: ThemeType) => {
-    dispatch(themeToggled(theme))
+    switchTheme(theme)
   }
 
   return (

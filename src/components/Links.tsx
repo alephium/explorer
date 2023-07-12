@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetAmount } from '@alephium/sdk'
 import dayjs from 'dayjs'
+import { map } from 'lodash'
 import { ExternalLink } from 'lucide-react'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllFungibleTokensMetadata } from '@/store/assetsMetadata/assetsMetadataSelectors'
 import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
@@ -80,11 +80,12 @@ const AddressLinkBase = ({
   className
 }: AddressLinkProps) => {
   const theme = useTheme()
-  const assetsInfo = useAppSelector(selectAllFungibleTokensMetadata)
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
+  const assetsMetadata = useAssetsMetadata(map(amounts, 'id'))
+
   const renderAmount = (amount: AssetAmount) => {
-    const info = assetsInfo.find((i) => i.id === amount.id)
+    const info = assetsMetadata.fungibleTokens.find((i) => i.id === amount.id)
 
     return (
       <Amount

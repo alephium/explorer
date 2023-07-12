@@ -15,12 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { useEffect, useState } from 'react'
 
-import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
+const useStateWithLocalStorage = <T extends string>(localStorageKey: string, defaultValue: T) => {
+  const [value, setValue] = useState(localStorage.getItem(localStorageKey) || defaultValue)
 
-import { AppDispatch, RootState } from '@/store/store'
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, value)
+  }, [localStorageKey, value])
 
-// Use throughout your app instead of plain `useDispatch` and `useSelector`.
-// See: https://redux-toolkit.js.org/tutorials/typescript#define-typed-hooks
-export const useAppDispatch = () => useDispatch<AppDispatch>()
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+  return [value as T, setValue] as const
+}
+
+export default useStateWithLocalStorage

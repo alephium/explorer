@@ -34,7 +34,7 @@ import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
 
 import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
-import { useAppSelector } from './hooks/redux'
+import { useSettings } from './contexts/settingsContext'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -58,7 +58,7 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const theme = useAppSelector((s) => s.settings.theme)
+  const { theme } = useSettings()
   const navigate = useNavigate()
 
   const queryClient = new QueryClient({

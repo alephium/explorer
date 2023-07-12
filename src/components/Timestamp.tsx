@@ -21,7 +21,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import styled from 'styled-components'
 
-import { useAppSelector } from '@/hooks/redux'
+import { useSettings } from '@/contexts/settingsContext'
 import { DATE_TIME_FORMAT } from '@/utils/strings'
 
 dayjs.extend(localizedFormat)
@@ -38,7 +38,7 @@ interface TimestampProps {
 }
 
 const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggle = false }: TimestampProps) => {
-  const timestampPrecisionMode = useAppSelector((s) => s.settings.timestampPrecisionMode)
+  const { timestampPrecisionMode } = useSettings()
 
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'high' : 'low')
 
