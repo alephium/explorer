@@ -86,7 +86,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
                 backgroundImage: `url(${nft.file?.image})`,
                 x: imagePosX,
                 y: imagePosY,
-                scale: 1.3
+                scale: 1.5
               }}
               animate={{
                 scale: isHovered ? 1 : 1.5
@@ -159,7 +159,8 @@ const PictureContainerShadow = styled(motion.div)`
   position: absolute;
   height: 100%;
   width: 100%;
-  box-shadow: inset 0 0 50px black;
+  box-shadow: inset 0 0 30px black;
+  z-index: 2;
 `
 
 const NFTPicture = styled(motion.div)`
@@ -184,7 +185,7 @@ const NFTDescription = styled.div`
   right: 0;
   left: 0;
   padding: 20px;
-  z-index: 1;
+  z-index: 2;
 `
 
 const BackFaceBackground = styled.div`
@@ -197,5 +198,5 @@ const BackFaceBackground = styled.div`
   left: 0;
   border-radius: 9px;
   opacity: 0.3;
-  z-index: 0;
+  z-index: 1;
 `

@@ -190,6 +190,7 @@ const MovingReflection = styled(motion.div)`
   pointer-events: none;
 
   inset: -50px;
+  z-index: 10;
 `
 
 export default Card3D
