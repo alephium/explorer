@@ -35,7 +35,9 @@ interface BadgeProps {
 }
 
 const Badge = ({ content, className, amount }: BadgeProps) => (
-  <div className={className}>{amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} /> : content}</div>
+  <div className={className}>
+    <BadgeContent>{amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} /> : content}</BadgeContent>
+  </div>
 )
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
@@ -72,18 +74,22 @@ export default styled(Badge)`
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
     return css`
-      display: flex;
+      display: ${inline ? 'inline-block' : 'block'};
       color: ${color};
       background-color: ${backgroundColor};
       border: 1px solid ${borderColor};
-      display: ${inline ? 'inline' : 'block'};
       float: ${inline ? 'none' : floatRight ? 'right' : 'left'};
       min-width: ${minWidth ? minWidth + 'px' : 'auto'};
     `
   }}
+  border-radius: 5px;
+`
 
+const BadgeContent = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
   text-align: center;
   padding: 6px 8px;
-  border-radius: 5px;
   white-space: nowrap;
 `

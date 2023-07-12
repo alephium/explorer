@@ -19,10 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
+import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -66,6 +67,8 @@ const AddressInfoPage = () => {
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
+  const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
+
   const { data: addressBalance } = useQuery({
     ...addressQueries.balance.details(addressHash),
     enabled: !!addressHash
@@ -86,7 +89,7 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const { data: addressMempoolTransactions } = useQuery({
+  const { data: addressMempoolTransactions = [] } = useQuery({
     ...addressQueries.transactions.mempool(addressHash),
     enabled: !!addressHash,
     refetchInterval: isAppVisible && pageNumber === 1 ? 10000 : undefined
@@ -128,6 +131,14 @@ const AddressInfoPage = () => {
 
     getAddressWorth()
   }, [addressBalance?.balance, displaySnackbar])
+
+  // Refetch TXs when less txs are found in mempool
+  useEffect(() => {
+    if (addressMempoolTransactions.length < lastKnownMempoolTxs.current.length) {
+      refetchTxList()
+    }
+    lastKnownMempoolTxs.current = addressMempoolTransactions
+  }, [addressMempoolTransactions, refetchTxList])
 
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
