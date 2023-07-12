@@ -70,7 +70,7 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
     const { x: positionX, y: positionY } = getPointerRelativePositionInElement(e)
 
     x.set(positionX, true)
-    y.set(positionY, true)
+    y.set(isFlipped ? 1 - positionY : positionY, true)
 
     onPointerMove && onPointerMove(positionX, positionY)
   }
@@ -111,10 +111,10 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
         >
           <FrontFaceContainer>{frontFace}</FrontFaceContainer>
           <BackFaceContainer>{backFace}</BackFaceContainer>
-          <ReflectionClipper>
+          <ReflectionClipper style={{ transform: isFlipped ? 'rotateY(180deg) rotateX(180deg)' : undefined }}>
             <MovingReflection
               style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}
-              animate={{ opacity: isHovered ? (theme.name === 'dark' ? 0.5 : 1) : 0 }}
+              animate={{ opacity: isHovered ? (theme.name === 'dark' ? 0.3 : 1) : 0 }}
             />
           </ReflectionClipper>
         </CardContainer>
@@ -134,7 +134,7 @@ const FlippingContainer = styled(motion.div)`
 
 const CardContainer = styled(motion.div)`
   position: relative;
-  height: 220px;
+  height: 205px;
   transform-style: preserve-3d;
   flex: 1;
 
@@ -159,7 +159,6 @@ const CardContainer = styled(motion.div)`
 
 const CardFace = styled.div`
   position: absolute;
-  padding: 20px;
   width: 100%;
   height: 100%;
   backface-visibility: hidden;

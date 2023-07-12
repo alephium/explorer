@@ -53,7 +53,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const desc = nft.file?.description
-  const cutDesc = desc && desc?.length > 500 ? nft.file?.description?.substring(0, 300) + '...' : desc
+  const cutDesc = desc && desc?.length > 200 ? nft.file?.description?.substring(0, 200) + '...' : desc
 
   const y = useMotionValue(0.5)
   const x = useMotionValue(0.5)
@@ -80,7 +80,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
       onCardFlip={setIsFlipped}
       onCardHover={setIsHovered}
       frontFace={
-        <>
+        <FrontFace>
           <NFTPictureContainer>
             <NFTPicture
               style={{
@@ -96,12 +96,13 @@ const NFTItem = ({ nft }: NFTItemProps) => {
             />
           </NFTPictureContainer>
           <NFTName>{nft.file?.name}</NFTName>
-        </>
+        </FrontFace>
       }
       backFace={
-        <>
+        <BackFace>
           <NFTDescription>{cutDesc}</NFTDescription>
-        </>
+          <BackFaceBackground style={{ backgroundImage: `url(${nft.file?.image})` }} />
+        </BackFace>
       }
     />
   )
@@ -140,6 +141,17 @@ const NFTCardStyled = styled(Card3D)`
   z-index: 1;
 `
 
+const FrontFace = styled.div`
+  padding: 10px;
+`
+
+const BackFace = styled.div`
+  padding: 20px;
+  height: 100%;
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-radius: 9px;
+`
+
 const NFTPictureContainer = styled(motion.div)`
   border-radius: 9px;
   overflow: hidden;
@@ -155,9 +167,31 @@ const NFTPicture = styled(motion.div)`
   background-position: center;
 `
 
-const NFTName = styled.h3`
+const NFTName = styled.div`
   margin-top: 15px;
-  margin-bottom: 0;
+  font-weight: 600;
+  margin: 15px 0;
 `
 
-const NFTDescription = styled.span``
+const NFTDescription = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  padding: 20px;
+  z-index: 1;
+`
+
+const BackFaceBackground = styled.div`
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  border-radius: 9px;
+  z-index: 0;
+  opacity: 0.3;
+`
