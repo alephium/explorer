@@ -27,11 +27,12 @@ import CursorHighlight from '../CursorHighlight'
 interface Card3DProps {
   children: ReactNode
   onPointerMove?: (pointerX: number, pointerY: number) => void
+  onCardHover?: (isHovered: boolean) => void
   onCardFlip?: (isFlipped: boolean) => void
   className?: string
 }
 
-const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps) => {
+const Card3D = ({ children, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
@@ -76,15 +77,14 @@ const Card3D = ({ children, onPointerMove, onCardFlip, className }: Card3DProps)
     onCardFlip && onCardFlip(isFlipped)
   }, [isFlipped, onCardFlip])
 
+  useEffect(() => {
+    onCardHover && onCardHover(isHovered)
+  }, [isHovered, onCardHover])
+
   return (
     <Card3DStyled whileHover={{ zIndex: 3 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
       <CardContainer
         className={className}
-        whileHover={{
-          boxShadow: theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 20px 40px rgba(0, 0, 0, 0.1)',
-          borderColor: theme.border.primary,
-          cursor: 'pointer'
-        }}
         onPointerMove={handlePointerMove}
         onPointerEnter={() => setIsHovered(true)}
         onPointerLeave={() => {
@@ -128,20 +128,36 @@ const CardContainer = styled(motion.div)`
   flex: 1;
   overflow: hidden;
   border-radius: 9px;
-  border-color: ${({ theme }) => theme.border.secondary};
   border-style: solid;
   padding: 20px;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
   box-shadow: ${({ theme }) =>
     theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.1)'};
+
+  border-color: ${({ theme }) => theme.border.secondary};
+
+  transition: box-shadow 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+  &:hover {
+    cursor: pointer;
+    border-color: ${({ theme }) => theme.border.primary};
+    box-shadow: ${({ theme }) =>
+      theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 20px 40px rgba(0, 0, 0, 0.1)'};
+  }
 `
 
 const CardContent = styled.div``
 
 const MovingReflection = styled(motion.div)`
   position: absolute;
-  background: linear-gradient(60deg, transparent 30%, rgba(255, 255, 255, 0.2) 50%, transparent 70%);
+  background: linear-gradient(
+    60deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 70%,
+    rgba(255, 255, 255, 0.3) 80%,
+    transparent 90%
+  );
   pointer-events: none;
 
   inset: -50px;

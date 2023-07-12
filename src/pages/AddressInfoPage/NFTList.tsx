@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQuery } from '@tanstack/react-query'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { assetsQueries } from '@/api/assets/assetsApi'
 import Card3D from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { NFTMetadataStored, UnverifiedNFTMetadataWithFile } from '@/types/assets'
+import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
 
 interface NFTListProps {
   nfts: UnverifiedNFTMetadataWithFile[]
@@ -51,7 +49,8 @@ interface NFTItemProps {
 }
 
 const NFTItem = ({ nft }: NFTItemProps) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isFlipped, setIsFlipped] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   const desc = nft.file?.description
   const cutDesc = desc && desc?.length > 500 ? nft.file?.description?.substring(0, 300) + '...' : desc
@@ -76,7 +75,7 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   }
 
   return (
-    <NFTCardStyled onPointerMove={handlePointerMove} onCardFlip={setIsExpanded}>
+    <NFTCardStyled onPointerMove={handlePointerMove} onCardFlip={setIsFlipped} onCardHover={setIsHovered}>
       <NFTPictureContainer>
         <NFTPicture
           style={{
@@ -86,12 +85,12 @@ const NFTItem = ({ nft }: NFTItemProps) => {
             scale: 1.3
           }}
           animate={{
-            scale: isExpanded ? 1.1 : 1.3
+            scale: isHovered ? 1 : 1.5
           }}
         />
       </NFTPictureContainer>
       <NFTName>{nft.file?.name}</NFTName>
-      {isExpanded && <NFTDescription>{cutDesc}</NFTDescription>}
+      {isFlipped && <NFTDescription>{cutDesc}</NFTDescription>}
     </NFTCardStyled>
   )
 }
@@ -100,12 +99,16 @@ export default NFTList
 
 const NFTListStyled = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 25px;
-  padding: 25px;
+  padding: 15px;
   z-index: 0;
   background-color: ${({ theme }) => theme.bg.secondary};
   border-radius: 0 0 12px 12px;
+
+  @media ${deviceBreakPoints.laptop} {
+    grid-template-columns: repeat(4, 1fr);
+  }
 
   @media ${deviceBreakPoints.tablet} {
     grid-template-columns: repeat(3, 1fr);
@@ -125,7 +128,7 @@ const NFTCardStyled = styled(Card3D)`
   z-index: 1;
 `
 
-const NFTPictureContainer = styled.div`
+const NFTPictureContainer = styled(motion.div)`
   border-radius: 9px;
   overflow: hidden;
   background-color: black;
@@ -133,13 +136,16 @@ const NFTPictureContainer = styled.div`
 
 const NFTPicture = styled(motion.div)`
   max-width: 100%;
-  height: 200px;
+  height: 150px;
   background-repeat: no-repeat;
   background-color: black;
   background-size: contain;
   background-position: center;
 `
 
-const NFTName = styled.h2``
+const NFTName = styled.h3`
+  margin-top: 15px;
+  margin-bottom: 0;
+`
 
 const NFTDescription = styled.span``

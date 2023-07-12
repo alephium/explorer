@@ -97,7 +97,7 @@ const FramedImage = ({
   isAlph?: boolean
 }) => (
   <ImageFrame
-    style={{ borderRadius: borderRadius === 'small' ? 3 : '100%', padding: borderRadius === 'small' ? 0 : 3 }}
+    style={{ borderRadius: borderRadius === 'small' ? 4 : '100%', padding: borderRadius === 'small' ? 0 : 3 }}
     isAlph={isAlph}
   >
     <Image style={{ backgroundImage: `url(${src})` }} />
