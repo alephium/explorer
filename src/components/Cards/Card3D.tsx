@@ -84,7 +84,20 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
   }, [isHovered, onCardHover])
 
   return (
-    <Card3DStyled whileHover={{ zIndex: 3 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <Card3DStyled
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => {
+        setIsHovered(false)
+        setIsFlipped(false)
+        x.set(0.5, true)
+        y.set(0.5, true)
+      }}
+      onPointerMove={handlePointerMove}
+      onClick={() => setIsFlipped((p) => !p)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      whileHover={{ zIndex: 3, cursor: 'pointer' }}
+    >
       <FlippingContainer
         animate={{
           rotateY: isFlipped ? 180 : 0,
@@ -94,20 +107,19 @@ const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, c
       >
         <CardContainer
           className={className}
-          onPointerMove={handlePointerMove}
-          onPointerEnter={() => setIsHovered(true)}
-          onPointerLeave={() => {
-            setIsHovered(false)
-            setIsFlipped(false)
-            x.set(0.5, true)
-            y.set(0.5, true)
-          }}
           style={{
             rotateY,
             rotateX,
-            zIndex: 0
+            zIndex: 0,
+            boxShadow: '0 0px 0px rgba(0, 0, 0, 0)'
           }}
-          onClick={() => setIsFlipped((p) => !p)}
+          animate={{
+            boxShadow: isHovered
+              ? theme.name === 'light'
+                ? '0 20px 40px rgba(0, 0, 0, 0.4)'
+                : '0 20px 40px rgba(0, 0, 0, 0.8)'
+              : undefined
+          }}
         >
           <FrontFaceContainer>{frontFace}</FrontFaceContainer>
           <BackFaceContainer>{backFace}</BackFaceContainer>
@@ -142,19 +154,8 @@ const CardContainer = styled(motion.div)`
   border-style: solid;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: ${({ theme }) =>
-    theme.name === 'dark' ? '0 1px 2px rgba(0, 0, 0, 0.4)' : '0 1px 2px rgba(0, 0, 0, 0.1)'};
 
   border-color: ${({ theme }) => theme.border.secondary};
-
-  transition: box-shadow 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
-
-  &:hover {
-    cursor: pointer;
-    border-color: ${({ theme }) => theme.border.primary};
-    box-shadow: ${({ theme }) =>
-      theme.name === 'dark' ? '0 50px 80px rgba(0, 0, 0, 0.6)' : '0 20px 40px rgba(0, 0, 0, 0.1)'};
-  }
 `
 
 const CardFace = styled.div`

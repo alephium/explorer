@@ -49,7 +49,6 @@ interface NFTItemProps {
 }
 
 const NFTItem = ({ nft }: NFTItemProps) => {
-  const [isFlipped, setIsFlipped] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
   const desc = nft.file?.description
@@ -77,11 +76,11 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   return (
     <NFTCardStyled
       onPointerMove={handlePointerMove}
-      onCardFlip={setIsFlipped}
       onCardHover={setIsHovered}
       frontFace={
         <FrontFace>
           <NFTPictureContainer>
+            <PictureContainerShadow animate={{ opacity: isHovered ? 1 : 0 }} />
             <NFTPicture
               style={{
                 backgroundImage: `url(${nft.file?.image})`,
@@ -115,7 +114,6 @@ const NFTListStyled = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: 25px;
   padding: 15px;
-  z-index: 0;
   background-color: ${({ theme }) => theme.bg.secondary};
   border-radius: 0 0 12px 12px;
 
@@ -138,7 +136,6 @@ const NFTListStyled = styled.div`
 
 const NFTCardStyled = styled(Card3D)`
   background-color: ${({ theme }) => theme.bg.primary};
-  z-index: 1;
 `
 
 const FrontFace = styled.div`
@@ -153,9 +150,16 @@ const BackFace = styled.div`
 `
 
 const NFTPictureContainer = styled(motion.div)`
+  position: relative;
   border-radius: 9px;
   overflow: hidden;
-  background-color: black;
+`
+
+const PictureContainerShadow = styled(motion.div)`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  box-shadow: inset 0 0 50px black;
 `
 
 const NFTPicture = styled(motion.div)`
@@ -192,6 +196,6 @@ const BackFaceBackground = styled.div`
   right: 0;
   left: 0;
   border-radius: 9px;
-  z-index: 0;
   opacity: 0.3;
+  z-index: 0;
 `
