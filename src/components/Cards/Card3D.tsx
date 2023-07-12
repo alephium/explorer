@@ -16,28 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, Transition, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { PointerEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 import { getPointerRelativePositionInElement } from '@/utils/pointer'
 
-import CursorHighlight from '../CursorHighlight'
-
 interface Card3DProps {
-  children: ReactNode
+  frontFace: ReactNode
+  backFace: ReactNode
   onPointerMove?: (pointerX: number, pointerY: number) => void
   onCardHover?: (isHovered: boolean) => void
   onCardFlip?: (isFlipped: boolean) => void
   className?: string
 }
 
-const Card3D = ({ children, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
+export const card3DHoverTransition: Transition = {
+  type: 'spring',
+  stiffness: 1000,
+  damping: 100
+}
+
+const Card3D = ({ frontFace, backFace, onPointerMove, onCardFlip, onCardHover, className }: Card3DProps) => {
   const theme = useTheme()
   const [isHovered, setIsHovered] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
-
-  const baseRotation = isFlipped ? 180 : 0
 
   const angle = 10
 
@@ -64,7 +67,6 @@ const Card3D = ({ children, onPointerMove, onCardFlip, onCardHover, className }:
   })
 
   const handlePointerMove = (e: PointerEvent) => {
-    if (isFlipped) return
     const { x: positionX, y: positionY } = getPointerRelativePositionInElement(e)
 
     x.set(positionX, true)
@@ -83,53 +85,61 @@ const Card3D = ({ children, onPointerMove, onCardFlip, onCardHover, className }:
 
   return (
     <Card3DStyled whileHover={{ zIndex: 3 }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <CardContainer
-        className={className}
-        onPointerMove={handlePointerMove}
-        onPointerEnter={() => setIsHovered(true)}
-        onPointerLeave={() => {
-          setIsHovered(false)
-          setIsFlipped(false)
-          x.set(0.5, true)
-          y.set(0.5, true)
-        }}
-        style={{
-          rotateY,
-          rotateX,
-          zIndex: 0
-        }}
+      <FlippingContainer
         animate={{
+          rotateY: isFlipped ? 180 : 0,
           translateZ: isHovered ? 100 : 0
         }}
-        onClick={() => setIsFlipped((p) => !p)}
+        transition={card3DHoverTransition}
       >
-        <CardContent>{children}</CardContent>
-        <MovingReflection
-          style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}
-          animate={{ opacity: isHovered ? (theme.name === 'dark' ? 0.5 : 1) : 0 }}
-        />
-      </CardContainer>
+        <CardContainer
+          className={className}
+          onPointerMove={handlePointerMove}
+          onPointerEnter={() => setIsHovered(true)}
+          onPointerLeave={() => {
+            setIsHovered(false)
+            setIsFlipped(false)
+            x.set(0.5, true)
+            y.set(0.5, true)
+          }}
+          style={{
+            rotateY,
+            rotateX,
+            zIndex: 0
+          }}
+          onClick={() => setIsFlipped((p) => !p)}
+        >
+          <FrontFaceContainer>{frontFace}</FrontFaceContainer>
+          <BackFaceContainer>{backFace}</BackFaceContainer>
+          <ReflectionClipper>
+            <MovingReflection
+              style={{ translateX: reflectionTranslationX, translateY: reflectionTranslationY, opacity: 0 }}
+              animate={{ opacity: isHovered ? (theme.name === 'dark' ? 0.5 : 1) : 0 }}
+            />
+          </ReflectionClipper>
+        </CardContainer>
+      </FlippingContainer>
     </Card3DStyled>
   )
 }
 
 const Card3DStyled = styled(motion.div)`
-  display: flex;
   position: relative;
   perspective: 1000px;
+`
+
+const FlippingContainer = styled(motion.div)`
   transform-style: preserve-3d;
 `
 
 const CardContainer = styled(motion.div)`
-  min-height: 11rem;
-  display: flex;
-  flex-direction: column;
   position: relative;
+  height: 220px;
+  transform-style: preserve-3d;
   flex: 1;
-  overflow: hidden;
+
   border-radius: 9px;
   border-style: solid;
-  padding: 20px;
   border-width: 1px;
   background-color: ${({ theme }) => theme.bg.primary};
   box-shadow: ${({ theme }) =>
@@ -147,7 +157,26 @@ const CardContainer = styled(motion.div)`
   }
 `
 
-const CardContent = styled.div``
+const CardFace = styled.div`
+  position: absolute;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+`
+
+const FrontFaceContainer = styled(CardFace)``
+
+const BackFaceContainer = styled(CardFace)`
+  transform: rotateY(180deg);
+`
+const ReflectionClipper = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 9px;
+`
 
 const MovingReflection = styled(motion.div)`
   position: absolute;

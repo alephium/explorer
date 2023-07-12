@@ -20,7 +20,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import Card3D from '@/components/Cards/Card3D'
+import Card3D, { card3DHoverTransition } from '@/components/Cards/Card3D'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { UnverifiedNFTMetadataWithFile } from '@/types/assets'
@@ -75,23 +75,35 @@ const NFTItem = ({ nft }: NFTItemProps) => {
   }
 
   return (
-    <NFTCardStyled onPointerMove={handlePointerMove} onCardFlip={setIsFlipped} onCardHover={setIsHovered}>
-      <NFTPictureContainer>
-        <NFTPicture
-          style={{
-            backgroundImage: `url(${nft.file?.image})`,
-            x: imagePosX,
-            y: imagePosY,
-            scale: 1.3
-          }}
-          animate={{
-            scale: isHovered ? 1 : 1.5
-          }}
-        />
-      </NFTPictureContainer>
-      <NFTName>{nft.file?.name}</NFTName>
-      {isFlipped && <NFTDescription>{cutDesc}</NFTDescription>}
-    </NFTCardStyled>
+    <NFTCardStyled
+      onPointerMove={handlePointerMove}
+      onCardFlip={setIsFlipped}
+      onCardHover={setIsHovered}
+      frontFace={
+        <>
+          <NFTPictureContainer>
+            <NFTPicture
+              style={{
+                backgroundImage: `url(${nft.file?.image})`,
+                x: imagePosX,
+                y: imagePosY,
+                scale: 1.3
+              }}
+              animate={{
+                scale: isHovered ? 1 : 1.5
+              }}
+              transition={card3DHoverTransition}
+            />
+          </NFTPictureContainer>
+          <NFTName>{nft.file?.name}</NFTName>
+        </>
+      }
+      backFace={
+        <>
+          <NFTDescription>{cutDesc}</NFTDescription>
+        </>
+      }
+    />
   )
 }
 
