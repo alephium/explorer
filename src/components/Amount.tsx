@@ -74,7 +74,9 @@ const Amount = ({
       data-tip={
         isUnknownToken
           ? integralPart
-          : !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+          : !fullPrecision && value
+          ? getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+          : undefined
       }
     >
       {value !== undefined ? (

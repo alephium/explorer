@@ -93,6 +93,7 @@ const AddressLinkBase = ({
         suffix={assetInfo?.symbol}
         decimals={assetInfo?.decimals}
         isUnknownToken={!assetInfo?.symbol}
+        fullPrecision
       />
     )
   }
