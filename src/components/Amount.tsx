@@ -48,7 +48,7 @@ const Amount = ({
   className,
   fadeDecimals,
   fullPrecision = false,
-  nbOfDecimalsToShow,
+  nbOfDecimalsToShow = 4,
   color,
   overrideSuffixColor,
   tabIndex,
