@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { mergeQueryKeys } from '@lukemorales/query-key-factory'
 
-import { blocks } from './blocks/blocksApi'
-import { infos } from './infos/infosApi'
-import { transactions } from './transactions/transactionsApi'
+import { blocks } from '@/api/blocks/blocksApi'
+import { infos } from '@/api/infos/infosApi'
+import { transactions } from '@/api/transactions/transactionsApi'
 
 export const queries = mergeQueryKeys(transactions, blocks, infos)

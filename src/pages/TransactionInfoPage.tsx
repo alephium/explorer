@@ -75,9 +75,9 @@ const TransactionInfoPage = () => {
     txInfoErrorStatus = e.status
   }
 
-  previousTransactionData.current = transactionData as Transaction
-
   const txInfo = transactionData as Transaction
+
+  previousTransactionData.current = txInfo
 
   const { data: txBlock } = useQuery({ ...queries.blocks.detail(txInfo?.blockHash), enabled: isTxConfirmed(txInfo) })
 

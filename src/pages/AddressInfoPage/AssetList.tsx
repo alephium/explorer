@@ -27,10 +27,9 @@ import { assetsQueries } from '@/api/assets/assetsApi'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { useQueriesData } from '@/hooks/useQueriesData'
+import NFTList from '@/pages/AddressInfoPage/NFTList'
+import TokenList from '@/pages/AddressInfoPage/TokenList'
 import { AddressHash } from '@/types/addresses'
-
-import NFTList from './NFTList'
-import TokenList from './TokenList'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -61,15 +60,9 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   )
 
   let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
-    if (!t) return []
-
     const metadata = find(fungibleTokens, { id: t.id })
 
-    if (metadata) {
-      return [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }]
-    }
-
-    return []
+    return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
   })
 
   tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [

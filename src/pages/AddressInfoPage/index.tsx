@@ -46,12 +46,11 @@ import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
+import AssetList from '@/pages/AddressInfoPage/AssetList'
+import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 import { formatNumberForDisplay } from '@/utils/strings'
-
-import AddressTransactionRow from './AddressTransactionRow'
-import AssetList from './AssetList'
-import AddressInfoGrid from './InfoGrid'
 
 type ParamTypes = {
   id: string

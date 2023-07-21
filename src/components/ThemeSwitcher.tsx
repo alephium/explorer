@@ -43,18 +43,14 @@ const toggleVariants = {
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
   const { theme, switchTheme } = useSettings()
 
-  const handleThemeSwitch = (theme: ThemeType) => {
-    switchTheme(theme)
-  }
-
   return (
-    <StyledThemeSwitcher onClick={() => handleThemeSwitch(theme === 'light' ? 'dark' : 'light')} className={className}>
+    <StyledThemeSwitcher onClick={() => switchTheme(theme === 'light' ? 'dark' : 'light')} className={className}>
       <ToggleContent>
         <ToggleIcon>
-          <Sun onClick={() => handleThemeSwitch('light')} color={getButtonColor(theme, 'light')} size={18} />
+          <Sun onClick={() => switchTheme('light')} color={getButtonColor(theme, 'light')} size={18} />
         </ToggleIcon>
         <ToggleIcon>
-          <Moon onClick={() => handleThemeSwitch('dark')} color={getButtonColor(theme, 'dark')} size={18} />
+          <Moon onClick={() => switchTheme('dark')} color={getButtonColor(theme, 'dark')} size={18} />
         </ToggleIcon>
       </ToggleContent>
       <ToggleFloatingIndicator

@@ -64,14 +64,14 @@ export const assetsQueries = createQueryKeyStore({
       queryFn: (): Promise<UnverifiedNFTMetadata> =>
         client.node
           .fetchNFTMetaData(assetId)
-          .then((r) => ({ id: assetId, type: 'non-fungible', verified: false, ...r }))
+          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false }))
     })
   },
   nftFile: {
     detail: (assetId: string, dataUri: string) => ({
       queryKey: [assetId, dataUri],
       queryFn: (): Promise<NFTFile> | undefined =>
-        fetch(dataUri).then((res) => res.json().then((f) => ({ assetId, ...f })))
+        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId })))
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?
@@ -81,7 +81,7 @@ export const assetsQueries = createQueryKeyStore({
       queryFn: () =>
         client.explorer.addresses
           .getAddressesAddressTokensTokenIdBalance(addressHash, tokenId)
-          .then((balance) => ({ id: tokenId, ...balance }))
+          .then((balance) => ({ ...balance, id: tokenId }))
     })
   }
 })

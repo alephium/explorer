@@ -25,6 +25,8 @@ import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
+import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
+import { useSettings } from '@/contexts/settingsContext'
 import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
 import BlockInfoSection from '@/pages/BlockInfoPage'
@@ -32,9 +34,6 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
-
-import { SnackbarProvider } from './components/Snackbar/SnackbarProvider'
-import { useSettings } from './contexts/settingsContext'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -75,10 +74,10 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-      <QueryClientProvider client={queryClient}>
-        <SnackbarProvider>
-          <GlobalStyle />
-          <MainContainer>
+      <SnackbarProvider>
+        <GlobalStyle />
+        <MainContainer>
+          <QueryClientProvider client={queryClient}>
             <AnimateSharedLayout>
               <AppHeader />
               <ContentContainer>
@@ -97,10 +96,10 @@ const App = () => {
             </AnimateSharedLayout>
             <AppFooter />
             <SnackbarAnchor id="snackbar-anchor" />
-          </MainContainer>
-          <Background />
-        </SnackbarProvider>
-      </QueryClientProvider>
+          </QueryClientProvider>
+        </MainContainer>
+        <Background />
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }

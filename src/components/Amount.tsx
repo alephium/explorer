@@ -54,11 +54,11 @@ const Amount = ({
   tabIndex,
   showPlusMinus = false
 }: AmountProps) => {
+  const assetMetadata = useAssetMetadata(assetId)
+
   let quantitySymbol = ''
   let amount = ''
   const isNegative = value && value < 0
-
-  const assetMetadata = useAssetMetadata(assetId)
 
   const assetType = assetMetadata.type
   const isUnknownToken = assetType === 'unknown'
@@ -126,18 +126,9 @@ const Amount = ({
   )
 }
 
-const getAmount = ({
-  value,
-  isFiat,
-  decimals,
-  nbOfDecimalsToShow,
-  fullPrecision,
-  isUnknownToken
-}: Partial<AmountProps>) =>
+const getAmount = ({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision }: Partial<AmountProps>) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
-    : isUnknownToken
-    ? convertToPositive(value as bigint).toString()
     : formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,

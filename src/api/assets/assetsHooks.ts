@@ -20,11 +20,10 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
 
+import { assetsQueries } from '@/api/assets/assetsApi'
+import client from '@/api/client'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
-
-import client from '../client'
-import { assetsQueries } from './assetsApi'
 
 export const useAssetMetadata = (assetId: string) => {
   const isAlph = assetId === ALPH.id

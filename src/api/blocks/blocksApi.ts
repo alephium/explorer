@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 
-import client from '../client'
+import client from '@/api/client'
 
 export const blocks = createQueryKeys('blocks', {
   detail: (blockHash: string) => ({
