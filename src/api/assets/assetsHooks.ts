@@ -30,34 +30,29 @@ export const useAssetMetadata = (assetId: string) => {
 
   const { data: allVerifiedTokensMetadata } = useQuery({
     ...assetsQueries.metadata.allVerifiedTokens(client.networkType),
-    enabled: !isAlph,
-    staleTime: Infinity
+    enabled: !isAlph
   })
   const verifiedTokenMetadata = allVerifiedTokensMetadata?.find((m) => m.id === assetId)
 
   const { data: assetBaseRaw } = useQuery({
-    ...assetsQueries.type.details(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata,
-    staleTime: Infinity
+    ...assetsQueries.type.one(assetId),
+    enabled: !isAlph && !verifiedTokenMetadata
   })
   const assetType = assetBaseRaw?.type
 
   const { data: unverifiedFungibleTokenMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedFungibleToken(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible',
-    staleTime: Infinity
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'fungible'
   })
 
   const { data: unverifiedNFTMetadata } = useQuery({
     ...assetsQueries.metadata.unverifiedNFT(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible',
-    staleTime: Infinity
+    enabled: !isAlph && !verifiedTokenMetadata && assetType === 'non-fungible'
   })
 
   const { data: nftData } = useQuery({
     ...assetsQueries.nftFile.detail(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
-    enabled: assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri,
-    staleTime: Infinity
+    enabled: assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
   })
 
   const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined = unverifiedNFTMetadata
@@ -74,36 +69,32 @@ export const useAssetMetadata = (assetId: string) => {
 }
 
 export const useAssetsMetadata = (assetIds: string[] = []) => {
-  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery({
-    ...assetsQueries.metadata.allVerifiedTokens(client.networkType),
-    staleTime: Infinity
-  })
+  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery(
+    assetsQueries.metadata.allVerifiedTokens(client.networkType)
+  )
 
   const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => assetIds.includes(m.id)) || []
 
   const unverifiedAssetIds = assetIds.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
-    unverifiedAssetIds.map((id) => ({ ...assetsQueries.type.details(id), staleTime: Infinity }))
+    unverifiedAssetIds.map((id) => assetsQueries.type.one(id))
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'fungible' ? { ...assetsQueries.metadata.unverifiedFungibleToken(id), staleTime: Infinity } : []
+      type === 'fungible' ? assetsQueries.metadata.unverifiedFungibleToken(id) : []
     )
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'non-fungible' ? { ...assetsQueries.metadata.unverifiedNFT(id), staleTime: Infinity } : []
+      type === 'non-fungible' ? assetsQueries.metadata.unverifiedNFT(id) : []
     )
   )
 
   const { data: NFTFiles } = useQueriesData(
-    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => ({
-      ...assetsQueries.nftFile.detail(id, tokenUri),
-      staleTime: Infinity
-    }))
+    flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => assetsQueries.nftFile.detail(id, tokenUri))
   )
 
   const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.map((m) => ({

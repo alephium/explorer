@@ -31,7 +31,7 @@ export type UnverifiedFungibleTokenMetadata = TokenInfo & { type: 'fungible'; ve
 
 export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungible'; verified: false }
 
-export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file: NFTFile }
+export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file?: NFTFile }
 
 export type NFTFile = {
   assetId: string

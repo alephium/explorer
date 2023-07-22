@@ -16,10 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { mergeQueryKeys } from '@lukemorales/query-key-factory'
+import { UseQueryOptions } from '@tanstack/react-query'
 
 import { blocks } from '@/api/blocks/blocksApi'
 import { infos } from '@/api/infos/infosApi'
 import { transactions } from '@/api/transactions/transactionsApi'
+
+type QueryFn = (...args: any[]) => UseQueryOptions
+
+interface Queries {
+  [key: string]: QueryFn
+}
+
+type QueriesCollection<T> = {
+  [P in keyof T]: T[P]
+}
+
+// Define your factory function with generics
+export const createQueriesCollection = <T extends Record<string, Queries>>(collection: T): QueriesCollection<T> =>
+  collection
 
 export const queries = mergeQueryKeys(transactions, blocks, infos)

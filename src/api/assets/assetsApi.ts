@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TokenList } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
-import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
+import { createQueriesCollection } from '@/api'
 import {
   AssetBase,
   NFTFile,
@@ -31,24 +31,26 @@ import { NetworkType } from '@/types/network'
 
 import client from '../client'
 
-export const assetsQueries = createQueryKeyStore({
+export const assetsQueries = createQueriesCollection({
   type: {
-    details: (assetId: string) => ({
-      queryKey: [assetId],
+    one: (assetId: string) => ({
+      queryKey: ['assetType', assetId],
       queryFn: (): Promise<AssetBase> =>
-        client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r ?? 'unknown' }))
+        client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r ?? 'unknown' })),
+      staleTime: Infinity
     })
   },
   metadata: {
     allVerifiedTokens: (network: NetworkType) => ({
-      queryKey: [network],
+      queryKey: ['verifiedTokens', network],
       queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> =>
         fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then((r) =>
           r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
-        )
+        ),
+      staleTime: Infinity
     }),
     unverifiedFungibleToken: (assetId: string) => ({
-      queryKey: [assetId],
+      queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
         client.node.fetchFungibleTokenMetaData(assetId).then((r) => ({
           ...r,
@@ -57,27 +59,30 @@ export const assetsQueries = createQueryKeyStore({
           symbol: hexToString(r.symbol),
           type: 'fungible',
           verified: false
-        }))
+        })),
+      staleTime: Infinity
     }),
     unverifiedNFT: (assetId: string) => ({
-      queryKey: [assetId],
+      queryKey: ['unverifiedNFT', assetId],
       queryFn: (): Promise<UnverifiedNFTMetadata> =>
         client.node
           .fetchNFTMetaData(assetId)
-          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false }))
+          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
+      staleTime: Infinity
     })
   },
   nftFile: {
     detail: (assetId: string, dataUri: string) => ({
-      queryKey: [assetId, dataUri],
+      queryKey: ['nftFile', assetId],
       queryFn: (): Promise<NFTFile> | undefined =>
-        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId })))
+        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+      staleTime: Infinity
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?
   balances: {
     addressToken: (addressHash: string, tokenId: string) => ({
-      queryKey: [addressHash, tokenId],
+      queryKey: ['addressTokenBalance', addressHash, tokenId],
       queryFn: () =>
         client.explorer.addresses
           .getAddressesAddressTokensTokenIdBalance(addressHash, tokenId)
