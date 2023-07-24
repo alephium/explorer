@@ -59,7 +59,7 @@ const TransactionInfoPage = () => {
     error: transactionInfoError,
     isLoading: txInfoLoading
   } = useQuery({
-    ...queries.transactions.detail(id || ''),
+    ...queries.transactions.transaction.one(id || ''),
     enabled: !!id,
     refetchInterval:
       isAppVisible && (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current))
@@ -79,9 +79,9 @@ const TransactionInfoPage = () => {
 
   previousTransactionData.current = txInfo
 
-  const { data: txBlock } = useQuery({ ...queries.blocks.detail(txInfo?.blockHash), enabled: isTxConfirmed(txInfo) })
+  const { data: txBlock } = useQuery({ ...queries.blocks.block.one(txInfo?.blockHash), enabled: isTxConfirmed(txInfo) })
 
-  const { data: chainHeights } = useQuery(queries.infos.heigths())
+  const { data: chainHeights } = useQuery(queries.infos.all.heights())
 
   const assetIds = _(txInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
     .uniq()

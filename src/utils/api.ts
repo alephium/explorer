@@ -16,14 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import client from '@/api/client'
-import { createQueriesCollection } from '@/utils/api'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const infosQueries = createQueriesCollection({
-  all: {
-    heights: () => ({
-      queryKey: ['heights'],
-      queryFn: () => client.explorer.infos.getInfosHeights()
-    })
-  }
-})
+import { UseQueryOptions } from '@tanstack/react-query'
+
+type QueryFn = (...args: any[]) => UseQueryOptions
+
+interface Queries {
+  [key: string]: QueryFn
+}
+
+type QueriesCollection<T> = {
+  [P in keyof T]: T[P]
+}
+
+export const createQueriesCollection = <T extends Record<string, Queries>>(collection: T): QueriesCollection<T> =>
+  collection

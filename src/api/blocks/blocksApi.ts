@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createQueryKeys } from '@lukemorales/query-key-factory'
-
 import client from '@/api/client'
+import { createQueriesCollection } from '@/utils/api'
 
-export const blocks = createQueryKeys('blocks', {
-  detail: (blockHash: string) => ({
-    queryKey: [blockHash],
-    queryFn: () => client.explorer.blocks.getBlocksBlockHash(blockHash)
-  })
+export const blocksQueries = createQueriesCollection({
+  block: {
+    one: (blockHash: string) => ({
+      queryKey: ['block', blockHash],
+      queryFn: () => client.explorer.blocks.getBlocksBlockHash(blockHash)
+    })
+  }
 })

@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenList } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
 
-import { createQueriesCollection } from '@/api'
 import {
   AssetBase,
   NFTFile,
@@ -28,6 +27,7 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
+import { createQueriesCollection } from '@/utils/api'
 
 import client from '../client'
 

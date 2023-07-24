@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createQueryKeys } from '@lukemorales/query-key-factory'
-
 import client from '@/api/client'
+import { createQueriesCollection } from '@/utils/api'
 
-export const transactions = createQueryKeys('transactions', {
-  detail: (txHash: string) => ({
-    queryKey: [txHash],
-    queryFn: () => client.explorer.transactions.getTransactionsTransactionHash(txHash)
-  })
+export const transactionsQueries = createQueriesCollection({
+  transaction: {
+    one: (txHash: string) => ({
+      queryKey: ['transactions', txHash],
+      queryFn: () => client.explorer.transactions.getTransactionsTransactionHash(txHash)
+    })
+  }
 })

@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
-import { assetsQueries } from '@/api/assets/assetsApi'
+import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import { useQueriesData } from '@/hooks/useQueriesData'
@@ -49,12 +49,12 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   const unknownAssetsIds = assetIds?.filter((id) => !knownAssetsIds.includes(id)) || []
 
   const { data: tokenBalances } = useQueriesData(
-    fungibleTokens.map((a) => assetsQueries.balances.addressToken(addressHash, a.id))
+    fungibleTokens.map((a) => queries.assets.balances.addressToken(addressHash, a.id))
   )
 
   const { data: unknownAssetsBalances } = useQueriesData(
     unknownAssetsIds.map((id) => ({
-      ...assetsQueries.balances.addressToken(addressHash, id),
+      ...queries.assets.balances.addressToken(addressHash, id),
       enabled: unknownAssetsIds.length > 0
     }))
   )

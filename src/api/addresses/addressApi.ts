@@ -16,20 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createQueryKeyStore } from '@lukemorales/query-key-factory'
-
 import client from '@/api/client'
+import { createQueriesCollection } from '@/utils/api'
 
-export const addressQueries = createQueryKeyStore({
+export const addressQueries = createQueriesCollection({
   balance: {
     details: (addressHash: string) => ({
-      queryKey: [addressHash],
+      queryKey: ['addressBalance', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressBalance(addressHash)
     })
   },
   transactions: {
-    settled: (addressHash: string, pageNumber: number, limit?: number) => ({
-      queryKey: [addressHash, pageNumber, limit],
+    confirmed: (addressHash: string, pageNumber: number, limit?: number) => ({
+      queryKey: ['addressConfirmedTransactions', addressHash, pageNumber, limit],
       queryFn: () =>
         client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
           page: pageNumber,
@@ -37,17 +36,17 @@ export const addressQueries = createQueryKeyStore({
         })
     }),
     mempool: (addressHash: string) => ({
-      queryKey: [addressHash],
+      queryKey: ['addressPendingTransactions', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
     }),
     txNumber: (addressHash: string) => ({
-      queryKey: [addressHash],
+      queryKey: ['addressTxNumber', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
     })
   },
   assets: {
     all: (addressHash: string) => ({
-      queryKey: [addressHash],
+      queryKey: ['addressAssets', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressTokens(addressHash)
     })
   }

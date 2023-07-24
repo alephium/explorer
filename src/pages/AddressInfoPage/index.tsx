@@ -28,7 +28,7 @@ import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { addressQueries } from '@/api/addresses/addressApi'
+import { queries } from '@/api'
 import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
@@ -69,7 +69,7 @@ const AddressInfoPage = () => {
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
   const { data: addressBalance } = useQuery({
-    ...addressQueries.balance.details(addressHash),
+    ...queries.address.balance.details(addressHash),
     enabled: !!addressHash
   })
 
@@ -78,29 +78,29 @@ const AddressInfoPage = () => {
     isLoading: txListLoading,
     refetch: refetchTxList
   } = useQuery({
-    ...addressQueries.transactions.settled(addressHash, pageNumber),
+    ...queries.address.transactions.confirmed(addressHash, pageNumber),
     enabled: !!addressHash,
     keepPreviousData: true
   })
 
   const { data: latestTransaction } = useQuery({
-    ...addressQueries.transactions.settled(addressHash, 1, 1),
+    ...queries.address.transactions.confirmed(addressHash, 1, 1),
     enabled: !!addressHash
   })
 
   const { data: addressMempoolTransactions = [] } = useQuery({
-    ...addressQueries.transactions.mempool(addressHash),
+    ...queries.address.transactions.mempool(addressHash),
     enabled: !!addressHash,
     refetchInterval: isAppVisible && pageNumber === 1 ? 10000 : undefined
   })
 
   const { data: txNumber, isLoading: txNumberLoading } = useQuery({
-    ...addressQueries.transactions.txNumber(addressHash),
+    ...queries.address.transactions.txNumber(addressHash),
     enabled: !!addressHash
   })
 
   const { data: addressAssetIds = [], isLoading: assetsLoading } = useQuery({
-    ...addressQueries.assets.all(addressHash),
+    ...queries.address.assets.all(addressHash),
     enabled: !!addressHash
   })
 
