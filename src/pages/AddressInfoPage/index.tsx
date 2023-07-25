@@ -21,9 +21,9 @@ import { ALPH } from '@alephium/token-list'
 import { groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import { FileDown } from 'lucide-react'
 import QRCode from 'qrcode.react'
 import { useEffect, useRef, useState } from 'react'
+import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -220,7 +220,7 @@ const AddressInfoPage = () => {
         <h2>Transactions</h2>
         {txNumber && txNumber > 0 ? (
           <Button onClick={handleExportModalOpen}>
-            <FileDown size={16} />
+            <RiFileDownloadLine size={16} />
             Download CSV
           </Button>
         ) : null}

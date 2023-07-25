@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError, getHumanReadableError } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import { isString } from 'lodash'
-import { Check } from 'lucide-react'
 import { ComponentProps, useCallback, useState } from 'react'
+import { RiCheckLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import client from '@/api/client'
@@ -73,7 +73,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       displaySnackbar({
         text: 'Your CSV has been successfully downloaded.',
         type: 'success',
-        Icon: <Check size={14} />
+        Icon: <RiCheckLine size={14} />
       })
     } catch (e) {
       console.error(e)

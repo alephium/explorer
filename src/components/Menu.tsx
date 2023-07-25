@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { MoreVertical } from 'lucide-react'
 import { useState } from 'react'
+import { RiMore2Line } from 'react-icons/ri'
 import styled from 'styled-components'
 
 interface MenuItem {
@@ -64,7 +64,7 @@ const Menu = ({
       <MenuCurrentContent>
         {icon && <IconContainer>{icon}</IconContainer>}
         <Label>{label}</Label>
-        <MoreVertical size={15} />
+        <RiMore2Line size={15} />
       </MenuCurrentContent>
       <AnimatePresence>
         {visible && (

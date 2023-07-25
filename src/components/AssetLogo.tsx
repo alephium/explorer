@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { HelpCircle } from 'lucide-react'
 import { useEffect } from 'react'
+import { RiCopperCoinLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -55,12 +55,12 @@ const AssetLogo = (props: AssetLogoProps) => {
         ) : metadata.name ? (
           <TokenInitials>{metadata.name.substring(0, 2)}</TokenInitials>
         ) : (
-          <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
+          <RiQuestionLine color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
         )
       ) : assetType === 'non-fungible' ? (
         <FramedImage src={metadata.file?.image} borderRadius="small" />
       ) : (
-        <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
+        <RiCopperCoinLine color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
       )}
       <ReactTooltip
         id="picture-tooltip"

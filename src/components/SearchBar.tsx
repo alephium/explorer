@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
 import React, { useRef, useState } from 'react'
+import { RiSearchLine } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -116,7 +116,7 @@ export default styled(SearchBar)`
   height: 50px;
 `
 
-const SearchIcon = styled(Search)`
+const SearchIcon = styled(RiSearchLine)`
   color: ${({ theme }) => theme.font.primary};
   position: absolute;
   right: 20px;

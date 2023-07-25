@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { isMempoolTx } from '@alephium/sdk'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
-import { ArrowRight } from 'lucide-react'
+import { RiArrowRightLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -94,7 +94,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
     <>
       <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
         <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
+          <Icon size={directionIconSize} strokeWidth={1} color={iconColor} />
           {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 
@@ -124,7 +124,6 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                 color={isMoved ? theme.font.secondary : undefined}
                 suffix={symbol}
                 decimals={decimals}
-                isUnknownToken={!symbol}
               />
             ))}
           </AmountCell>
@@ -152,7 +151,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                   </IODetailList>
 
                   <span style={{ textAlign: 'center' }}>
-                    <ArrowRight size={12} />
+                    <RiArrowRightLine size={12} />
                   </span>
 
                   <IODetailList>

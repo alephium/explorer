@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetAmount } from '@alephium/sdk'
 import dayjs from 'dayjs'
 import { map } from 'lodash'
-import { ExternalLink } from 'lucide-react'
+import { RiExternalLinkLine } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -94,7 +94,6 @@ const AddressLinkBase = ({
         value={amount.amount}
         suffix={info?.symbol}
         decimals={info?.decimals}
-        isUnknownToken={!info?.name}
       />
     )
   }
@@ -104,7 +103,7 @@ const AddressLinkBase = ({
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
-          <ExternalLink size={10} />
+          <RiExternalLinkLine size={10} />
         </TxLink>
       )}
       {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}

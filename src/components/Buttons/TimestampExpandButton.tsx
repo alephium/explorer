@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ChevronsLeftRight, ChevronsRightLeft, LucideProps } from 'lucide-react'
+import { IconBaseProps } from 'react-icons'
+import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
@@ -27,13 +28,13 @@ interface TimestampExpandButtonProps {
   className?: string
 }
 
-const config: Record<OnOff, { Icon: (props: LucideProps) => JSX.Element; tooltipContent: string }> = {
+const config: Record<OnOff, { Icon: (props: IconBaseProps) => JSX.Element; tooltipContent: string }> = {
   on: {
-    Icon: ChevronsRightLeft,
+    Icon: RiContractLeftRightLine,
     tooltipContent: 'Switch to simple time'
   },
   off: {
-    Icon: ChevronsLeftRight,
+    Icon: RiExpandLeftRightLine,
     tooltipContent: 'Switch to precise time'
   }
 }

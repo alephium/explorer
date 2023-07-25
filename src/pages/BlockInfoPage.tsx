@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { RiArrowRightLine } from 'react-icons/ri'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
@@ -217,7 +217,7 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
         <span>
           {t.inputs ? t.inputs.length : 0} {t.inputs && t.inputs.length === 1 ? 'address' : 'addresses'}
         </span>
-        <ArrowRight size={15} />
+        <RiArrowRightLine size={15} />
         <span>
           {outputs ? outputs.length : 0} {outputs?.length === 1 ? 'address' : 'addresses'}
         </span>

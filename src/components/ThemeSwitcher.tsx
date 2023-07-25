@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { Moon, Sun } from 'lucide-react'
+import { RiMoonLine, RiSunLine } from 'react-icons/ri'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -47,10 +47,10 @@ const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
     <StyledThemeSwitcher onClick={() => switchTheme(theme === 'light' ? 'dark' : 'light')} className={className}>
       <ToggleContent>
         <ToggleIcon>
-          <Sun onClick={() => switchTheme('light')} color={getButtonColor(theme, 'light')} size={18} />
+          <RiSunLine onClick={() => switchTheme('light')} color={getButtonColor(theme, 'light')} size={18} />
         </ToggleIcon>
         <ToggleIcon>
-          <Moon onClick={() => switchTheme('dark')} color={getButtonColor(theme, 'dark')} size={18} />
+          <RiMoonLine onClick={() => switchTheme('dark')} color={getButtonColor(theme, 'dark')} size={18} />
         </ToggleIcon>
       </ToggleContent>
       <ToggleFloatingIndicator

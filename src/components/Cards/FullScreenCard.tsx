@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLMotionProps, motion } from 'framer-motion'
-import { X } from 'lucide-react'
 import { useEffect } from 'react'
+import { RiCloseLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { isMobile } from '@/utils/browserSupport'
@@ -124,7 +124,7 @@ const Header = styled.div`
   justify-content: space-between;
 `
 
-const CloseButton = styled(X)`
+const CloseButton = styled(RiCloseLine)`
   cursor: pointer;
   color: ${({ theme }) => theme.font.primary};
 

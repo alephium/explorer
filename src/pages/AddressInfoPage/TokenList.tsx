@@ -20,7 +20,7 @@ import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
-import { AlertCircle } from 'lucide-react'
+import { RiSpam2Line } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -52,7 +52,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
           </NameColumn>
           {token.id !== ALPH.id && !token.logoURI && token.name && (
             <UnverifiedWarningIcon data-tip="Unverified token">
-              <AlertCircle />
+              <RiSpam2Line />
             </UnverifiedWarningIcon>
           )}
           <TableCellAmount>

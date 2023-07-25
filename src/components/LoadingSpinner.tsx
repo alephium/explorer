@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Loader2 } from 'lucide-react'
 import { CSSProperties } from 'react'
+import { RiLoader4Line } from 'react-icons/ri'
 import styled from 'styled-components'
 
 interface LoadingSpinnerProps {
@@ -39,7 +39,7 @@ const SpinnerContainer = styled.div`
   justify-content: center;
 `
 
-const Spinner = styled(Loader2)`
+const Spinner = styled(RiLoader4Line)`
   animation: spin 1s infinite;
   color: ${({ theme }) => theme.font.secondary};
 `

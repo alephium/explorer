@@ -27,8 +27,8 @@ import {
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import _ from 'lodash'
-import { Check } from 'lucide-react'
 import { useRef } from 'react'
+import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
@@ -126,7 +126,7 @@ const TransactionInfoPage = () => {
                       type="plus"
                       content={
                         <span>
-                          <Check style={{ marginRight: 5 }} size={15} />
+                          <RiCheckLine style={{ marginRight: 5 }} size={15} />
                           Success
                         </span>
                       }
