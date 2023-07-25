@@ -30,7 +30,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 
 interface TokenListProps {
-  tokens?: Optional<Asset, 'decimals'>[]
+  tokens: Optional<Asset, 'decimals'>[]
   limit?: number
   isLoading?: boolean
   className?: string
@@ -38,8 +38,6 @@ interface TokenListProps {
 
 const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const theme = useTheme()
-
-  if (!tokens) return null
 
   const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 

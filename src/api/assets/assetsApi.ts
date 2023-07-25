@@ -41,10 +41,16 @@ export const assetsQueries = createQueriesCollection({
   metadata: {
     allVerifiedTokens: (network: NetworkType) => ({
       queryKey: ['verifiedTokens', network],
-      queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> =>
-        fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then((r) =>
-          r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
-        ),
+      queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
+        try {
+          return fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then(
+            (r) => r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
+          )
+        } catch (e) {
+          console.error(e)
+          return Promise.reject(new Error('Verified token fetch failed'))
+        }
+      },
       staleTime: Infinity
     }),
     unverifiedFungibleToken: (assetId: string) => ({
