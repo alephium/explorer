@@ -48,7 +48,7 @@ export const useAssetMetadata = (assetId: string) => {
 
   const { data: nftData } = useQuery({
     ...queries.assets.nftFile.detail(assetId, unverifiedNFTMetadata?.tokenUri ?? ''),
-    enabled: assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
+    enabled: !isAlph && assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
   })
 
   const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined = unverifiedNFTMetadata
@@ -67,11 +67,14 @@ export const useAssetMetadata = (assetId: string) => {
 export const useAssetsMetadata = (assetIds: string[] = []) => {
   const allVerifiedTokensMetadata = useVerifiedTokensMetadata()
 
+  const ids = assetIds.filter((id) => id !== ALPH.id)
+  const isAlphIn = assetIds.length !== ids.length
+
   const verifiedTokensMetadata = Array.from(allVerifiedTokensMetadata || []).flatMap(([id, m]) =>
     assetIds.includes(id) ? m : []
   )
 
-  const unverifiedAssetIds = assetIds.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
+  const unverifiedAssetIds = ids.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
     unverifiedAssetIds.map((id) => queries.assets.type.one(id))
@@ -79,7 +82,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'fungible' ? queries.assets.metadata.unverifiedFungibleToken(id) : []
+      type === 'fungible' ? { ...queries.assets.metadata.unverifiedFungibleToken(id) } : []
     )
   )
 
@@ -97,6 +100,10 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     ...m,
     file: NFTFiles.find((f) => f.assetId === m.id)
   }))
+
+  if (isAlphIn) {
+    verifiedTokensMetadata.unshift({ ...ALPH, type: 'fungible', verified: true })
+  }
 
   return {
     fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
