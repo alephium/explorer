@@ -20,6 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, flatMap, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
+import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
@@ -98,20 +99,21 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   const tabs: TabItem[] = [
     {
       value: 'tokens',
-      icon: '🪙',
+      icon: <RiCopperDiamondLine />,
       label: 'Tokens',
       length: tokensWithBalanceAndMetadata.length,
       loading: isLoading
     }
   ]
 
-  if (nfts.length > 0) tabs.push({ value: 'nfts', label: 'NFTs', icon: '🖼️', length: nfts.length, loading: isLoading })
+  if (nfts.length > 0)
+    tabs.push({ value: 'nfts', label: 'NFTs', icon: <RiNftLine />, length: nfts.length, loading: isLoading })
 
   if (unknownAssetsIds.length > 0)
     tabs.push({
       value: 'unknown',
       label: 'Unknown',
-      icon: '❔',
+      icon: <RiQuestionLine size={14} />,
       length: unknownAssetsIds.length,
       loading: isLoading
     })
@@ -151,7 +153,7 @@ export default styled(AssetList)`
   margin-bottom: 35px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 12px;
+  border-radius: 9px;
 `
 
 const EmptyListContainer = styled.div`

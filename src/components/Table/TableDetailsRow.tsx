@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { RiArrowDownSLine } from 'react-icons/ri'
 import { createContext, useContext, useEffect } from 'react'
+import { RiArrowDownSLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { SectionContext } from '../Section'

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
+import { IconBaseProps } from 'react-icons'
 import styled, { css } from 'styled-components'
 
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -26,7 +27,7 @@ import LoadingSpinner from '../LoadingSpinner'
 export interface TabItem {
   value: string
   label: string | ReactNode
-  icon?: string | ReactNode
+  icon?: ReactNode
   length?: number
   loading?: boolean
 }
@@ -54,14 +55,10 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
           aria-selected={isActive}
           isActive={isActive}
         >
-          {item.icon && <TabIcon>{item.icon}</TabIcon>}
-          {item.label}
-          {!item.loading && item.length && <Suffix>{`(${item.length})`}</Suffix>}
-          {item.loading && (
-            <Suffix>
-              <LoadingSpinner style={{ opacity: 0.5 }} size={14} />
-            </Suffix>
-          )}
+          {item.icon && <IconWrapper>{item.icon}</IconWrapper>}
+          <LabelWrapper>{item.label}</LabelWrapper>
+          {!item.loading && item.length && <Suffix>{`${item.length}`}</Suffix>}
+          {item.loading && <LoadingSpinner style={{ marginLeft: 4 }} size={18} />}
         </Tab>
       )
     })}
@@ -71,19 +68,19 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
 export default styled(TableTabBar)`
   display: flex;
   background-color: ${({ theme }) => theme.bg.tertiary};
-  border-radius: 12px 12px 0 0;
+  border-radius: 9px 9px 0 0;
   overflow: hidden;
 `
 
 const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   flex: 1;
-  text-align: center;
-  font-size: 15px;
-  height: 55px;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  height: 50px;
+  cursor: pointer;
 
   ${({ isAlone }) =>
     isAlone &&
@@ -104,29 +101,41 @@ const Tab = styled.div<{ isActive: boolean; isAlone: boolean }>`
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.font.primary};
           background-color: ${theme.bg.secondary};
           border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
         `
       : css`
-          color: ${theme.font.tertiary};
           background-color: ${theme.bg.tertiary};
           border-bottom: 1px solid ${({ theme }) => theme.border.primary};
         `}
 
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.6)};
+
   &:hover {
-    color: ${({ theme }) => theme.font.primary};
+    opacity: 1;
   }
 `
 
-const TabIcon = styled.div`
-  margin-right: 10px;
+const IconWrapper = styled.div`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
 
   @media ${deviceBreakPoints.mobile} {
-    margin-right: 5px;
+    margin-right: 3px;
   }
 `
 
+const LabelWrapper = styled.span``
+
 const Suffix = styled.div`
+  display: inline;
   margin-left: 4px;
+  margin-top: 1px;
+  padding: 2px 3px;
+  background-color: ${({ theme }) => theme.bg.background2};
+  color: ${({ theme }) => theme.font.secondary};
+  border-radius: 9px;
+  font-size: 11px;
 `

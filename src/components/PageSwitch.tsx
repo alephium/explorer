@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri'
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 

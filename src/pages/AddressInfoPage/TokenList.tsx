@@ -87,7 +87,7 @@ export default TokenList
 
 const AssetRow = styled(motion.div)`
   display: flex;
-  padding: 15px 20px;
+  padding: 14px 20px;
   align-items: center;
 
   &:not(:last-child) {
