@@ -23,7 +23,7 @@ export const infosQueries = createQueriesCollection({
   all: {
     heights: () => ({
       queryKey: ['heights'],
-      queryFn: () => client.explorer.infos.getInfosHeights()
+      queryFn: client.explorer.infos.getInfosHeights
     })
   }
 })

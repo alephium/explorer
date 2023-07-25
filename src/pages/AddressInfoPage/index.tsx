@@ -142,7 +142,9 @@ const AddressInfoPage = () => {
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
-  const totalNbOfAssets = addressAssetIds.length + (totalBalance && BigInt(totalBalance) > 0 ? 1 : 0)
+  const totalNbOfAssets =
+    addressAssetIds.length +
+    ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)

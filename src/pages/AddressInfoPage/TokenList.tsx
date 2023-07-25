@@ -56,13 +56,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
             </UnverifiedWarningIcon>
           )}
           <TableCellAmount>
-            <TokenAmount
-              assetId={token.id}
-              value={token.balance}
-              suffix={token.symbol}
-              decimals={token.decimals}
-              isUnknownToken={!token.symbol}
-            />
+            <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
             {token.lockedBalance > 0 ? (
               <TokenAmountSublabel>
                 {'Available '}
@@ -74,7 +68,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                   decimals={token.decimals}
                 />
               </TokenAmountSublabel>
-            ) : !token.name ? (
+            ) : token.decimals === undefined ? (
               <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
             ) : undefined}
           </TableCellAmount>

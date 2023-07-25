@@ -82,7 +82,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     })
   }
 
-  const unknownAssetsWithBalance = unknownAssetsIds?.flatMap((id) => {
+  const unknownAssetsWithBalance = unknownAssetsIds.flatMap((id) => {
     const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
 
     if (assetBalance) {

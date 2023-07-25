@@ -28,7 +28,6 @@ interface AmountProps {
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
-  isUnknownToken?: boolean
   fadeDecimals?: boolean
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
@@ -114,7 +113,7 @@ const Amount = ({
           {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </>
-      ) : assetType === 'unknown' ? (
+      ) : isUnknownToken ? (
         <>
           <RawAmount data-tip={convertToPositive(value as bigint)}>{value?.toString()}</RawAmount>
           <Suffix>?</Suffix>

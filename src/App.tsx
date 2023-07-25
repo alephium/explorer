@@ -27,6 +27,7 @@ import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
 import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
 import { useSettings } from '@/contexts/settingsContext'
+import { StaticDataProvider } from '@/contexts/staticDataContext'
 import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
 import BlockInfoSection from '@/pages/BlockInfoPage'
@@ -34,7 +35,6 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
-import { StaticDataProvider } from '@/contexts/staticDataContext'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -67,7 +67,7 @@ const App = () => {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
         retry: 6,
-        staleTime: 5000 // default ms before cache data is considered stale
+        staleTime: 10000 // default ms before cache data is considered stale
       }
     }
   })
