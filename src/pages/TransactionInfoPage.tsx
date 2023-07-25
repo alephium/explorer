@@ -19,7 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { PerChainHeight, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import {
+  AcceptedTransaction,
+  PendingTransaction,
+  PerChainHeight,
+  Transaction
+} from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import _ from 'lodash'
 import { Check } from 'lucide-react'
@@ -75,11 +80,11 @@ const TransactionInfoPage = () => {
     txInfoErrorStatus = e.status
   }
 
-  const txInfo = transactionData as Transaction
+  const txInfo = isTxConfirmed(transactionData) ? transactionData : undefined
 
   previousTransactionData.current = txInfo
 
-  const { data: txBlock } = useQuery({ ...queries.blocks.block.one(txInfo?.blockHash), enabled: isTxConfirmed(txInfo) })
+  const { data: txBlock } = useQuery({ ...queries.blocks.block.one(txInfo?.blockHash || ''), enabled: !!txInfo })
 
   const { data: chainHeights } = useQuery(queries.infos.all.heights())
 
@@ -236,8 +241,8 @@ const TransactionInfoPage = () => {
   )
 }
 
-const isTxConfirmed = (tx?: explorer.Transaction): tx is explorer.Transaction =>
-  !!tx && (tx as explorer.Transaction).blockHash !== undefined
+const isTxConfirmed = (tx?: Transaction | AcceptedTransaction | PendingTransaction): tx is Transaction =>
+  !!tx && (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
   let confirmations = 0
