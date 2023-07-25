@@ -51,9 +51,8 @@ export const useAssetMetadata = (assetId: string) => {
     enabled: !isAlph && assetType === 'non-fungible' && !!unverifiedNFTMetadata?.tokenUri
   })
 
-  const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined = unverifiedNFTMetadata
-    ? { ...unverifiedNFTMetadata, file: nftData }
-    : undefined
+  const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined =
+    unverifiedNFTMetadata && nftData ? { ...unverifiedNFTMetadata, file: nftData } : undefined
 
   if (isAlph) return { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
 
@@ -96,10 +95,11 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     flatMap(unverifiedNFTsMetadata, ({ id, tokenUri }) => queries.assets.nftFile.detail(id, tokenUri))
   )
 
-  const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.map((m) => ({
-    ...m,
-    file: NFTFiles.find((f) => f.assetId === m.id)
-  }))
+  const unverifiedNFTsMetadataWithFiles: UnverifiedNFTMetadataWithFile[] = unverifiedNFTsMetadata.flatMap((m) => {
+    const file = NFTFiles.find((f) => f.assetId === m.id)
+
+    return file ? { ...m, file } : []
+  })
 
   if (isAlphIn) {
     verifiedTokensMetadata.unshift({ ...ALPH, type: 'fungible', verified: true })
