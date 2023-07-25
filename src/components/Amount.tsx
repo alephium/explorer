@@ -104,9 +104,7 @@ const Amount = ({
               integralPart
             )}
           </NumberContainer>
-          <Suffix color={overrideSuffixColor ? color : undefined}>{` ${
-            isUnknownToken ? '?' : suffix ?? 'ALPH'
-          }`}</Suffix>
+          <Suffix color={overrideSuffixColor ? color : undefined}> {suffix ?? 'ALPH'}</Suffix>
         </>
       ) : assetType === 'non-fungible' ? (
         <>
@@ -114,10 +112,7 @@ const Amount = ({
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </>
       ) : isUnknownToken ? (
-        <>
-          <RawAmount data-tip={convertToPositive(value as bigint)}>{value?.toString()}</RawAmount>
-          <Suffix>?</Suffix>
-        </>
+        <RawAmount data-tip={convertToPositive(value as bigint)}>{value?.toString()}</RawAmount>
       ) : (
         '-'
       )}

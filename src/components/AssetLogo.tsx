@@ -52,8 +52,10 @@ const AssetLogo = (props: AssetLogoProps) => {
       ) : assetType === 'fungible' ? (
         metadata.verified ? (
           <FramedImage src={metadata.logoURI} borderRadius="full" />
-        ) : (
+        ) : metadata.name ? (
           <TokenInitials>{metadata.name.substring(0, 2)}</TokenInitials>
+        ) : (
+          <HelpCircle color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
         )
       ) : assetType === 'non-fungible' ? (
         <FramedImage src={metadata.file?.image} borderRadius="small" />

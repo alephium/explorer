@@ -67,9 +67,12 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
 
   tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
     (t) => !t.verified,
+    (t) => !t.name,
     (t) => t.name.toLowerCase(),
     'id'
   ])
+
+  // Identify and move potentally badly formated tokens
 
   // Add ALPH
   if (addressBalance && BigInt(addressBalance.balance) > 0) {
