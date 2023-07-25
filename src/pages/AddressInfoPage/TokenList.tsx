@@ -20,7 +20,7 @@ import { Asset } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
-import { RiSpam2Line } from 'react-icons/ri'
+import { RiErrorWarningFill } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -47,14 +47,13 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
         <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
-            <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
+            <TokenName>
+              {token.name || <HashEllipsed hash={token.id} />}
+              {token.id !== ALPH.id && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
+            </TokenName>
             {token.symbol && <TokenSymbol>{token.symbol}</TokenSymbol>}
           </NameColumn>
-          {token.id !== ALPH.id && !token.logoURI && token.name && (
-            <UnverifiedWarningIcon data-tip="Unverified token">
-              <RiSpam2Line />
-            </UnverifiedWarningIcon>
-          )}
+
           <TableCellAmount>
             <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
             {token.lockedBalance > 0 ? (
@@ -107,12 +106,19 @@ const AssetLogoStyled = styled(AssetLogo)`
 `
 
 const TokenName = styled.span`
+  display: flex;
+  gap: 5px;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 250px;
+`
+
+const UnverifiedIcon = styled(RiErrorWarningFill)`
+  fill: ${({ theme }) => theme.font.tertiary};
+  margin-top: 1px;
 `
 
 const TokenSymbol = styled.div`
@@ -132,23 +138,6 @@ const TokenAmountSublabel = styled.div`
 
 const NameColumn = styled(Column)`
   margin-right: 20px;
-`
-
-const UnverifiedWarningIcon = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 18px;
-  width: 18px;
-  border-radius: 100%;
-  font-size: 12px;
-  font-weight: 800;
-  color: ${({ theme }) => theme.global.warning};
-  opacity: ${({ theme }) => (theme.name === 'dark' ? 0.4 : 0.7)};
-
-  &:hover {
-    opacity: ${({ theme }) => (theme.name === 'dark' ? 0.6 : 1)};
-  }
 `
 
 const LoadingRow = styled.div`

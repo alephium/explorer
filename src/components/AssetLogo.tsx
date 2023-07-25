@@ -55,12 +55,12 @@ const AssetLogo = (props: AssetLogoProps) => {
         ) : metadata.name ? (
           <TokenInitials>{metadata.name.substring(0, 2)}</TokenInitials>
         ) : (
-          <RiQuestionLine color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
+          <RiCopperCoinLine color={theme.font.secondary} size="72%" />
         )
       ) : assetType === 'non-fungible' ? (
         <FramedImage src={metadata.file?.image} borderRadius="small" />
       ) : (
-        <RiCopperCoinLine color={theme.font.secondary} opacity={0.5} strokeWidth={1.5} />
+        <RiQuestionLine color={theme.font.secondary} size="72%" />
       )}
       <ReactTooltip
         id="picture-tooltip"
@@ -116,6 +116,8 @@ const AssetLogoStyled = styled.div<AssetLogoProps>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   flex-shrink: 0;
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-radius: 100%;
 `
 
 const Image = styled.div`

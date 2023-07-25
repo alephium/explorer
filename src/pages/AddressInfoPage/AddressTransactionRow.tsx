@@ -42,7 +42,7 @@ interface AddressTransactionRowProps {
   addressHash: string
 }
 
-const directionIconSize = 13
+const directionIconSize = 14
 
 const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)

@@ -31,6 +31,7 @@ interface BadgeProps {
   inline?: boolean
   floatRight?: boolean
   minWidth?: number
+  compact?: boolean
   className?: string
 }
 
@@ -70,7 +71,7 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
 }
 
 export default styled(Badge)`
-  ${({ type, inline = false, floatRight = false, minWidth, theme }) => {
+  ${({ type, inline = false, floatRight = false, minWidth, compact, theme }) => {
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
     return css`
@@ -80,9 +81,11 @@ export default styled(Badge)`
       border: 1px solid ${borderColor};
       float: ${inline ? 'none' : floatRight ? 'right' : 'left'};
       min-width: ${minWidth ? minWidth + 'px' : 'auto'};
+      border-radius: ${compact ? '3px' : '5px'};
+      font-size: ${compact ? '10px' : 'inherit'};
+      padding: ${compact ? '1px 2px' : '6px 8px'};
     `
   }}
-  border-radius: 5px;
 `
 
 const BadgeContent = styled.div`
@@ -90,6 +93,5 @@ const BadgeContent = styled.div`
   width: 100%;
   justify-content: center;
   text-align: center;
-  padding: 6px 8px;
   white-space: nowrap;
 `
