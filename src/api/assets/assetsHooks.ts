@@ -21,18 +21,14 @@ import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
 
 import { queries } from '@/api'
-import client from '@/api/client'
+import { useVerifiedTokensMetadata } from '@/contexts/staticDataContext'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
 
 export const useAssetMetadata = (assetId: string) => {
   const isAlph = assetId === ALPH.id
 
-  const { data: allVerifiedTokensMetadata } = useQuery({
-    ...queries.assets.metadata.allVerifiedTokens(client.networkType),
-    enabled: !isAlph
-  })
-  const verifiedTokenMetadata = allVerifiedTokensMetadata?.find((m) => m.id === assetId)
+  const verifiedTokenMetadata = useVerifiedTokensMetadata()?.get(assetId)
 
   const { data: assetBaseRaw } = useQuery({
     ...queries.assets.type.one(assetId),
@@ -64,16 +60,16 @@ export const useAssetMetadata = (assetId: string) => {
   return (
     verifiedTokenMetadata ||
     unverifiedNFTMetadataWithFile ||
-    unverifiedFungibleTokenMetadata || { id: assetId, type: 'unknown', verified: false }
+    unverifiedFungibleTokenMetadata || { id: assetId, type: undefined, verified: false }
   )
 }
 
 export const useAssetsMetadata = (assetIds: string[] = []) => {
-  const { data: allVerifiedTokensMetadata, isLoading: verifiedTokenMetadataLoading } = useQuery(
-    queries.assets.metadata.allVerifiedTokens(client.networkType)
-  )
+  const allVerifiedTokensMetadata = useVerifiedTokensMetadata()
 
-  const verifiedTokensMetadata = allVerifiedTokensMetadata?.filter((m) => assetIds.includes(m.id)) || []
+  const verifiedTokensMetadata = Array.from(allVerifiedTokensMetadata || []).flatMap(([id, m]) =>
+    assetIds.includes(id) ? m : []
+  )
 
   const unverifiedAssetIds = assetIds.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
@@ -106,7 +102,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
     nfts: unverifiedNFTsMetadataWithFiles,
     isLoading:
-      verifiedTokenMetadataLoading ||
+      !allVerifiedTokensMetadata ||
       unverifiedAssetsLoading ||
       unverifiedTokensMetadataLoading ||
       unverifiedNFTsMetadataLoading

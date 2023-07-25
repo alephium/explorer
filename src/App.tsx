@@ -34,6 +34,7 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
+import { StaticDataProvider } from '@/contexts/staticDataContext'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -78,24 +79,26 @@ const App = () => {
         <GlobalStyle />
         <MainContainer>
           <QueryClientProvider client={queryClient}>
-            <AnimateSharedLayout>
-              <AppHeader />
-              <ContentContainer>
-                <ContentWrapper>
-                  <Content>
-                    <Routes>
-                      <Route path="/" element={<HomeSection />} />
-                      <Route path="/blocks/:id" element={<BlockInfoSection />} />
-                      <Route path="/addresses/:id" element={<AddressInfoSection />} />
-                      <Route path="/transactions/:id" element={<TransactionInfoSection />} />
-                      <Route path="*" element={<PageNotFound />} />
-                    </Routes>
-                  </Content>
-                </ContentWrapper>
-              </ContentContainer>
-            </AnimateSharedLayout>
-            <AppFooter />
-            <SnackbarAnchor id="snackbar-anchor" />
+            <StaticDataProvider>
+              <AnimateSharedLayout>
+                <AppHeader />
+                <ContentContainer>
+                  <ContentWrapper>
+                    <Content>
+                      <Routes>
+                        <Route path="/" element={<HomeSection />} />
+                        <Route path="/blocks/:id" element={<BlockInfoSection />} />
+                        <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                        <Route path="/transactions/:id" element={<TransactionInfoSection />} />
+                        <Route path="*" element={<PageNotFound />} />
+                      </Routes>
+                    </Content>
+                  </ContentWrapper>
+                </ContentContainer>
+              </AnimateSharedLayout>
+              <AppFooter />
+              <SnackbarAnchor id="snackbar-anchor" />
+            </StaticDataProvider>
           </QueryClientProvider>
         </MainContainer>
         <Background />

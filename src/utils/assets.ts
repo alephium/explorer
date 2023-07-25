@@ -22,7 +22,7 @@ import { AssetBase, AssetType } from '@/types/assets'
 
 type AssetTypeMapValues = 'fungibleTokenIds' | 'NFTIds' | 'unknownAssetIds'
 
-const assetTypeMap: Record<AssetType, AssetTypeMapValues> = {
+const assetTypeMap: Record<NonNullable<AssetType> | 'unknown', AssetTypeMapValues> = {
   fungible: 'fungibleTokenIds',
   'non-fungible': 'NFTIds',
   unknown: 'unknownAssetIds'
@@ -32,7 +32,7 @@ type AssetIdCategories = Record<AssetTypeMapValues, string[]>
 
 export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategories => {
   const categorizedAssets = mapValues(
-    groupBy(assets, (asset) => assetTypeMap[asset.type]),
+    groupBy(assets, (asset) => assetTypeMap[asset.type || 'unknown']),
     (assetsGroup) => map(assetsGroup, 'id')
   )
 

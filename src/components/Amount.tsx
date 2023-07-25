@@ -61,7 +61,7 @@ const Amount = ({
   const isNegative = value && value < 0
 
   const assetType = assetMetadata.type
-  const isUnknownToken = assetType === 'unknown'
+  const isUnknownToken = assetType === undefined
 
   let decimals: number | undefined, suffix: string | undefined
 
@@ -77,7 +77,7 @@ const Amount = ({
         amount = amount.slice(0, -1)
       }
     }
-  } else if (assetType === 'unknown') {
+  } else if (assetType === undefined) {
     amount = getAmount({ value, fullPrecision: true })
   }
 

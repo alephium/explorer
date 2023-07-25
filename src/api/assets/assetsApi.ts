@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenList } from '@alephium/token-list'
 import { hexToString } from '@alephium/web3'
 
+import client from '@/api/client'
 import {
   AssetBase,
   NFTFile,
@@ -29,14 +30,11 @@ import {
 import { NetworkType } from '@/types/network'
 import { createQueriesCollection } from '@/utils/api'
 
-import client from '../client'
-
 export const assetsQueries = createQueriesCollection({
   type: {
     one: (assetId: string) => ({
       queryKey: ['assetType', assetId],
-      queryFn: (): Promise<AssetBase> =>
-        client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r ?? 'unknown' })),
+      queryFn: (): Promise<AssetBase> => client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r })),
       staleTime: Infinity
     })
   },
