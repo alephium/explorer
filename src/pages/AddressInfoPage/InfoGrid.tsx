@@ -74,8 +74,7 @@ const CellContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   background-color: ${({ theme }) => theme.bg.primary};
-  padding: 20px;
-  min-height: 120px;
+  padding: 10px 20px;
 `
 
 const Label = styled.label`

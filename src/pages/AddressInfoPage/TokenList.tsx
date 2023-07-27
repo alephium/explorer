@@ -47,14 +47,14 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
         <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
-            <TokenName>
-              {token.name || <HashEllipsed hash={token.id} />}
+            <TokenNameAndTag>
+              <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
               {token.id !== ALPH.id && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
-            </TokenName>
+            </TokenNameAndTag>
             {token.name && (
-              <TokenSymbol>
+              <TokenHash>
                 <HashEllipsed hash={token.id} />
-              </TokenSymbol>
+              </TokenHash>
             )}
           </NameColumn>
 
@@ -109,15 +109,19 @@ const AssetLogoStyled = styled(AssetLogo)`
   margin-right: 20px;
 `
 
-const TokenName = styled.span`
+const TokenNameAndTag = styled.div`
+  width: 100%;
   display: flex;
   gap: 5px;
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
+  max-width: 250px;
+`
+
+const TokenName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 250px;
 `
 
 const UnverifiedIcon = styled(RiErrorWarningFill)`
@@ -125,7 +129,7 @@ const UnverifiedIcon = styled(RiErrorWarningFill)`
   margin-top: 1px;
 `
 
-const TokenSymbol = styled.div`
+const TokenHash = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   max-width: 150px;
 `
@@ -142,6 +146,7 @@ const TokenAmountSublabel = styled.div`
 
 const NameColumn = styled(Column)`
   margin-right: 20px;
+  overflow: hidden;
 `
 
 const LoadingRow = styled.div`
