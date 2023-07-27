@@ -58,7 +58,7 @@ const AssetLogo = (props: AssetLogoProps) => {
           <RiCopperCoinLine color={theme.font.secondary} size="72%" />
         )
       ) : assetType === 'non-fungible' ? (
-        <FramedImage src={metadata.file?.image} borderRadius="small" />
+        <FramedImage src={metadata.file?.image} borderRadius="small" withBorder />
       ) : (
         <RiQuestionLine color={theme.font.secondary} size="72%" />
       )}
@@ -83,7 +83,9 @@ const AssetLogo = (props: AssetLogoProps) => {
           data-tip={JSON.stringify({ name: metadata.file?.name, src: metadata.file?.image })}
         />
       ) : (
-        <TooltipHolder data-tip={assetType === 'fungible' ? metadata.name : metadata.id} />
+        <TooltipHolder
+          data-tip={assetType === 'fungible' ? (metadata.name ? metadata.name : metadata.id) : metadata.id}
+        />
       )}
     </AssetLogoStyled>
   )
@@ -92,19 +94,29 @@ const AssetLogo = (props: AssetLogoProps) => {
 const FramedImage = ({
   src,
   borderRadius,
-  isAlph
+  isAlph,
+  withBorder
 }: {
   src?: string
   borderRadius: 'small' | 'full'
   isAlph?: boolean
-}) => (
-  <ImageFrame
-    style={{ borderRadius: borderRadius === 'small' ? 4 : '100%', padding: borderRadius === 'small' ? 0 : 3 }}
-    isAlph={isAlph}
-  >
-    <Image style={{ backgroundImage: `url(${src})` }} />
-  </ImageFrame>
-)
+  withBorder?: boolean
+}) => {
+  const theme = useTheme()
+
+  return (
+    <ImageFrame
+      style={{
+        borderRadius: borderRadius === 'small' ? 4 : '100%',
+        padding: borderRadius === 'small' ? 0 : 3,
+        boxShadow: withBorder ? `0 0 0 1px ${theme.border.primary}` : 'initial'
+      }}
+      isAlph={isAlph}
+    >
+      <Image style={{ backgroundImage: `url(${src})` }} />
+    </ImageFrame>
+  )
+}
 
 export default AssetLogo
 

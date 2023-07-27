@@ -41,7 +41,7 @@ interface TableTabBarProps {
 
 const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarProps) => (
   <div className={className} role="tablist" aria-label="Tab navigation">
-    {items.map((item, i) => {
+    {items.map((item) => {
       const isActive = activeTab.value === item.value
 
       return (
@@ -61,7 +61,7 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
             </IconWrapper>
           )}
           <LabelWrapper>{item.label}</LabelWrapper>
-          {!item.loading && item.length && <Suffix>{`${item.length}`}</Suffix>}
+          {!item.loading && item.length && <NumberOfItems>{`${item.length}`}</NumberOfItems>}
           {item.loading && <LoadingSpinner style={{ marginLeft: 4 }} size={18} />}
         </Tab>
       )
@@ -133,13 +133,14 @@ const IconWrapper = styled.div`
 
 const LabelWrapper = styled.span``
 
-const Suffix = styled.div`
+const NumberOfItems = styled.div`
   display: inline;
-  margin-left: 4px;
+  margin-left: 8px;
   margin-top: 1px;
-  padding: 2px 3px;
+  padding: 1px 5px;
   background-color: ${({ theme }) => theme.bg.background2};
   color: ${({ theme }) => theme.font.secondary};
   border-radius: 9px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
   font-size: 11px;
 `
