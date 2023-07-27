@@ -51,7 +51,11 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               {token.name || <HashEllipsed hash={token.id} />}
               {token.id !== ALPH.id && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
             </TokenName>
-            {token.symbol && <TokenSymbol>{token.symbol}</TokenSymbol>}
+            {token.name && (
+              <TokenSymbol>
+                <HashEllipsed hash={token.id} />
+              </TokenSymbol>
+            )}
           </NameColumn>
 
           <TableCellAmount>
@@ -122,7 +126,7 @@ const UnverifiedIcon = styled(RiErrorWarningFill)`
 `
 
 const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
   max-width: 150px;
 `
 
