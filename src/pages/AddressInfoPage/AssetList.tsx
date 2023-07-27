@@ -102,12 +102,20 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       icon: <RiCopperDiamondLine />,
       label: 'Tokens',
       length: tokensWithBalanceAndMetadata.length,
-      loading: isLoading
+      loading: isLoading,
+      highlightColor: '#0cd6ff'
     }
   ]
 
   if (nfts.length > 0)
-    tabs.push({ value: 'nfts', label: 'NFTs', icon: <RiNftLine />, length: nfts.length, loading: isLoading })
+    tabs.push({
+      value: 'nfts',
+      label: 'NFTs',
+      icon: <RiNftLine />,
+      length: nfts.length,
+      loading: isLoading,
+      highlightColor: '#ffae0c'
+    })
 
   if (unknownAssetsIds.length > 0)
     tabs.push({
@@ -115,7 +123,8 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       label: 'Unknown',
       icon: <RiQuestionLine size={14} />,
       length: unknownAssetsIds.length,
-      loading: isLoading
+      loading: isLoading,
+      highlightColor: '#dedede'
     })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])

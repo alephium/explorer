@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { IconBaseProps } from 'react-icons'
 import styled, { css } from 'styled-components'
 
 import { deviceBreakPoints } from '@/styles/globalStyles'
@@ -28,6 +27,7 @@ export interface TabItem {
   value: string
   label: string | ReactNode
   icon?: ReactNode
+  highlightColor?: string
   length?: number
   loading?: boolean
 }
@@ -41,7 +41,7 @@ interface TableTabBarProps {
 
 const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarProps) => (
   <div className={className} role="tablist" aria-label="Tab navigation">
-    {items.map((item) => {
+    {items.map((item, i) => {
       const isActive = activeTab.value === item.value
 
       return (
@@ -55,7 +55,11 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
           aria-selected={isActive}
           isActive={isActive}
         >
-          {item.icon && <IconWrapper>{item.icon}</IconWrapper>}
+          {item.icon && (
+            <IconWrapper style={isActive && item.highlightColor ? { color: item.highlightColor } : undefined}>
+              {item.icon}
+            </IconWrapper>
+          )}
           <LabelWrapper>{item.label}</LabelWrapper>
           {!item.loading && item.length && <Suffix>{`${item.length}`}</Suffix>}
           {item.loading && <LoadingSpinner style={{ marginLeft: 4 }} size={18} />}
