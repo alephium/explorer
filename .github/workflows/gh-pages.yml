@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  VITE_BACKEND_URL: https://testnet-backend.alephium.org
+  VITE_BACKEND_URL: https://backend-v113.testnet.alephium.org
+  VITE_NODE_URL: https://wallet-v20.testnet.alephium.org
   VITE_NETWORK_TYPE: testnet
 
 jobs:
