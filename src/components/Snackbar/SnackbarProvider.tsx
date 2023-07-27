@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AnimatePresence } from 'framer-motion'
-import { createContext, ReactNode, useEffect, useState } from 'react'
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
 
@@ -56,8 +56,11 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
     return () => clearTimeout(timeoutId)
   }, [message, message?.duration])
 
+  const displaySnackbar = useCallback((message: SnackbarMessage) => setMessage(message), [])
+  const value = useMemo(() => ({ displaySnackbar }), [displaySnackbar])
+
   return (
-    <SnackbarContext.Provider value={{ displaySnackbar: setMessage }}>
+    <SnackbarContext.Provider value={value}>
       {children}
       {createPortal(
         <SnackbarContainer>
