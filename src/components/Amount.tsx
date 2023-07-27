@@ -88,7 +88,10 @@ const Amount = ({
         <>
           <NumberContainer
             data-tip={
-              !fullPrecision && value && getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })
+              (!fullPrecision &&
+                value &&
+                getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })) ||
+              undefined
             }
           >
             {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}

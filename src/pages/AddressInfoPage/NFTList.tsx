@@ -99,8 +99,8 @@ const NFTItem = ({ nft }: NFTItemProps) => {
       }
       backFace={
         <BackFace>
-          <NFTDescription>{cutDesc}</NFTDescription>
           <BackFaceBackground style={{ backgroundImage: `url(${nft.file?.image})` }} />
+          <NFTDescription>{cutDesc}</NFTDescription>
         </BackFace>
       }
     />
@@ -185,7 +185,6 @@ const NFTDescription = styled.div`
   right: 0;
   left: 0;
   padding: 20px;
-  z-index: 2;
 `
 
 const BackFaceBackground = styled.div`
@@ -198,5 +197,4 @@ const BackFaceBackground = styled.div`
   left: 0;
   border-radius: 9px;
   opacity: 0.3;
-  z-index: 1;
 `
