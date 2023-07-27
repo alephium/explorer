@@ -35,6 +35,8 @@ export type UnverifiedNFTMetadata = NFTMetaData & { id: string; type: 'non-fungi
 
 export type UnverifiedNFTMetadataWithFile = UnverifiedNFTMetadata & { file: NFTFile }
 
+export type NumericTokenBalance = { balance: bigint; lockedBalance: bigint }
+
 export type NFTFile = {
   assetId: string
   name?: string

@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
-import { ALPH } from '@alephium/token-list'
+import { ALPH, TokenInfo } from '@alephium/token-list'
 import { Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { RiErrorWarningFill } from 'react-icons/ri'
@@ -25,12 +24,14 @@ import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
+import Badge from '@/components/Badge'
 import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
+import { AssetBase, NumericTokenBalance } from '@/types/assets'
 
 interface TokenListProps {
-  tokens: Optional<Asset, 'decimals'>[]
+  tokens: (Optional<AssetBase, 'type'> & Optional<TokenInfo & NumericTokenBalance, 'decimals' | 'symbol' | 'name'>)[]
   limit?: number
   isLoading?: boolean
   className?: string
@@ -57,6 +58,8 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               </TokenHash>
             )}
           </NameColumn>
+
+          {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Missing metadata" />}
 
           <TableCellAmount>
             <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
@@ -155,3 +158,5 @@ const LoadingRow = styled.div`
   justify-content: space-between;
   align-items: center;
 `
+
+const IncompleteMetadataBadge = styled(Badge)``
