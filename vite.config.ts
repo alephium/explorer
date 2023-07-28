@@ -38,5 +38,6 @@ export default defineConfig({
       reporter: ['text', 'html'],
       exclude: ['node_modules/', 'src/setupTests.js']
     }
-  }
+  },
+  base: '/explorer' // For gh pages deployement
 })
