@@ -46,8 +46,6 @@ const SnackbarStyled = styled(motion.div)`
   gap: 10px;
   align-items: center;
 
-  z-index: 1000;
-
   &.alert {
     background-color: rgb(219, 99, 69);
   }

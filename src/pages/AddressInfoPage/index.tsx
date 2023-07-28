@@ -154,7 +154,13 @@ const AddressInfoPage = () => {
 
   if (!addressHash) return null
 
-  const addressGroup = groupOfAddress(addressHash)
+  let addressGroup
+
+  try {
+    addressGroup = groupOfAddress(addressHash)
+  } catch (e) {
+    console.log(e)
+  }
 
   return (
     <Section>
@@ -191,7 +197,7 @@ const AddressInfoPage = () => {
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label="Nb. of assets" value={totalNbOfAssets} />
-          <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
+          <InfoGrid.Cell label="Address group" value={addressGroup?.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
             value={

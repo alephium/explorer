@@ -61,13 +61,13 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
 
   return (
     <SnackbarContext.Provider value={value}>
-      {children}
       {createPortal(
         <SnackbarContainer>
           <AnimatePresence>{message && <Snackbar {...message} />}</AnimatePresence>
         </SnackbarContainer>,
         document.body
       )}
+      {children}
     </SnackbarContext.Provider>
   )
 }
@@ -76,4 +76,5 @@ const SnackbarContainer = styled.div`
   position: absolute;
   bottom: 10px;
   right: 10px;
+  z-index: 10;
 `
