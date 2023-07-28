@@ -24,6 +24,7 @@ import { queries } from '@/api'
 import { useVerifiedTokensMetadata } from '@/contexts/staticDataContext'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
+import { useMemo } from 'react'
 
 export const useAssetMetadata = (assetId: string) => {
   const isAlph = assetId === ALPH.id
@@ -105,13 +106,42 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     verifiedTokensMetadata.unshift({ ...ALPH, type: 'fungible', verified: true })
   }
 
-  return {
-    fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
-    nfts: unverifiedNFTsMetadataWithFiles,
-    isLoading:
-      !allVerifiedTokensMetadata ||
-      unverifiedAssetsLoading ||
-      unverifiedTokensMetadataLoading ||
-      unverifiedNFTsMetadataLoading
-  }
+  const returnedVerifiedTokensMetadata = useMemo(
+    () => ({
+      fungibleTokens: verifiedTokensMetadata,
+      nfts: [],
+      isLoading: true
+    }),
+    [verifiedTokensMetadata]
+  )
+
+  const returnedCompleteMetadata = useMemo(
+    () => ({
+      fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
+      nfts: unverifiedNFTsMetadataWithFiles,
+      isLoading:
+        !allVerifiedTokensMetadata ||
+        unverifiedAssetsLoading ||
+        unverifiedTokensMetadataLoading ||
+        unverifiedNFTsMetadataLoading
+    }),
+    [
+      allVerifiedTokensMetadata,
+      unverifiedAssetsLoading,
+      unverifiedNFTsMetadataLoading,
+      unverifiedNFTsMetadataWithFiles,
+      unverifiedTokensMetadata,
+      unverifiedTokensMetadataLoading,
+      verifiedTokensMetadata
+    ]
+  )
+
+  // Split the loading in 2 parts: first return verified tokens (fast to fetch), and then the rest when everything is ready
+  if (
+    (verifiedTokensMetadata && unverifiedAssetsLoading) ||
+    unverifiedTokensMetadataLoading ||
+    unverifiedNFTsMetadataLoading
+  ) {
+    return returnedVerifiedTokensMetadata
+  } else return returnedCompleteMetadata
 }

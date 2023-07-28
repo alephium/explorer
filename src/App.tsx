@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { AnimateSharedLayout } from 'framer-motion'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -82,22 +81,20 @@ const App = () => {
         <MainContainer>
           <QueryClientProvider client={queryClient}>
             <StaticDataProvider>
-              <AnimateSharedLayout>
-                <AppHeader />
-                <ContentContainer>
-                  <ContentWrapper>
-                    <Content>
-                      <Routes>
-                        <Route path="/" element={<HomeSection />} />
-                        <Route path="/blocks/:id" element={<BlockInfoSection />} />
-                        <Route path="/addresses/:id" element={<AddressInfoSection />} />
-                        <Route path="/transactions/:id" element={<TransactionInfoSection />} />
-                        <Route path="*" element={<PageNotFound />} />
-                      </Routes>
-                    </Content>
-                  </ContentWrapper>
-                </ContentContainer>
-              </AnimateSharedLayout>
+              <AppHeader />
+              <ContentContainer>
+                <ContentWrapper>
+                  <Content>
+                    <Routes>
+                      <Route path="/" element={<HomeSection />} />
+                      <Route path="/blocks/:id" element={<BlockInfoSection />} />
+                      <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                      <Route path="/transactions/:id" element={<TransactionInfoSection />} />
+                      <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                  </Content>
+                </ContentWrapper>
+              </ContentContainer>
               <AppFooter />
               <SnackbarAnchor id="snackbar-anchor" />
             </StaticDataProvider>

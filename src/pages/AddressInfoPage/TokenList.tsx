@@ -45,7 +45,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   return (
     <div className={className}>
       {displayedTokens.map((token) => (
-        <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+        <AssetRow key={token.id}>
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
             <TokenNameAndTag>
@@ -92,7 +92,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
 
 export default TokenList
 
-const AssetRow = styled(motion.div)`
+const AssetRow = styled.div`
   display: flex;
   padding: 14px 20px;
   align-items: center;
