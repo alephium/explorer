@@ -45,7 +45,7 @@ if (browserIsOld) {
 } else {
   import('./App').then(({ default: App }) => {
     ReactDOM.render(
-      <Router>
+      <Router basename={import.meta.env.BASE_URL}>
         <SettingsProvider>
           <App />
         </SettingsProvider>
