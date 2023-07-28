@@ -33,17 +33,17 @@ interface NFTListProps {
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => (
   <NFTListContainer>
-    {nfts.length > 0 ? (
+    {isLoading ? (
+      <NFTListStyled>
+        <SkeletonLoader height="200px" />
+        <SkeletonLoader height="200px" />
+        <SkeletonLoader height="200px" />
+      </NFTListStyled>
+    ) : nfts.length > 0 ? (
       <NFTListStyled>
         {nfts.map((nft) => (
           <NFTItem key={nft.id} nft={nft} />
         ))}
-        {isLoading && (
-          <>
-            <SkeletonLoader height="100%" />
-            <SkeletonLoader height="100%" />
-          </>
-        )}
       </NFTListStyled>
     ) : (
       <NoNFTsMessage>
