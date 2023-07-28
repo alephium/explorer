@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
+import { RiGhostLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import Card3D, { card3DHoverTransition } from '@/components/Cards/Card3D'
@@ -31,17 +32,28 @@ interface NFTListProps {
 }
 
 const NFTList = ({ nfts, isLoading }: NFTListProps) => (
-  <NFTListStyled>
-    {nfts.map((nft) => (
-      <NFTItem key={nft.id} nft={nft} />
-    ))}
-    {isLoading && (
-      <>
-        <SkeletonLoader height="100%" />
-        <SkeletonLoader height="100%" />
-      </>
+  <NFTListContainer>
+    {nfts.length > 0 ? (
+      <NFTListStyled>
+        {nfts.map((nft) => (
+          <NFTItem key={nft.id} nft={nft} />
+        ))}
+        {isLoading && (
+          <>
+            <SkeletonLoader height="100%" />
+            <SkeletonLoader height="100%" />
+          </>
+        )}
+      </NFTListStyled>
+    ) : (
+      <NoNFTsMessage>
+        <EmptyIconContainer>
+          <RiGhostLine />
+        </EmptyIconContainer>
+        <div>No NFTs yet.</div>
+      </NoNFTsMessage>
     )}
-  </NFTListStyled>
+  </NFTListContainer>
 )
 
 interface NFTItemProps {
@@ -109,7 +121,12 @@ const NFTItem = ({ nft }: NFTItemProps) => {
 
 export default NFTList
 
+const NFTListContainer = styled.div`
+  display: flex;
+`
+
 const NFTListStyled = styled.div`
+  flex: 1;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 25px;
@@ -197,4 +214,29 @@ const BackFaceBackground = styled.div`
   left: 0;
   border-radius: 9px;
   opacity: 0.3;
+`
+
+const NoNFTsMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  color: ${({ theme }) => theme.font.tertiary};
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 9px;
+  border: 2px dashed ${({ theme }) => theme.border.primary};
+  font-size: 1.1em;
+`
+
+const EmptyIconContainer = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+
+  svg {
+    height: 100%;
+    width: 30px;
+  }
 `

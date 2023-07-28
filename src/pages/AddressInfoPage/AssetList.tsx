@@ -45,6 +45,8 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
   const theme = useTheme()
 
+  console.log('ASSET LIST')
+
   const isLoading = assetsLoading || assetsMetadataLoading
 
   const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
@@ -104,7 +106,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       label: 'Tokens',
       length: tokensWithBalanceAndMetadata.length,
       loading: isLoading,
-      highlightColor: '#0cd6ff'
+      highlightColor: '#0cbaff'
     },
     {
       value: 'nfts',
@@ -123,7 +125,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       icon: <RiQuestionLine size={14} />,
       length: unknownAssetsIds.length,
       loading: isLoading,
-      highlightColor: theme.font.tertiary
+      highlightColor: theme.font.primary
     })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])

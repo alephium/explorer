@@ -43,9 +43,9 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 
   return (
-    <motion.div className={className}>
+    <div className={className}>
       {displayedTokens.map((token) => (
-        <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
             <TokenNameAndTag>
@@ -86,7 +86,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
           <SkeletonLoader height="25px" width="200px" />
         </LoadingRow>
       )}
-    </motion.div>
+    </div>
   )
 }
 
