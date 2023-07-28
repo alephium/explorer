@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { find, flatMap, sortBy } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled, { useTheme } from 'styled-components'
@@ -45,12 +45,13 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
   const theme = useTheme()
 
-  console.log('ASSET LIST')
-
   const isLoading = assetsLoading || assetsMetadataLoading
 
   const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
-  const unknownAssetsIds = assetIds?.filter((id) => !knownAssetsIds.includes(id)) || []
+  const unknownAssetsIds = useMemo(
+    () => assetIds?.filter((id) => !knownAssetsIds.includes(id)) || [],
+    [assetIds, knownAssetsIds]
+  )
 
   const { data: tokenBalances } = useQueriesData(
     fungibleTokens.map((a) => queries.assets.balances.addressToken(addressHash, a.id))
@@ -63,41 +64,40 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     }))
   )
 
-  let tokensWithBalanceAndMetadata = flatMap(tokenBalances, (t) => {
-    const metadata = find(fungibleTokens, { id: t.id })
+  const tokensWithBalanceAndMetadata = useMemo(() => {
+    const unsorted = flatMap(tokenBalances, (t) => {
+      const metadata = find(fungibleTokens, { id: t.id })
 
-    return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
-  })
-
-  tokensWithBalanceAndMetadata = sortBy(tokensWithBalanceAndMetadata, [
-    (t) => !t.verified,
-    (t) => !t.name,
-    (t) => t.name.toLowerCase(),
-    'id'
-  ])
-
-  // Identify and move potentally badly formated tokens
-
-  // Add ALPH
-  if (addressBalance && BigInt(addressBalance.balance) > 0) {
-    tokensWithBalanceAndMetadata.unshift({
-      ...ALPH,
-      type: 'fungible',
-      balance: BigInt(addressBalance.balance),
-      lockedBalance: BigInt(addressBalance.lockedBalance),
-      verified: true
+      return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
     })
-  }
 
-  const unknownAssetsWithBalance = unknownAssetsIds.flatMap((id) => {
-    const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
-
-    if (assetBalance) {
-      return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+    // Add ALPH
+    if (addressBalance && BigInt(addressBalance.balance) > 0) {
+      unsorted.unshift({
+        ...ALPH,
+        type: 'fungible',
+        balance: BigInt(addressBalance.balance),
+        lockedBalance: BigInt(addressBalance.lockedBalance),
+        verified: true
+      })
     }
 
-    return []
-  })
+    return sortBy(unsorted, [(t) => !t.verified, (t) => !t.name, (t) => t.name.toLowerCase(), 'id'])
+  }, [addressBalance, fungibleTokens, tokenBalances])
+
+  const unknownAssetsWithBalance = useMemo(
+    () =>
+      unknownAssetsIds.flatMap((id) => {
+        const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
+
+        if (assetBalance) {
+          return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+        }
+
+        return []
+      }),
+    [unknownAssetsBalances, unknownAssetsIds]
+  )
 
   const tabs: TabItem[] = [
     {
