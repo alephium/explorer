@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
+import { useMemo } from 'react'
 
 import { queries } from '@/api'
 import { useVerifiedTokensMetadata } from '@/contexts/staticDataContext'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
-import { useMemo } from 'react'
 
 export const useAssetMetadata = (assetId: string) => {
   const isAlph = assetId === ALPH.id

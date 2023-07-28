@@ -45,14 +45,14 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   return (
     <div className={className}>
       {displayedTokens.map((token) => (
-        <AssetRow key={token.id}>
+        <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <AssetLogoStyled assetId={token.id} size={30} />
           <NameColumn>
             <TokenNameAndTag>
               <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
               {token.id !== ALPH.id && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
             </TokenNameAndTag>
-            {token.name && (
+            {token.name && token.id !== ALPH.id && (
               <TokenHash>
                 <HashEllipsed hash={token.id} />
               </TokenHash>
@@ -92,7 +92,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
 
 export default TokenList
 
-const AssetRow = styled.div`
+const AssetRow = styled(motion.div)`
   display: flex;
   padding: 14px 20px;
   align-items: center;
