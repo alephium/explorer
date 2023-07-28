@@ -56,6 +56,8 @@ type ParamTypes = {
   id: string
 }
 
+const numberOfTxsPerPage = 10
+
 const AddressInfoPage = () => {
   const theme = useTheme()
   const { id: addressHash = '' } = useParams<ParamTypes>()
@@ -78,7 +80,7 @@ const AddressInfoPage = () => {
     isLoading: txListLoading,
     refetch: refetchTxList
   } = useQuery({
-    ...queries.address.transactions.confirmed(addressHash, pageNumber),
+    ...queries.address.transactions.confirmed(addressHash, pageNumber, numberOfTxsPerPage),
     enabled: !!addressHash,
     keepPreviousData: true
   })
@@ -266,7 +268,7 @@ const AddressInfoPage = () => {
         )}
       </Table>
 
-      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
+      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
 
       <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>

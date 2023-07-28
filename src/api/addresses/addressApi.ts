@@ -27,7 +27,7 @@ export const addressQueries = createQueriesCollection({
     })
   },
   transactions: {
-    confirmed: (addressHash: string, pageNumber: number, limit?: number) => ({
+    confirmed: (addressHash: string, pageNumber: number, limit = 10) => ({
       queryKey: ['addressConfirmedTransactions', addressHash, pageNumber, limit],
       queryFn: () =>
         client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
