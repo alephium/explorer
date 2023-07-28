@@ -22,7 +22,7 @@ import styled from 'styled-components'
 interface TableHeaderProps {
   headerTitles: ReactNode[]
   columnWidths?: string[]
-  textAlign?: ('left' | 'right')[]
+  textAlign?: ('left' | 'right' | 'center')[]
   compact?: boolean
   transparent?: boolean
   className?: string

@@ -28,11 +28,11 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
 
   return {
     label: {
-      in: 'Received',
-      out: 'Sent',
-      move: 'Moved',
+      in: 'Incoming transfer',
+      out: 'Outgoing transfer',
+      move: 'Auto transfer',
       pending: 'Pending',
-      swap: 'Swapped'
+      swap: 'dApp operation'
     }[infoType],
     Icon: {
       in: RiArrowDownLine,
@@ -56,11 +56,11 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
       swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
     }[infoType],
     badgeText: {
-      move: 'Moved',
-      out: 'To',
-      swap: 'Swap',
-      pending: 'Pending',
-      in: 'From'
+      move: 'inside',
+      out: 'to',
+      swap: 'with',
+      pending: '...',
+      in: 'from'
     }[infoType]
   }
 }

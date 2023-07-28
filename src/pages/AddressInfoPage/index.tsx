@@ -234,18 +234,18 @@ const AddressInfoPage = () => {
           <>
             <TableHeader
               headerTitles={[
-                '',
                 <span key="hash-time">
                   Hash & Time
                   <TimestampExpandButton />
                 </span>,
+                'Type',
                 'Assets',
                 '',
                 'Addresses',
                 'Amounts',
                 ''
               ]}
-              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '25px']}
+              columnWidths={['20%', '15%', '20%', '80px', '25%', '120px', '25px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
@@ -278,6 +278,12 @@ const AddressInfoPage = () => {
 export default AddressInfoPage
 
 const TxListCustomStyles: TDStyle[] = [
+  {
+    tdPos: 3,
+    style: css`
+      min-width: 100px;
+    `
+  },
   {
     tdPos: 6,
     style: css`

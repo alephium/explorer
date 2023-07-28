@@ -115,7 +115,7 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tr td {
-    padding: 12px;
+    padding: 10px;
   }
 
   tr:not(.details) {

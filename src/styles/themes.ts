@@ -39,7 +39,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '#adadad',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#fa6251'
+    highlight: '#f37975'
   },
   border: {
     primary: '#e3e3e3',
@@ -52,7 +52,7 @@ export const lightTheme: DefaultTheme = {
   },
   global: {
     accent: '#5981f3',
-    complementary: '#f076b1',
+    complementary: '#ce5cf8',
     alert: '#ed4a34',
     warning: '#ffa600',
     valid: '#0ea683',

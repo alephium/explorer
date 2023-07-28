@@ -49,7 +49,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const theme = useTheme()
 
   const { assets, infoType } = useTransactionInfo(t, addressHash)
-  const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
+  const { label, Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
 
@@ -93,15 +93,15 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   return (
     <>
       <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
-        <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} strokeWidth={1} color={iconColor} />
-          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
-        </IconContainer>
-
         <HashAndTimestamp>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
           {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
+        <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
+          <Icon size={directionIconSize} color={iconColor} />
+          <TxLabel style={{ color: iconColor }}>{label}</TxLabel>
+          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
+        </IconContainer>
 
         <Assets>
           {assets.map((a) => (
@@ -109,7 +109,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           ))}
         </Assets>
 
-        <Badge type="neutralHighlight" content={badgeText} floatRight minWidth={60} />
+        <Badge type="neutral" compact content={badgeText} floatRight minWidth={40} />
 
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
@@ -221,13 +221,19 @@ const AmountCell = styled.span`
 `
 
 const IconContainer = styled.div`
-  width: 28px;
-  height: 28px;
-  border-radius: 20px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  gap: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  float: left;
+`
+
+const TxLabel = styled.div`
+  margin-bottom: 2px;
+  font-size: 11px;
 `
 
 const HashAndTimestamp = styled.div`

@@ -83,7 +83,7 @@ export default styled(Badge)`
       min-width: ${minWidth ? minWidth + 'px' : 'auto'};
       border-radius: ${compact ? '3px' : '5px'};
       font-size: ${compact ? '10px' : 'inherit'};
-      padding: ${compact ? '2px 4px' : '6px 8px'};
+      padding: ${compact ? '2px 4px' : '4px 6px'};
     `
   }}
 `
