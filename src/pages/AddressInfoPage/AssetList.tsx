@@ -22,7 +22,7 @@ import { find, flatMap, sortBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
@@ -43,6 +43,7 @@ interface AssetListProps {
 
 const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading, className }: AssetListProps) => {
   const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
+  const theme = useTheme()
 
   const isLoading = assetsLoading || assetsMetadataLoading
 
@@ -104,27 +105,25 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       length: tokensWithBalanceAndMetadata.length,
       loading: isLoading,
       highlightColor: '#0cd6ff'
-    }
-  ]
-
-  if (nfts.length > 0)
-    tabs.push({
+    },
+    {
       value: 'nfts',
       label: 'NFTs',
       icon: <RiNftLine />,
       length: nfts.length,
       loading: isLoading,
       highlightColor: '#ffae0c'
-    })
+    }
+  ]
 
-  if (unknownAssetsIds.length > 0)
+  if (!isLoading && unknownAssetsIds.length > 0)
     tabs.push({
       value: 'unknown',
       label: 'Unknown',
       icon: <RiQuestionLine size={14} />,
       length: unknownAssetsIds.length,
       loading: isLoading,
-      highlightColor: '#dedede'
+      highlightColor: theme.font.tertiary
     })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])

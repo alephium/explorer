@@ -61,7 +61,7 @@ const TableTabBar = ({ items, onTabChange, activeTab, className }: TableTabBarPr
             </IconWrapper>
           )}
           <LabelWrapper>{item.label}</LabelWrapper>
-          {!item.loading && item.length && <NumberOfItems>{`${item.length}`}</NumberOfItems>}
+          {!item.loading && <NumberOfItems>{`${item.length}`}</NumberOfItems>}
           {item.loading && <LoadingSpinner style={{ marginLeft: 4 }} size={18} />}
         </Tab>
       )
