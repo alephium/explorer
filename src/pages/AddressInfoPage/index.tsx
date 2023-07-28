@@ -104,7 +104,8 @@ const AddressInfoPage = () => {
     enabled: !!addressHash
   })
 
-  const addressLatestActivity = latestTransaction?.[0].timestamp
+  const addressLatestActivity =
+    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
 
   // Asset price
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
