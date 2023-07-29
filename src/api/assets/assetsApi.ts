@@ -29,13 +29,14 @@ import {
 } from '@/types/assets'
 import { NetworkType } from '@/types/network'
 import { createQueriesCollection } from '@/utils/api'
+import { ONE_DAY_MS, ONE_HOUR_MS } from '@/utils/time'
 
 export const assetsQueries = createQueriesCollection({
   type: {
     one: (assetId: string) => ({
       queryKey: ['assetType', assetId],
       queryFn: (): Promise<AssetBase> => client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r })),
-      staleTime: Infinity
+      staleTime: ONE_HOUR_MS
     })
   },
   metadata: {
@@ -51,7 +52,7 @@ export const assetsQueries = createQueriesCollection({
           return Promise.reject(new Error('Verified token fetch failed'))
         }
       },
-      staleTime: Infinity
+      staleTime: ONE_DAY_MS
     }),
     unverifiedFungibleToken: (assetId: string) => ({
       queryKey: ['unverifiedFungibleToken', assetId],
@@ -64,7 +65,7 @@ export const assetsQueries = createQueriesCollection({
           type: 'fungible',
           verified: false
         })),
-      staleTime: Infinity
+      staleTime: ONE_HOUR_MS
     }),
     unverifiedNFT: (assetId: string) => ({
       queryKey: ['unverifiedNFT', assetId],
@@ -72,7 +73,7 @@ export const assetsQueries = createQueriesCollection({
         client.node
           .fetchNFTMetaData(assetId)
           .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
-      staleTime: Infinity
+      staleTime: ONE_HOUR_MS
     })
   },
   nftFile: {
@@ -80,7 +81,7 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['nftFile', assetId],
       queryFn: (): Promise<NFTFile> | undefined =>
         fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
-      staleTime: Infinity
+      staleTime: ONE_HOUR_MS
     })
   },
   // TODO: This may be moved in a balancesApi file in the future?

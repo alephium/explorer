@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { Route, Routes, useNavigate } from 'react-router-dom'
@@ -34,6 +36,7 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
+import { ONE_DAY_MS } from '@/utils/time'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -66,9 +69,14 @@ const App = () => {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
         retry: 6,
-        staleTime: 10000 // default ms before cache data is considered stale
+        staleTime: 10000, // default ms before cache data is considered stale
+        cacheTime: ONE_DAY_MS
       }
     }
+  })
+
+  const persister = createSyncStoragePersister({
+    storage: window.localStorage
   })
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
@@ -79,7 +87,7 @@ const App = () => {
       <SnackbarProvider>
         <GlobalStyle />
         <MainContainer>
-          <QueryClientProvider client={queryClient}>
+          <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
             <StaticDataProvider>
               <AppHeader />
               <ContentContainer>
@@ -98,7 +106,7 @@ const App = () => {
               <AppFooter />
               <SnackbarAnchor id="snackbar-anchor" />
             </StaticDataProvider>
-          </QueryClientProvider>
+          </PersistQueryClientProvider>
         </MainContainer>
         <Background />
       </SnackbarProvider>
