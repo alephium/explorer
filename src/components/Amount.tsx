@@ -143,7 +143,7 @@ export default styled(Amount)`
         : theme.global.valid
       : 'inherit'};
   white-space: nowrap;
-  font-weight: 800;
+  font-weight: 600;
 `
 
 const NumberContainer = styled.span``

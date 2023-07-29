@@ -39,7 +39,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '#adadad',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#f37975'
+    highlight: '#f67460'
   },
   border: {
     primary: '#e3e3e3',
@@ -55,7 +55,7 @@ export const lightTheme: DefaultTheme = {
     complementary: '#ce5cf8',
     alert: '#ed4a34',
     warning: '#ffa600',
-    valid: '#0ea683',
+    valid: '#0ea68f',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -79,7 +79,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
-    highlight: '#ff765a'
+    highlight: '#f37975'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.08)',

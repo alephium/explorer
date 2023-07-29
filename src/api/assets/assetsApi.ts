@@ -36,7 +36,7 @@ export const assetsQueries = createQueriesCollection({
     one: (assetId: string) => ({
       queryKey: ['assetType', assetId],
       queryFn: (): Promise<AssetBase> => client.node.guessStdTokenType(assetId).then((r) => ({ id: assetId, type: r })),
-      staleTime: ONE_HOUR_MS
+      staleTime: ONE_DAY_MS
     })
   },
   metadata: {
