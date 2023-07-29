@@ -80,15 +80,18 @@ const TransactionInfoPage = () => {
     txInfoErrorStatus = e.status
   }
 
-  const txInfo = isTxConfirmed(transactionData) ? transactionData : undefined
+  const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
 
-  previousTransactionData.current = txInfo
+  previousTransactionData.current = confirmedTxInfo
 
-  const { data: txBlock } = useQuery({ ...queries.blocks.block.one(txInfo?.blockHash || ''), enabled: !!txInfo })
+  const { data: txBlock } = useQuery({
+    ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
+    enabled: !!confirmedTxInfo
+  })
 
   const { data: chainHeights } = useQuery(queries.infos.all.heights())
 
-  const assetIds = _(txInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
+  const assetIds = _(confirmedTxInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
     .uniq()
     .compact()
     .value()
@@ -100,7 +103,7 @@ const TransactionInfoPage = () => {
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<explorer.Output> | undefined = txInfo?.outputs
+  const outputs: Array<explorer.Output> | undefined = transactionData?.outputs
 
   const totalAmount = outputs?.reduce<bigint>(
     (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
@@ -112,16 +115,16 @@ const TransactionInfoPage = () => {
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
         <Table bodyOnly isLoading={txInfoLoading}>
-          {txInfo && (
+          {transactionData && (
             <TableBody>
               <TableRow>
                 <span>Hash</span>
-                <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
+                <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
               </TableRow>
               <TableRow>
                 <span>Status</span>
-                {isTxConfirmed(txInfo) ? (
-                  txInfo.scriptExecutionOk ? (
+                {confirmedTxInfo ? (
+                  confirmedTxInfo.scriptExecutionOk ? (
                     <Badge
                       type="plus"
                       content={
@@ -147,12 +150,12 @@ const TransactionInfoPage = () => {
                   />
                 )}
               </TableRow>
-              {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
+              {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
                 <TableRow>
                   <span>Block</span>
                   <span>
                     <SimpleLink
-                      to={`../blocks/${txInfo.blockHash || ''}`}
+                      to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
                       data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
                     >
                       {txBlock?.height.toString()}
@@ -171,13 +174,13 @@ const TransactionInfoPage = () => {
                   </span>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && txInfo.timestamp && (
+              {confirmedTxInfo && confirmedTxInfo.timestamp && (
                 <TableRow>
                   <span>Timestamp</span>
-                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="high" />
+                  <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Assets</span>
                   <AssetLogos>
@@ -190,24 +193,24 @@ const TransactionInfoPage = () => {
                   </AssetLogos>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Inputs</span>
                   <div>
-                    {txInfo.inputs && txInfo.inputs.length > 0 ? (
-                      <TransactionIOList inputs={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                    {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
+                      <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       'Block Rewards'
                     )}
                   </div>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Outputs</span>
                   <div>
-                    {txInfo.outputs ? (
-                      <TransactionIOList outputs={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                    {confirmedTxInfo.outputs ? (
+                      <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       '-'
                     )}
@@ -216,16 +219,20 @@ const TransactionInfoPage = () => {
               )}
               <TableRow>
                 <span>Gas Amount</span>
-                <span>{txInfo.gasAmount || '-'} GAS</span>
+                <span>{transactionData.gasAmount || '-'} GAS</span>
               </TableRow>
               <TableRow>
                 <span>Gas Price</span>
 
-                <Amount assetId={ALPH.id} value={BigInt(txInfo.gasPrice)} fullPrecision />
+                <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
               </TableRow>
               <TableRow>
                 <span>Transaction Fee</span>
-                <Amount assetId={ALPH.id} value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
+                <Amount
+                  assetId={ALPH.id}
+                  value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
+                  fullPrecision
+                />
               </TableRow>
               <TableRow>
                 <b>Total ALPH Value</b>
