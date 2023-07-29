@@ -21,6 +21,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
+import { useEffect } from 'react'
 import { Route, Routes, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
@@ -29,6 +30,7 @@ import AppHeader from '@/components/AppHeader'
 import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
 import { useSettings } from '@/contexts/settingsContext'
 import { StaticDataProvider } from '@/contexts/staticDataContext'
+import { isHostGhPages } from '@/index'
 import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
 import BlockInfoSection from '@/pages/BlockInfoPage'
@@ -80,7 +82,9 @@ const App = () => {
   })
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
-  if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
+  useEffect(() => {
+    if (!isHostGhPages && location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
+  }, [navigate])
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

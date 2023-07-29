@@ -20,7 +20,7 @@ import './fonts/index.css'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import App from '@/App'
 import NotificationBar from '@/components/NotificationBar'
@@ -30,6 +30,10 @@ import * as serviceWorker from './serviceWorker'
 import { isFlexGapSupported } from './utils/browserSupport'
 
 let browserIsOld = !isFlexGapSupported()
+
+export const isHostGhPages = import.meta.env.BASE_URL.includes('explorer')
+
+const Router = isHostGhPages ? HashRouter : BrowserRouter
 
 try {
   BigInt(1)
@@ -46,7 +50,7 @@ root.render(
         Your browser version appears to be out of date. To use our app, please update your browser.
       </NotificationBar>
     ) : (
-      <Router basename={import.meta.env.BASE_URL}>
+      <Router>
         <SettingsProvider>
           <App />
         </SettingsProvider>
