@@ -232,7 +232,6 @@ const IconContainer = styled.div`
 `
 
 const TxLabel = styled.div`
-  margin-bottom: 2px;
   font-size: 11px;
 `
 

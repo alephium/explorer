@@ -18,9 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import './fonts/index.css'
 
-import ReactDOM from 'react-dom'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router } from 'react-router-dom'
 
+import App from '@/App'
 import NotificationBar from '@/components/NotificationBar'
 
 import { SettingsProvider } from './contexts/settingsContext'
@@ -35,25 +37,23 @@ try {
   browserIsOld = true
 }
 
-if (browserIsOld) {
-  ReactDOM.render(
-    <NotificationBar>
-      Your browser version appears to be out of date. To use our app, please update your browser.
-    </NotificationBar>,
-    document.getElementById('root')
-  )
-} else {
-  import('./App').then(({ default: App }) => {
-    ReactDOM.render(
+const root = createRoot(document.getElementById('root') as HTMLElement)
+
+root.render(
+  <StrictMode>
+    {browserIsOld ? (
+      <NotificationBar>
+        Your browser version appears to be out of date. To use our app, please update your browser.
+      </NotificationBar>
+    ) : (
       <Router basename={import.meta.env.BASE_URL}>
         <SettingsProvider>
           <App />
         </SettingsProvider>
-      </Router>,
-      document.getElementById('root')
-    )
-  })
-}
+      </Router>
+    )}
+  </StrictMode>
+)
 
 //
 // If you want your app to work offline and load faster, you can change
