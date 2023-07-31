@@ -30,7 +30,7 @@ export const useTransactionUI = (infoType: TransactionInfoType) => {
     label: {
       in: 'Incoming transfer',
       out: 'Outgoing transfer',
-      move: 'Auto transfer',
+      move: 'Self transfer',
       pending: 'Pending',
       swap: 'dApp operation'
     }[infoType],
