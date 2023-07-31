@@ -24,7 +24,6 @@ import client from '@/api/client'
 const useBlockListData = (currentPageNumber: number) => {
   const [blockList, setBlockList] = useState<explorer.ListBlocks>()
   const [manualLoading, setManualLoading] = useState(false)
-  const [page, setPage] = useState(currentPageNumber)
 
   const getBlocks = useCallback(async (pageNumber: number, manualFetch?: boolean) => {
     console.log('Fetching blocks...')
@@ -37,10 +36,9 @@ const useBlockListData = (currentPageNumber: number) => {
       if (data) {
         console.log('Number of block fetched: ' + data.blocks?.length)
         setBlockList(data)
-        setPage(pageNumber)
       }
     } catch (e) {
-      setPage(1)
+      console.error(e)
     }
 
     manualFetch && setManualLoading(false)
@@ -51,7 +49,7 @@ const useBlockListData = (currentPageNumber: number) => {
     getBlocks(currentPageNumber, true)
   }, [getBlocks, currentPageNumber])
 
-  return { getBlocks, blockPageLoading: manualLoading, data: { blockList }, page }
+  return { getBlocks, blockPageLoading: manualLoading, data: { blockList } }
 }
 
 export default useBlockListData
