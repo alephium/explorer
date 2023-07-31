@@ -110,18 +110,22 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
           {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
-        <IconContainer
-          style={{
-            backgroundColor: isFailedScriptExecution ? dAppIconBgColor : iconBgColor,
-            border: `1px solid ${iconBgColor}`
-          }}
-        >
-          <TXIcon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
-          <TxLabel style={{ color: isFailedScriptExecution ? dAppIconColor : iconColor }}>
-            {isFailedScriptExecution ? dAppLabel : label}
-          </TxLabel>
+        <TxLabelBadgeContainer>
+          <TxLabelBadge
+            style={{
+              backgroundColor: isFailedScriptExecution ? dAppIconBgColor : iconBgColor,
+              border: `1px solid ${iconBgColor}`,
+              opacity: isFailedScriptExecution ? 0.7 : 1,
+              filter: isFailedScriptExecution ? 'contrast(0.3)' : undefined
+            }}
+          >
+            <TXIcon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
+            <TxLabel style={{ color: isFailedScriptExecution ? dAppIconColor : iconColor }}>
+              {isFailedScriptExecution ? dAppLabel : label}
+            </TxLabel>
+          </TxLabelBadge>
           {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
-        </IconContainer>
+        </TxLabelBadgeContainer>
 
         <Assets>
           {assets.map((a) => (
@@ -240,15 +244,22 @@ const AmountCell = styled.span`
   font-weight: 600;
 `
 
-const IconContainer = styled.div`
-  padding: 2px 5px;
-  border-radius: 4px;
-  gap: 5px;
+const TxLabelBadgeContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   float: left;
+  border-radius: 4px;
+`
+
+const TxLabelBadge = styled.div`
+  display: flex;
+  padding: 2px 5px;
+  border-radius: 4px;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
 `
 
 const TxLabel = styled.div`
