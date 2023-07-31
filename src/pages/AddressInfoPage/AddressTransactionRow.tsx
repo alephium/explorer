@@ -34,7 +34,7 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { useTransactionUI } from '@/hooks/useTransactionUI'
+import { getTransactionUI, useTransactionUI } from '@/hooks/useTransactionUI'
 import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
@@ -50,8 +50,19 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
 
   const { assets, infoType } = useTransactionInfo(t, addressHash)
   const { label, Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
+
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
+
+  // Override badge if it's a failed script execution.
+  // TODO: Better (better way to define infoType by looking at presence of script)
+  const isFailedScriptExecution = (t as Transaction).scriptExecutionOk === false
+  const {
+    iconColor: dAppIconColor,
+    Icon: dAppIcon,
+    iconBgColor: dAppIconBgColor,
+    label: dAppLabel
+  } = getTransactionUI('swap', theme)
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -97,9 +108,16 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
           {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
-        <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} color={iconColor} />
-          <TxLabel style={{ color: iconColor }}>{label}</TxLabel>
+        <IconContainer
+          style={{
+            backgroundColor: isFailedScriptExecution ? dAppIconBgColor : iconBgColor,
+            border: `1px solid ${iconBgColor}`
+          }}
+        >
+          <Icon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
+          <TxLabel style={{ color: isFailedScriptExecution ? dAppIconColor : iconColor }}>
+            {isFailedScriptExecution ? dAppLabel : label}
+          </TxLabel>
           {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </IconContainer>
 

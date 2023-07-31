@@ -251,7 +251,7 @@ const AddressInfoPage = () => {
                 'Amounts',
                 ''
               ]}
-              columnWidths={['20%', '15%', '20%', '80px', '25%', '120px', '25px']}
+              columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
