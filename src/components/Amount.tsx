@@ -24,7 +24,7 @@ import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import AssetLogo from './AssetLogo'
 
 interface AmountProps {
-  assetId: string
+  assetId?: string
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
@@ -48,12 +48,13 @@ const Amount = ({
   fadeDecimals,
   fullPrecision = false,
   nbOfDecimalsToShow = 4,
+  suffix,
   color,
   overrideSuffixColor,
   tabIndex,
   showPlusMinus = false
 }: AmountProps) => {
-  const assetMetadata = useAssetMetadata(assetId)
+  const assetMetadata = useAssetMetadata(assetId || '')
 
   let quantitySymbol = ''
   let amount = ''
@@ -62,11 +63,14 @@ const Amount = ({
   const assetType = assetMetadata.type
   const isUnknownToken = assetType === undefined
 
-  let decimals: number | undefined, suffix: string | undefined
+  let decimals: number | undefined
+  let usedSuffix = suffix
 
-  if (assetType === 'fungible') {
-    decimals = assetMetadata.decimals
-    suffix = assetMetadata.symbol
+  if (assetType === 'fungible' || isFiat) {
+    if (assetType === 'fungible') {
+      decimals = assetMetadata.decimals
+      usedSuffix = assetMetadata.symbol
+    }
 
     if (value !== undefined) {
       amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
@@ -84,7 +88,7 @@ const Amount = ({
 
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
-      {assetType === 'fungible' ? (
+      {assetType === 'fungible' || isFiat ? (
         <>
           <NumberContainer
             data-tip={
@@ -107,9 +111,9 @@ const Amount = ({
               integralPart
             )}
           </NumberContainer>
-          <Suffix color={overrideSuffixColor ? color : undefined}> {suffix ?? 'ALPH'}</Suffix>
+          <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix ?? 'ALPH'}</Suffix>
         </>
-      ) : assetType === 'non-fungible' ? (
+      ) : assetType === 'non-fungible' && assetId ? (
         <>
           {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />

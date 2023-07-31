@@ -193,9 +193,7 @@ const AddressInfoPage = () => {
           <InfoGrid.Cell
             label="Fiat price"
             value={
-              client.networkType === 'mainnet'
-                ? addressWorth && <Amount assetId={ALPH.id} value={addressWorth} isFiat suffix="$" />
-                : '-'
+              client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
             }
           />
           <InfoGrid.Cell
