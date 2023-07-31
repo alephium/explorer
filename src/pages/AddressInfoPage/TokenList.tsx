@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH, TokenInfo } from '@alephium/token-list'
-import { Optional } from '@alephium/web3'
+import { Optional, addressFromTokenId } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { RiErrorWarningFill } from 'react-icons/ri'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -29,6 +29,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import { AssetBase, NumericTokenBalance } from '@/types/assets'
+import { useNavigate } from 'react-router-dom'
 
 interface TokenListProps {
   tokens: (Optional<AssetBase, 'type'> & Optional<TokenInfo & NumericTokenBalance, 'decimals' | 'symbol' | 'name'>)[]
@@ -39,47 +40,63 @@ interface TokenListProps {
 
 const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
   const theme = useTheme()
+  const navigate = useNavigate()
 
   const displayedTokens = limit ? tokens.slice(0, limit) : tokens
 
+  const handleTokenNameClick = (tokenId: string) => {
+    try {
+      const tokenAddress = addressFromTokenId(tokenId)
+      navigate(`/addresses/${tokenAddress}`)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return (
     <div className={className}>
-      {displayedTokens.map((token) => (
-        <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <AssetLogoStyled assetId={token.id} size={30} />
-          <NameColumn>
-            <TokenNameAndTag>
-              <TokenName>{token.name || <HashEllipsed hash={token.id} />}</TokenName>
-              {token.id !== ALPH.id && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
-            </TokenNameAndTag>
-            {token.name && token.id !== ALPH.id && (
-              <TokenHash>
-                <HashEllipsed hash={token.id} />
-              </TokenHash>
-            )}
-          </NameColumn>
+      {displayedTokens.map((token) => {
+        const isAlph = token.id === ALPH.id
 
-          {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Missing metadata" />}
+        return (
+          <AssetRow key={token.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <AssetLogoStyled assetId={token.id} size={30} />
+            <NameColumn>
+              <TokenNameAndTag>
+                <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
+                  {token.name || <HashEllipsed hash={token.id} />}
+                </TokenName>
+                {!isAlph && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
+              </TokenNameAndTag>
+              {token.name && !isAlph && (
+                <TokenHash>
+                  <HashEllipsed hash={token.id} />
+                </TokenHash>
+              )}
+            </NameColumn>
 
-          <TableCellAmount>
-            <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
-            {token.lockedBalance > 0 ? (
-              <TokenAmountSublabel>
-                {'Available '}
-                <Amount
-                  assetId={token.id}
-                  value={token.balance - token.lockedBalance}
-                  suffix={token.symbol}
-                  color={theme.font.secondary}
-                  decimals={token.decimals}
-                />
-              </TokenAmountSublabel>
-            ) : token.decimals === undefined ? (
-              <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
-            ) : undefined}
-          </TableCellAmount>
-        </AssetRow>
-      ))}
+            {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Missing metadata" />}
+
+            <TableCellAmount>
+              <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
+              {token.lockedBalance > 0 ? (
+                <TokenAmountSublabel>
+                  {'Available '}
+                  <Amount
+                    assetId={token.id}
+                    value={token.balance - token.lockedBalance}
+                    suffix={token.symbol}
+                    color={theme.font.secondary}
+                    decimals={token.decimals}
+                  />
+                </TokenAmountSublabel>
+              ) : token.decimals === undefined ? (
+                <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
+              ) : undefined}
+            </TableCellAmount>
+          </AssetRow>
+        )
+      })}
       {isLoading && (
         <LoadingRow>
           <SkeletonLoader height="40px" width="280px" />
@@ -122,9 +139,18 @@ const TokenNameAndTag = styled.div`
   max-width: 250px;
 `
 
-const TokenName = styled.span`
+const TokenName = styled.span<{ isAlph: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ${({ isAlph }) =>
+    !isAlph &&
+    css`
+      &:hover {
+        cursor: pointer;
+        opacity: 0.8;
+      }
+    `}
 `
 
 const UnverifiedIcon = styled(RiErrorWarningFill)`
