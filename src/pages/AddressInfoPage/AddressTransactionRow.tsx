@@ -59,10 +59,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   const isFailedScriptExecution = (t as Transaction).scriptExecutionOk === false
   const {
     iconColor: dAppIconColor,
-    Icon: dAppIcon,
+    Icon: DAppIcon,
     iconBgColor: dAppIconBgColor,
     label: dAppLabel
   } = getTransactionUI('swap', theme)
+
+  const TXIcon = isFailedScriptExecution ? DAppIcon : Icon
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -114,7 +116,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             border: `1px solid ${iconBgColor}`
           }}
         >
-          <Icon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
+          <TXIcon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
           <TxLabel style={{ color: isFailedScriptExecution ? dAppIconColor : iconColor }}>
             {isFailedScriptExecution ? dAppLabel : label}
           </TxLabel>
@@ -291,8 +293,9 @@ const FailedTXBubble = styled.div`
   border-radius: 14px;
   background-color: ${({ theme }) => theme.global.alert};
   color: white;
-  top: -7px;
-  right: -7px;
+  top: auto;
+  bottom: auto;
+  right: -20px;
   text-align: center;
   font-size: 10px;
   font-weight: 800;
