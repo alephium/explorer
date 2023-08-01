@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { groupOfAddress } from '@alephium/web3'
+import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -167,9 +167,20 @@ const AddressInfoPage = () => {
     })
   }
 
+  let isContract = false
+
+  try {
+    isContract = !!contractIdFromAddress(addressHash)
+  } catch (e) {
+    isContract = false
+  }
+
   return (
     <Section>
-      <SectionTitle title="Address" subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />} />
+      <SectionTitle
+        title={isContract ? 'Contract' : 'Address'}
+        subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
+      />
       <InfoGridAndQR>
         <InfoGrid>
           <InfoGrid.Cell
