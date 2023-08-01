@@ -24,9 +24,8 @@ const useTableDetailsState = (defaultState: boolean) => {
 
   const location = useLocation()
 
+  // Close details when location is changing.
   useEffect(() => {
-    // Close details when location is changing
-    // TODO: Store state in URL? Careful, can become complex when we'll have paging
     setDetailOpen(false)
   }, [location])
 

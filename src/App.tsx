@@ -22,7 +22,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { useEffect } from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from '@/components/AppFooter'
@@ -64,6 +64,7 @@ dayjs.updateLocale('en', {
 const App = () => {
   const { theme } = useSettings()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -84,7 +85,12 @@ const App = () => {
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
   useEffect(() => {
     if (!isHostGhPages && location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
-  }, [navigate])
+  }, [location.hash, navigate])
+
+  // Scroll to top on location change
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location])
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
@@ -128,8 +134,6 @@ const MainContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
 `
 
 const Background = styled.div`
