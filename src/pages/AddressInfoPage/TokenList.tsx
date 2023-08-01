@@ -70,7 +70,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               </TokenNameAndTag>
               {token.name && !isAlph && (
                 <TokenHash>
-                  <HashEllipsed hash={token.id} />
+                  <HashEllipsed hash={token.id} copyTooltipText="Copy token ID" />
                 </TokenHash>
               )}
             </NameColumn>
