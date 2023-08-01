@@ -271,12 +271,19 @@ const AddressInfoPage = () => {
             <TableBody tdStyles={TxListCustomStyles}>
               {addressMempoolTransactions &&
                 addressMempoolTransactions.map((t, i) => (
-                  <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} />
+                  <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} isInContract={isContract} />
                 ))}
               {txList &&
                 txList
                   .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} />)}
+                  .map((t, i) => (
+                    <AddressTransactionRow
+                      transaction={t}
+                      addressHash={addressHash}
+                      key={i}
+                      isInContract={isContract}
+                    />
+                  ))}
             </TableBody>
           </>
         ) : (

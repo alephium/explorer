@@ -34,37 +34,33 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { getTransactionUI, useTransactionUI } from '@/hooks/useTransactionUI'
+import { getTransactionUI } from '@/hooks/useTransactionUI'
 import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
   transaction: Transaction | MempoolTransaction
   addressHash: string
+  isInContract: boolean
 }
 
 const directionIconSize = 14
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
+const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: AddressTransactionRowProps) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
 
   const { assets, infoType } = useTransactionInfo(t, addressHash)
-  const { label, Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
 
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
-
-  // Override badge if it's a failed script execution.
-  // TODO: Better (better way to define infoType by looking at presence of script)
   const isFailedScriptExecution = (t as Transaction).scriptExecutionOk === false
-  const {
-    iconColor: dAppIconColor,
-    Icon: DAppIcon,
-    iconBgColor: dAppIconBgColor,
-    label: dAppLabel
-  } = getTransactionUI('swap', theme)
 
-  const TXIcon = isFailedScriptExecution ? DAppIcon : Icon
+  const { label, Icon, badgeColor, badgeBgColor, directionText } = getTransactionUI({
+    infoType,
+    isFailedScriptTx: isFailedScriptExecution,
+    isInContract,
+    theme
+  })
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -113,16 +109,12 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
         <TxLabelBadgeContainer>
           <TxLabelBadge
             style={{
-              backgroundColor: isFailedScriptExecution ? dAppIconBgColor : iconBgColor,
-              border: `1px solid ${iconBgColor}`,
-              opacity: isFailedScriptExecution ? 0.7 : 1,
-              filter: isFailedScriptExecution ? 'contrast(0.3)' : undefined
+              backgroundColor: badgeBgColor,
+              border: `1px solid ${badgeBgColor}`
             }}
           >
-            <TXIcon size={directionIconSize} color={isFailedScriptExecution ? dAppIconColor : iconColor} />
-            <TxLabel style={{ color: isFailedScriptExecution ? dAppIconColor : iconColor }}>
-              {isFailedScriptExecution ? dAppLabel : label}
-            </TxLabel>
+            {Icon && <Icon size={directionIconSize} color={badgeColor} />}
+            <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
           {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
         </TxLabelBadgeContainer>
@@ -133,7 +125,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
           ))}
         </Assets>
 
-        <Badge type="neutral" compact content={badgeText} floatRight minWidth={40} />
+        <Badge type="neutral" compact content={directionText} floatRight minWidth={40} />
 
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
