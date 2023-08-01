@@ -17,9 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH, TokenInfo } from '@alephium/token-list'
-import { Optional, addressFromTokenId } from '@alephium/web3'
+import { addressFromTokenId, Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import { RiErrorWarningFill } from 'react-icons/ri'
+import { useNavigate } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -29,7 +30,6 @@ import HashEllipsed from '@/components/HashEllipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/Table/TableCellAmount'
 import { AssetBase, NumericTokenBalance } from '@/types/assets'
-import { useNavigate } from 'react-router-dom'
 
 interface TokenListProps {
   tokens: (Optional<AssetBase, 'type'> & Optional<TokenInfo & NumericTokenBalance, 'decimals' | 'symbol' | 'name'>)[]
@@ -64,7 +64,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
             <NameColumn>
               <TokenNameAndTag>
                 <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
-                  {token.name || <HashEllipsed hash={token.id} />}
+                  {token.name || <HashEllipsed hash={token.id} copyTooltipText="Copy token ID" />}
                 </TokenName>
                 {!isAlph && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
               </TokenNameAndTag>

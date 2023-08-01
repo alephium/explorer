@@ -25,7 +25,7 @@ import QRCode from 'qrcode.react'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'
@@ -64,7 +64,6 @@ const AddressInfoPage = () => {
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
-  const navigate = useNavigate()
 
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
