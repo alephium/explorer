@@ -90,7 +90,7 @@ const App = () => {
   // Scroll to top on location change
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [location])
+  }, [location.pathname])
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

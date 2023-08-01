@@ -263,6 +263,7 @@ const HashAndTimestamp = styled.div`
     color: ${({ theme }) => theme.font.secondary};
     font-size: 12px;
     margin-top: 2px;
+    width: fit-content;
   }
 `
 
