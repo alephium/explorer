@@ -54,10 +54,10 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
 
     if (hasBeenCopied) {
       displaySnackbar({ text: 'Copied to clipboard.', type: 'info' })
-      ReactTooltip.rebuild()
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
+        ReactTooltip.rebuild()
       }, 3000)
     }
     return () => {
