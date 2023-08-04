@@ -31,6 +31,7 @@ import { useQueriesData } from '@/hooks/useQueriesData'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
 import { AddressHash } from '@/types/addresses'
+import { alphMetadata } from '@/utils/assets'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -74,11 +75,9 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     // Add ALPH
     if (addressBalance && BigInt(addressBalance.balance) > 0) {
       unsorted.unshift({
-        ...ALPH,
-        type: 'fungible',
+        ...alphMetadata,
         balance: BigInt(addressBalance.balance),
-        lockedBalance: BigInt(addressBalance.lockedBalance),
-        verified: true
+        lockedBalance: BigInt(addressBalance.lockedBalance)
       })
     }
 

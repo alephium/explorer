@@ -25,6 +25,7 @@ import { queries } from '@/api'
 import { useVerifiedTokensMetadata } from '@/contexts/staticDataContext'
 import { useQueriesData } from '@/hooks/useQueriesData'
 import { UnverifiedNFTMetadataWithFile, VerifiedFungibleTokenMetadata } from '@/types/assets'
+import { alphMetadata } from '@/utils/assets'
 
 export const useAssetMetadata = (assetId: string) => {
   const isAlph = assetId === ALPH.id
@@ -55,7 +56,7 @@ export const useAssetMetadata = (assetId: string) => {
   const unverifiedNFTMetadataWithFile: UnverifiedNFTMetadataWithFile | undefined =
     unverifiedNFTMetadata && nftData ? { ...unverifiedNFTMetadata, file: nftData } : undefined
 
-  if (isAlph) return { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
+  if (isAlph) return alphMetadata
 
   return (
     verifiedTokenMetadata ||
@@ -103,7 +104,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   })
 
   if (isAlphIn) {
-    verifiedTokensMetadata.unshift({ ...ALPH, type: 'fungible', verified: true })
+    verifiedTokensMetadata.unshift(alphMetadata)
   }
 
   const returnedVerifiedTokensMetadata = useMemo(
