@@ -66,14 +66,18 @@ const AssetLogo = (props: AssetLogoProps) => {
         id="picture-tooltip"
         backgroundColor="black"
         getContent={(dataTip) => {
-          const props = JSON.parse(dataTip)
+          try {
+            const props = JSON.parse(dataTip)
 
-          return (
-            <NFTTooltipContainer>
-              <NFTTooltipImage height={150} width={150} src={props?.src} />
-              <NFTTitle>{props?.name}</NFTTitle>
-            </NFTTooltipContainer>
-          )
+            return (
+              <NFTTooltipContainer>
+                <NFTTooltipImage height={150} width={150} src={props?.src} />
+                <NFTTitle>{props?.name}</NFTTitle>
+              </NFTTooltipContainer>
+            )
+          } catch (e) {
+            return null
+          }
         }}
         effect="solid"
       />
