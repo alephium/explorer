@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
+import { calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -60,7 +60,7 @@ const numberOfTxsPerPage = 10
 
 const AddressInfoPage = () => {
   const theme = useTheme()
-  const { id: addressHash = '' } = useParams<ParamTypes>()
+  const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
@@ -69,6 +69,8 @@ const AddressInfoPage = () => {
   const [exportModalShown, setExportModalShown] = useState(false)
 
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
+
+  const addressHash = id && isAddressValid(id) ? id : ''
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),
