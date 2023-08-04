@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MAGNITUDE_SYMBOL, convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
+import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay, MAGNITUDE_SYMBOL } from '@alephium/sdk'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
