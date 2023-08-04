@@ -16,19 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
+import { calculateAmountWorth, getHumanReadableError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
-import { ExplorerProvider, groupOfAddress } from '@alephium/web3'
-import { AddressBalance, MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { sortBy } from 'lodash'
-import { FileDown } from 'lucide-react'
+import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
+import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
-import { fetchAddressAssets } from '@/api/addressApi'
+import { queries } from '@/api'
+import client from '@/api/client'
 import { fetchAssetPrice } from '@/api/priceApi'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
@@ -42,135 +43,73 @@ import Table, { TDStyle } from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
-import { GlobalContextInterface, useGlobalContext } from '@/contexts/global'
-import useInterval from '@/hooks/useInterval'
 import usePageNumber from '@/hooks/usePageNumber'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
+import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow'
+import AssetList from '@/pages/AddressInfoPage/AssetList'
+import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { AddressAssetsResult } from '@/types/addresses'
-import { getAssetInfo } from '@/utils/assets'
 import { formatNumberForDisplay } from '@/utils/strings'
-
-import AddressTransactionRow from './AddressTransactionRow'
-import AssetList from './AssetList'
-import AddressInfoGrid from './InfoGrid'
 
 type ParamTypes = {
   id: string
 }
 
-type AddressPropertyName = 'balance' | 'txNumber' | 'assets' | 'transactions'
-
-type SingleStringArgFunctions<T> = {
-  [K in keyof T]: T[K] extends (arg: string) => unknown ? K : never
-}[keyof T]
+const numberOfTxsPerPage = 10
 
 const AddressInfoPage = () => {
   const theme = useTheme()
-  const { id } = useParams<ParamTypes>()
-  const { client, setSnackbarMessage, networkType } = useGlobalContext()
+  const { id: addressHash = '' } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
+  const { displaySnackbar } = useSnackbar()
 
-  const [addressBalance, setAddressBalance] = useState<AddressBalance>()
-  const [addressTransactionNumber, setAddressTransactionNumber] = useState<number>()
-  const [addressAssets, setAddressAssets] = useState<AddressAssetsResult>()
-  const [addressTransactions, setAddressTransactions] = useState<Transaction[]>()
-  const [addressMempoolTransactions, setAddressMempoolTransactions] = useState<MempoolTransaction[]>([])
-  const [addressLatestActivity, setAddressLatestActivity] = useState<number>()
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
 
-  const [loadings, setLoadings] = useState<{ [key in AddressPropertyName]: boolean }>({
-    balance: true,
-    txNumber: true,
-    assets: true,
-    transactions: true
+  const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
+
+  const { data: addressBalance } = useQuery({
+    ...queries.address.balance.details(addressHash),
+    enabled: !!addressHash
   })
 
-  const fetchAddressDataGeneric = useCallback(
-    async <T,>(
-      addressPropName: AddressPropertyName,
-      setAddressProp: (value: T | undefined) => void,
-      apiCall: SingleStringArgFunctions<ExplorerProvider['addresses']> | (() => Promise<T>)
-    ) => {
-      if (!client || !id) return
+  const {
+    data: txList,
+    isLoading: txListLoading,
+    refetch: refetchTxList
+  } = useQuery({
+    ...queries.address.transactions.confirmed(addressHash, pageNumber, numberOfTxsPerPage),
+    enabled: !!addressHash,
+    keepPreviousData: true
+  })
 
-      setLoadings((p) => ({ ...p, [addressPropName]: true }))
-      setAddressProp(undefined)
+  const { data: latestTransaction } = useQuery({
+    ...queries.address.transactions.confirmed(addressHash, 1, 1),
+    enabled: !!addressHash
+  })
 
-      try {
-        const result = typeof apiCall === 'string' ? ((await client.addresses[apiCall](id, {})) as T) : await apiCall()
-        setAddressProp(result)
-      } catch (error) {
-        displayError(setSnackbarMessage, error, `Error while fetching ${addressPropName}`)
-      } finally {
-        setLoadings((p) => ({ ...p, [addressPropName]: false }))
-      }
-    },
-    [client, id, setSnackbarMessage]
-  )
+  const { data: addressMempoolTransactions = [] } = useQuery({
+    ...queries.address.transactions.mempool(addressHash),
+    enabled: !!addressHash,
+    refetchInterval: isAppVisible && pageNumber === 1 ? 10000 : undefined
+  })
 
-  const fetchTransactions = useCallback(
-    () =>
-      client &&
-      id &&
-      fetchAddressDataGeneric('transactions', setAddressTransactions, async () => {
-        const currentPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, {
-          page: pageNumber
-        })
-        const firstPageTransactionData = await client.addresses.getAddressesAddressTransactions(id, { page: 1 })
-        setAddressLatestActivity(firstPageTransactionData[0]?.timestamp)
+  const { data: txNumber, isLoading: txNumberLoading } = useQuery({
+    ...queries.address.transactions.txNumber(addressHash),
+    enabled: !!addressHash
+  })
 
-        return currentPageTransactionData
-      }),
-    [client, fetchAddressDataGeneric, id, pageNumber]
-  )
+  const { data: addressAssetIds = [], isLoading: assetsLoading } = useQuery({
+    ...queries.address.assets.all(addressHash),
+    enabled: !!addressHash
+  })
 
-  const fetchMempoolTxs = useCallback(
-    async (shouldTriggerTxFetch = true) => {
-      if (!client || !id) return
+  const addressLatestActivity =
+    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
 
-      try {
-        const addressMempoolTransactionsHashes = new Set(addressMempoolTransactions.map((t) => t.hash))
-        const mempoolTxs = await client.addresses.getAddressesAddressMempoolTransactions(id)
-
-        if (
-          addressMempoolTransactions.length === mempoolTxs.length &&
-          mempoolTxs.every((t) => addressMempoolTransactionsHashes.has(t.hash))
-        )
-          return
-
-        if (shouldTriggerTxFetch && addressMempoolTransactions.length > mempoolTxs.length) {
-          await fetchTransactions()
-        }
-
-        setAddressMempoolTransactions(mempoolTxs)
-      } catch (e) {
-        displayError(setSnackbarMessage, e, `Error while fetching pending transactions`)
-      }
-    },
-    [addressMempoolTransactions, client, fetchTransactions, id, setSnackbarMessage]
-  )
-
-  // Fetch on mount
-  useEffect(() => {
-    if (client && id) {
-      fetchAddressDataGeneric('balance', setAddressBalance, 'getAddressesAddressBalance')
-      fetchAddressDataGeneric('txNumber', setAddressTransactionNumber, 'getAddressesAddressTotalTransactions')
-      fetchAddressDataGeneric('assets', setAddressAssets, async () => fetchAddressAssets(client, id))
-      fetchTransactions()
-    }
-  }, [client, fetchAddressDataGeneric, fetchTransactions, id, pageNumber])
-
-  useEffect(() => {
-    fetchMempoolTxs(false)
-  }, [fetchMempoolTxs])
-
-  // Mempool tx check
-  useInterval(fetchMempoolTxs, 10000, !isAppVisible)
-
-  // Asset price (appox).
+  // Asset price
   // TODO: when listed tokens, add resp. prices. ALPH only for now.
   useEffect(() => {
     setAddressWorth(undefined)
@@ -183,52 +122,77 @@ const AddressInfoPage = () => {
         const price = await fetchAssetPrice('alephium')
 
         setAddressWorth(calculateAmountWorth(BigInt(balance), price))
-      } catch (error) {
-        displayError(setSnackbarMessage, error, 'Error while fetching fiat price')
+      } catch (e) {
+        console.error(e)
+        displaySnackbar({
+          text: getHumanReadableError(e, 'Error while fetching fiat worth'),
+          type: 'alert'
+        })
       }
     }
 
     getAddressWorth()
-  }, [addressBalance?.balance, setSnackbarMessage])
+  }, [addressBalance?.balance, displaySnackbar])
+
+  // Refetch TXs when less txs are found in mempool
+  useEffect(() => {
+    if (addressMempoolTransactions.length < lastKnownMempoolTxs.current.length) {
+      refetchTxList()
+    }
+    lastKnownMempoolTxs.current = addressMempoolTransactions
+  }, [addressMempoolTransactions, refetchTxList])
+
+  const totalBalance = addressBalance?.balance
+  const lockedBalance = addressBalance?.lockedBalance
+
+  const totalNbOfAssets =
+    addressAssetIds.length +
+    ((totalBalance && BigInt(totalBalance) > 0) || (lockedBalance && BigInt(lockedBalance) > 0) ? 1 : 0)
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
 
-  if (!id) return null
+  if (!addressHash) return null
 
-  const addressGroup = groupOfAddress(id)
+  let addressGroup
 
-  const totalBalance = addressBalance?.balance
-  const lockedBalance = addressBalance?.lockedBalance
-  const txNumber = addressTransactionNumber
-  const txList = addressTransactions
+  try {
+    addressGroup = groupOfAddress(addressHash)
+  } catch (e) {
+    console.log(e)
 
-  const assets = (addressAssets?.assets.map((a) => ({
-    ...a,
-    balance: BigInt(a.balance),
-    lockedBalance: BigInt(a.lockedBalance),
-    ...getAssetInfo({ assetId: a.id, networkType })
-  })) ?? []) as Asset[]
+    displaySnackbar({
+      text: getHumanReadableError(e, 'Impossible to get the group of this address'),
+      type: 'alert'
+    })
+  }
 
-  if (totalBalance && lockedBalance && parseInt(totalBalance) > 0) {
-    assets.push({ ...ALPH, balance: BigInt(totalBalance), lockedBalance: BigInt(lockedBalance) })
+  let isContract = false
+
+  try {
+    isContract = !!contractIdFromAddress(addressHash)
+  } catch (e) {
+    isContract = false
   }
 
   return (
     <Section>
-      <SectionTitle title="Address" subtitle={<HighlightedHash text={id} textToCopy={id} />} />
+      <SectionTitle
+        title={isContract ? 'Contract' : 'Address'}
+        subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
+      />
       <InfoGridAndQR>
         <InfoGrid>
           <InfoGrid.Cell
             label="ALPH balance"
-            value={totalBalance && <Amount value={BigInt(totalBalance)} />}
+            value={totalBalance && <Amount assetId={ALPH.id} value={BigInt(totalBalance)} />}
             sublabel={
               lockedBalance &&
               lockedBalance !== '0' && (
                 <Badge
                   content={
                     <span>
-                      Locked: <Amount value={BigInt(lockedBalance)} />
+                      Locked: <Amount assetId={ALPH.id} value={BigInt(lockedBalance)} />
                     </span>
                   }
                   type="neutral"
@@ -238,27 +202,29 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell
             label="Fiat price"
-            value={networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'}
+            value={
+              client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
+            }
           />
           <InfoGrid.Cell
             label="Nb. of transactions"
-            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !loadings.txNumber ? 0 : undefined}
+            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={!loadings.assets ? assets.length : undefined} />
-          <InfoGrid.Cell label="Address group" value={addressGroup.toString()} />
+          <InfoGrid.Cell label="Nb. of assets" value={totalNbOfAssets} />
+          <InfoGrid.Cell label="Address group" value={addressGroup?.toString()} />
           <InfoGrid.Cell
             label="Latest activity"
             value={
               addressLatestActivity ? (
                 <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
-              ) : !loadings.transactions ? (
+              ) : !txListLoading ? (
                 'No activity yet'
               ) : undefined
             }
           />
         </InfoGrid>
         <QRCodeCell>
-          <QRCode size={130} value={id} bgColor="transparent" fgColor={theme.font.primary} />
+          <QRCode size={130} value={addressHash} bgColor="transparent" fgColor={theme.font.primary} />
         </QRCodeCell>
       </InfoGridAndQR>
 
@@ -266,46 +232,58 @@ const AddressInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList assets={sortBy(assets, 'name')} isLoading={loadings.assets} />
+      <AssetList
+        addressBalance={addressBalance}
+        addressHash={addressHash}
+        assetIds={addressAssetIds}
+        assetsLoading={assetsLoading}
+      />
 
       <SectionHeader>
         <h2>Transactions</h2>
         {txNumber && txNumber > 0 ? (
           <Button onClick={handleExportModalOpen}>
-            <FileDown size={16} />
+            <RiFileDownloadLine size={16} />
             Download CSV
           </Button>
         ) : null}
       </SectionHeader>
 
-      <Table hasDetails main scrollable isLoading={loadings.transactions}>
-        {txList?.length || addressMempoolTransactions?.length ? (
+      <Table hasDetails main scrollable isLoading={txListLoading}>
+        {(!txListLoading && txList?.length) || addressMempoolTransactions?.length ? (
           <>
             <TableHeader
               headerTitles={[
-                '',
                 <span key="hash-time">
                   Hash & Time
                   <TimestampExpandButton />
                 </span>,
+                'Type',
                 'Assets',
                 '',
                 'Addresses',
                 'Amounts',
                 ''
               ]}
-              columnWidths={['45px', '15%', '100px', '80px', '25%', '120px', '25px']}
+              columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
             <TableBody tdStyles={TxListCustomStyles}>
               {addressMempoolTransactions &&
                 addressMempoolTransactions.map((t, i) => (
-                  <AddressTransactionRow transaction={t} addressHash={id} key={i} />
+                  <AddressTransactionRow transaction={t} addressHash={addressHash} key={i} isInContract={isContract} />
                 ))}
               {txList &&
                 txList
                   .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                  .map((t, i) => <AddressTransactionRow transaction={t} addressHash={id} key={i} />)}
+                  .map((t, i) => (
+                    <AddressTransactionRow
+                      transaction={t}
+                      addressHash={addressHash}
+                      key={i}
+                      isInContract={isContract}
+                    />
+                  ))}
             </TableBody>
           </>
         ) : (
@@ -317,28 +295,22 @@ const AddressInfoPage = () => {
         )}
       </Table>
 
-      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} /> : null}
+      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
 
-      <ExportAddressTXsModal addressHash={id} isOpen={exportModalShown} onClose={handleExportModalClose} />
+      <ExportAddressTXsModal addressHash={addressHash} isOpen={exportModalShown} onClose={handleExportModalClose} />
     </Section>
   )
 }
 
 export default AddressInfoPage
 
-const displayError = (
-  setSnackbarMessage: GlobalContextInterface['setSnackbarMessage'],
-  error: unknown,
-  errorMsg: string
-) => {
-  console.error(error)
-  setSnackbarMessage({
-    text: getHumanReadableError(error, errorMsg),
-    type: 'alert'
-  })
-}
-
 const TxListCustomStyles: TDStyle[] = [
+  {
+    tdPos: 3,
+    style: css`
+      min-width: 100px;
+    `
+  },
   {
     tdPos: 6,
     style: css`
@@ -367,7 +339,7 @@ const InfoGridAndQR = styled.div`
   flex-direction: row;
   background-color: ${({ theme }) => theme.bg.primary};
   width: 100%;
-  border-radius: 12px;
+  border-radius: 9px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
 

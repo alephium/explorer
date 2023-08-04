@@ -18,15 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import './fonts/index.css'
 
+import { StrictMode } from 'react'
 import ReactDOM from 'react-dom'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import NotificationBar from '@/components/NotificationBar'
 
+import { SettingsProvider } from './contexts/settingsContext'
 import * as serviceWorker from './serviceWorker'
 import { isFlexGapSupported } from './utils/browserSupport'
 
 let browserIsOld = !isFlexGapSupported()
+
+export const isHostGhPages = import.meta.env.BASE_URL.includes('explorer')
+
+const Router = isHostGhPages ? HashRouter : BrowserRouter
 
 try {
   BigInt(1)
@@ -43,16 +49,16 @@ if (browserIsOld) {
   )
 } else {
   import('./App').then(({ default: App }) => {
-    import('./contexts/global').then(({ GlobalContextProvider }) => {
-      ReactDOM.render(
+    ReactDOM.render(
+      <StrictMode>
         <Router>
-          <GlobalContextProvider>
+          <SettingsProvider>
             <App />
-          </GlobalContextProvider>
-        </Router>,
-        document.getElementById('root')
-      )
-    })
+          </SettingsProvider>
+        </Router>
+      </StrictMode>,
+      document.getElementById('root')
+    )
   })
 }
 

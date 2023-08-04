@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Check, Copy } from 'lucide-react'
 import { MouseEvent, useEffect, useState } from 'react'
+import { RiCheckLine, RiFileCopyLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled, { css } from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useSnackbar } from '@/hooks/useSnackbar'
 
 interface ClipboardButtonProps {
   textToCopy: string
@@ -32,7 +32,7 @@ interface ClipboardButtonProps {
 
 const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProps) => {
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
-  const { setSnackbarMessage } = useGlobalContext()
+  const { displaySnackbar } = useSnackbar()
 
   const handleClick = (e: MouseEvent) => {
     e.stopPropagation()
@@ -53,11 +53,11 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
     let interval: ReturnType<typeof setInterval>
 
     if (hasBeenCopied) {
-      ReactTooltip.rebuild()
-      setSnackbarMessage({ text: 'Copied to clipboard!', type: 'info' })
+      displaySnackbar({ text: 'Copied to clipboard.', type: 'info' })
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
+        ReactTooltip.rebuild()
       }, 3000)
     }
     return () => {
@@ -65,7 +65,7 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
         clearInterval(interval)
       }
     }
-  }, [hasBeenCopied, setSnackbarMessage])
+  }, [displaySnackbar, hasBeenCopied])
 
   return (
     <div className={className}>
@@ -81,7 +81,7 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
 export default styled(ClipboardButton)`
   display: inline-flex;
   align-items: center;
-  margin-left: 10px;
+  margin-left: 6px;
   cursor: pointer;
 
   & svg {
@@ -103,10 +103,10 @@ export default styled(ClipboardButton)`
     `}
 `
 
-const StyledClipboardIcon = styled(Copy)`
+const StyledClipboardIcon = styled(RiFileCopyLine)`
   stroke: currentColor;
 `
 
-const StyledCheckIcon = styled(Check)`
+const StyledCheckIcon = styled(RiCheckLine)`
   color: ${({ theme }) => theme.global.valid};
 `

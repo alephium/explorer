@@ -16,15 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
-import { AnimatePresence, AnimateSharedLayout, motion } from 'framer-motion'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import styled, { ThemeProvider } from 'styled-components'
 
 import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
-import { useGlobalContext } from '@/contexts/global'
+import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
+import { useSettings } from '@/contexts/settingsContext'
+import { StaticDataProvider } from '@/contexts/staticDataContext'
+import { isHostGhPages } from '@/index'
 import PageNotFound from '@/pages/404'
 import AddressInfoSection from '@/pages/AddressInfoPage'
 import BlockInfoSection from '@/pages/BlockInfoPage'
@@ -32,7 +38,7 @@ import HomeSection from '@/pages/HomePage/HomePage'
 import TransactionInfoSection from '@/pages/TransactionInfoPage'
 import GlobalStyle, { deviceBreakPoints } from '@/styles/globalStyles'
 import { darkTheme, lightTheme } from '@/styles/themes'
-import { SnackbarMessage } from '@/types/ui'
+import { ONE_DAY_MS } from '@/utils/time'
 
 /* Customize data format accross the app */
 dayjs.extend(updateLocale)
@@ -56,59 +62,69 @@ dayjs.updateLocale('en', {
 })
 
 const App = () => {
-  const { snackbarMessage, currentTheme } = useGlobalContext()
+  const { theme } = useSettings()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
+        retry: 6,
+        staleTime: 10000, // default ms before cache data is considered stale
+        cacheTime: ONE_DAY_MS
+      }
+    }
+  })
+
+  const persister = createSyncStoragePersister({
+    storage: window.localStorage
+  })
 
   // Ensure that old HashRouter URLs get converted to BrowserRouter URLs
-  if (location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
+  useEffect(() => {
+    if (!isHostGhPages && location.hash.startsWith('#/')) navigate(location.hash.replace('#', ''))
+  }, [location.hash, navigate])
+
+  // Scroll to top on location change
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   return (
-    <ThemeProvider theme={currentTheme === 'light' ? lightTheme : darkTheme}>
-      <GlobalStyle />
-      <MainContainer>
-        <AnimateSharedLayout>
-          <AppHeader />
-          <ContentContainer>
-            <ContentWrapper>
-              <Content>
-                <Routes>
-                  <Route path="/" element={<HomeSection />} />
-                  <Route path="/blocks/:id" element={<BlockInfoSection />} />
-                  <Route path="/addresses/:id" element={<AddressInfoSection />} />
-                  <Route path="/transactions/:id" element={<TransactionInfoSection />} />
-                  <Route path="*" element={<PageNotFound />} />
-                </Routes>
-              </Content>
-            </ContentWrapper>
-          </ContentContainer>
-        </AnimateSharedLayout>
-        <AppFooter />
-        <SnackbarManager message={snackbarMessage} />
-      </MainContainer>
-      <Background />
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <SnackbarProvider>
+        <GlobalStyle />
+        <MainContainer>
+          <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+            <StaticDataProvider>
+              <AppHeader />
+              <ContentContainer>
+                <ContentWrapper>
+                  <Content>
+                    <Routes>
+                      <Route path="/" element={<HomeSection />} />
+                      <Route path="/blocks/:id" element={<BlockInfoSection />} />
+                      <Route path="/addresses/:id" element={<AddressInfoSection />} />
+                      <Route path="/transactions/:id" element={<TransactionInfoSection />} />
+                      <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                  </Content>
+                </ContentWrapper>
+              </ContentContainer>
+              <AppFooter />
+              <SnackbarAnchor id="snackbar-anchor" />
+            </StaticDataProvider>
+          </PersistQueryClientProvider>
+        </MainContainer>
+        <Background />
+      </SnackbarProvider>
     </ThemeProvider>
   )
 }
 
 export default App
-
-const SnackbarManager = ({ message }: { message?: SnackbarMessage }) => (
-  <SnackbarManagerContainer>
-    <AnimatePresence>
-      {message && (
-        <SnackbarPopup
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className={message?.type}
-        >
-          {message.Icon}
-          {message.text}
-        </SnackbarPopup>
-      )}
-    </AnimatePresence>
-  </SnackbarManagerContainer>
-)
 
 const MainContainer = styled.div`
   position: absolute;
@@ -118,8 +134,6 @@ const MainContainer = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
 `
 
 const Background = styled.div`
@@ -160,51 +174,8 @@ const Content = styled.div`
   margin-bottom: 40px;
 `
 
-const SnackbarManagerContainer = styled.div`
-  position: fixed;
+const SnackbarAnchor = styled.div`
+  position: absolute;
   bottom: 0;
   right: 0;
-  display: flex;
-  z-index: 10001;
-  justify-content: flex-end;
-
-  @media ${deviceBreakPoints.mobile} {
-    left: 0;
-    justify-content: center;
-  }
-`
-
-const SnackbarPopup = styled(motion.div)`
-  margin: 10px;
-  text-align: center;
-  min-width: 150px;
-  max-width: 50vw;
-  padding: 20px;
-  color: white;
-  border-radius: 12px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
-
-  display: flex;
-  gap: 10px;
-  align-items: center;
-
-  z-index: 1000;
-
-  &.alert {
-    background-color: rgb(219, 99, 69);
-  }
-
-  &.info {
-    background-color: black;
-  }
-
-  &.success {
-    background-color: rgb(56, 168, 93);
-  }
-
-  @media ${deviceBreakPoints.mobile} {
-    margin: 10px auto;
-    max-width: 90vw;
-  }
 `

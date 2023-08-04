@@ -72,7 +72,7 @@ const Table: FC<TableProps> = ({ children, isLoading, ...props }) => {
 const TableWrapper = styled.div<TableProps>`
   border: ${({ noBorder, theme }) => !noBorder && `1px solid ${theme.border.primary}`};
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 9px;
   line-height: initial;
   min-height: ${({ minHeight }) => minHeight}px;
   background-color: ${({ theme }) => theme.bg.primary};
@@ -115,7 +115,7 @@ const StyledTable = styled.table<TableProps>`
   }
 
   tr td {
-    padding: 12px;
+    padding: 10px;
   }
 
   tr:not(.details) {

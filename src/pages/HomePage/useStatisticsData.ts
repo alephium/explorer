@@ -20,7 +20,7 @@ import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { useCallback, useEffect, useState } from 'react'
 
-import { useGlobalContext } from '@/contexts/global'
+import client from '@/api/client'
 
 const ONE_DAY = 1000 * 60 * 60 * 24
 
@@ -56,8 +56,6 @@ const getTimeIntervals = (timeInterval: explorer.IntervalType) => ({
 })
 
 const useStatisticsData = (timeInterval: explorer.IntervalType) => {
-  const { client } = useGlobalContext()
-
   const [statsScalarData, setStatsScalarData] = useState<StatsScalarData>({
     hashrate: statScalarDefault,
     totalSupply: statScalarDefault,
@@ -92,7 +90,7 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
       const now = new Date().getTime()
       const yesterday = now - ONE_DAY
 
-      const data = await client.charts.getChartsHashrates({
+      const data = await client.explorer.charts.getChartsHashrates({
         fromTs: yesterday,
         toTs: now,
         'interval-type': explorer.IntervalType.Hourly
@@ -102,7 +100,7 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
     }
 
     const fetchBlocksData = async () => {
-      const data = await client.infos.getInfosHeights()
+      const data = await client.explorer.infos.getInfosHeights()
       if (data && data.length > 0)
         updateStatsScalar(
           'totalBlocks',
@@ -111,14 +109,14 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
     }
 
     const fetchAvgBlockTimeData = async () => {
-      const data = await client.infos.getInfosAverageBlockTimes()
+      const data = await client.explorer.infos.getInfosAverageBlockTimes()
       if (data && data.length > 0)
         updateStatsScalar('avgBlockTime', data.reduce((acc: number, { value }) => acc + value, 0.0) / data.length)
     }
 
     const fetchTxVectorData = async () => {
       const timeIntervals = getTimeIntervals(timeInterval)
-      const data = await client.charts.getChartsTransactionsCount({
+      const data = await client.explorer.charts.getChartsTransactionsCount({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
         'interval-type': timeInterval
@@ -143,7 +141,7 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
     const fetchHashrateVectorData = async () => {
       const timeIntervals = getTimeIntervals(timeInterval)
 
-      const data = await client.charts.getChartsHashrates({
+      const data = await client.explorer.charts.getChartsHashrates({
         fromTs: timeIntervals.from,
         toTs: timeIntervals.to,
         'interval-type': timeInterval
@@ -170,10 +168,10 @@ const useStatisticsData = (timeInterval: explorer.IntervalType) => {
     fetchAvgBlockTimeData()
     fetchTxVectorData()
     fetchHashrateVectorData()
-    fetchAndUpdateStatsScalar('totalSupply', client.infos.getInfosSupplyTotalAlph)
-    fetchAndUpdateStatsScalar('circulatingSupply', client.infos.getInfosSupplyCirculatingAlph)
-    fetchAndUpdateStatsScalar('totalTransactions', client.infos.getInfosTotalTransactions)
-  }, [client, timeInterval])
+    fetchAndUpdateStatsScalar('totalSupply', client.explorer.infos.getInfosSupplyTotalAlph)
+    fetchAndUpdateStatsScalar('circulatingSupply', client.explorer.infos.getInfosSupplyCirculatingAlph)
+    fetchAndUpdateStatsScalar('totalTransactions', client.explorer.infos.getInfosTotalTransactions)
+  }, [timeInterval])
 
   useEffect(() => {
     fetchStatistics()

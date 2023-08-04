@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { QrCode } from 'lucide-react'
 import QRCode from 'qrcode.react'
+import { RiQrCodeLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
@@ -32,7 +32,7 @@ const QRCodeButton = ({ textToEncode }: { textToEncode: string }) => (
 
 export default QRCodeButton
 
-const StyledClipboardIcon = styled(QrCode)`
+const StyledClipboardIcon = styled(RiQrCodeLine)`
   margin-left: 10px;
   cursor: pointer;
   color: ${({ theme }) => theme.font.secondary};

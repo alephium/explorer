@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { isMempoolTx } from '@alephium/sdk'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
-import { ArrowRight } from 'lucide-react'
+import { RiArrowRightLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -33,27 +33,34 @@ import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
-import { useGlobalContext } from '@/contexts/global'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { useTransactionUI } from '@/hooks/useTransactionUI'
-import { getTransactionInfo } from '@/utils/transactions'
+import { getTransactionUI } from '@/hooks/useTransactionUI'
+import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
   transaction: Transaction | MempoolTransaction
   addressHash: string
+  isInContract: boolean
 }
 
-const directionIconSize = 13
+const directionIconSize = 14
 
-const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t, addressHash }) => {
+const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: AddressTransactionRowProps) => {
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
-  const { networkType } = useGlobalContext()
   const theme = useTheme()
 
-  const { assets, infoType } = getTransactionInfo(t, addressHash, networkType)
-  const { Icon, iconColor, iconBgColor, badgeText } = useTransactionUI(infoType)
+  const { assets, infoType } = useTransactionInfo(t, addressHash)
+
   const isMoved = infoType === 'move'
   const isPending = isMempoolTx(t)
+  const isFailedScriptExecution = (t as Transaction).scriptExecutionOk === false
+
+  const { label, Icon, badgeColor, badgeBgColor, directionText } = getTransactionUI({
+    infoType,
+    isFailedScriptTx: isFailedScriptExecution,
+    isInContract,
+    theme
+  })
 
   const renderOutputAccounts = () => {
     if (!t.outputs) return
@@ -95,23 +102,30 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
   return (
     <>
       <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
-        <IconContainer style={{ backgroundColor: iconBgColor, border: `1px solid ${iconBgColor}` }}>
-          <Icon size={directionIconSize} strokeWidth={3} color={iconColor} />
-          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
-        </IconContainer>
-
         <HashAndTimestamp>
           <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
           {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
         </HashAndTimestamp>
+        <TxLabelBadgeContainer>
+          <TxLabelBadge
+            style={{
+              backgroundColor: badgeBgColor,
+              border: `1px solid ${badgeBgColor}`
+            }}
+          >
+            {Icon && <Icon size={directionIconSize} color={badgeColor} />}
+            <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
+          </TxLabelBadge>
+          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
+        </TxLabelBadgeContainer>
 
         <Assets>
           {assets.map((a) => (
-            <AssetLogo key={a.id} asset={a} size={21} showTooltip />
+            <AssetLogo key={a.id} assetId={a.id} size={21} showTooltip />
           ))}
         </Assets>
 
-        <Badge type="neutralHighlight" content={badgeText} floatRight minWidth={60} />
+        <Badge type="neutral" compact content={directionText} floatRight minWidth={40} />
 
         {!isPending && (infoType === 'move' || infoType === 'out' ? renderOutputAccounts() : renderInputAccounts())}
         {!isPending && (
@@ -119,13 +133,13 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
             {assets.map(({ id, amount, symbol, decimals }) => (
               <Amount
                 key={id}
+                assetId={id}
                 value={amount}
                 highlight={!isMoved}
                 showPlusMinus={!isMoved}
                 color={isMoved ? theme.font.secondary : undefined}
                 suffix={symbol}
                 decimals={decimals}
-                isUnknownToken={!symbol}
               />
             ))}
           </AmountCell>
@@ -153,7 +167,7 @@ const AddressTransactionRow: FC<AddressTransactionRowProps> = ({ transaction: t,
                   </IODetailList>
 
                   <span style={{ textAlign: 'center' }}>
-                    <ArrowRight size={12} />
+                    <RiArrowRightLine size={12} />
                   </span>
 
                   <IODetailList>
@@ -222,14 +236,26 @@ const AmountCell = styled.span`
   font-weight: 600;
 `
 
-const IconContainer = styled.div`
-  width: 28px;
-  height: 28px;
-  border-radius: 20px;
+const TxLabelBadgeContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  float: left;
+  border-radius: 4px;
+`
+
+const TxLabelBadge = styled.div`
+  display: flex;
+  padding: 2px 5px;
+  border-radius: 4px;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+`
+
+const TxLabel = styled.div`
+  font-size: 11px;
 `
 
 const HashAndTimestamp = styled.div`
@@ -237,6 +263,7 @@ const HashAndTimestamp = styled.div`
     color: ${({ theme }) => theme.font.secondary};
     font-size: 12px;
     margin-top: 2px;
+    width: fit-content;
   }
 `
 
@@ -252,7 +279,7 @@ const IODetailList = styled.div`
   flex-direction: column;
   background-color: ${({ theme }) => theme.bg.secondary};
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  border-radius: 12px;
+  border-radius: 9px;
 `
 
 const IODetailsContainer = styled.div`
@@ -270,8 +297,9 @@ const FailedTXBubble = styled.div`
   border-radius: 14px;
   background-color: ${({ theme }) => theme.global.alert};
   color: white;
-  top: -7px;
-  right: -7px;
+  top: auto;
+  bottom: auto;
+  right: -20px;
   text-align: center;
   font-size: 10px;
   font-weight: 800;

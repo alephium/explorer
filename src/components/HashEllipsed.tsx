@@ -25,16 +25,19 @@ import ClipboardButton from './Buttons/ClipboardButton'
 
 interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   hash: string
+  copyTooltipText?: string
   disableCopy?: boolean
   className?: string
 }
 
-const HashEllipsed = ({ hash, disableCopy = false, className, ...props }: HashEllipsedProps) => (
+const HashEllipsed = ({ hash, copyTooltipText, disableCopy = false, className, ...props }: HashEllipsedProps) => (
   <Container className={className}>
     <HashContainer>
       <Ellipsed text={hash} {...props} />
     </HashContainer>
-    {!disableCopy && <CopyButton textToCopy={hash} tooltip="Copy hash" className={className} hasBackground />}
+    {!disableCopy && (
+      <CopyButton textToCopy={hash} tooltip={copyTooltipText || 'Copy hash'} className={className} hasBackground />
+    )}
   </Container>
 )
 

@@ -34,12 +34,12 @@ export const lightTheme: DefaultTheme = {
     background2: '#F0F0F0'
   },
   font: {
-    primary: '#1d1d1d',
+    primary: '#242424',
     secondary: '#6a6a6a',
     tertiary: '#adadad',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#d4a10d'
+    highlight: '#f67460'
   },
   border: {
     primary: '#e3e3e3',
@@ -52,10 +52,10 @@ export const lightTheme: DefaultTheme = {
   },
   global: {
     accent: '#5981f3',
-    complementary: '#d969bf',
+    complementary: '#ce5cf8',
     alert: '#ed4a34',
-    warning: '#FFB800',
-    valid: '#0ea670',
+    warning: '#ffa600',
+    valid: '#0ea68f',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -79,7 +79,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
-    highlight: '#f0d590'
+    highlight: '#f37975'
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.08)',
@@ -92,10 +92,10 @@ export const darkTheme: DefaultTheme = {
   },
   global: {
     accent: '#598BED',
-    complementary: '#eb88d6',
+    complementary: '#eb88a4',
     alert: '#ed4a34',
-    warning: '#FFB800',
-    valid: '#45d5ab',
+    warning: '#ffc42d',
+    valid: '#3ed9b0',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

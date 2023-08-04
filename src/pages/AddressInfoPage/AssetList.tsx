@@ -16,48 +16,141 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/sdk'
-import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { ALPH } from '@alephium/token-list'
+import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { find, flatMap, sortBy } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
+import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
+import ReactTooltip from 'react-tooltip'
 import styled, { useTheme } from 'styled-components'
 
-import Amount from '@/components/Amount'
-import AssetLogo from '@/components/AssetLogo'
-import HashEllipsed from '@/components/HashEllipsed'
-import SkeletonLoader from '@/components/SkeletonLoader'
-import TableCellAmount from '@/components/Table/TableCellAmount'
+import { queries } from '@/api'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
+import { useQueriesData } from '@/hooks/useQueriesData'
+import NFTList from '@/pages/AddressInfoPage/NFTList'
+import TokenList from '@/pages/AddressInfoPage/TokenList'
 import { AddressHash } from '@/types/addresses'
 
 interface AssetListProps {
-  assets?: Asset[]
+  addressHash: AddressHash
+  addressBalance?: AddressBalance
+  assetIds?: string[]
   limit?: number
-  isLoading: boolean
-  addressHash?: AddressHash
-  tokensTabTitle?: string
-  nftsTabTitle?: string
+  assetsLoading: boolean
   className?: string
 }
 
-const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, className }: AssetListProps) => {
-  const tabs = [
-    { value: 'tokens', label: tokensTabTitle ?? 'Tokens' },
-    { value: 'nfts', label: nftsTabTitle ?? 'NFTs' }
+const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading, className }: AssetListProps) => {
+  const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
+  const theme = useTheme()
+
+  const isLoading = assetsLoading || assetsMetadataLoading
+
+  const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
+  const unknownAssetsIds = useMemo(
+    () => assetIds?.filter((id) => !knownAssetsIds.includes(id)) || [],
+    [assetIds, knownAssetsIds]
+  )
+
+  const { data: tokenBalances } = useQueriesData(
+    fungibleTokens.map((a) => queries.assets.balances.addressToken(addressHash, a.id))
+  )
+
+  const { data: unknownAssetsBalances } = useQueriesData(
+    unknownAssetsIds.map((id) => ({
+      ...queries.assets.balances.addressToken(addressHash, id),
+      enabled: unknownAssetsIds.length > 0
+    }))
+  )
+
+  const tokensWithBalanceAndMetadata = useMemo(() => {
+    const unsorted = flatMap(tokenBalances, (t) => {
+      const metadata = find(fungibleTokens, { id: t.id })
+
+      return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
+    })
+
+    // Add ALPH
+    if (addressBalance && BigInt(addressBalance.balance) > 0) {
+      unsorted.unshift({
+        ...ALPH,
+        type: 'fungible',
+        balance: BigInt(addressBalance.balance),
+        lockedBalance: BigInt(addressBalance.lockedBalance),
+        verified: true
+      })
+    }
+
+    return sortBy(unsorted, [(t) => !t.verified, (t) => !t.name, (t) => t.name.toLowerCase(), 'id'])
+  }, [addressBalance, fungibleTokens, tokenBalances])
+
+  const unknownAssetsWithBalance = useMemo(
+    () =>
+      unknownAssetsIds.flatMap((id) => {
+        const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
+
+        if (assetBalance) {
+          return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
+        }
+
+        return []
+      }),
+    [unknownAssetsBalances, unknownAssetsIds]
+  )
+
+  const tabs: TabItem[] = [
+    {
+      value: 'tokens',
+      icon: <RiCopperDiamondLine />,
+      label: 'Tokens',
+      length: tokensWithBalanceAndMetadata.length,
+      loading: isLoading,
+      highlightColor: '#0cbaff'
+    },
+    {
+      value: 'nfts',
+      label: 'NFTs',
+      icon: <RiNftLine />,
+      length: nfts.length,
+      loading: isLoading,
+      highlightColor: '#ffae0c'
+    }
   ]
+
+  if (!isLoading && unknownAssetsIds.length > 0)
+    tabs.push({
+      value: 'unknown',
+      label: 'Unknown',
+      icon: <RiQuestionLine size={14} />,
+      length: unknownAssetsIds.length,
+      loading: isLoading,
+      highlightColor: theme.font.primary
+    })
+
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
+
+  useEffect(() => {
+    currentTab && ReactTooltip.rebuild()
+  }, [currentTab])
+
+  useEffect(() => {
+    addressHash && setCurrentTab(tabs[0])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addressHash])
 
   return (
     <div className={className}>
       <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-      {isLoading ? (
-        <EmptyListContainer>
-          <SkeletonLoader height="60px" />
-          <SkeletonLoader height="60px" />
-        </EmptyListContainer>
-      ) : assets && assets?.length > 0 ? (
+      {tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
         {
-          tokens: <TokenList limit={limit} assets={assets} />,
-          nfts: <NFTList />
+          tokens: tokensWithBalanceAndMetadata && (
+            <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} isLoading={isLoading} />
+          ),
+          nfts: nfts && <NFTList nfts={nfts} isLoading={isLoading} />,
+          unknown: unknownAssetsWithBalance && (
+            <TokenList limit={limit} tokens={unknownAssetsWithBalance} isLoading={isLoading} />
+          )
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
@@ -66,119 +159,11 @@ const AssetList = ({ assets, limit, isLoading, tokensTabTitle, nftsTabTitle, cla
   )
 }
 
-interface TokenListProps {
-  assets?: Asset[]
-  limit?: number
-  className?: string
-}
-
-const TokenList = ({ assets, limit, className }: TokenListProps) => {
-  const theme = useTheme()
-
-  if (!assets) return null
-
-  const displayedAssets = limit ? assets.slice(0, limit) : assets
-
-  return (
-    <motion.div className={className}>
-      {displayedAssets.map((asset) => (
-        <AssetRow key={asset.id}>
-          <AssetLogoStyled asset={asset} size={30} />
-          <NameColumn>
-            <TokenName>{asset.name || 'Unknown token'}</TokenName>
-            <TokenSymbol>
-              {asset.symbol ?? (
-                <UnknownTokenId>
-                  <HashEllipsed hash={asset.id} />
-                </UnknownTokenId>
-              )}
-            </TokenSymbol>
-          </NameColumn>
-          <TableCellAmount>
-            <TokenAmount
-              value={asset.balance}
-              suffix={asset.symbol}
-              decimals={asset.decimals}
-              isUnknownToken={!asset.symbol}
-            />
-            {asset.lockedBalance > 0 ? (
-              <TokenAmountSublabel>
-                {'Available '}
-                <Amount
-                  value={asset.balance - asset.lockedBalance}
-                  suffix={asset.symbol}
-                  color={theme.font.tertiary}
-                  decimals={asset.decimals}
-                />
-              </TokenAmountSublabel>
-            ) : !asset.name ? (
-              <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
-            ) : undefined}
-          </TableCellAmount>
-        </AssetRow>
-      ))}
-    </motion.div>
-  )
-}
-
-const NFTList = () => (
-  <motion.div style={{ padding: 30 }}>
-    <div>Coming soon.</div>
-  </motion.div>
-)
-
 export default styled(AssetList)`
   margin-bottom: 35px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
-  border-radius: 12px;
-`
-
-const AssetRow = styled.div`
-  display: flex;
-  padding: 15px 20px;
-  align-items: center;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  }
-`
-
-const AssetLogoStyled = styled(AssetLogo)`
-  margin-right: 20px;
-`
-
-const TokenName = styled.span`
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`
-
-const TokenSymbol = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  max-width: 150px;
-`
-
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
-const TokenAmount = styled(Amount)`
-  font-size: 14px;
-`
-
-const TokenAmountSublabel = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 11px;
-`
-
-const NameColumn = styled(Column)`
-  margin-right: 50px;
+  border-radius: 9px;
 `
 
 const EmptyListContainer = styled.div`
@@ -188,8 +173,4 @@ const EmptyListContainer = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   padding: 15px 20px;
   background-color: ${({ theme }) => theme.bg.secondary};
-`
-
-const UnknownTokenId = styled.div`
-  display: flex;
 `

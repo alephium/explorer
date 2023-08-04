@@ -17,11 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { Moon, Sun } from 'lucide-react'
+import { RiMoonLine, RiSunLine } from 'react-icons/ri'
 import React from 'react'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useSettings } from '@/contexts/settingsContext'
 import { ThemeType } from '@/styles/themes'
 
 interface ThemeSwitcherProps {
@@ -41,21 +41,21 @@ const toggleVariants = {
 }
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
-  const { currentTheme, switchTheme } = useGlobalContext()
+  const { theme, switchTheme } = useSettings()
 
   return (
-    <StyledThemeSwitcher onClick={() => switchTheme(currentTheme === 'light' ? 'dark' : 'light')} className={className}>
+    <StyledThemeSwitcher onClick={() => switchTheme(theme === 'light' ? 'dark' : 'light')} className={className}>
       <ToggleContent>
         <ToggleIcon>
-          <Sun onClick={() => switchTheme('light')} color={getButtonColor(currentTheme, 'light')} size={18} />
+          <RiSunLine onClick={() => switchTheme('light')} color={getButtonColor(theme, 'light')} size={18} />
         </ToggleIcon>
         <ToggleIcon>
-          <Moon onClick={() => switchTheme('dark')} color={getButtonColor(currentTheme, 'dark')} size={18} />
+          <RiMoonLine onClick={() => switchTheme('dark')} color={getButtonColor(theme, 'dark')} size={18} />
         </ToggleIcon>
       </ToggleContent>
       <ToggleFloatingIndicator
         variants={toggleVariants}
-        animate={currentTheme}
+        animate={theme}
         transition={{ duration: 0.5, type: 'spring' }}
       />
     </StyledThemeSwitcher>

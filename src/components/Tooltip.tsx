@@ -28,7 +28,7 @@ const Tooltip: FC<TooltipProps> = ({ id, children }) => {
   const backgroundColor = theme.name === 'dark' ? theme.bg.background2 : theme.font.primary
 
   return (
-    <ReactTooltip backgroundColor={backgroundColor} id={id}>
+    <ReactTooltip backgroundColor={backgroundColor} id={id} effect="solid">
       {children}
     </ReactTooltip>
   )

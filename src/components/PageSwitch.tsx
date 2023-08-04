@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -100,7 +100,7 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
   return (
     <SwitchContainer>
       <TextButton disabled={currentPage === 1} onClick={() => handlePageSwitch('previous')}>
-        <ChevronLeft />
+        <RiArrowLeftSLine />
         <span>Previous</span>
       </TextButton>
       {isSettingPageManually ? (
@@ -128,7 +128,7 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
         onClick={() => handlePageSwitch('next')}
       >
         <span>Next</span>
-        <ChevronRight />
+        <RiArrowRightSLine />
       </TextButton>
     </SwitchContainer>
   )

@@ -16,32 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { HTMLAttributes, MutableRefObject, useEffect, useRef, useState } from 'react'
+import { HTMLAttributes, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-
-const createHandleResize =
-  (
-    el: MutableRefObject<HTMLDivElement | null>,
-    charWidth: MutableRefObject<number | undefined>,
-    text: string,
-    setText: (t: string) => void
-  ) =>
-  () => {
-    if (el?.current === null) return
-
-    charWidth.current = el.current.scrollWidth / text.length
-
-    const visibleChars = Math.floor(el.current.clientWidth / charWidth.current)
-    const half = visibleChars / 2
-
-    setText(
-      visibleChars >= text.length
-        ? text
-        : text.slice(0, Math.floor(half) - 2) +
-            (visibleChars === text.length ? '' : '...') +
-            text.slice(-Math.ceil(half) + 2)
-    )
-  }
 
 interface EllipsedProps extends HTMLAttributes<HTMLDivElement> {
   text: string
@@ -50,10 +26,24 @@ interface EllipsedProps extends HTMLAttributes<HTMLDivElement> {
 
 const Ellipsed = ({ text, className }: EllipsedProps) => {
   const el = useRef<HTMLDivElement | null>(null)
-  const charWidth = useRef<number>()
   const [_text, setText] = useState(text)
 
-  const handleResize = createHandleResize(el, charWidth, text, setText)
+  const handleResize = useCallback(() => {
+    if (el?.current === null) {
+      setText(text.substring(0, 5) + '...')
+    } else {
+      const visibleChars = Math.floor(el.current.clientWidth / (el.current.scrollWidth / text.length))
+      const half = visibleChars / 2
+
+      setText(
+        visibleChars >= text.length
+          ? text
+          : text.slice(0, Math.floor(half) - 2) +
+              (visibleChars === text.length ? '' : '...') +
+              text.slice(-Math.ceil(half) + 2)
+      )
+    }
+  }, [text])
 
   useEffect(() => {
     handleResize()

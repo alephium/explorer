@@ -25,6 +25,7 @@ export const deviceSizes = {
   tiny: 400,
   mobile: 600,
   tablet: 800,
+  laptop: 1200,
   desktop: 1600
 }
 

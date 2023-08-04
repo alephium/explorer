@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AssetAmount,
   calcTxAmountsDeltaForAddress,
   getDirection,
   isConsolidationTx,
@@ -30,32 +29,28 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { map } from 'lodash'
 
-import { NetworkType } from '@/types/network'
-import { getAssetInfo } from '@/utils/assets'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
-export const getTransactionInfo = (
-  tx: Transaction | MempoolTransaction,
-  addressHash: string,
-  networkType: NetworkType
-): TransactionInfo => {
+export const useTransactionInfo = (tx: Transaction | MempoolTransaction, addressHash: string): TransactionInfo => {
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
   let infoType: TransactionInfoType
   let outputs: explorer.Output[] = []
   let lockTime: Date | undefined
-  let tokens: Required<AssetAmount>[] = []
 
   outputs = tx.outputs ?? outputs
-  const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+  const { alph: alphDeltaAmount, tokens: tokensDeltaAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
-  amount = alphAmount
-  tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
+  amount = alphDeltaAmount
+
+  const assetsMetadata = useAssetsMetadata(map(tokensDeltaAmounts, 'id'))
 
   if (isConsolidationTx(tx)) {
     direction = 'out'
     infoType = 'move'
-  } else if (isSwap(amount, tokens)) {
+  } else if (isSwap(amount, tokensDeltaAmounts)) {
     direction = 'swap'
     infoType = 'swap'
   } else if (isMempoolTx(tx)) {
@@ -73,7 +68,12 @@ export const getTransactionInfo = (
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...getAssetInfo({ assetId: token.id, networkType }) }))]
+  const tokenAssets = [
+    ...tokensDeltaAmounts.map((token) => ({
+      ...token,
+      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
+    }))
+  ]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
 
   return {

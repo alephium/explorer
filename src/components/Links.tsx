@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetAmount } from '@alephium/sdk'
 import dayjs from 'dayjs'
-import { ExternalLink } from 'lucide-react'
+import { map } from 'lodash'
+import { RiExternalLinkLine } from 'react-icons/ri'
 import { Link, LinkProps } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import LockTimeIcon from '@/components/LockTimeIcon'
-import { useGlobalContext } from '@/contexts/global'
-import { getAssetInfo } from '@/utils/assets'
 import { smartHash } from '@/utils/strings'
 
 import Ellipsed from './Ellipsed'
@@ -79,21 +79,21 @@ const AddressLinkBase = ({
   flex,
   className
 }: AddressLinkProps) => {
-  const { networkType } = useGlobalContext()
   const theme = useTheme()
   const isLocked = lockTime && dayjs(lockTime).isAfter(dayjs())
 
+  const assetsMetadata = useAssetsMetadata(map(amounts, 'id'))
+
   const renderAmount = (amount: AssetAmount) => {
-    const assetInfo = getAssetInfo({ assetId: amount.id, networkType })
+    const info = assetsMetadata.fungibleTokens.find((i) => i.id === amount.id)
 
     return (
       <Amount
         key={amount.id}
+        assetId={amount.id}
         value={amount.amount}
-        suffix={assetInfo?.symbol}
-        decimals={assetInfo?.decimals}
-        isUnknownToken={!assetInfo?.symbol}
-        fullPrecision
+        suffix={info?.symbol}
+        decimals={info?.decimals}
       />
     )
   }
@@ -103,7 +103,7 @@ const AddressLinkBase = ({
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
         <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
-          <ExternalLink size={10} />
+          <RiExternalLinkLine size={10} />
         </TxLink>
       )}
       {isLocked && <LockIcon timestamp={lockTime} color={theme.global.highlight} />}

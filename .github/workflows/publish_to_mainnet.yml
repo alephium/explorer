@@ -11,6 +11,7 @@ env:
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME_MAINNET }}
   VITE_BACKEND_URL: https://backend-v113.mainnet.alephium.org
   VITE_NETWORK_TYPE: mainnet
+  VITE_NODE_URL: https://wallet-v20.mainnet.alephium.org
 
 jobs:
   build:

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import dayjs from 'dayjs'
-import { Lock } from 'lucide-react'
+import { RiLockLine } from 'react-icons/ri'
 
 import { DATE_TIME_FORMAT } from '@/utils/strings'
 
@@ -30,7 +30,7 @@ interface LockTimeIconProps {
 const LockTimeIcon = ({ timestamp, color, className }: LockTimeIconProps) => {
   const unlocksOn = dayjs(timestamp).format(DATE_TIME_FORMAT)
 
-  return <Lock data-tip={`Unlocks on ${unlocksOn}`} size="13px" className={className} color={color} />
+  return <RiLockLine data-tip={`Unlocks on ${unlocksOn}`} className={className} color={color} />
 }
 
 export default LockTimeIcon

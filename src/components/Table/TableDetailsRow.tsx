@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
 import { createContext, useContext, useEffect } from 'react'
+import { RiArrowDownSLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { SectionContext } from '../Section'
@@ -73,7 +73,7 @@ export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSp
 export const DetailToggle = ({ isOpen }: DetailToggleProps) => (
   <span style={{ padding: 0, textAlign: 'center', overflow: 'hidden' }}>
     <DetailToggleWrapper animate={isOpen ? 'open' : 'closed'} variants={variants}>
-      <ChevronDown size={20} />
+      <RiArrowDownSLine size={20} />
     </DetailToggleWrapper>
   </span>
 )

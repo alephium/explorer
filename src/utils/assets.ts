@@ -16,9 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import TokensMetadata, { ALPH } from '@alephium/token-list'
+import { groupBy, map, mapValues } from 'lodash'
 
-import { NetworkType } from '@/types/network'
+import { AssetBase, AssetType } from '@/types/assets'
 
-export const getAssetInfo = ({ assetId, networkType }: { assetId: string; networkType: NetworkType }) =>
-  assetId === ALPH.id ? ALPH : TokensMetadata[networkType].tokens.tokens.find((tm) => tm.id === assetId)
+type AssetTypeMapValues = 'fungibleTokenIds' | 'NFTIds' | 'unknownAssetIds'
+
+const assetTypeMap: Record<NonNullable<AssetType> | 'unknown', AssetTypeMapValues> = {
+  fungible: 'fungibleTokenIds',
+  'non-fungible': 'NFTIds',
+  unknown: 'unknownAssetIds'
+}
+
+type AssetIdCategories = Record<AssetTypeMapValues, string[]>
+
+export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategories => {
+  const categorizedAssets = mapValues(
+    groupBy(assets, (asset) => assetTypeMap[asset.type || 'unknown']),
+    (assetsGroup) => map(assetsGroup, 'id')
+  )
+
+  return {
+    fungibleTokenIds: categorizedAssets.fungibleTokenIds || [],
+    NFTIds: categorizedAssets.NFTIds || [],
+    unknownAssetIds: categorizedAssets.unknownAssetIds || []
+  }
+}

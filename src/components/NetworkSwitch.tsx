@@ -19,20 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ComponentPropsWithoutRef } from 'react'
 import styled from 'styled-components'
 
+import client from '@/api/client'
 import Menu from '@/components/Menu'
 import NetworkLogo from '@/components/NetworkLogo'
-import { useGlobalContext } from '@/contexts/global'
 
 const NetworkSwitch = ({
   direction = 'down',
   className
 }: Pick<ComponentPropsWithoutRef<typeof Menu>, 'direction' | 'className'>) => {
-  const { networkType } = useGlobalContext()
-
-  const isMainnet = networkType === 'mainnet'
+  const isMainnet = client.networkType === 'mainnet'
 
   const switchToNetwork = (network: string) => {
-    if (networkType !== network) {
+    if (client.networkType !== network) {
       window.location.assign(isMainnet ? 'https://explorer.testnet.alephium.org' : 'https://explorer.alephium.org')
     }
   }

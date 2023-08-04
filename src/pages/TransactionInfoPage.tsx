@@ -19,13 +19,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
+import {
+  AcceptedTransaction,
+  PendingTransaction,
+  PerChainHeight,
+  Transaction
+} from '@alephium/web3/dist/src/api/api-explorer'
+import { useQuery } from '@tanstack/react-query'
 import _ from 'lodash'
-import { Check } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useRef } from 'react'
+import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { queries } from '@/api'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -40,9 +48,6 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
-import { useGlobalContext } from '@/contexts/global'
-import useInterval from '@/hooks/useInterval'
-import { getAssetInfo } from '@/utils/assets'
 
 type ParamTypes = {
   id: string
@@ -50,107 +55,81 @@ type ParamTypes = {
 
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
-  const { client, networkType } = useGlobalContext()
-  const [txInfo, setTxInfo] = useState<explorer.Transaction>()
-  const [txBlock, setTxBlock] = useState<explorer.BlockEntryLite>()
-  const [txChain, setTxChain] = useState<explorer.PerChainHeight>()
-  const [txInfoStatus, setTxInfoStatus] = useState<number>()
-  const [txInfoError, setTxInfoError] = useState('')
-  const [loading, setLoading] = useState(true)
   const isAppVisible = usePageVisibility()
 
-  const getTxInfo = useCallback(async () => {
-    const fetchTransactionInfo = async () => {
-      if (!client || !id) return
+  const previousTransactionData = useRef<Transaction | undefined>()
 
-      setLoading(true)
+  const {
+    data: transactionData,
+    error: transactionInfoError,
+    isLoading: txInfoLoading
+  } = useQuery({
+    ...queries.transactions.transaction.one(id || ''),
+    enabled: !!id,
+    refetchInterval:
+      isAppVisible && (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current))
+        ? 10000
+        : undefined
+  })
 
-      try {
-        const data = await client.transactions.getTransactionsTransactionHash(id)
-        const tx = data as explorer.Transaction
+  let txInfoError, txInfoErrorStatus
 
-        if (tx) setTxInfo(tx)
+  if (transactionInfoError) {
+    const e = transactionInfoError as APIError
+    txInfoError = e.error
+    txInfoErrorStatus = e.status
+  }
 
-        if (!isTxConfirmed(tx)) return
+  const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
 
-        const block = await client.blocks.getBlocksBlockHash(tx.blockHash)
-        const chainHeights = await client.infos.getInfosHeights()
+  previousTransactionData.current = confirmedTxInfo
 
-        setTxBlock(block)
+  const { data: txBlock } = useQuery({
+    ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
+    enabled: !!confirmedTxInfo
+  })
 
-        const chain = chainHeights.find(
-          (c: explorer.PerChainHeight) => c.chainFrom === block.chainFrom && c.chainTo === block.chainTo
-        )
+  const { data: chainHeights } = useQuery(queries.infos.all.heights())
 
-        setTxChain(chain)
-      } catch (e) {
-        console.error(e)
-        const { error, status } = e as APIError
+  const assetIds = _(confirmedTxInfo?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
+    .uniq()
+    .compact()
+    .value()
 
-        setTxInfoStatus(status)
-        setTxInfoError(error.detail || error.message || 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchTransactionInfo()
-  }, [client, id])
-
-  // Initial fetch
-  useEffect(() => {
-    getTxInfo()
-  }, [getTxInfo])
-
-  // Polling when TX is unconfirmed
-  useInterval(
-    () => {
-      if (txInfo && !isTxConfirmed(txInfo)) getTxInfo()
-    },
-    15 * 1000,
-    !isAppVisible
+  const txChain = chainHeights?.find(
+    (c: PerChainHeight) => c.chainFrom === txBlock?.chainFrom && c.chainTo === txBlock.chainTo
   )
 
-  // Compute confirmations
   const confirmations = computeConfirmations(txBlock, txChain)
 
   // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<explorer.Output> | undefined = txInfo?.outputs
+  const outputs: Array<explorer.Output> | undefined = transactionData?.outputs
 
   const totalAmount = outputs?.reduce<bigint>(
     (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
     BigInt(0)
   )
 
-  const tokenInfos = _(
-    txInfo?.inputs?.map((i) => i.tokens?.map((t) => getAssetInfo({ assetId: t.id, networkType }) || { id: t.id }))
-  )
-    .flatten()
-    .uniqBy('id')
-    .compact()
-    .sortBy('name')
-    .value()
-
   return (
     <Section>
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
-        <Table bodyOnly isLoading={loading}>
-          {txInfo && (
+        <Table bodyOnly isLoading={txInfoLoading}>
+          {transactionData && (
             <TableBody>
               <TableRow>
                 <span>Hash</span>
-                <HighlightedCell textToCopy={txInfo.hash}>{txInfo.hash}</HighlightedCell>
+                <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
               </TableRow>
               <TableRow>
                 <span>Status</span>
-                {isTxConfirmed(txInfo) ? (
-                  txInfo.scriptExecutionOk ? (
+                {confirmedTxInfo ? (
+                  confirmedTxInfo.scriptExecutionOk ? (
                     <Badge
                       type="plus"
                       content={
                         <span>
-                          <Check style={{ marginRight: 5 }} size={15} />
+                          <RiCheckLine style={{ marginRight: 5 }} size={15} />
                           Success
                         </span>
                       }
@@ -171,12 +150,12 @@ const TransactionInfoPage = () => {
                   />
                 )}
               </TableRow>
-              {isTxConfirmed(txInfo) && txInfo.blockHash && txBlock && (
+              {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
                 <TableRow>
                   <span>Block</span>
                   <span>
                     <SimpleLink
-                      to={`../blocks/${txInfo.blockHash || ''}`}
+                      to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
                       data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
                     >
                       {txBlock?.height.toString()}
@@ -195,43 +174,43 @@ const TransactionInfoPage = () => {
                   </span>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && txInfo.timestamp && (
+              {confirmedTxInfo && confirmedTxInfo.timestamp && (
                 <TableRow>
                   <span>Timestamp</span>
-                  <Timestamp timeInMs={txInfo.timestamp} forceFormat="high" />
+                  <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Assets</span>
                   <AssetLogos>
                     <>
-                      {totalAmount && <AssetLogo asset={ALPH} size={20} showTooltip />}
-                      {tokenInfos.map((i) => (
-                        <AssetLogo key={i.id} asset={i} size={20} showTooltip />
+                      {totalAmount && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
+                      {assetIds.map((id) => (
+                        <AssetLogo key={id} assetId={id} size={20} showTooltip />
                       ))}
                     </>
                   </AssetLogos>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Inputs</span>
                   <div>
-                    {txInfo.inputs && txInfo.inputs.length > 0 ? (
-                      <TransactionIOList inputs={txInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                    {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
+                      <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       'Block Rewards'
                     )}
                   </div>
                 </TableRow>
               )}
-              {isTxConfirmed(txInfo) && (
+              {confirmedTxInfo && (
                 <TableRow>
                   <span>Outputs</span>
                   <div>
-                    {txInfo.outputs ? (
-                      <TransactionIOList outputs={txInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                    {confirmedTxInfo.outputs ? (
+                      <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
                     ) : (
                       '-'
                     )}
@@ -240,16 +219,20 @@ const TransactionInfoPage = () => {
               )}
               <TableRow>
                 <span>Gas Amount</span>
-                <span>{txInfo.gasAmount || '-'} GAS</span>
+                <span>{transactionData.gasAmount || '-'} GAS</span>
               </TableRow>
               <TableRow>
                 <span>Gas Price</span>
 
-                <Amount value={BigInt(txInfo.gasPrice)} fullPrecision />
+                <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
               </TableRow>
               <TableRow>
                 <span>Transaction Fee</span>
-                <Amount value={BigInt(txInfo.gasPrice) * BigInt(txInfo.gasAmount)} fullPrecision />
+                <Amount
+                  assetId={ALPH.id}
+                  value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
+                  fullPrecision
+                />
               </TableRow>
               <TableRow>
                 <b>Total ALPH Value</b>
@@ -259,14 +242,14 @@ const TransactionInfoPage = () => {
           )}
         </Table>
       ) : (
-        <InlineErrorMessage message={txInfoError} code={txInfoStatus} />
+        <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
       )}
     </Section>
   )
 }
 
-const isTxConfirmed = (tx: explorer.Transaction): tx is explorer.Transaction =>
-  (tx as explorer.Transaction).blockHash !== undefined
+const isTxConfirmed = (tx?: Transaction | AcceptedTransaction | PendingTransaction): tx is Transaction =>
+  !!tx && (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {
   let confirmations = 0

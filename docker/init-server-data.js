@@ -32,7 +32,12 @@ readFile(file, 'utf-8', function (err, contents) {
   )
   const replaced1 = replaced0.replace(/__VITE_NETWORK_TYPE__/g, `"${process.env.VITE_NETWORK_TYPE ?? 'testnet'}"`)
 
-  writeFile(file, replaced1, 'utf-8', function (err) {
+  const replaced2 = replaced1.replace(
+    /__VITE_NODE_URL__/g,
+    `"${process.env.VITE_NODE_URL ?? 'http://localhost:22973'}"`
+  )
+
+  writeFile(file, replaced2, 'utf-8', function (err) {
     console.log(err)
   })
 })

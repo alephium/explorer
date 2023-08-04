@@ -21,7 +21,7 @@ import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePageVisibility } from 'react-page-visibility'
 import styled, { css } from 'styled-components'
 
@@ -65,8 +65,7 @@ const HomePage = () => {
   const {
     getBlocks,
     blockPageLoading,
-    data: { blockList },
-    page
+    data: { blockList }
   } = useBlockListData(currentPageNumber)
 
   const {
@@ -91,10 +90,6 @@ const HomePage = () => {
     10 * 1000,
     !isAppVisible
   )
-
-  useEffect(() => {
-    if (page !== currentPageNumber) getBlocks(page, false)
-  }, [currentPageNumber, getBlocks, page])
 
   const [hashrateInteger, hashrateDecimal, hashrateSuffix] = formatNumberForDisplay(hashrate.value, '', 'hash')
 

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import styled, { css, DefaultTheme } from 'styled-components'
 
@@ -30,11 +31,14 @@ interface BadgeProps {
   inline?: boolean
   floatRight?: boolean
   minWidth?: number
+  compact?: boolean
   className?: string
 }
 
 const Badge = ({ content, className, amount }: BadgeProps) => (
-  <div className={className}>{amount ? <Amount value={BigInt(amount)} /> : content}</div>
+  <div className={className}>
+    <BadgeContent>{amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} /> : content}</BadgeContent>
+  </div>
 )
 
 const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
@@ -67,21 +71,27 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
 }
 
 export default styled(Badge)`
-  ${({ type, inline = false, floatRight = false, minWidth, theme }) => {
+  ${({ type, inline = false, floatRight = false, minWidth, compact, theme }) => {
     const { color, backgroundColor, borderColor } = getBadgeColor(type, theme)
 
     return css`
+      display: ${inline ? 'inline-block' : 'block'};
       color: ${color};
       background-color: ${backgroundColor};
       border: 1px solid ${borderColor};
-      display: ${inline ? 'inline' : 'block'};
       float: ${inline ? 'none' : floatRight ? 'right' : 'left'};
       min-width: ${minWidth ? minWidth + 'px' : 'auto'};
+      border-radius: ${compact ? '3px' : '5px'};
+      font-size: ${compact ? '10px' : 'inherit'};
+      padding: ${compact ? '2px 4px' : '4px 6px'};
     `
   }}
+`
 
+const BadgeContent = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: center;
   text-align: center;
-  padding: 6px 8px;
-  border-radius: 5px;
   white-space: nowrap;
 `

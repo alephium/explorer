@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { Search } from 'lucide-react'
 import React, { useRef, useState } from 'react'
+import { RiSearchLine } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useGlobalContext } from '@/contexts/global'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import { checkAddressValidity, checkHexStringValidity } from '@/utils/strings'
 
 interface SearchBarProps {
@@ -32,7 +32,8 @@ interface SearchBarProps {
 const SearchBar = ({ className }: SearchBarProps) => {
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
-  const { setSnackbarMessage } = useGlobalContext()
+  const { displaySnackbar } = useSnackbar()
+
   const inputRef = useRef<HTMLInputElement>(null)
 
   const navigate = useNavigate()
@@ -82,13 +83,13 @@ const SearchBar = ({ className }: SearchBarProps) => {
           redirect(`/transactions/${word}`)
         }
       } else {
-        setSnackbarMessage({ text: 'There seems to be an error in the hash format.', type: 'info' })
+        displaySnackbar({ text: 'There seems to be an error in the hash format.', type: 'info' })
       }
     } else {
       if (checkAddressValidity(word)) {
         redirect(`/addresses/${word}`)
       } else {
-        setSnackbarMessage({ text: 'There seems to be an error in the address format.', type: 'info' })
+        displaySnackbar({ text: 'There seems to be an error in the address format.', type: 'info' })
       }
     }
   }
@@ -115,7 +116,7 @@ export default styled(SearchBar)`
   height: 50px;
 `
 
-const SearchIcon = styled(Search)`
+const SearchIcon = styled(RiSearchLine)`
   color: ${({ theme }) => theme.font.primary};
   position: absolute;
   right: 20px;
@@ -130,7 +131,7 @@ const SearchInput = styled.input`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 12px;
+  border-radius: 9px;
   padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};
