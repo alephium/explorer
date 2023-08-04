@@ -25,7 +25,7 @@ import QRCode from 'qrcode.react'
 import { useEffect, useRef, useState } from 'react'
 import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
 
 import { queries } from '@/api'
@@ -64,6 +64,7 @@ const AddressInfoPage = () => {
   const isAppVisible = usePageVisibility()
   const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
+  const navigate = useNavigate()
 
   const [addressWorth, setAddressWorth] = useState<number | undefined>(undefined)
   const [exportModalShown, setExportModalShown] = useState(false)
@@ -144,6 +145,11 @@ const AddressInfoPage = () => {
     lastKnownMempoolTxs.current = addressMempoolTransactions
   }, [addressMempoolTransactions, refetchTxList])
 
+  if (!addressHash) {
+    displaySnackbar({ text: 'The address format seems invalid', type: 'alert' })
+    navigate('404')
+  }
+
   const totalBalance = addressBalance?.balance
   const lockedBalance = addressBalance?.lockedBalance
 
@@ -153,8 +159,6 @@ const AddressInfoPage = () => {
 
   const handleExportModalOpen = () => setExportModalShown(true)
   const handleExportModalClose = () => setExportModalShown(false)
-
-  if (!addressHash) return null
 
   let addressGroup
 
