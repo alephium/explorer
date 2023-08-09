@@ -75,6 +75,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     if (addressBalance && BigInt(addressBalance.balance) > 0) {
       unsorted.unshift({
         ...ALPH,
+        tokenId: ALPH.id,
         type: 'fungible',
         balance: BigInt(addressBalance.balance),
         lockedBalance: BigInt(addressBalance.lockedBalance),
