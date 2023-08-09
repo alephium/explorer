@@ -102,7 +102,7 @@ const AddressInfoPage = () => {
   })
 
   const { data: addressAssetIds = [], isLoading: assetsLoading } = useQuery({
-    ...queries.address.assets.all(addressHash),
+    ...queries.assets.balances.addressTokens(addressHash),
     enabled: !!addressHash
   })
 
@@ -232,12 +232,7 @@ const AddressInfoPage = () => {
         <h2>Assets</h2>
       </SectionHeader>
 
-      <AssetList
-        addressBalance={addressBalance}
-        addressHash={addressHash}
-        assetIds={addressAssetIds}
-        assetsLoading={assetsLoading}
-      />
+      <AssetList addressBalance={addressBalance} addressHash={addressHash} />
 
       <SectionHeader>
         <h2>Transactions</h2>

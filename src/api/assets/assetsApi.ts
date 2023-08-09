@@ -86,8 +86,8 @@ export const assetsQueries = createQueriesCollection({
   },
   // TODO: This may be moved in a balancesApi file in the future?
   balances: {
-    addressTokens: (addressHash: string, tokenIds: string[]) => ({
-      queryKey: ['addressTokensBalance', addressHash, tokenIds.toString()],
+    addressTokens: (addressHash: string) => ({
+      queryKey: ['addressTokensBalance', addressHash],
       queryFn: async () => {
         let pageTotalResults
         let page = 1

@@ -67,6 +67,8 @@ export const useAssetMetadata = (assetId: string) => {
 export const useAssetsMetadata = (assetIds: string[] = []) => {
   const allVerifiedTokensMetadata = useVerifiedTokensMetadata()
 
+  const shouldExecuteQueries = assetIds.length > 0 && !!allVerifiedTokensMetadata
+
   const ids = assetIds.filter((id) => id !== ALPH.id)
   const isAlphIn = assetIds.length !== ids.length
 
@@ -77,18 +79,23 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   const unverifiedAssetIds = ids.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
-    unverifiedAssetIds.map((id) => queries.assets.type.one(id))
+    unverifiedAssetIds.map((id) => ({
+      ...queries.assets.type.one(id),
+      enabled: shouldExecuteQueries
+    }))
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'fungible' ? { ...queries.assets.metadata.unverifiedFungibleToken(id) } : []
+      type === 'fungible'
+        ? { ...queries.assets.metadata.unverifiedFungibleToken(id), enabled: shouldExecuteQueries }
+        : []
     )
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'non-fungible' ? queries.assets.metadata.unverifiedNFT(id) : []
+      type === 'non-fungible' ? { ...queries.assets.metadata.unverifiedNFT(id), enabled: shouldExecuteQueries } : []
     )
   )
 
