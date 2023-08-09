@@ -113,10 +113,21 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     verifiedTokensMetadata.unshift({ ...ALPH, type: 'fungible', verified: true })
   }
 
+  const knownAssetsIds = useMemo(
+    () => [...verifiedTokensMetadata, ...unverifiedTokensMetadata, ...unverifiedNFTsMetadata].map((a) => a.id),
+    [unverifiedNFTsMetadata, unverifiedTokensMetadata, verifiedTokensMetadata]
+  )
+
+  const unknownAssetsIds = useMemo(
+    () => assetIds?.filter((id) => !knownAssetsIds.includes(id)) || [],
+    [assetIds, knownAssetsIds]
+  )
+
   const returnedVerifiedTokensMetadata = useMemo(
     () => ({
       fungibleTokens: verifiedTokensMetadata,
       nfts: [],
+      unknown: [],
       isLoading: true
     }),
     [verifiedTokensMetadata]
@@ -126,6 +137,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     () => ({
       fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
       nfts: unverifiedNFTsMetadataWithFiles,
+      unknown: unknownAssetsIds,
       isLoading:
         !allVerifiedTokensMetadata ||
         unverifiedAssetsLoading ||
@@ -134,6 +146,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     }),
     [
       allVerifiedTokensMetadata,
+      unknownAssetsIds,
       unverifiedAssetsLoading,
       unverifiedNFTsMetadataLoading,
       unverifiedNFTsMetadataWithFiles,
