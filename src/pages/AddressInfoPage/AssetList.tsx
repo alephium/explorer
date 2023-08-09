@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import { flatMap, map, sortBy } from 'lodash'
+import { flatMap, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
