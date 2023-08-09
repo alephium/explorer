@@ -86,12 +86,28 @@ export const assetsQueries = createQueriesCollection({
   },
   // TODO: This may be moved in a balancesApi file in the future?
   balances: {
-    addressToken: (addressHash: string, tokenId: string) => ({
-      queryKey: ['addressTokenBalance', addressHash, tokenId],
-      queryFn: () =>
-        client.explorer.addresses
-          .getAddressesAddressTokensTokenIdBalance(addressHash, tokenId)
-          .then((balance) => ({ ...balance, id: tokenId }))
+    addressTokens: (addressHash: string, tokenIds: string[]) => ({
+      queryKey: ['addressTokensBalance', addressHash, tokenIds.toString()],
+      queryFn: async () => {
+        let pageTotalResults
+        let page = 1
+
+        const tokenBalances = []
+
+        while (pageTotalResults === undefined || pageTotalResults === 100) {
+          const pageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
+            limit: 100,
+            page
+          })
+
+          tokenBalances.push(...pageResults)
+
+          pageTotalResults = pageResults.length
+          page += 1
+        }
+
+        return tokenBalances
+      }
     })
   }
 })

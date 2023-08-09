@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { find, flatMap, sortBy } from 'lodash'
+import { useQuery } from '@tanstack/react-query'
+import { find, flatMap, map, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
@@ -53,20 +54,18 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     [assetIds, knownAssetsIds]
   )
 
-  const { data: tokenBalances } = useQueriesData(
-    fungibleTokens.map((a) => queries.assets.balances.addressToken(addressHash, a.id))
+  const { data: tokenBalances } = useQuery(
+    queries.assets.balances.addressTokens(addressHash, map(fungibleTokens, 'id'))
   )
 
-  const { data: unknownAssetsBalances } = useQueriesData(
-    unknownAssetsIds.map((id) => ({
-      ...queries.assets.balances.addressToken(addressHash, id),
-      enabled: unknownAssetsIds.length > 0
-    }))
-  )
+  const { data: unknownAssetsBalances } = useQuery({
+    ...queries.assets.balances.addressTokens(addressHash, unknownAssetsIds),
+    enabled: unknownAssetsIds.length > 0
+  })
 
   const tokensWithBalanceAndMetadata = useMemo(() => {
     const unsorted = flatMap(tokenBalances, (t) => {
-      const metadata = find(fungibleTokens, { id: t.id })
+      const metadata = find(fungibleTokens, { id: t.tokenId })
 
       return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
     })
@@ -89,7 +88,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   const unknownAssetsWithBalance = useMemo(
     () =>
       unknownAssetsIds.flatMap((id) => {
-        const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
+        const assetBalance = unknownAssetsBalances?.find((a) => a.tokenId === id)
 
         if (assetBalance) {
           return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
