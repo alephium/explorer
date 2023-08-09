@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Asset } from '@alephium/sdk'
 import { useQuery } from '@tanstack/react-query'
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 
@@ -23,8 +24,10 @@ import { queries } from '@/api'
 import client from '@/api/client'
 import { VerifiedFungibleTokenMetadata } from '@/types/assets'
 
+type VerifiedTokenMap = Map<Asset['id'], VerifiedFungibleTokenMetadata>
+
 export interface StaticDataValue {
-  verifiedTokens?: Map<string, VerifiedFungibleTokenMetadata>
+  verifiedTokens?: VerifiedTokenMap
 }
 
 export const StaticDataContext = createContext<StaticDataValue>({
@@ -32,7 +35,7 @@ export const StaticDataContext = createContext<StaticDataValue>({
 })
 
 export const StaticDataProvider = ({ children }: { children: ReactNode }) => {
-  const [verifiedTokensMap, setVerifiedTokensMap] = useState<Map<string, VerifiedFungibleTokenMetadata>>()
+  const [verifiedTokensMap, setVerifiedTokensMap] = useState<VerifiedTokenMap>()
 
   const { data: verifiedTokensMetadataData } = useQuery(queries.assets.metadata.allVerifiedTokens(client.networkType))
 

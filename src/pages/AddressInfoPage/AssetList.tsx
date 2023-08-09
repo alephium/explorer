@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, sortBy } from 'lodash'
@@ -31,6 +30,7 @@ import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
 import { AddressHash } from '@/types/addresses'
+import { alphMetadata } from '@/utils/assets'
 
 interface AssetListProps {
   addressHash: AddressHash
@@ -65,11 +65,9 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     // Add ALPH
     if (addressBalance && BigInt(addressBalance.balance) > 0) {
       unsorted.unshift({
-        ...ALPH,
-        type: 'fungible',
+        ...alphMetadata,
         balance: BigInt(addressBalance.balance),
-        lockedBalance: BigInt(addressBalance.lockedBalance),
-        verified: true
+        lockedBalance: BigInt(addressBalance.lockedBalance)
       })
     }
 

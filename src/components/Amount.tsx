@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/sdk'
+import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay, MAGNITUDE_SYMBOL } from '@alephium/sdk'
 import styled from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
@@ -75,7 +75,7 @@ const Amount = ({
     if (value !== undefined) {
       amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
 
-      if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+      if (fadeDecimals && MAGNITUDE_SYMBOL.some((char) => amount.endsWith(char))) {
         quantitySymbol = amount.slice(-1)
         amount = amount.slice(0, -1)
       }

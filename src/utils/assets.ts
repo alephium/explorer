@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { groupBy, map, mapValues } from 'lodash'
 
-import { AssetBase, AssetType } from '@/types/assets'
+import { AssetBase, AssetType, VerifiedFungibleTokenMetadata } from '@/types/assets'
 
 type AssetTypeMapValues = 'fungibleTokenIds' | 'NFTIds' | 'unknownAssetIds'
 
@@ -42,3 +43,5 @@ export const getCategorizedAssetIds = (assets: AssetBase[] = []): AssetIdCategor
     unknownAssetIds: categorizedAssets.unknownAssetIds || []
   }
 }
+
+export const alphMetadata = { ...ALPH, type: 'fungible', verified: true } as VerifiedFungibleTokenMetadata
