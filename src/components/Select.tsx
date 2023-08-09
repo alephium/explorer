@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion, MotionStyle, Transition, Variants } from 'framer-motion'
-import { RiArrowDownSLine } from 'react-icons/ri'
 import { ReactNode, useRef, useState } from 'react'
+import { RiArrowDownSLine } from 'react-icons/ri'
 import styled, { css } from 'styled-components'
 
 import useOnClickOutside from '@/hooks/useOnClickOutside'

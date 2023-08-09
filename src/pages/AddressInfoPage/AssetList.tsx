@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { find, flatMap, sortBy } from 'lodash'
+import { useQuery } from '@tanstack/react-query'
+import { flatMap, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import ReactTooltip from 'react-tooltip'
@@ -27,7 +28,6 @@ import styled, { useTheme } from 'styled-components'
 import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
-import { useQueriesData } from '@/hooks/useQueriesData'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
 import { AddressHash } from '@/types/addresses'
@@ -35,47 +35,37 @@ import { AddressHash } from '@/types/addresses'
 interface AssetListProps {
   addressHash: AddressHash
   addressBalance?: AddressBalance
-  assetIds?: string[]
   limit?: number
-  assetsLoading: boolean
   className?: string
 }
 
-const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading, className }: AssetListProps) => {
-  const { fungibleTokens, nfts, isLoading: assetsMetadataLoading } = useAssetsMetadata(assetIds)
+const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListProps) => {
   const theme = useTheme()
+
+  const { data: assets, isLoading: assetsLoading } = useQuery(queries.assets.balances.addressTokens(addressHash))
+
+  const assetIds = assets?.map((a) => a.tokenId)
+
+  const {
+    fungibleTokens: fungibleTokensMetadata,
+    nfts: nftsMetadata,
+    unknown: unknownAssetsIds,
+    isLoading: assetsMetadataLoading
+  } = useAssetsMetadata(assetIds)
 
   const isLoading = assetsLoading || assetsMetadataLoading
 
-  const knownAssetsIds = [...fungibleTokens, ...nfts].map((a) => a.id)
-  const unknownAssetsIds = useMemo(
-    () => assetIds?.filter((id) => !knownAssetsIds.includes(id)) || [],
-    [assetIds, knownAssetsIds]
-  )
+  const fungibleTokens = useMemo(() => {
+    const unsorted = flatMap(fungibleTokensMetadata, (t) => {
+      const balance = assets?.find((a) => a.tokenId === t.id)
 
-  const { data: tokenBalances } = useQueriesData(
-    fungibleTokens.map((a) => queries.assets.balances.addressToken(addressHash, a.id))
-  )
-
-  const { data: unknownAssetsBalances } = useQueriesData(
-    unknownAssetsIds.map((id) => ({
-      ...queries.assets.balances.addressToken(addressHash, id),
-      enabled: unknownAssetsIds.length > 0
-    }))
-  )
-
-  const tokensWithBalanceAndMetadata = useMemo(() => {
-    const unsorted = flatMap(tokenBalances, (t) => {
-      const metadata = find(fungibleTokens, { id: t.id })
-
-      return metadata ? [{ ...t, ...metadata, balance: BigInt(t.balance), lockedBalance: BigInt(t.lockedBalance) }] : []
+      return balance ? [{ ...t, balance: BigInt(balance.balance), lockedBalance: BigInt(balance.lockedBalance) }] : []
     })
 
     // Add ALPH
     if (addressBalance && BigInt(addressBalance.balance) > 0) {
       unsorted.unshift({
         ...ALPH,
-        tokenId: ALPH.id,
         type: 'fungible',
         balance: BigInt(addressBalance.balance),
         lockedBalance: BigInt(addressBalance.lockedBalance),
@@ -84,12 +74,12 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
     }
 
     return sortBy(unsorted, [(t) => !t.verified, (t) => !t.name, (t) => t.name.toLowerCase(), 'id'])
-  }, [addressBalance, fungibleTokens, tokenBalances])
+  }, [addressBalance, assets, fungibleTokensMetadata])
 
-  const unknownAssetsWithBalance = useMemo(
+  const unknownAssets = useMemo(
     () =>
       unknownAssetsIds.flatMap((id) => {
-        const assetBalance = unknownAssetsBalances.find((a) => a.id === id)
+        const assetBalance = assets?.find((a) => a.tokenId === id)
 
         if (assetBalance) {
           return { id, ...{ balance: BigInt(assetBalance.balance), lockedBalance: BigInt(assetBalance.lockedBalance) } }
@@ -97,7 +87,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
 
         return []
       }),
-    [unknownAssetsBalances, unknownAssetsIds]
+    [assets, unknownAssetsIds]
   )
 
   const tabs: TabItem[] = [
@@ -105,7 +95,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       value: 'tokens',
       icon: <RiCopperDiamondLine />,
       label: 'Tokens',
-      length: tokensWithBalanceAndMetadata.length,
+      length: fungibleTokens.length,
       loading: isLoading,
       highlightColor: '#0cbaff'
     },
@@ -113,7 +103,7 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
       value: 'nfts',
       label: 'NFTs',
       icon: <RiNftLine />,
-      length: nfts.length,
+      length: nftsMetadata.length,
       loading: isLoading,
       highlightColor: '#ffae0c'
     }
@@ -143,15 +133,11 @@ const AssetList = ({ addressHash, addressBalance, assetIds, limit, assetsLoading
   return (
     <div className={className}>
       <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-      {tokensWithBalanceAndMetadata.length > 0 || nfts.length > 0 ? (
+      {fungibleTokens.length > 0 || nftsMetadata.length > 0 ? (
         {
-          tokens: tokensWithBalanceAndMetadata && (
-            <TokenList limit={limit} tokens={tokensWithBalanceAndMetadata} isLoading={isLoading} />
-          ),
-          nfts: nfts && <NFTList nfts={nfts} isLoading={isLoading} />,
-          unknown: unknownAssetsWithBalance && (
-            <TokenList limit={limit} tokens={unknownAssetsWithBalance} isLoading={isLoading} />
-          )
+          tokens: fungibleTokens && <TokenList limit={limit} tokens={fungibleTokens} isLoading={isLoading} />,
+          nfts: nftsMetadata && <NFTList nfts={nftsMetadata} isLoading={isLoading} />,
+          unknown: unknownAssets && <TokenList limit={limit} tokens={unknownAssets} isLoading={isLoading} />
         }[currentTab.value]
       ) : (
         <EmptyListContainer>No assets yet</EmptyListContainer>
