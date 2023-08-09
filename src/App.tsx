@@ -71,7 +71,7 @@ const App = () => {
       queries: {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
-        retry: 6,
+        retry: 10,
         staleTime: 10000, // default ms before cache data is considered stale
         cacheTime: ONE_DAY_MS
       }

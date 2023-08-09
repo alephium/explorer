@@ -43,11 +43,5 @@ export const addressQueries = createQueriesCollection({
       queryKey: ['addressTxNumber', addressHash],
       queryFn: () => client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
     })
-  },
-  assets: {
-    all: (addressHash: string) => ({
-      queryKey: ['addressAssets', addressHash],
-      queryFn: () => client.explorer.addresses.getAddressesAddressTokens(addressHash)
-    })
   }
 })
