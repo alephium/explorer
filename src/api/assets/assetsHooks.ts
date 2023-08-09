@@ -68,6 +68,8 @@ export const useAssetMetadata = (assetId: string) => {
 export const useAssetsMetadata = (assetIds: string[] = []) => {
   const allVerifiedTokensMetadata = useVerifiedTokensMetadata()
 
+  const shouldExecuteQueries = assetIds.length > 0 && !!allVerifiedTokensMetadata
+
   const ids = assetIds.filter((id) => id !== ALPH.id)
   const isAlphIn = assetIds.length !== ids.length
 
@@ -78,18 +80,23 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   const unverifiedAssetIds = ids.filter((id) => !verifiedTokensMetadata.some((vt) => vt.id === id))
 
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
-    unverifiedAssetIds.map((id) => queries.assets.type.one(id))
+    unverifiedAssetIds.map((id) => ({
+      ...queries.assets.type.one(id),
+      enabled: shouldExecuteQueries
+    }))
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'fungible' ? { ...queries.assets.metadata.unverifiedFungibleToken(id) } : []
+      type === 'fungible'
+        ? { ...queries.assets.metadata.unverifiedFungibleToken(id), enabled: shouldExecuteQueries }
+        : []
     )
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'non-fungible' ? queries.assets.metadata.unverifiedNFT(id) : []
+      type === 'non-fungible' ? { ...queries.assets.metadata.unverifiedNFT(id), enabled: shouldExecuteQueries } : []
     )
   )
 
@@ -107,10 +114,21 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     verifiedTokensMetadata.unshift(alphMetadata)
   }
 
+  const knownAssetsIds = useMemo(
+    () => [...verifiedTokensMetadata, ...unverifiedTokensMetadata, ...unverifiedNFTsMetadata].map((a) => a.id),
+    [unverifiedNFTsMetadata, unverifiedTokensMetadata, verifiedTokensMetadata]
+  )
+
+  const unknownAssetsIds = useMemo(
+    () => assetIds?.filter((id) => !knownAssetsIds.includes(id)) || [],
+    [assetIds, knownAssetsIds]
+  )
+
   const returnedVerifiedTokensMetadata = useMemo(
     () => ({
       fungibleTokens: verifiedTokensMetadata,
       nfts: [],
+      unknown: [],
       isLoading: true
     }),
     [verifiedTokensMetadata]
@@ -120,6 +138,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     () => ({
       fungibleTokens: [...verifiedTokensMetadata, ...unverifiedTokensMetadata],
       nfts: unverifiedNFTsMetadataWithFiles,
+      unknown: unknownAssetsIds,
       isLoading:
         !allVerifiedTokensMetadata ||
         unverifiedAssetsLoading ||
@@ -128,6 +147,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
     }),
     [
       allVerifiedTokensMetadata,
+      unknownAssetsIds,
       unverifiedAssetsLoading,
       unverifiedNFTsMetadataLoading,
       unverifiedNFTsMetadataWithFiles,
