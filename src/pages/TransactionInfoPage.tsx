@@ -26,7 +26,7 @@ import {
   Transaction
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import _ from 'lodash'
+import _, { groupBy, mapValues, reduce, uniq } from 'lodash'
 import { useRef } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
@@ -38,7 +38,7 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
-import { SimpleLink } from '@/components/Links'
+import { AddressLink, SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -102,13 +102,7 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<explorer.Output> | undefined = transactionData?.outputs
-
-  const totalAmount = outputs?.reduce<bigint>(
-    (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
-    BigInt(0)
-  )
+  const totalAmount = deltaAlphAmount(transactionData?.inputs, transactionData?.outputs)
 
   return (
     <Section>
@@ -240,8 +234,19 @@ const TransactionInfoPage = () => {
                 />
               </TableRow>
               <TableRow>
-                <b>Total ALPH Value</b>
-                <Badge type="neutralHighlight" amount={totalAmount} />
+                <b>Total ALPH</b>
+                {typeof totalAmount === 'string' ? (
+                  <Badge type="neutralHighlight" amount={totalAmount} />
+                ) : (
+                  <AlphValuesContainer>
+                    {Object.entries(totalAmount).map(([k, v]) => (
+                      <AlphValue key={k}>
+                        <AddressLink address={k} />
+                        <Badge type="neutralHighlight" amount={v} />
+                      </AlphValue>
+                    ))}
+                  </AlphValuesContainer>
+                )}
               </TableRow>
             </TableBody>
           )}
@@ -267,6 +272,61 @@ const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explo
   return confirmations
 }
 
+// TODO: The following 2 functions could be ported to js-sdk (and properly tested there)
+type AttoAlphAmount = string
+type Address = string
+
+type UTXO = {
+  attoAlphAmount?: AttoAlphAmount
+  address?: Address
+}
+
+const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
+
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) =>
+    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || '0')).toString(), '0')
+  )
+
+  return summed
+}
+
+const deltaAlphAmount = (inputs: UTXO[] = [], outputs: UTXO[] = []): Record<string, string> | string => {
+  const summedInputs = sumUpAlphAmounts(inputs)
+  const summedOutputs = sumUpAlphAmounts(outputs)
+
+  const uniqueInputAddresses = uniq(
+    inputs.reduce((acc: string[], input) => {
+      if (input.address) {
+        acc.push(input.address)
+      }
+      return acc
+    }, [])
+  )
+
+  if (uniqueInputAddresses.length === 1) {
+    const address = uniqueInputAddresses[0]
+    if (address) {
+      const delta = BigInt(summedOutputs[address] || '0') - BigInt(summedInputs[address] || '0')
+      return BigInt(Math.abs(Number(delta))).toString()
+    }
+  }
+
+  const allAddresses = uniq([...Object.keys(summedInputs), ...Object.keys(summedOutputs)])
+  const deltas: Record<string, string> = {}
+
+  for (const address of allAddresses) {
+    const inputAmount = BigInt(summedInputs[address] || '0')
+    const outputAmount = BigInt(summedOutputs[address] || '0')
+    const delta = Math.abs(Number(outputAmount - inputAmount))
+
+    deltas[address] = BigInt(delta).toString()
+  }
+
+  return deltas
+}
+
 const IOItemContainer = styled.div`
   padding: 5px 0;
 
@@ -278,6 +338,17 @@ const IOItemContainer = styled.div`
 const AssetLogos = styled.div`
   display: flex;
   gap: 10px;
+`
+
+const AlphValuesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`
+
+const AlphValue = styled.div`
+  display: flex;
+  justify-content: space-between;
 `
 
 export default TransactionInfoPage
