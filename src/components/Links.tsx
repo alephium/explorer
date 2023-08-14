@@ -54,7 +54,7 @@ export const TightLink: FC<TightLinkProps> = ({ maxWidth, text, isHash, ...props
 
 export const TightLinkStrict: FC<TightLinkProps> = ({ maxWidth, text, ...props }) => (
   <div style={{ maxWidth: maxWidth, display: 'flex', overflow: 'hidden' }}>
-    <StyledLink {...props} data-tip={text}>
+    <StyledLink {...props} data-tooltip-id="default" data-tooltip-content={text}>
       {smartHash(text)}
     </StyledLink>
   </div>
@@ -102,7 +102,7 @@ const AddressLinkBase = ({
     <div className={className}>
       <TightLink to={`/addresses/${address}`} maxWidth={maxWidth} text={address} isHash />
       {txHashRef && (
-        <TxLink to={`/transactions/${txHashRef}`} data-tip={txHashRef}>
+        <TxLink to={`/transactions/${txHashRef}`} data-tooltip-id="default" data-tooltip-content={txHashRef}>
           <RiExternalLinkLine size={10} />
         </TxLink>
       )}

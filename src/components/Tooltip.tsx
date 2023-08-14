@@ -16,22 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import ReactTooltip from 'react-tooltip'
-import { useTheme } from 'styled-components'
+import 'react-tooltip/dist/react-tooltip.css'
 
-interface TooltipProps {
-  id?: string
-}
+import { Tooltip } from 'react-tooltip'
+import styled from 'styled-components'
 
-const Tooltip: FC<TooltipProps> = ({ id, children }) => {
-  const theme = useTheme()
-  const backgroundColor = theme.name === 'dark' ? theme.bg.background2 : theme.font.primary
-
-  return (
-    <ReactTooltip backgroundColor={backgroundColor} id={id} effect="solid">
-      {children}
-    </ReactTooltip>
-  )
-}
-
-export default Tooltip
+export default styled(Tooltip)`
+  background-color: ${({ theme }) => (theme.name === 'dark' ? theme.bg.background2 : theme.font.primary)};
+  opacity: 1 !important;
+`

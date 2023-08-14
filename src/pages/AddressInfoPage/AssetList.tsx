@@ -21,7 +21,6 @@ import { useQuery } from '@tanstack/react-query'
 import { flatMap, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
-import ReactTooltip from 'react-tooltip'
 import styled, { useTheme } from 'styled-components'
 
 import { queries } from '@/api'
@@ -118,10 +117,6 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
-
-  useEffect(() => {
-    currentTab && ReactTooltip.rebuild()
-  }, [currentTab])
 
   useEffect(() => {
     addressHash && setCurrentTab(tabs[0])

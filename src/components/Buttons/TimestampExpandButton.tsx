@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { IconBaseProps } from 'react-icons'
 import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
-import ReactTooltip from 'react-tooltip'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
@@ -44,12 +43,11 @@ const TimestampExpandButton = ({ className }: TimestampExpandButtonProps) => {
 
   const handleClick = () => {
     setTimestampPrecisionMode(timestampPrecisionMode === 'on' ? 'off' : 'on')
-    ReactTooltip.hide()
   }
   const { Icon, tooltipContent } = config[timestampPrecisionMode]
 
   return (
-    <span className={className} onClick={handleClick} data-tip={tooltipContent}>
+    <span className={className} onClick={handleClick} data-tooltip-id="default" data-tooltip-content={tooltipContent}>
       <Icon size={11} />
     </span>
   )

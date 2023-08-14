@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { MouseEvent, useEffect, useState } from 'react'
 import { RiCheckLine, RiFileCopyLine } from 'react-icons/ri'
-import ReactTooltip from 'react-tooltip'
 import styled, { css } from 'styled-components'
 
 import { useSnackbar } from '@/hooks/useSnackbar'
@@ -57,7 +56,6 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
-        ReactTooltip.rebuild()
       }, 3000)
     }
     return () => {
@@ -70,7 +68,11 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
   return (
     <div className={className}>
       {!hasBeenCopied ? (
-        <StyledClipboardIcon data-tip={tooltip || 'Copy to clipboard'} onClick={handleClick} />
+        <StyledClipboardIcon
+          data-tooltip-id="default"
+          data-tooltip-content={tooltip || 'Copy to clipboard'}
+          onClick={handleClick}
+        />
       ) : (
         <StyledCheckIcon />
       )}

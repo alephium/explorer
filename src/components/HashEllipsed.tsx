@@ -36,7 +36,13 @@ const HashEllipsed = ({ hash, copyTooltipText, disableCopy = false, className, .
       <Ellipsed text={hash} {...props} />
     </HashContainer>
     {!disableCopy && (
-      <CopyButton textToCopy={hash} tooltip={copyTooltipText || 'Copy hash'} className={className} hasBackground />
+      <CopyButton
+        textToCopy={hash}
+        data-tooltip-id="default"
+        data-tooltip-content={copyTooltipText || 'Copy hash'}
+        className={className}
+        hasBackground
+      />
     )}
   </Container>
 )

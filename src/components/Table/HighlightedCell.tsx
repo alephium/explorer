@@ -19,21 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components'
 
 import ClipboardButton from '../Buttons/ClipboardButton'
-import QRCodeButton from '../Buttons/QRCodeButton'
 import Ellipsed from '../Ellipsed'
 
 interface HighlightedCellProps {
   children: string
   textToCopy?: string
-  qrCodeContent?: string
   className?: string
 }
 
-const HighlightedCell = ({ children, textToCopy, qrCodeContent, className }: HighlightedCellProps) => (
+const HighlightedCell = ({ children, textToCopy, className }: HighlightedCellProps) => (
   <div className={className}>
     <Ellipsed text={children} />
     {textToCopy && <ClipboardButton textToCopy={textToCopy} />}
-    {qrCodeContent && <QRCodeButton textToEncode={qrCodeContent} />}
   </div>
 )
 

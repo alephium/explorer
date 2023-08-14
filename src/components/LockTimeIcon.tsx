@@ -30,7 +30,14 @@ interface LockTimeIconProps {
 const LockTimeIcon = ({ timestamp, color, className }: LockTimeIconProps) => {
   const unlocksOn = dayjs(timestamp).format(DATE_TIME_FORMAT)
 
-  return <RiLockLine data-tip={`Unlocks on ${unlocksOn}`} className={className} color={color} />
+  return (
+    <RiLockLine
+      data-tooltip-id="default"
+      data-tooltip-content={`Unlocks on ${unlocksOn}`}
+      className={className}
+      color={color}
+    />
+  )
 }
 
 export default LockTimeIcon

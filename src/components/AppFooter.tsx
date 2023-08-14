@@ -48,7 +48,7 @@ const AppFooter = ({ className }: AppFooterProps) => (
       <SocialMediaIconList>
         {socialMediaData.map((d) => (
           <ExternalLink href={d.link} key={d.name}>
-            <d.Icon data-tip={d.name} className="social-media-icon" />
+            <d.Icon data-tooltip-id="default" data-tooltip-content={d.name} className="social-media-icon" />
           </ExternalLink>
         ))}
       </SocialMediaIconList>
