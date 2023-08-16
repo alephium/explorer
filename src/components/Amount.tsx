@@ -91,7 +91,8 @@ const Amount = ({
       {assetType === 'fungible' || isFiat ? (
         <>
           <NumberContainer
-            data-tip={
+            data-tooltip-id="default"
+            data-tooltip-content={
               (!fullPrecision &&
                 value &&
                 getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })) ||
@@ -119,7 +120,9 @@ const Amount = ({
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </>
       ) : isUnknownToken ? (
-        <RawAmount data-tip={convertToPositive(value as bigint)}>{value?.toString()}</RawAmount>
+        <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
+          {value?.toString()}
+        </RawAmount>
       ) : (
         '-'
       )}

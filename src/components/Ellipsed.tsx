@@ -55,7 +55,7 @@ const Ellipsed = ({ text, className }: EllipsedProps) => {
   }, [handleResize])
 
   return (
-    <div ref={el} key={text} className={className} data-tip={text}>
+    <div ref={el} key={text} className={className} data-tooltip-id="default" data-tooltip-content={text}>
       <HiddenText>{text}</HiddenText>
       <div>{_text}</div>
     </div>

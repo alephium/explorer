@@ -48,7 +48,8 @@ const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggl
 
   return (
     <div
-      data-tip={
+      data-tooltip-id="default"
+      data-tooltip-content={
         forceFormat !== 'high'
           ? `${highPrecisionTimestamp}
             ${

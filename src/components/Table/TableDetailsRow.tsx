@@ -17,11 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AnimatePresence, motion } from 'framer-motion'
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext } from 'react'
 import { RiArrowDownSLine } from 'react-icons/ri'
 import styled from 'styled-components'
-
-import { SectionContext } from '../Section'
 
 interface DetailsRowProps {
   openCondition: boolean
@@ -37,16 +35,11 @@ interface DetailToggleProps {
   isOpen: boolean
 }
 
-export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => {
-  const rebuildTooltips = useContext(SectionContext).rebuildTooltips
-  useEffect(() => rebuildTooltips()) // Need to rebuild after lazy rendering
-
-  return (
-    <OpenConditionContext.Provider value={openCondition}>
-      <tr className="details">{children}</tr>
-    </OpenConditionContext.Provider>
-  )
-}
+export const TableDetailsRow: FC<DetailsRowProps> = ({ children, openCondition }) => (
+  <OpenConditionContext.Provider value={openCondition}>
+    <tr className="details">{children}</tr>
+  </OpenConditionContext.Provider>
+)
 
 export const AnimatedCell: FC<AnimatedCellProps> = ({ children, className, colSpan, alignItems = 'left' }) => {
   const condition = useContext(OpenConditionContext)

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import './fonts/index.css'
 
 import { StrictMode } from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 
 import NotificationBar from '@/components/NotificationBar'
@@ -40,24 +40,26 @@ try {
   browserIsOld = true
 }
 
+const container = document.getElementById('root')
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!)
+
 if (browserIsOld) {
-  ReactDOM.render(
+  root.render(
     <NotificationBar>
       Your browser version appears to be out of date. To use our app, please update your browser.
-    </NotificationBar>,
-    document.getElementById('root')
+    </NotificationBar>
   )
 } else {
   import('./App').then(({ default: App }) => {
-    ReactDOM.render(
+    root.render(
       <StrictMode>
         <Router>
           <SettingsProvider>
             <App />
           </SettingsProvider>
         </Router>
-      </StrictMode>,
-      document.getElementById('root')
+      </StrictMode>
     )
   })
 }

@@ -16,14 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
+import Tooltip from '@/components/Tooltip'
 
-const Section: FC<{ className?: string }> = ({ children, className }) => (
-  <Container className={className}>{children}</Container>
-)
+const Tooltips = () => <Tooltip id="default" />
 
-const Container = styled.section`
-  width: 100%;
-`
-
-export default Section
+export default Tooltips

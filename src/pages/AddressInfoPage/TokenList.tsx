@@ -66,7 +66,9 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                 <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
                   {token.name || <HashEllipsed hash={token.id} copyTooltipText="Copy token ID" />}
                 </TokenName>
-                {!isAlph && !token.logoURI && token.name && <UnverifiedIcon data-tip="Unverified token" />}
+                {!isAlph && !token.logoURI && token.name && (
+                  <UnverifiedIcon data-tooltip-id="default" data-tooltip-content="Unverified token" />
+                )}
               </TokenNameAndTag>
               {token.name && !isAlph && (
                 <TokenHash>

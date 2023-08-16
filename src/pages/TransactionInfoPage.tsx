@@ -156,11 +156,16 @@ const TransactionInfoPage = () => {
                   <span>
                     <SimpleLink
                       to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
-                      data-tip={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                      data-tooltip-id="default"
+                      data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
                     >
                       {txBlock?.height.toString()}
                     </SimpleLink>
-                    <span data-tip="Number of blocks mined since" style={{ marginLeft: 10 }}>
+                    <span
+                      data-tooltip-id="default"
+                      data-tooltip-content="Number of blocks mined since"
+                      style={{ marginLeft: 10 }}
+                    >
                       <Badge
                         type="neutral"
                         content={

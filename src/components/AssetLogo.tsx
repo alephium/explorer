@@ -17,9 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { useEffect } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import { RiCopperCoinLine, RiQuestionLine } from 'react-icons/ri'
-import ReactTooltip from 'react-tooltip'
 import styled, { css, useTheme } from 'styled-components'
 
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
@@ -36,14 +35,9 @@ const AssetLogo = (props: AssetLogoProps) => {
   const { assetId, showTooltip, className } = props
 
   const theme = useTheme()
-
   const metadata = useAssetMetadata(assetId)
 
   const assetType = metadata.type
-
-  useEffect(() => {
-    metadata && ReactTooltip.rebuild()
-  }, [metadata])
 
   return (
     <AssetLogoStyled className={className} {...props}>
@@ -62,33 +56,20 @@ const AssetLogo = (props: AssetLogoProps) => {
       ) : (
         <RiQuestionLine color={theme.font.secondary} size="72%" />
       )}
-      <ReactTooltip
-        id="picture-tooltip"
-        backgroundColor="black"
-        getContent={(dataTip) => {
-          try {
-            const props = JSON.parse(dataTip)
-
-            return (
-              <NFTTooltipContainer>
-                <NFTTooltipImage height={150} width={150} src={props?.src} />
-                <NFTTitle>{props?.name}</NFTTitle>
-              </NFTTooltipContainer>
-            )
-          } catch (e) {
-            return null
-          }
-        }}
-        effect="solid"
-      />
       {!showTooltip ? null : assetType === 'non-fungible' ? (
         <ImageTooltipHolder
-          data-for="picture-tooltip"
-          data-tip={JSON.stringify({ name: metadata.file?.name, src: metadata.file?.image })}
+          data-tooltip-id="default"
+          data-tooltip-html={renderToStaticMarkup(
+            <NFTTooltipContainer>
+              <NFTTooltipImage height={150} width={150} src={metadata.file?.image} />
+              <NFTTitle>{metadata.file?.name}</NFTTitle>
+            </NFTTooltipContainer>
+          )}
         />
       ) : (
         <TooltipHolder
-          data-tip={assetType === 'fungible' ? (metadata.name ? metadata.name : metadata.id) : metadata.id}
+          data-tooltip-id="default"
+          data-tooltip-content={assetType === 'fungible' ? (metadata.name ? metadata.name : metadata.id) : metadata.id}
         />
       )}
     </AssetLogoStyled>

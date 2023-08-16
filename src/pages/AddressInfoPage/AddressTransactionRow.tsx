@@ -116,7 +116,11 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
             {Icon && <Icon size={directionIconSize} color={badgeColor} />}
             <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
-          {!isPending && !t.scriptExecutionOk && <FailedTXBubble data-tip="Script execution failed">!</FailedTXBubble>}
+          {!isPending && !t.scriptExecutionOk && (
+            <FailedTXBubble data-tooltip-id="default" data-tooltip-content="Script execution failed">
+              !
+            </FailedTXBubble>
+          )}
         </TxLabelBadgeContainer>
 
         <Assets>

@@ -28,6 +28,7 @@ import styled, { ThemeProvider } from 'styled-components'
 import AppFooter from '@/components/AppFooter'
 import AppHeader from '@/components/AppHeader'
 import { SnackbarProvider } from '@/components/Snackbar/SnackbarProvider'
+import Tooltips from '@/components/Tooltips'
 import { useSettings } from '@/contexts/settingsContext'
 import { StaticDataProvider } from '@/contexts/staticDataContext'
 import { isHostGhPages } from '@/index'
@@ -120,6 +121,7 @@ const App = () => {
         </MainContainer>
         <Background />
       </SnackbarProvider>
+      <Tooltips />
     </ThemeProvider>
   )
 }
