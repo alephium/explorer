@@ -326,12 +326,24 @@ const AssetLogos = styled.div`
 const AlphValuesContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
 `
 
 const AlphValue = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 10px 0;
+
+  &:first-child {
+    padding-top: 5px;
+  }
+
+  &:last-child {
+    padding-bottom: 5px;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
 `
 
 export default TransactionInfoPage
