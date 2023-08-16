@@ -242,7 +242,7 @@ const TransactionInfoPage = () => {
                     {totalAmountEntries.map(([k, v]) => (
                       <AlphValue key={k}>
                         <AddressLink address={k} />
-                        <Badge type="neutralHighlight" amount={v} />
+                        <Badge type="neutralHighlight" amount={v} showAmountPlusMinus={true} />
                       </AlphValue>
                     ))}
                   </AlphValuesContainer>
@@ -302,9 +302,9 @@ const deltaAlphAmount = (inputs: UTXO[] = [], outputs: UTXO[] = []): Record<stri
   for (const address of allAddresses) {
     const inputAmount = BigInt(summedInputs[address] || '0')
     const outputAmount = BigInt(summedOutputs[address] || '0')
-    const delta = Math.abs(Number(outputAmount - inputAmount))
+    const delta = outputAmount - inputAmount
 
-    deltas[address] = BigInt(delta).toString()
+    deltas[address] = delta.toString()
   }
 
   return deltas
