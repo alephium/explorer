@@ -102,7 +102,7 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  const totalAmount = deltaAlphAmount(transactionData?.inputs, transactionData?.outputs)
+  const totalAmountEntries = Object.entries(deltaAlphAmount(transactionData?.inputs, transactionData?.outputs))
 
   return (
     <Section>
@@ -184,7 +184,7 @@ const TransactionInfoPage = () => {
                   <span>Assets</span>
                   <AssetLogos>
                     <>
-                      {totalAmount && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
+                      {totalAmountEntries.length > 0 && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
                       {assetIds.map((id) => (
                         <AssetLogo key={id} assetId={id} size={20} showTooltip />
                       ))}
@@ -235,11 +235,11 @@ const TransactionInfoPage = () => {
               </TableRow>
               <TableRow>
                 <b>Total ALPH</b>
-                {typeof totalAmount === 'string' ? (
-                  <Badge type="neutralHighlight" amount={totalAmount} />
+                {totalAmountEntries.length === 1 ? (
+                  <Badge type="neutralHighlight" amount={totalAmountEntries[0][1]} />
                 ) : (
                   <AlphValuesContainer>
-                    {Object.entries(totalAmount).map(([k, v]) => (
+                    {totalAmountEntries.map(([k, v]) => (
                       <AlphValue key={k}>
                         <AddressLink address={k} />
                         <Badge type="neutralHighlight" amount={v} />
@@ -292,26 +292,9 @@ const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   return summed
 }
 
-const deltaAlphAmount = (inputs: UTXO[] = [], outputs: UTXO[] = []): Record<string, string> | string => {
+const deltaAlphAmount = (inputs: UTXO[] = [], outputs: UTXO[] = []): Record<string, string> => {
   const summedInputs = sumUpAlphAmounts(inputs)
   const summedOutputs = sumUpAlphAmounts(outputs)
-
-  const uniqueInputAddresses = uniq(
-    inputs.reduce((acc: string[], input) => {
-      if (input.address) {
-        acc.push(input.address)
-      }
-      return acc
-    }, [])
-  )
-
-  if (uniqueInputAddresses.length === 1) {
-    const address = uniqueInputAddresses[0]
-    if (address) {
-      const delta = BigInt(summedOutputs[address] || '0') - BigInt(summedInputs[address] || '0')
-      return BigInt(Math.abs(Number(delta))).toString()
-    }
-  }
 
   const allAddresses = uniq([...Object.keys(summedInputs), ...Object.keys(summedOutputs)])
   const deltas: Record<string, string> = {}
