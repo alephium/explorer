@@ -36,7 +36,7 @@ interface AmountProps {
   tabIndex?: number
   suffix?: string
   highlight?: boolean
-  showPlusMinus?: boolean
+  displaySign?: boolean
   className?: string
 }
 
@@ -52,7 +52,7 @@ const Amount = ({
   color,
   overrideSuffixColor,
   tabIndex,
-  showPlusMinus = false
+  displaySign = false
 }: AmountProps) => {
   const assetMetadata = useAssetMetadata(assetId || '')
 
@@ -99,7 +99,7 @@ const Amount = ({
               undefined
             }
           >
-            {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+            {displaySign && <span>{isNegative ? '-' : '+'}</span>}
             {fadeDecimals ? (
               <>
                 <span>{integralPart}</span>
@@ -116,7 +116,7 @@ const Amount = ({
         </>
       ) : assetType === 'non-fungible' && assetId ? (
         <>
-          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+          {displaySign && <span>{isNegative ? '-' : '+'}</span>}
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </>
       ) : isUnknownToken ? (

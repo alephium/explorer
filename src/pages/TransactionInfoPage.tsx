@@ -239,7 +239,7 @@ const TransactionInfoPage = () => {
                   {totalAmountEntries.map(([k, v]) => (
                     <AlphValue key={k}>
                       <AddressLink address={k} />
-                      <Badge type="neutral" amount={v} showAmountPlusMinus={true} />
+                      <Badge type="neutral" amount={v} displayAmountSign={true} />
                     </AlphValue>
                   ))}
                 </AlphValuesContainer>
