@@ -235,18 +235,14 @@ const TransactionInfoPage = () => {
               </TableRow>
               <TableRow>
                 <b>Total ALPH</b>
-                {totalAmountEntries.length === 1 ? (
-                  <Badge type="neutralHighlight" amount={totalAmountEntries[0][1]} />
-                ) : (
-                  <AlphValuesContainer>
-                    {totalAmountEntries.map(([k, v]) => (
-                      <AlphValue key={k}>
-                        <AddressLink address={k} />
-                        <Badge type="neutralHighlight" amount={v} showAmountPlusMinus={true} />
-                      </AlphValue>
-                    ))}
-                  </AlphValuesContainer>
-                )}
+                <AlphValuesContainer>
+                  {totalAmountEntries.map(([k, v]) => (
+                    <AlphValue key={k}>
+                      <AddressLink address={k} />
+                      <Badge type="neutral" amount={v} showAmountPlusMinus={true} />
+                    </AlphValue>
+                  ))}
+                </AlphValuesContainer>
               </TableRow>
             </TableBody>
           )}

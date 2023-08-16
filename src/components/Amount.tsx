@@ -146,7 +146,7 @@ export default styled(Amount)`
       ? color
       : highlight && value !== undefined
       ? value < 0
-        ? theme.font.highlight
+        ? theme.global.alert
         : theme.global.valid
       : 'inherit'};
   white-space: nowrap;

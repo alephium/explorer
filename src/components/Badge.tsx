@@ -39,7 +39,16 @@ interface BadgeProps {
 const Badge = ({ content, className, amount, showAmountPlusMinus = false }: BadgeProps) => (
   <div className={className}>
     <BadgeContent>
-      {amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} showPlusMinus={showAmountPlusMinus} /> : content}
+      {amount ? (
+        <Amount
+          assetId={ALPH.id}
+          value={BigInt(amount)}
+          showPlusMinus={showAmountPlusMinus}
+          highlight={showAmountPlusMinus}
+        />
+      ) : (
+        content
+      )}
     </BadgeContent>
   </div>
 )
