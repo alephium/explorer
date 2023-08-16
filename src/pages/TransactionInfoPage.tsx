@@ -102,7 +102,13 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  const totalAmountEntries = Object.entries(deltaAlphAmount(transactionData?.inputs, transactionData?.outputs))
+  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = IOAmountsDelta(
+    transactionData?.inputs,
+    transactionData?.outputs
+  )
+
+  const alphDeltaAmountsEntries = Object.entries(alphDeltaAmounts)
+  const tokensDeltaAmountsEntries = Object.entries(tokenDeltaAmounts)
 
   return (
     <Section>
@@ -184,7 +190,7 @@ const TransactionInfoPage = () => {
                   <span>Assets</span>
                   <AssetLogos>
                     <>
-                      {totalAmountEntries.length > 0 && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
+                      {alphDeltaAmountsEntries.length > 0 && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
                       {assetIds.map((id) => (
                         <AssetLogo key={id} assetId={id} size={20} showTooltip />
                       ))}
@@ -234,9 +240,24 @@ const TransactionInfoPage = () => {
                 />
               </TableRow>
               <TableRow>
-                <b>Total ALPH</b>
+                <b>Total Token Amounts</b>
                 <AlphValuesContainer>
-                  {totalAmountEntries.map(([k, v]) => (
+                  {tokensDeltaAmountsEntries.map(([k, v]) => (
+                    <AlphValue key={k}>
+                      <AddressLink address={k} />
+                      <TokenAmounts>
+                        {Object.entries(v).map((t) => (
+                          <Badge key={t[0]} type="neutral" amount={t[1]} assetId={t[0]} displayAmountSign={true} />
+                        ))}
+                      </TokenAmounts>
+                    </AlphValue>
+                  ))}
+                </AlphValuesContainer>
+              </TableRow>
+              <TableRow>
+                <b>Total ALPH Amounts</b>
+                <AlphValuesContainer>
+                  {alphDeltaAmountsEntries.map(([k, v]) => (
                     <AlphValue key={k}>
                       <AddressLink address={k} />
                       <Badge type="neutral" amount={v} displayAmountSign={true} />
@@ -275,6 +296,7 @@ type Address = string
 type UTXO = {
   attoAlphAmount?: AttoAlphAmount
   address?: Address
+  tokens?: { id: string; amount: string }[]
 }
 
 const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
@@ -288,22 +310,68 @@ const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   return summed
 }
 
-const deltaAlphAmount = (inputs: UTXO[] = [], outputs: UTXO[] = []): Record<string, string> => {
-  const summedInputs = sumUpAlphAmounts(inputs)
-  const summedOutputs = sumUpAlphAmounts(outputs)
+const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<string, string>> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
 
-  const allAddresses = uniq([...Object.keys(summedInputs), ...Object.keys(summedOutputs)])
-  const deltas: Record<string, string> = {}
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) => {
+    const tokenSums: Record<string, string> = {}
+    for (const utxo of addressGroup) {
+      for (const token of utxo.tokens || []) {
+        if (!tokenSums[token.id]) {
+          tokenSums[token.id]
+        }
+        tokenSums[token.id] = (BigInt(tokenSums[token.id] || '0') + BigInt(token.amount)).toString()
+      }
+    }
+    return tokenSums
+  })
+
+  return summed
+}
+
+const IOAmountsDelta = (
+  inputs: UTXO[] = [],
+  outputs: UTXO[] = []
+): { alph: Record<string, string>; tokens: Record<string, Record<string, string>> } => {
+  const summedInputsAlph = sumUpAlphAmounts(inputs)
+  const summedOutputsAlph = sumUpAlphAmounts(outputs)
+  const summedInputTokens = sumUpTokenAmounts(inputs)
+  const summedOutputTokens = sumUpTokenAmounts(outputs)
+
+  const allAddresses = uniq([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])
+
+  const alphDeltas: Record<string, string> = {}
+  const tokenDeltas: Record<string, Record<string, string>> = {}
 
   for (const address of allAddresses) {
-    const inputAmount = BigInt(summedInputs[address] || '0')
-    const outputAmount = BigInt(summedOutputs[address] || '0')
-    const delta = outputAmount - inputAmount
+    const inputAmount = BigInt(summedInputsAlph[address])
+    const outputAmount = BigInt(summedOutputsAlph[address])
+    const deltaAlph = outputAmount - inputAmount
+    alphDeltas[address] = deltaAlph.toString()
 
-    deltas[address] = delta.toString()
+    const inputTokens = summedInputTokens[address]
+    const outputTokens = summedOutputTokens[address]
+
+    const allTokenIds = uniq([...Object.keys(inputTokens), ...Object.keys(outputTokens)])
+
+    if (allTokenIds.length > 0) {
+      for (const tokenId of allTokenIds) {
+        if (!tokenDeltas[address]) {
+          tokenDeltas[address] = {}
+        }
+        const inputTokenAmount = BigInt(inputTokens[tokenId] || 0)
+        const outputTokenAmount = BigInt(outputTokens[tokenId] || 0)
+        const deltaToken = outputTokenAmount - inputTokenAmount
+        tokenDeltas[address][tokenId] = deltaToken.toString()
+      }
+    }
   }
 
-  return deltas
+  return {
+    alph: alphDeltas,
+    tokens: tokenDeltas
+  }
 }
 
 const IOItemContainer = styled.div`
@@ -327,6 +395,7 @@ const AlphValuesContainer = styled.div`
 const AlphValue = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px 0;
 
   &:first-child {
@@ -340,6 +409,14 @@ const AlphValue = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
+`
+
+const TokenAmounts = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
 `
 
 export default TransactionInfoPage
