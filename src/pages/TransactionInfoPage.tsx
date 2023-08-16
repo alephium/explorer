@@ -353,7 +353,10 @@ const IOAmountsDelta = (
     const inputTokens = summedInputTokens[address]
     const outputTokens = summedOutputTokens[address]
 
-    const allTokenIds = uniq([...Object.keys(inputTokens), ...Object.keys(outputTokens)])
+    const inputTokensKeys = inputTokens ? Object.keys(inputTokens) : []
+    const outputTokensKeys = outputTokens ? Object.keys(outputTokens) : []
+
+    const allTokenIds = uniq([...inputTokensKeys, ...outputTokensKeys])
 
     if (allTokenIds.length > 0) {
       for (const tokenId of allTokenIds) {
