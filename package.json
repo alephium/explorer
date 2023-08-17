@@ -8,7 +8,7 @@
   },
   "homepage": "/",
   "dependencies": {
-    "@alephium/sdk": "0.7.5",
+    "@alephium/sdk": "^0.7.6-rc.2",
     "@alephium/token-list": "^0.0.11",
     "@alephium/web3": "0.16.1",
     "@tanstack/query-sync-storage-persister": "4.32.0",

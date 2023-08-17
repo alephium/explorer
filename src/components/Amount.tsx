@@ -29,13 +29,14 @@ interface AmountProps {
   decimals?: number
   isFiat?: boolean
   fadeDecimals?: boolean
-  fullPrecision?: boolean
   nbOfDecimalsToShow?: number
   color?: string
   overrideSuffixColor?: boolean
   tabIndex?: number
   suffix?: string
   highlight?: boolean
+  fullPrecision?: boolean
+  smartRounding?: boolean
   displaySign?: boolean
   className?: string
 }
@@ -46,12 +47,13 @@ const Amount = ({
   isFiat,
   className,
   fadeDecimals,
-  fullPrecision = false,
   nbOfDecimalsToShow = 4,
   suffix,
   color,
   overrideSuffixColor,
   tabIndex,
+  fullPrecision = false,
+  smartRounding = true,
   displaySign = false
 }: AmountProps) => {
   const assetMetadata = useAssetMetadata(assetId || '')
@@ -73,7 +75,7 @@ const Amount = ({
     }
 
     if (value !== undefined) {
-      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
+      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, smartRounding })
 
       if (fadeDecimals && MAGNITUDE_SYMBOL.some((char) => amount.endsWith(char))) {
         quantitySymbol = amount.slice(-1)
@@ -130,14 +132,22 @@ const Amount = ({
   )
 }
 
-const getAmount = ({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision }: Partial<AmountProps>) =>
+const getAmount = ({
+  value,
+  isFiat,
+  decimals,
+  nbOfDecimalsToShow,
+  fullPrecision,
+  smartRounding
+}: Partial<AmountProps>) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
     : formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,
         displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
+        fullPrecision,
+        smartRounding
       })
 
 export default styled(Amount)`

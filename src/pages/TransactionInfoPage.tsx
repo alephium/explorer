@@ -26,7 +26,7 @@ import {
   Transaction
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import _, { groupBy, mapValues, reduce, uniq } from 'lodash'
+import _ from 'lodash'
 import { useRef } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
@@ -240,21 +240,23 @@ const TransactionInfoPage = () => {
                   fullPrecision
                 />
               </TableRow>
-              <TableRow>
-                <b>Total Token Amounts</b>
-                <AlphValuesContainer>
-                  {tokensDeltaAmountsEntries.map(([k, v]) => (
-                    <AlphValue key={k}>
-                      <AddressLink address={k} />
-                      <TokenAmounts>
-                        {Object.entries(v).map((t) => (
-                          <Badge key={t[0]} type="neutral" amount={t[1]} assetId={t[0]} displayAmountSign={true} />
-                        ))}
-                      </TokenAmounts>
-                    </AlphValue>
-                  ))}
-                </AlphValuesContainer>
-              </TableRow>
+              {tokensDeltaAmountsEntries.length > 0 && (
+                <TableRow>
+                  <b>Total Token Amounts</b>
+                  <AlphValuesContainer>
+                    {tokensDeltaAmountsEntries.map(([k, v]) => (
+                      <AlphValue key={k}>
+                        <AddressLink address={k} />
+                        <TokenAmounts>
+                          {Object.entries(v).map((t) => (
+                            <Badge key={t[0]} type="neutral" amount={t[1]} assetId={t[0]} displayAmountSign={true} />
+                          ))}
+                        </TokenAmounts>
+                      </AlphValue>
+                    ))}
+                  </AlphValuesContainer>
+                </TableRow>
+              )}
               <TableRow>
                 <b>Total ALPH Amounts</b>
                 <AlphValuesContainer>
