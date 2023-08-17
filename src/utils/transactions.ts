@@ -29,7 +29,7 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { map } from 'lodash'
+import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
@@ -82,5 +82,88 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     infoType,
     outputs,
     lockTime
+  }
+}
+
+// TODO: The following 2 functions could be ported to js-sdk (and properly tested there)
+type AttoAlphAmount = string
+type Address = string
+
+type UTXO = {
+  attoAlphAmount?: AttoAlphAmount
+  address?: Address
+  tokens?: { id: string; amount: string }[]
+}
+
+export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
+
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) =>
+    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+  )
+
+  return summed
+}
+
+export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<string, string>> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
+
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) => {
+    const tokenSums: Record<string, string> = {}
+    for (const utxo of addressGroup) {
+      for (const token of utxo.tokens || []) {
+        if (!tokenSums[token.id]) {
+          tokenSums[token.id]
+        }
+        tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
+      }
+    }
+    return tokenSums
+  })
+
+  return summed
+}
+
+export const IOAmountsDelta = (
+  inputs: UTXO[] = [],
+  outputs: UTXO[] = []
+): { alph: Record<string, string>; tokens: Record<string, Record<string, string>> } => {
+  const summedInputsAlph = sumUpAlphAmounts(inputs)
+  const summedOutputsAlph = sumUpAlphAmounts(outputs)
+  const summedInputTokens = sumUpTokenAmounts(inputs)
+  const summedOutputTokens = sumUpTokenAmounts(outputs)
+
+  const allAddresses = uniq([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])
+
+  const alphDeltas: Record<string, string> = {}
+  const tokenDeltas: Record<string, Record<string, string>> = {}
+
+  for (const address of allAddresses) {
+    const deltaAlph = (BigInt(summedOutputsAlph[address] || 0) - BigInt(summedInputsAlph[address] || 0)).toString()
+
+    if (deltaAlph !== '0') {
+      alphDeltas[address] = deltaAlph
+    }
+
+    const inputTokens = summedInputTokens[address] || {}
+    const outputTokens = summedOutputTokens[address] || {}
+    const allTokenIds = uniq([...Object.keys(inputTokens), ...Object.keys(outputTokens)])
+
+    allTokenIds.forEach((tokenId) => {
+      const deltaToken = (BigInt(outputTokens[tokenId] || 0) - BigInt(inputTokens[tokenId] || 0)).toString()
+      if (deltaToken !== '0') {
+        if (!tokenDeltas[address]) {
+          tokenDeltas[address] = {}
+        }
+        tokenDeltas[address][tokenId] = deltaToken
+      }
+    })
+  }
+
+  return {
+    alph: alphDeltas,
+    tokens: tokenDeltas
   }
 }

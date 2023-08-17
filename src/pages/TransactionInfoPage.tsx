@@ -48,6 +48,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
+import { IOAmountsDelta } from '@/utils/transactions'
 
 type ParamTypes = {
   id: string
@@ -287,94 +288,6 @@ const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explo
   }
 
   return confirmations
-}
-
-// TODO: The following 2 functions could be ported to js-sdk (and properly tested there)
-type AttoAlphAmount = string
-type Address = string
-
-type UTXO = {
-  attoAlphAmount?: AttoAlphAmount
-  address?: Address
-  tokens?: { id: string; amount: string }[]
-}
-
-const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
-  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
-
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) =>
-    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || '0')).toString(), '0')
-  )
-
-  return summed
-}
-
-const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<string, string>> => {
-  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
-
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) => {
-    const tokenSums: Record<string, string> = {}
-    for (const utxo of addressGroup) {
-      for (const token of utxo.tokens || []) {
-        if (!tokenSums[token.id]) {
-          tokenSums[token.id]
-        }
-        tokenSums[token.id] = (BigInt(tokenSums[token.id] || '0') + BigInt(token.amount)).toString()
-      }
-    }
-    return tokenSums
-  })
-
-  return summed
-}
-
-const IOAmountsDelta = (
-  inputs: UTXO[] = [],
-  outputs: UTXO[] = []
-): { alph: Record<string, string>; tokens: Record<string, Record<string, string>> } => {
-  const summedInputsAlph = sumUpAlphAmounts(inputs)
-  const summedOutputsAlph = sumUpAlphAmounts(outputs)
-  const summedInputTokens = sumUpTokenAmounts(inputs)
-  const summedOutputTokens = sumUpTokenAmounts(outputs)
-
-  const allAddresses = uniq([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])
-
-  const alphDeltas: Record<string, string> = {}
-  const tokenDeltas: Record<string, Record<string, string>> = {}
-
-  for (const address of allAddresses) {
-    const inputAmount = BigInt(summedInputsAlph[address])
-    const outputAmount = BigInt(summedOutputsAlph[address])
-    const deltaAlph = outputAmount - inputAmount
-    alphDeltas[address] = deltaAlph.toString()
-
-    const inputTokens = summedInputTokens[address]
-    const outputTokens = summedOutputTokens[address]
-
-    const inputTokensKeys = inputTokens ? Object.keys(inputTokens) : []
-    const outputTokensKeys = outputTokens ? Object.keys(outputTokens) : []
-
-    const allTokenIds = uniq([...inputTokensKeys, ...outputTokensKeys])
-
-    if (allTokenIds.length > 0) {
-      for (const tokenId of allTokenIds) {
-        if (!tokenDeltas[address]) {
-          tokenDeltas[address] = {}
-        }
-        const inputTokenAmount = BigInt(inputTokens[tokenId] || 0)
-        const outputTokenAmount = BigInt(outputTokens[tokenId] || 0)
-        const deltaToken = outputTokenAmount - inputTokenAmount
-        tokenDeltas[address][tokenId] = deltaToken.toString()
-      }
-    }
-  }
-
-  return {
-    alph: alphDeltas,
-    tokens: tokenDeltas
-  }
 }
 
 const IOItemContainer = styled.div`
