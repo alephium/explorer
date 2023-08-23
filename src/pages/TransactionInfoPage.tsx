@@ -244,11 +244,11 @@ const TransactionInfoPage = () => {
                 <TableRow>
                   <b>Total Token Amounts</b>
                   <AlphValuesContainer>
-                    {tokensDeltaAmountsEntries.map(([k, v]) => (
-                      <AlphValue key={k}>
-                        <AddressLink address={k} />
+                    {tokensDeltaAmountsEntries.map(([addressHash, tokenAmounts]) => (
+                      <AlphValue key={addressHash}>
+                        <AddressLink address={addressHash} />
                         <TokenAmounts>
-                          {Object.entries(v).map((t) => (
+                          {Object.entries(tokenAmounts).map((t) => (
                             <Badge key={t[0]} type="neutral" amount={t[1]} assetId={t[0]} displayAmountSign={true} />
                           ))}
                         </TokenAmounts>
@@ -260,10 +260,10 @@ const TransactionInfoPage = () => {
               <TableRow>
                 <b>Total ALPH Amounts</b>
                 <AlphValuesContainer>
-                  {alphDeltaAmountsEntries.map(([k, v]) => (
-                    <AlphValue key={k}>
-                      <AddressLink address={k} />
-                      <Badge type="neutral" amount={v} displayAmountSign={true} />
+                  {alphDeltaAmountsEntries.map(([addressHash, amount]) => (
+                    <AlphValue key={addressHash}>
+                      <AddressLink address={addressHash} />
+                      <Badge type="neutral" amount={amount} displayAmountSign={true} />
                     </AlphValue>
                   ))}
                 </AlphValuesContainer>
