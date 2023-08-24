@@ -125,10 +125,12 @@ const Amount = ({
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </NFT>
       ) : isUnknownToken ? (
-        <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
-          {value?.toString()}
+        <>
+          <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
+            {value?.toString()}
+          </RawAmount>
           <Suffix>?</Suffix>
-        </RawAmount>
+        </>
       ) : (
         '-'
       )}

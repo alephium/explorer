@@ -146,7 +146,7 @@ const TransactionInfoPage = () => {
 
   const getSortedTokenAmounts = useCallback(
     (addressHash: string): { tokenId: string; type?: AssetType; amount: string; title?: string }[] => {
-      const tokenIds = Object.keys(tokenDeltaAmounts[addressHash])
+      const tokenIds = Object.keys(tokenDeltaAmounts[addressHash] || [])
 
       const sortedTokens = getSortedTokens(tokenIds)
 
