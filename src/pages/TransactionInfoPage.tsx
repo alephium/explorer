@@ -26,7 +26,7 @@ import {
   Transaction
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import _, { flatten, sortBy, uniq } from 'lodash'
+import _, { sortBy, uniq } from 'lodash'
 import { useCallback, useRef } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
@@ -110,37 +110,49 @@ const TransactionInfoPage = () => {
     transactionData?.outputs
   )
 
+  const tokenMetadataInvolved = useAssetsMetadata(assetIds)
   const addressesInvolved = uniq([...Object.keys(alphDeltaAmounts), ...Object.keys(tokenDeltaAmounts)])
-  const tokenMetadataInvolved = useAssetsMetadata(flatten(Object.values(tokenDeltaAmounts).map((v) => Object.keys(v))))
 
-  const getSortedTokenAmounts = useCallback(
-    (addressHash: string): { tokenId: string; type?: AssetType; amount: string; title?: string }[] => {
-      const unsorted = Object.entries(tokenDeltaAmounts[addressHash] || []).map(([tokenId, amount]) => {
+  const getSortedTokens = useCallback(
+    (tokenIds: string[]) => {
+      const unsorted = tokenIds.map((tokenId) => {
         const fungibleTokenMetadata = tokenMetadataInvolved.fungibleTokens.find((t) => t.id === tokenId)
 
         if (fungibleTokenMetadata) {
           const type: AssetType = 'fungible'
-          return { tokenId, type, title: fungibleTokenMetadata.symbol, amount }
+          return { tokenId, type, verified: fungibleTokenMetadata.verified, title: fungibleTokenMetadata.symbol }
         }
 
         const nftMetadata = tokenMetadataInvolved.nfts.find((nft) => nft.id === tokenId)
 
         if (nftMetadata) {
           const type: AssetType = 'non-fungible'
-          return { tokenId, type, title: nftMetadata.file.name, amount }
+          return { tokenId, type, verified: nftMetadata.verified, title: nftMetadata.file.name }
         }
 
-        return { tokenId, amount }
+        return { tokenId }
       })
 
       return sortBy(unsorted, [
         (v) => !v.type,
+        (v) => !v.verified,
         (v) => v.type === 'non-fungible',
         (v) => v.type === 'fungible',
         (v) => v.title
       ])
     },
-    [tokenDeltaAmounts, tokenMetadataInvolved.fungibleTokens, tokenMetadataInvolved.nfts]
+    [tokenMetadataInvolved.fungibleTokens, tokenMetadataInvolved.nfts]
+  )
+
+  const getSortedTokenAmounts = useCallback(
+    (addressHash: string): { tokenId: string; type?: AssetType; amount: string; title?: string }[] => {
+      const tokenIds = Object.keys(tokenDeltaAmounts[addressHash])
+
+      const sortedTokens = getSortedTokens(tokenIds)
+
+      return sortedTokens.map((t) => ({ tokenId: t.tokenId, amount: tokenDeltaAmounts[addressHash][t.tokenId] }))
+    },
+    [getSortedTokens, tokenDeltaAmounts]
   )
 
   return (
@@ -227,8 +239,8 @@ const TransactionInfoPage = () => {
                         {Object.keys(alphDeltaAmounts).length > 0 && (
                           <AssetLogo assetId={ALPH.id} size={20} showTooltip />
                         )}
-                        {assetIds.map((id) => (
-                          <AssetLogo key={id} assetId={id} size={20} showTooltip />
+                        {getSortedTokens(assetIds).map((a) => (
+                          <AssetLogo key={a.tokenId} assetId={a.tokenId} size={20} showTooltip />
                         ))}
                       </>
                     </AssetLogos>

@@ -29,7 +29,7 @@ import {
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { groupBy, map, mapValues, reduce, uniq } from 'lodash'
+import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
@@ -71,10 +71,20 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   const tokenAssets = [
     ...tokensDeltaAmounts.map((token) => ({
       ...token,
-      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
+      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id),
+      ...assetsMetadata.nfts.find((i) => i.id === token.id)
     }))
   ]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+
+  const sortedTokens = sortBy(tokenAssets, [
+    (v) => !v.type,
+    (v) => !v.verified,
+    (v) => v.type === 'non-fungible',
+    (v) => v.type === 'fungible',
+    (v) => (v.type === 'fungible' ? v.symbol : v.file?.name)
+  ])
+
+  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...sortedTokens] : sortedTokens
 
   return {
     assets,
