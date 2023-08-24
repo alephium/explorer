@@ -33,6 +33,7 @@ interface TableProps {
   scrollable?: boolean
   isLoading?: boolean
   minHeight?: number
+  className?: string
 }
 
 export interface TDStyle {
@@ -40,15 +41,15 @@ export interface TDStyle {
   style: FlattenInterpolation<ThemeProps<DefaultTheme>>
 }
 
-const Table: FC<TableProps> = ({ children, isLoading, ...props }) => {
+const Table: FC<TableProps> = ({ children, isLoading, className, ...props }) => {
   const tableRef = useRef<HTMLDivElement>(null)
 
   return !isLoading ? (
-    <TableWrapper {...props} ref={tableRef}>
+    <TableWrapper {...props} className={className} ref={tableRef}>
       <StyledTable {...props}>{children}</StyledTable>
     </TableWrapper>
   ) : (
-    <TableWrapper {...props} ref={tableRef}>
+    <TableWrapper {...props} className={className} ref={tableRef}>
       <StyledTable {...props} minHeight={150}>
         {!props.bodyOnly && (
           <thead>
@@ -148,7 +149,7 @@ const StyledTable = styled.table<TableProps>`
       ${({ bodyOnly }) =>
         bodyOnly &&
         css`
-          width: 35%;
+          width: 25%;
         `}
     }
   }

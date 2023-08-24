@@ -53,9 +53,9 @@ export const lightTheme: DefaultTheme = {
   global: {
     accent: '#5981f3',
     complementary: '#ce5cf8',
-    alert: '#ee5959',
+    alert: '#da3341',
     warning: '#ffa600',
-    valid: '#00a661',
+    valid: '#028f54',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

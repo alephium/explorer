@@ -26,7 +26,7 @@ import {
   Transaction
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import _ from 'lodash'
+import _, { uniq } from 'lodash'
 import { useRef } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
@@ -108,169 +108,171 @@ const TransactionInfoPage = () => {
     transactionData?.outputs
   )
 
-  const alphDeltaAmountsEntries = Object.entries(alphDeltaAmounts)
-  const tokensDeltaAmountsEntries = Object.entries(tokenDeltaAmounts)
+  const addressesInvolved = uniq([...Object.keys(alphDeltaAmounts), ...Object.keys(tokenDeltaAmounts)])
 
   return (
     <Section>
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
-        <Table bodyOnly isLoading={txInfoLoading}>
-          {transactionData && (
-            <TableBody>
-              <TableRow>
-                <span>Hash</span>
-                <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
-              </TableRow>
-              <TableRow>
-                <span>Status</span>
-                {confirmedTxInfo ? (
-                  confirmedTxInfo.scriptExecutionOk ? (
-                    <Badge
-                      type="plus"
-                      content={
-                        <span>
-                          <RiCheckLine style={{ marginRight: 5 }} size={15} />
-                          Success
-                        </span>
-                      }
-                      inline
-                    />
-                  ) : (
-                    <Badge type="minus" content={<span>Script execution failed</span>} />
-                  )
-                ) : (
-                  <Badge
-                    type="neutral"
-                    content={
-                      <>
-                        <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                        <span>Pending</span>
-                      </>
-                    }
-                  />
-                )}
-              </TableRow>
-              {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
+        <>
+          <Table bodyOnly isLoading={txInfoLoading}>
+            {transactionData && (
+              <TableBody>
                 <TableRow>
-                  <span>Block</span>
-                  <span>
-                    <SimpleLink
-                      to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
-                      data-tooltip-id="default"
-                      data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
-                    >
-                      {txBlock?.height.toString()}
-                    </SimpleLink>
-                    <span
-                      data-tooltip-id="default"
-                      data-tooltip-content="Number of blocks mined since"
-                      style={{ marginLeft: 10 }}
-                    >
+                  <span>Hash</span>
+                  <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
+                </TableRow>
+                <TableRow>
+                  <span>Status</span>
+                  {confirmedTxInfo ? (
+                    confirmedTxInfo.scriptExecutionOk ? (
                       <Badge
-                        type="neutral"
+                        type="plus"
                         content={
                           <span>
-                            {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            <RiCheckLine style={{ marginRight: 5 }} size={15} />
+                            Success
                           </span>
                         }
                         inline
                       />
+                    ) : (
+                      <Badge type="minus" content={<span>Script execution failed</span>} />
+                    )
+                  ) : (
+                    <Badge
+                      type="neutral"
+                      content={
+                        <>
+                          <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                          <span>Pending</span>
+                        </>
+                      }
+                    />
+                  )}
+                </TableRow>
+                {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
+                  <TableRow>
+                    <span>Block</span>
+                    <span>
+                      <SimpleLink
+                        to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
+                        data-tooltip-id="default"
+                        data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                      >
+                        {txBlock?.height.toString()}
+                      </SimpleLink>
+                      <span
+                        data-tooltip-id="default"
+                        data-tooltip-content="Number of blocks mined since"
+                        style={{ marginLeft: 10 }}
+                      >
+                        <Badge
+                          type="neutral"
+                          content={
+                            <span>
+                              {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            </span>
+                          }
+                          inline
+                        />
+                      </span>
                     </span>
-                  </span>
-                </TableRow>
-              )}
-              {confirmedTxInfo && confirmedTxInfo.timestamp && (
+                  </TableRow>
+                )}
+                {confirmedTxInfo && confirmedTxInfo.timestamp && (
+                  <TableRow>
+                    <span>Timestamp</span>
+                    <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Assets</span>
+                    <AssetLogos>
+                      <>
+                        {Object.keys(alphDeltaAmounts).length > 0 && (
+                          <AssetLogo assetId={ALPH.id} size={20} showTooltip />
+                        )}
+                        {assetIds.map((id) => (
+                          <AssetLogo key={id} assetId={id} size={20} showTooltip />
+                        ))}
+                      </>
+                    </AssetLogos>
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Inputs</span>
+                    <div>
+                      {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
+                        <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                      ) : (
+                        'Block Rewards'
+                      )}
+                    </div>
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Outputs</span>
+                    <div>
+                      {confirmedTxInfo.outputs ? (
+                        <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                      ) : (
+                        '-'
+                      )}
+                    </div>
+                  </TableRow>
+                )}
                 <TableRow>
-                  <span>Timestamp</span>
-                  <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
+                  <span>Gas Amount</span>
+                  <span>{transactionData.gasAmount || '-'} GAS</span>
                 </TableRow>
-              )}
-              {confirmedTxInfo && (
                 <TableRow>
-                  <span>Assets</span>
-                  <AssetLogos>
-                    <>
-                      {alphDeltaAmountsEntries.length > 0 && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
-                      {assetIds.map((id) => (
-                        <AssetLogo key={id} assetId={id} size={20} showTooltip />
-                      ))}
-                    </>
-                  </AssetLogos>
-                </TableRow>
-              )}
-              {confirmedTxInfo && (
-                <TableRow>
-                  <span>Inputs</span>
-                  <div>
-                    {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
-                      <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
-                    ) : (
-                      'Block Rewards'
-                    )}
-                  </div>
-                </TableRow>
-              )}
-              {confirmedTxInfo && (
-                <TableRow>
-                  <span>Outputs</span>
-                  <div>
-                    {confirmedTxInfo.outputs ? (
-                      <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
-                    ) : (
-                      '-'
-                    )}
-                  </div>
-                </TableRow>
-              )}
-              <TableRow>
-                <span>Gas Amount</span>
-                <span>{transactionData.gasAmount || '-'} GAS</span>
-              </TableRow>
-              <TableRow>
-                <span>Gas Price</span>
+                  <span>Gas Price</span>
 
-                <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
-              </TableRow>
-              <TableRow>
-                <span>Transaction Fee</span>
-                <Amount
-                  assetId={ALPH.id}
-                  value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
-                  fullPrecision
-                />
-              </TableRow>
-              {tokensDeltaAmountsEntries.length > 0 && (
-                <TableRow>
-                  <b>Total Token Amounts</b>
-                  <AlphValuesContainer>
-                    {tokensDeltaAmountsEntries.map(([addressHash, tokenAmounts]) => (
-                      <AlphValue key={addressHash}>
-                        <AddressLink address={addressHash} />
-                        <TokenAmounts>
-                          {Object.entries(tokenAmounts).map((t) => (
-                            <Badge key={t[0]} type="neutral" amount={t[1]} assetId={t[0]} displayAmountSign={true} />
-                          ))}
-                        </TokenAmounts>
-                      </AlphValue>
-                    ))}
-                  </AlphValuesContainer>
+                  <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
                 </TableRow>
-              )}
+                <TableRow>
+                  <span>Transaction Fee</span>
+                  <Amount
+                    assetId={ALPH.id}
+                    value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
+                    fullPrecision
+                  />
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+          <TotalAmountsTable bodyOnly isLoading={txInfoLoading}>
+            <TableBody>
               <TableRow>
-                <b>Total ALPH Amounts</b>
-                <AlphValuesContainer>
-                  {alphDeltaAmountsEntries.map(([addressHash, amount]) => (
-                    <AlphValue key={addressHash}>
-                      <AddressLink address={addressHash} />
-                      <Badge type="neutral" amount={amount} displayAmountSign={true} />
-                    </AlphValue>
+                <b>Total Amounts</b>
+                <DetltaAmountsContainer>
+                  {addressesInvolved.map((addressHash) => (
+                    <DeltaAmountsBox key={addressHash}>
+                      <DeltaAmountsTitle>
+                        <AddressLink address={addressHash} maxWidth="180px" />
+                      </DeltaAmountsTitle>
+                      <AmountList>
+                        <Amount
+                          value={BigInt(alphDeltaAmounts[addressHash])}
+                          displaySign={true}
+                          highlight
+                          assetId={ALPH.id}
+                        />
+                        {Object.entries(tokenDeltaAmounts[addressHash] || []).map((t) => (
+                          <Amount key={t[0]} value={BigInt(t[1])} assetId={t[0]} displaySign={true} highlight />
+                        ))}
+                      </AmountList>
+                    </DeltaAmountsBox>
                   ))}
-                </AlphValuesContainer>
+                </DetltaAmountsContainer>
               </TableRow>
             </TableBody>
-          )}
-        </Table>
+          </TotalAmountsTable>
+        </>
       ) : (
         <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
       )}
@@ -305,36 +307,50 @@ const AssetLogos = styled.div`
   gap: 10px;
 `
 
-const AlphValuesContainer = styled.div`
+const TotalAmountsTable = styled(Table)`
+  margin-top: 20px;
+`
+
+const DetltaAmountsContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+`
+
+const DeltaAmountsBox = styled.div`
+  flex: 1;
+  display: flex;
+  max-width: 200px;
   flex-direction: column;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
-const AlphValue = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-
-  &:first-child {
-    padding-top: 5px;
-  }
-
-  &:last-child {
-    padding-bottom: 5px;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  }
-`
-
-const TokenAmounts = styled.div`
+const AmountList = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 10px;
+
+  ${Amount} {
+    padding: 10px;
+    width: 100%;
+    text-align: right;
+  }
+
+  ${Amount}:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
+`
+
+const DeltaAmountsTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 5px;
 `
 
 export default TransactionInfoPage
