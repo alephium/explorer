@@ -117,13 +117,17 @@ const Amount = ({
           <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix ?? 'ALPH'}</Suffix>
         </>
       ) : assetType === 'non-fungible' && assetId ? (
-        <>
+        <NFT>
           {displaySign && <span>{isNegative ? '-' : '+'}</span>}
+          <NFTName data-tooltip-id="default" data-tooltip-content={assetMetadata.file.name}>
+            {assetMetadata.file.name}
+          </NFTName>
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
-        </>
+        </NFT>
       ) : isUnknownToken ? (
         <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
           {value?.toString()}
+          <Suffix>?</Suffix>
         </RawAmount>
       ) : (
         '-'
@@ -182,8 +186,20 @@ const RawAmount = styled.div`
   vertical-align: bottom;
 `
 
+const NFT = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`
+
+const NFTName = styled.div`
+  display: inline-block;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
 const NFTInlineLogo = styled(AssetLogo)`
   display: inline-block;
   margin-left: 2px;
-  transform: translateY(3px);
 `
