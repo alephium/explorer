@@ -28,6 +28,8 @@ interface BadgeProps {
   type: BadgeType
   content?: JSX.Element | string | undefined
   amount?: string | bigint | undefined
+  assetId?: string
+  displayAmountSign?: boolean
   inline?: boolean
   floatRight?: boolean
   minWidth?: number
@@ -35,9 +37,20 @@ interface BadgeProps {
   className?: string
 }
 
-const Badge = ({ content, className, amount }: BadgeProps) => (
+const Badge = ({ content, className, amount, assetId, displayAmountSign = false }: BadgeProps) => (
   <div className={className}>
-    <BadgeContent>{amount ? <Amount assetId={ALPH.id} value={BigInt(amount)} /> : content}</BadgeContent>
+    <BadgeContent>
+      {amount ? (
+        <Amount
+          assetId={assetId || ALPH.id}
+          value={BigInt(amount)}
+          displaySign={displayAmountSign}
+          highlight={displayAmountSign}
+        />
+      ) : (
+        content
+      )}
+    </BadgeContent>
   </div>
 )
 

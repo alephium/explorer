@@ -26,19 +26,20 @@ import {
   Transaction
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import _ from 'lodash'
-import { useRef } from 'react'
+import _, { sortBy, uniq } from 'lodash'
+import { useCallback, useRef } from 'react'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { queries } from '@/api'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
-import { SimpleLink } from '@/components/Links'
+import { AddressLink, SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Section from '@/components/Section'
 import SectionTitle from '@/components/SectionTitle'
@@ -48,6 +49,8 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
+import { AssetType } from '@/types/assets'
+import { IOAmountsDelta } from '@/utils/transactions'
 
 type ParamTypes = {
   id: string
@@ -102,150 +105,225 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  // https://github.com/microsoft/TypeScript/issues/33591
-  const outputs: Array<explorer.Output> | undefined = transactionData?.outputs
+  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = IOAmountsDelta(
+    transactionData?.inputs,
+    transactionData?.outputs
+  )
 
-  const totalAmount = outputs?.reduce<bigint>(
-    (acc, o) => acc + BigInt((o as explorer.Output).attoAlphAmount ?? (o as explorer.AssetOutput).attoAlphAmount),
-    BigInt(0)
+  const tokenMetadataInvolved = useAssetsMetadata(assetIds)
+  const addressesInvolved = uniq([...Object.keys(alphDeltaAmounts), ...Object.keys(tokenDeltaAmounts)])
+
+  const getSortedTokens = useCallback(
+    (tokenIds: string[]) => {
+      const unsorted = tokenIds.map((tokenId) => {
+        const fungibleTokenMetadata = tokenMetadataInvolved.fungibleTokens.find((t) => t.id === tokenId)
+
+        if (fungibleTokenMetadata) {
+          const type: AssetType = 'fungible'
+          return { tokenId, type, verified: fungibleTokenMetadata.verified, title: fungibleTokenMetadata.symbol }
+        }
+
+        const nftMetadata = tokenMetadataInvolved.nfts.find((nft) => nft.id === tokenId)
+
+        if (nftMetadata) {
+          const type: AssetType = 'non-fungible'
+          return { tokenId, type, verified: nftMetadata.verified, title: nftMetadata.file.name }
+        }
+
+        return { tokenId }
+      })
+
+      return sortBy(unsorted, [
+        (v) => !v.type,
+        (v) => !v.verified,
+        (v) => v.type === 'non-fungible',
+        (v) => v.type === 'fungible',
+        (v) => v.title
+      ])
+    },
+    [tokenMetadataInvolved.fungibleTokens, tokenMetadataInvolved.nfts]
+  )
+
+  const getSortedTokenAmounts = useCallback(
+    (addressHash: string): { tokenId: string; type?: AssetType; amount: string; title?: string }[] => {
+      const tokenIds = Object.keys(tokenDeltaAmounts[addressHash] || [])
+
+      const sortedTokens = getSortedTokens(tokenIds)
+
+      return sortedTokens.map((t) => ({ tokenId: t.tokenId, amount: tokenDeltaAmounts[addressHash][t.tokenId] }))
+    },
+    [getSortedTokens, tokenDeltaAmounts]
   )
 
   return (
     <Section>
       <SectionTitle title="Transaction" />
       {!txInfoError ? (
-        <Table bodyOnly isLoading={txInfoLoading}>
-          {transactionData && (
-            <TableBody>
-              <TableRow>
-                <span>Hash</span>
-                <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
-              </TableRow>
-              <TableRow>
-                <span>Status</span>
-                {confirmedTxInfo ? (
-                  confirmedTxInfo.scriptExecutionOk ? (
-                    <Badge
-                      type="plus"
-                      content={
-                        <span>
-                          <RiCheckLine style={{ marginRight: 5 }} size={15} />
-                          Success
-                        </span>
-                      }
-                      inline
-                    />
-                  ) : (
-                    <Badge type="minus" content={<span>Script execution failed</span>} />
-                  )
-                ) : (
-                  <Badge
-                    type="neutral"
-                    content={
-                      <>
-                        <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                        <span>Pending</span>
-                      </>
-                    }
-                  />
-                )}
-              </TableRow>
-              {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
+        <>
+          <Table bodyOnly isLoading={txInfoLoading}>
+            {transactionData && (
+              <TableBody>
                 <TableRow>
-                  <span>Block</span>
-                  <span>
-                    <SimpleLink
-                      to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
-                      data-tooltip-id="default"
-                      data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
-                    >
-                      {txBlock?.height.toString()}
-                    </SimpleLink>
-                    <span
-                      data-tooltip-id="default"
-                      data-tooltip-content="Number of blocks mined since"
-                      style={{ marginLeft: 10 }}
-                    >
+                  <span>Hash</span>
+                  <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
+                </TableRow>
+                <TableRow>
+                  <span>Status</span>
+                  {confirmedTxInfo ? (
+                    confirmedTxInfo.scriptExecutionOk ? (
                       <Badge
-                        type="neutral"
+                        type="plus"
                         content={
                           <span>
-                            {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            <RiCheckLine style={{ marginRight: 5 }} size={15} />
+                            Success
                           </span>
                         }
                         inline
                       />
+                    ) : (
+                      <Badge type="minus" content={<span>Script execution failed</span>} />
+                    )
+                  ) : (
+                    <Badge
+                      type="neutral"
+                      content={
+                        <>
+                          <LoadingSpinner style={{ marginRight: 5 }} size={15} />
+                          <span>Pending</span>
+                        </>
+                      }
+                    />
+                  )}
+                </TableRow>
+                {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
+                  <TableRow>
+                    <span>Block</span>
+                    <span>
+                      <SimpleLink
+                        to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
+                        data-tooltip-id="default"
+                        data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                      >
+                        {txBlock?.height.toString()}
+                      </SimpleLink>
+                      <span
+                        data-tooltip-id="default"
+                        data-tooltip-content="Number of blocks mined since"
+                        style={{ marginLeft: 10 }}
+                      >
+                        <Badge
+                          type="neutral"
+                          content={
+                            <span>
+                              {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
+                            </span>
+                          }
+                          inline
+                        />
+                      </span>
                     </span>
-                  </span>
-                </TableRow>
-              )}
-              {confirmedTxInfo && confirmedTxInfo.timestamp && (
+                  </TableRow>
+                )}
+                {confirmedTxInfo && confirmedTxInfo.timestamp && (
+                  <TableRow>
+                    <span>Timestamp</span>
+                    <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Assets</span>
+                    <AssetLogos>
+                      <>
+                        {Object.keys(alphDeltaAmounts).length > 0 && (
+                          <AssetLogo assetId={ALPH.id} size={20} showTooltip />
+                        )}
+                        {getSortedTokens(assetIds).map((a) => (
+                          <AssetLogo key={a.tokenId} assetId={a.tokenId} size={20} showTooltip />
+                        ))}
+                      </>
+                    </AssetLogos>
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Inputs</span>
+                    <div>
+                      {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
+                        <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                      ) : (
+                        'Block Rewards'
+                      )}
+                    </div>
+                  </TableRow>
+                )}
+                {confirmedTxInfo && (
+                  <TableRow>
+                    <span>Outputs</span>
+                    <div>
+                      {confirmedTxInfo.outputs ? (
+                        <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                      ) : (
+                        '-'
+                      )}
+                    </div>
+                  </TableRow>
+                )}
                 <TableRow>
-                  <span>Timestamp</span>
-                  <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
+                  <span>Gas Amount</span>
+                  <span>{transactionData.gasAmount || '-'} GAS</span>
                 </TableRow>
-              )}
-              {confirmedTxInfo && (
                 <TableRow>
-                  <span>Assets</span>
-                  <AssetLogos>
-                    <>
-                      {totalAmount && <AssetLogo assetId={ALPH.id} size={20} showTooltip />}
-                      {assetIds.map((id) => (
-                        <AssetLogo key={id} assetId={id} size={20} showTooltip />
-                      ))}
-                    </>
-                  </AssetLogos>
-                </TableRow>
-              )}
-              {confirmedTxInfo && (
-                <TableRow>
-                  <span>Inputs</span>
-                  <div>
-                    {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
-                      <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
-                    ) : (
-                      'Block Rewards'
-                    )}
-                  </div>
-                </TableRow>
-              )}
-              {confirmedTxInfo && (
-                <TableRow>
-                  <span>Outputs</span>
-                  <div>
-                    {confirmedTxInfo.outputs ? (
-                      <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
-                    ) : (
-                      '-'
-                    )}
-                  </div>
-                </TableRow>
-              )}
-              <TableRow>
-                <span>Gas Amount</span>
-                <span>{transactionData.gasAmount || '-'} GAS</span>
-              </TableRow>
-              <TableRow>
-                <span>Gas Price</span>
+                  <span>Gas Price</span>
 
-                <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
-              </TableRow>
+                  <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
+                </TableRow>
+                <TableRow>
+                  <span>Transaction Fee</span>
+                  <Amount
+                    assetId={ALPH.id}
+                    value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
+                    fullPrecision
+                  />
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+          <TotalAmountsTable bodyOnly isLoading={txInfoLoading}>
+            <TableBody>
               <TableRow>
-                <span>Transaction Fee</span>
-                <Amount
-                  assetId={ALPH.id}
-                  value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
-                  fullPrecision
-                />
-              </TableRow>
-              <TableRow>
-                <b>Total ALPH Value</b>
-                <Badge type="neutralHighlight" amount={totalAmount} />
+                <b>Total Amounts</b>
+                <DetltaAmountsContainer>
+                  {addressesInvolved.map((addressHash) => (
+                    <DeltaAmountsBox key={addressHash}>
+                      <DeltaAmountsTitle>
+                        <AddressLink address={addressHash} maxWidth="180px" />
+                      </DeltaAmountsTitle>
+                      <AmountList>
+                        <Amount
+                          value={BigInt(alphDeltaAmounts[addressHash])}
+                          displaySign={true}
+                          highlight
+                          assetId={ALPH.id}
+                        />
+                        {getSortedTokenAmounts(addressHash).map((v) => (
+                          <Amount
+                            key={v.tokenId}
+                            value={BigInt(v.amount)}
+                            assetId={v.tokenId}
+                            displaySign={true}
+                            highlight
+                          />
+                        ))}
+                      </AmountList>
+                    </DeltaAmountsBox>
+                  ))}
+                </DetltaAmountsContainer>
               </TableRow>
             </TableBody>
-          )}
-        </Table>
+          </TotalAmountsTable>
+        </>
       ) : (
         <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
       )}
@@ -278,6 +356,52 @@ const IOItemContainer = styled.div`
 const AssetLogos = styled.div`
   display: flex;
   gap: 10px;
+`
+
+const TotalAmountsTable = styled(Table)`
+  margin-top: 20px;
+`
+
+const DetltaAmountsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+`
+
+const DeltaAmountsBox = styled.div`
+  flex: 1;
+  display: flex;
+  max-width: 200px;
+  flex-direction: column;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+`
+
+const AmountList = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+
+  ${Amount} {
+    padding: 10px;
+    width: 100%;
+    text-align: right;
+  }
+
+  ${Amount}:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
+`
+
+const DeltaAmountsTitle = styled.div`
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 5px;
 `
 
 export default TransactionInfoPage

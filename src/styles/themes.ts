@@ -53,9 +53,9 @@ export const lightTheme: DefaultTheme = {
   global: {
     accent: '#5981f3',
     complementary: '#ce5cf8',
-    alert: '#ed4a34',
+    alert: '#da3341',
     warning: '#ffa600',
-    valid: '#0ea68f',
+    valid: '#028f54',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -93,9 +93,9 @@ export const darkTheme: DefaultTheme = {
   global: {
     accent: '#598BED',
     complementary: '#eb88a4',
-    alert: '#ed4a34',
+    alert: '#f24242',
     warning: '#ffc42d',
-    valid: '#3ed9b0',
+    valid: '#1dcd84',
     highlight: '#f78c14',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }

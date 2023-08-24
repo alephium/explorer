@@ -28,8 +28,8 @@ import {
 } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { map } from 'lodash'
+import { MempoolTransaction, Token, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { groupBy, map, mapValues, reduce, sortBy, uniq } from 'lodash'
 
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 
@@ -71,10 +71,20 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   const tokenAssets = [
     ...tokensDeltaAmounts.map((token) => ({
       ...token,
-      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
+      ...assetsMetadata.fungibleTokens.find((i) => i.id === token.id),
+      ...assetsMetadata.nfts.find((i) => i.id === token.id)
     }))
   ]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+
+  const sortedTokens = sortBy(tokenAssets, [
+    (v) => !v.type,
+    (v) => !v.verified,
+    (v) => v.type === 'non-fungible',
+    (v) => v.type === 'fungible',
+    (v) => (v.type === 'fungible' ? v.symbol : v.file?.name)
+  ])
+
+  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...sortedTokens] : sortedTokens
 
   return {
     assets,
@@ -82,5 +92,88 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
     infoType,
     outputs,
     lockTime
+  }
+}
+
+// TODO: The following 2 functions could be ported to js-sdk (and properly tested there)
+type AttoAlphAmount = string
+type TokenAmount = string
+type Address = string
+
+type UTXO = {
+  attoAlphAmount?: AttoAlphAmount
+  address?: Address
+  tokens?: Token[]
+}
+
+export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
+
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) =>
+    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+  )
+
+  return summed
+}
+
+export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
+  const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
+
+  const grouped = groupBy(validUtxos, 'address')
+  const summed = mapValues(grouped, (addressGroup) => {
+    const tokenSums: Record<Token['id'], TokenAmount> = {}
+
+    for (const utxo of addressGroup) {
+      for (const token of utxo.tokens || []) {
+        tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
+      }
+    }
+    return tokenSums
+  })
+
+  return summed
+}
+
+export const IOAmountsDelta = (
+  inputs: UTXO[] = [],
+  outputs: UTXO[] = []
+): { alph: Record<Address, AttoAlphAmount>; tokens: Record<Address, Record<Token['id'], TokenAmount>> } => {
+  const summedInputsAlph = sumUpAlphAmounts(inputs)
+  const summedOutputsAlph = sumUpAlphAmounts(outputs)
+  const summedInputTokens = sumUpTokenAmounts(inputs)
+  const summedOutputTokens = sumUpTokenAmounts(outputs)
+
+  const allAddresses = uniq([...Object.keys(summedInputsAlph), ...Object.keys(summedOutputsAlph)])
+
+  const alphDeltas: Record<Address, AttoAlphAmount> = {}
+  const tokenDeltas: Record<Address, Record<Token['id'], TokenAmount>> = {}
+
+  for (const address of allAddresses) {
+    const deltaAlph = (BigInt(summedOutputsAlph[address] || 0) - BigInt(summedInputsAlph[address] || 0)).toString()
+
+    if (deltaAlph !== '0') {
+      alphDeltas[address] = deltaAlph
+    }
+
+    const inputTokens = summedInputTokens[address] || {}
+    const outputTokens = summedOutputTokens[address] || {}
+    const allTokenIds = uniq([...Object.keys(inputTokens), ...Object.keys(outputTokens)])
+
+    allTokenIds.forEach((tokenId) => {
+      const deltaToken = (BigInt(outputTokens[tokenId] || 0) - BigInt(inputTokens[tokenId] || 0)).toString()
+
+      if (deltaToken !== '0') {
+        if (!tokenDeltas[address]) {
+          tokenDeltas[address] = {}
+        }
+        tokenDeltas[address][tokenId] = deltaToken
+      }
+    })
+  }
+
+  return {
+    alph: alphDeltas,
+    tokens: tokenDeltas
   }
 }

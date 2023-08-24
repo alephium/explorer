@@ -29,14 +29,15 @@ interface AmountProps {
   decimals?: number
   isFiat?: boolean
   fadeDecimals?: boolean
-  fullPrecision?: boolean
   nbOfDecimalsToShow?: number
   color?: string
   overrideSuffixColor?: boolean
   tabIndex?: number
   suffix?: string
   highlight?: boolean
-  showPlusMinus?: boolean
+  fullPrecision?: boolean
+  smartRounding?: boolean
+  displaySign?: boolean
   className?: string
 }
 
@@ -46,13 +47,14 @@ const Amount = ({
   isFiat,
   className,
   fadeDecimals,
-  fullPrecision = false,
   nbOfDecimalsToShow = 4,
   suffix,
   color,
   overrideSuffixColor,
   tabIndex,
-  showPlusMinus = false
+  fullPrecision = false,
+  smartRounding = true,
+  displaySign = false
 }: AmountProps) => {
   const assetMetadata = useAssetMetadata(assetId || '')
 
@@ -73,7 +75,7 @@ const Amount = ({
     }
 
     if (value !== undefined) {
-      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision })
+      amount = getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision, smartRounding })
 
       if (fadeDecimals && MAGNITUDE_SYMBOL.some((char) => amount.endsWith(char))) {
         quantitySymbol = amount.slice(-1)
@@ -99,7 +101,7 @@ const Amount = ({
               undefined
             }
           >
-            {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+            {displaySign && <span>{isNegative ? '-' : '+'}</span>}
             {fadeDecimals ? (
               <>
                 <span>{integralPart}</span>
@@ -115,14 +117,20 @@ const Amount = ({
           <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix ?? 'ALPH'}</Suffix>
         </>
       ) : assetType === 'non-fungible' && assetId ? (
-        <>
-          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
+        <NFT>
+          {displaySign && <span>{isNegative ? '-' : '+'}</span>}
+          <NFTName data-tooltip-id="default" data-tooltip-content={assetMetadata.file.name}>
+            {assetMetadata.file.name}
+          </NFTName>
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
-        </>
+        </NFT>
       ) : isUnknownToken ? (
-        <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
-          {value?.toString()}
-        </RawAmount>
+        <>
+          <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
+            {value?.toString()}
+          </RawAmount>
+          <Suffix>?</Suffix>
+        </>
       ) : (
         '-'
       )}
@@ -130,14 +138,22 @@ const Amount = ({
   )
 }
 
-const getAmount = ({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision }: Partial<AmountProps>) =>
+const getAmount = ({
+  value,
+  isFiat,
+  decimals,
+  nbOfDecimalsToShow,
+  fullPrecision,
+  smartRounding
+}: Partial<AmountProps>) =>
   isFiat && typeof value === 'number'
     ? formatFiatAmountForDisplay(value)
     : formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,
         displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
+        fullPrecision,
+        smartRounding
       })
 
 export default styled(Amount)`
@@ -146,7 +162,7 @@ export default styled(Amount)`
       ? color
       : highlight && value !== undefined
       ? value < 0
-        ? theme.font.highlight
+        ? theme.global.alert
         : theme.global.valid
       : 'inherit'};
   white-space: nowrap;
@@ -172,8 +188,20 @@ const RawAmount = styled.div`
   vertical-align: bottom;
 `
 
+const NFT = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`
+
+const NFTName = styled.div`
+  display: inline-block;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
 const NFTInlineLogo = styled(AssetLogo)`
   display: inline-block;
   margin-left: 2px;
-  transform: translateY(3px);
 `

@@ -163,7 +163,12 @@ const TooltipHolder = styled.div`
   left: 0;
 `
 
-const NFTTooltipContainer = styled.div``
+const NFTTooltipContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
 
 const NFTTooltipImage = styled.img`
   object-fit: contain;
