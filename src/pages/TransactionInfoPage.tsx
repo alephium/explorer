@@ -301,12 +301,14 @@ const TransactionInfoPage = () => {
                         <AddressLink address={addressHash} maxWidth="180px" />
                       </DeltaAmountsTitle>
                       <AmountList>
-                        <Amount
-                          value={BigInt(alphDeltaAmounts[addressHash])}
-                          displaySign={true}
-                          highlight
-                          assetId={ALPH.id}
-                        />
+                        {alphDeltaAmounts[addressHash] && (
+                          <Amount
+                            value={BigInt(alphDeltaAmounts[addressHash])}
+                            displaySign={true}
+                            highlight
+                            assetId={ALPH.id}
+                          />
+                        )}
                         {getSortedTokenAmounts(addressHash).map((v) => (
                           <Amount
                             key={v.tokenId}
