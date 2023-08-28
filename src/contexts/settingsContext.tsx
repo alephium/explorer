@@ -29,8 +29,12 @@ export interface SettingsContextValue {
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
+export const systemThemeQuery = () => matchMedia('(prefers-color-scheme: dark)')
+
 //could be `no-preference` so default is `light`'
-const systemTheme: ThemeType = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+export const currentSystemTheme = () => (systemThemeQuery().matches ? 'dark' : 'light')
+
+const systemTheme: ThemeType = currentSystemTheme()
 
 export const SettingsContext = createContext<SettingsContextValue>({
   theme: systemTheme,

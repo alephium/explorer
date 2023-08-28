@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import React from 'react'
+import { useEffect } from 'react'
 import { RiMoonLine, RiSunLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
-import { useSettings } from '@/contexts/settingsContext'
+import { currentSystemTheme, systemThemeQuery, useSettings } from '@/contexts/settingsContext'
 import { ThemeType } from '@/styles/themes'
 
 interface ThemeSwitcherProps {
@@ -42,6 +43,14 @@ const toggleVariants = {
 
 const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({ className }) => {
   const { theme, switchTheme } = useSettings()
+  const themeQuery = systemThemeQuery()
+  const themeHandler = () => switchTheme(currentSystemTheme())
+
+  useEffect(() => {
+    themeQuery.addEventListener('change', themeHandler)
+    return () => themeQuery.removeEventListener('change', themeHandler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <StyledThemeSwitcher onClick={() => switchTheme(theme === 'light' ? 'dark' : 'light')} className={className}>
