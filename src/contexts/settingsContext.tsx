@@ -29,15 +29,18 @@ export interface SettingsContextValue {
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
+//could be `no-preference` so default is `light`'
+const systemTheme: ThemeType = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+
 export const SettingsContext = createContext<SettingsContextValue>({
-  theme: 'light',
+  theme: systemTheme,
   switchTheme: () => null,
   timestampPrecisionMode: 'off',
   setTimestampPrecisionMode: () => null
 })
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', 'light')
+  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', systemTheme)
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
     'off'
