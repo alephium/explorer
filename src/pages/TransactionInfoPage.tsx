@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import {
@@ -49,6 +48,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
 import { IOAmountsDelta } from '@/utils/transactions'
 
@@ -59,6 +59,8 @@ type ParamTypes = {
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
+  const { displaySnackbar } = useSnackbar()
+  const retryNum = 10 //as defined in App.tsx
 
   const previousTransactionData = useRef<Transaction | undefined>()
 
@@ -69,18 +71,24 @@ const TransactionInfoPage = () => {
   } = useQuery({
     ...queries.transactions.transaction.one(id || ''),
     enabled: !!id,
-    refetchInterval:
-      isAppVisible && (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current))
-        ? 10000
-        : undefined
+    retry: (num, e) => {
+      const error = (e as Error).message
+      displaySnackbar({ text: error, type: 'alert' })
+      return (
+        isAppVisible &&
+        (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
+        error.includes('not found') &&
+        num < retryNum
+      )
+    }
   })
 
   let txInfoError, txInfoErrorStatus
 
   if (transactionInfoError) {
-    const e = transactionInfoError as APIError
-    txInfoError = e.error
-    txInfoErrorStatus = e.status
+    const e = transactionInfoError as Error
+    txInfoError = e.message
+    txInfoErrorStatus = txInfoError.includes('not found') ? 404 : 400
   }
 
   const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
