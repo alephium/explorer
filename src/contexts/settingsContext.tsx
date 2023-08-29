@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, ReactNode, useContext, useEffect } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { ThemeType } from '@/styles/themes'
@@ -29,26 +29,34 @@ export interface SettingsContextValue {
   setTimestampPrecisionMode: (status: OnOff) => void
 }
 
-export const systemThemeQuery = () => matchMedia('(prefers-color-scheme: dark)')
+const systemThemeQuery = matchMedia('(prefers-color-scheme: dark)')
 
 //could be `no-preference` so default is `light`'
-export const currentSystemTheme = () => (systemThemeQuery().matches ? 'dark' : 'light')
+const currentSystemTheme = () => (systemThemeQuery.matches ? 'dark' : 'light')
 
-const systemTheme: ThemeType = currentSystemTheme()
+const initialSystemTheme: ThemeType = currentSystemTheme()
 
 export const SettingsContext = createContext<SettingsContextValue>({
-  theme: systemTheme,
+  theme: initialSystemTheme,
   switchTheme: () => null,
   timestampPrecisionMode: 'off',
   setTimestampPrecisionMode: () => null
 })
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', systemTheme)
+  const [themeName, setThemeName] = useStateWithLocalStorage<ThemeType>('theme', initialSystemTheme)
   const [timestampPrecisionMode, setTimestampPrecisionMode] = useStateWithLocalStorage<OnOff>(
     'timestampPrecisionMode',
     'off'
   )
+
+  const themeHandler = () => setThemeName(currentSystemTheme())
+
+  useEffect(() => {
+    systemThemeQuery.addEventListener('change', themeHandler)
+    return () => systemThemeQuery.removeEventListener('change', themeHandler)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <SettingsContext.Provider
