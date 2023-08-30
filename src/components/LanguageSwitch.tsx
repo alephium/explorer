@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import 'dayjs/locale/fr'
+
+import dayjs from 'dayjs'
 import i18next from 'i18next'
 import { useEffect } from 'react'
 import styled from 'styled-components'
@@ -44,6 +47,7 @@ const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
 
   useEffect(() => {
     i18next.changeLanguage(langValue)
+    dayjs.locale(langValue.slice(0, 2))
   }, [langValue])
 
   const items = languageOptions.map((lang) => ({
