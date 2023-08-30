@@ -20,6 +20,7 @@ import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
@@ -47,6 +48,7 @@ type ParamTypes = {
 }
 
 const BlockInfoPage = () => {
+  const { t } = useTranslation()
   const { id } = useParams<ParamTypes>()
   const navigate = useNavigate()
 
@@ -127,7 +129,7 @@ const BlockInfoPage = () => {
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
-      <SectionTitle title="Block" isLoading={infoLoading || txLoading} />
+      <SectionTitle title={t('Block')} isLoading={infoLoading || txLoading} />
 
       <Table bodyOnly isLoading={infoLoading}>
         {blockInfo && (
@@ -137,21 +139,21 @@ const BlockInfoPage = () => {
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
             <TableRow>
-              <span>Height</span>
+              <span>{t('Height')}</span>
               <span>{blockInfo.height}</span>
             </TableRow>
             <TableRow>
-              <span>Chain Index</span>
+              <span>{t('Chain index')}</span>
               <span>
                 {blockInfo.chainFrom} → {blockInfo.chainTo}
               </span>
             </TableRow>
             <TableRow>
-              <span>Nb. of transactions</span>
+              <span>{t('Nb. of transactions')}</span>
               <span>{blockInfo.txNumber}</span>
             </TableRow>
             <TableRow>
-              <span>Timestamp</span>
+              <span>{t('Timestamp')}</span>
               <Timestamp timeInMs={blockInfo.timestamp} forceFormat="high" />
             </TableRow>
           </TableBody>
@@ -160,7 +162,7 @@ const BlockInfoPage = () => {
 
       {blockInfo?.mainChain ? (
         !txLoading && (!txList || (txListStatus && txListStatus !== 200)) ? (
-          <InlineErrorMessage message="An error occured while fetching transactions" code={txListStatus} />
+          <InlineErrorMessage message={t('An error occured while fetching transactions')} code={txListStatus} />
         ) : (
           <>
             <SecondaryTitle>Transactions</SecondaryTitle>
@@ -168,7 +170,7 @@ const BlockInfoPage = () => {
               {txList && txList && (
                 <>
                   <TableHeader
-                    headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
+                    headerTitles={['', t('Hash'), t('Inputs'), '', t('Outputs'), t('Total Amount'), '']}
                     columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                     textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                   />

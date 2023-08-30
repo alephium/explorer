@@ -99,8 +99,10 @@ const HomePage = () => {
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `Transactions per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`,
-    hashrateVector: `Hashrate per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`
+    txVector: `${t('Transactions')} ${t('per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`,
+    hashrateVector: `${t('Hashrate')} ${t('per')} ${
+      timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')
+    }`
   }
 
   return (

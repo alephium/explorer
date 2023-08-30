@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiGhostLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -31,30 +32,33 @@ interface NFTListProps {
   isLoading?: boolean
 }
 
-const NFTList = ({ nfts, isLoading }: NFTListProps) => (
-  <NFTListContainer>
-    {isLoading ? (
-      <NFTListStyled>
-        <SkeletonLoader height="200px" />
-        <SkeletonLoader height="200px" />
-        <SkeletonLoader height="200px" />
-      </NFTListStyled>
-    ) : nfts.length > 0 ? (
-      <NFTListStyled>
-        {nfts.map((nft) => (
-          <NFTItem key={nft.id} nft={nft} />
-        ))}
-      </NFTListStyled>
-    ) : (
-      <NoNFTsMessage>
-        <EmptyIconContainer>
-          <RiGhostLine />
-        </EmptyIconContainer>
-        <div>No NFTs yet.</div>
-      </NoNFTsMessage>
-    )}
-  </NFTListContainer>
-)
+const NFTList = ({ nfts, isLoading }: NFTListProps) => {
+  const { t } = useTranslation()
+  return (
+    <NFTListContainer>
+      {isLoading ? (
+        <NFTListStyled>
+          <SkeletonLoader height="200px" />
+          <SkeletonLoader height="200px" />
+          <SkeletonLoader height="200px" />
+        </NFTListStyled>
+      ) : nfts.length > 0 ? (
+        <NFTListStyled>
+          {nfts.map((nft) => (
+            <NFTItem key={nft.id} nft={nft} />
+          ))}
+        </NFTListStyled>
+      ) : (
+        <NoNFTsMessage>
+          <EmptyIconContainer>
+            <RiGhostLine />
+          </EmptyIconContainer>
+          <div>{t('No NFTs yet')}</div>
+        </NoNFTsMessage>
+      )}
+    </NFTListContainer>
+  )
+}
 
 interface NFTItemProps {
   nft: UnverifiedNFTMetadataWithFile

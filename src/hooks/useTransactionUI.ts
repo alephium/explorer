@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TransactionInfoType } from '@alephium/sdk'
 import { colord } from 'colord'
+import { useTranslation } from 'react-i18next'
 import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRepeat2Line } from 'react-icons/ri'
 import { DefaultTheme } from 'styled-components'
 
@@ -33,20 +34,21 @@ interface TransactionUIProps {
 // TODO: Better (better way to define infoType by looking at presence of script)
 // Use script field in tx once available https://github.com/alephium/explorer-backend/issues/485
 
-export const getTransactionUI = ({
+export const GetTransactionUI = ({
   infoType,
   isFailedScriptTx,
   isInContract,
   theme
 }: TransactionUIProps & { theme: DefaultTheme }) => {
+  const { t } = useTranslation()
   if (!isFailedScriptTx && !isInContract) {
     return {
       label: {
-        in: 'Incoming transfer',
-        out: 'Outgoing transfer',
-        move: 'Self transfer',
-        pending: 'Pending',
-        swap: 'dApp operation'
+        in: t('Incoming transfer'),
+        out: t('Outgoing transfer'),
+        move: t('Self transfer'),
+        pending: t('Pending'),
+        swap: t('dApp operation')
       }[infoType],
       Icon: {
         in: RiArrowDownLine,
@@ -70,28 +72,28 @@ export const getTransactionUI = ({
         swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
       }[infoType],
       directionText: {
-        move: 'inside',
-        out: 'to',
-        swap: 'with',
+        move: t('inside'),
+        out: t('to'),
+        swap: t('with'),
         pending: '...',
-        in: 'from'
+        in: t('from')
       }[infoType]
     }
   } else if (isInContract) {
     return {
-      label: 'Contract operation',
+      label: t('Contract operation'),
       Icon: undefined,
       badgeColor: theme.font.secondary,
       badgeBgColor: theme.border.secondary,
-      directionText: 'with'
+      directionText: t('with')
     }
   } else if (isFailedScriptTx) {
     return {
-      label: 'dApp operation',
+      label: t('dApp operation'),
       Icon: RiRepeat2Line,
       badgeColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
       badgeBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString(),
-      directionText: 'with'
+      directionText: t('with')
     }
   } else {
     return {

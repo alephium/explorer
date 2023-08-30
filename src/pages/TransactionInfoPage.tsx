@@ -28,6 +28,7 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import _, { sortBy, uniq } from 'lodash'
 import { useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useParams } from 'react-router-dom'
@@ -57,6 +58,7 @@ type ParamTypes = {
 }
 
 const TransactionInfoPage = () => {
+  const { t } = useTranslation()
   const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
 
@@ -157,18 +159,18 @@ const TransactionInfoPage = () => {
 
   return (
     <Section>
-      <SectionTitle title="Transaction" />
+      <SectionTitle title={t('Transaction')} />
       {!txInfoError ? (
         <>
           <Table bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
               <TableBody>
                 <TableRow>
-                  <span>Hash</span>
+                  <span>{t('Hash')}</span>
                   <HighlightedCell textToCopy={transactionData.hash}>{transactionData.hash}</HighlightedCell>
                 </TableRow>
                 <TableRow>
-                  <span>Status</span>
+                  <span>{t('Status')}</span>
                   {confirmedTxInfo ? (
                     confirmedTxInfo.scriptExecutionOk ? (
                       <Badge
@@ -176,13 +178,13 @@ const TransactionInfoPage = () => {
                         content={
                           <span>
                             <RiCheckLine style={{ marginRight: 5 }} size={15} />
-                            Success
+                            {t('Success')}
                           </span>
                         }
                         inline
                       />
                     ) : (
-                      <Badge type="minus" content={<span>Script execution failed</span>} />
+                      <Badge type="minus" content={<span>{t('Script execution failed')}</span>} />
                     )
                   ) : (
                     <Badge
@@ -190,7 +192,7 @@ const TransactionInfoPage = () => {
                       content={
                         <>
                           <LoadingSpinner style={{ marginRight: 5 }} size={15} />
-                          <span>Pending</span>
+                          <span>{t('Pending')}</span>
                         </>
                       }
                     />
@@ -198,18 +200,18 @@ const TransactionInfoPage = () => {
                 </TableRow>
                 {confirmedTxInfo && confirmedTxInfo.blockHash && txBlock && (
                   <TableRow>
-                    <span>Block</span>
+                    <span>{t('Block')}</span>
                     <span>
                       <SimpleLink
                         to={`../blocks/${confirmedTxInfo.blockHash || ''}`}
                         data-tooltip-id="default"
-                        data-tooltip-content={`On chain ${txChain?.chainFrom} → ${txChain?.chainTo}`}
+                        data-tooltip-content={`${t('On chain')} ${txChain?.chainFrom} → ${txChain?.chainTo}`}
                       >
                         {txBlock?.height.toString()}
                       </SimpleLink>
                       <span
                         data-tooltip-id="default"
-                        data-tooltip-content="Number of blocks mined since"
+                        data-tooltip-content={t('Number of blocks mined since')}
                         style={{ marginLeft: 10 }}
                       >
                         <Badge
@@ -227,13 +229,13 @@ const TransactionInfoPage = () => {
                 )}
                 {confirmedTxInfo && confirmedTxInfo.timestamp && (
                   <TableRow>
-                    <span>Timestamp</span>
+                    <span>{t('Timestamp')}</span>
                     <Timestamp timeInMs={confirmedTxInfo.timestamp} forceFormat="high" />
                   </TableRow>
                 )}
                 {confirmedTxInfo && (
                   <TableRow>
-                    <span>Assets</span>
+                    <span>{t('Assets')}</span>
                     <AssetLogos>
                       <>
                         {Object.keys(alphDeltaAmounts).length > 0 && (
@@ -248,19 +250,19 @@ const TransactionInfoPage = () => {
                 )}
                 {confirmedTxInfo && (
                   <TableRow>
-                    <span>Inputs</span>
+                    <span>{t('Inputs')}</span>
                     <div>
                       {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
                         <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
                       ) : (
-                        'Block Rewards'
+                        t('Block rewards')
                       )}
                     </div>
                   </TableRow>
                 )}
                 {confirmedTxInfo && (
                   <TableRow>
-                    <span>Outputs</span>
+                    <span>{t('Outputs')}</span>
                     <div>
                       {confirmedTxInfo.outputs ? (
                         <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
@@ -271,16 +273,16 @@ const TransactionInfoPage = () => {
                   </TableRow>
                 )}
                 <TableRow>
-                  <span>Gas Amount</span>
+                  <span>{t('Gas Amount')}</span>
                   <span>{transactionData.gasAmount || '-'} GAS</span>
                 </TableRow>
                 <TableRow>
-                  <span>Gas Price</span>
+                  <span>{t('Gas Price')}</span>
 
                   <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
                 </TableRow>
                 <TableRow>
-                  <span>Transaction Fee</span>
+                  <span>{t('Transaction Fee')}</span>
                   <Amount
                     assetId={ALPH.id}
                     value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
@@ -293,7 +295,7 @@ const TransactionInfoPage = () => {
           <TotalAmountsTable bodyOnly isLoading={txInfoLoading}>
             <TableBody>
               <TableRow>
-                <b>Total Amounts</b>
+                <b>{t('Total Amounts')}</b>
                 <DetltaAmountsContainer>
                   {addressesInvolved.map((addressHash) => (
                     <DeltaAmountsBox key={addressHash}>

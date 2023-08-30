@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { isMempoolTx } from '@alephium/sdk'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
+import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -34,7 +35,7 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { getTransactionUI } from '@/hooks/useTransactionUI'
+import { GetTransactionUI } from '@/hooks/useTransactionUI'
 import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
@@ -45,17 +46,18 @@ interface AddressTransactionRowProps {
 
 const directionIconSize = 14
 
-const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: AddressTransactionRowProps) => {
+const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: AddressTransactionRowProps) => {
+  const { t } = useTranslation()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
 
-  const { assets, infoType } = useTransactionInfo(t, addressHash)
+  const { assets, infoType } = useTransactionInfo(tx, addressHash)
 
   const isMoved = infoType === 'move'
-  const isPending = isMempoolTx(t)
-  const isFailedScriptExecution = (t as Transaction).scriptExecutionOk === false
+  const isPending = isMempoolTx(tx)
+  const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
 
-  const { label, Icon, badgeColor, badgeBgColor, directionText } = getTransactionUI({
+  const { label, Icon, badgeColor, badgeBgColor, directionText } = GetTransactionUI({
     infoType,
     isFailedScriptTx: isFailedScriptExecution,
     isInContract,
@@ -63,12 +65,12 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
   })
 
   const renderOutputAccounts = () => {
-    if (!t.outputs) return
+    if (!tx.outputs) return
     // Check for auto-sent tx
-    if (t.outputs.every((o) => o.address === addressHash)) {
+    if (tx.outputs.every((o) => o.address === addressHash)) {
       return <AddressLink key={addressHash} address={addressHash} maxWidth="250px" />
     } else {
-      const outputs = _(t.outputs.filter((o) => o.address !== addressHash))
+      const outputs = _(tx.outputs.filter((o) => o.address !== addressHash))
         .map((v) => v.address)
         .uniq()
         .value()
@@ -83,8 +85,8 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
   }
 
   const renderInputAccounts = () => {
-    if (!t.inputs) return
-    const inputs = _(t.inputs.filter((o) => o.address !== addressHash))
+    if (!tx.inputs) return
+    const inputs = _(tx.inputs.filter((o) => o.address !== addressHash))
       .map((v) => v.address)
       .uniq()
       .value()
@@ -95,16 +97,16 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
         {inputs.length > 1 && ` (+ ${inputs.length - 1})`}
       </div>
     ) : (
-      <BlockRewardLabel>Block rewards</BlockRewardLabel>
+      <BlockRewardLabel>{t('Block rewards')}</BlockRewardLabel>
     )
   }
 
   return (
     <>
-      <TableRowStyled key={t.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
+      <TableRowStyled key={tx.hash} isActive={detailOpen} onClick={toggleDetail} pending={isPending}>
         <HashAndTimestamp>
-          <TightLink to={`/transactions/${t.hash}`} text={t.hash} maxWidth="120px" />
-          {!isPending && t.timestamp && <Timestamp timeInMs={t.timestamp} />}
+          <TightLink to={`/transactions/${tx.hash}`} text={tx.hash} maxWidth="120px" />
+          {!isPending && tx.timestamp && <Timestamp timeInMs={tx.timestamp} />}
         </HashAndTimestamp>
         <TxLabelBadgeContainer>
           <TxLabelBadge
@@ -116,7 +118,7 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
             {Icon && <Icon size={directionIconSize} color={badgeColor} />}
             <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
-          {!isPending && !t.scriptExecutionOk && (
+          {!isPending && !tx.scriptExecutionOk && (
             <FailedTXBubble data-tooltip-id="default" data-tooltip-content="Script execution failed">
               !
             </FailedTXBubble>
@@ -154,13 +156,13 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
         <TableDetailsRow openCondition={detailOpen}>
           <AnimatedCell colSpan={7}>
             <Table>
-              <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
+              <TableHeader headerTitles={[t('Inputs'), '', t('Outputs')]} columnWidths={['', '50px', '']} compact />
               <TableBody>
                 <TableRow>
                   <IODetailList>
-                    {t.inputs && t.inputs.length > 0 ? (
+                    {tx.inputs && tx.inputs.length > 0 ? (
                       <TransactionIOList
-                        inputs={t.inputs}
+                        inputs={tx.inputs}
                         IOItemWrapper={IODetailsContainer}
                         addressMaxWidth="180px"
                         flex
@@ -175,9 +177,9 @@ const AddressTransactionRow = ({ transaction: t, addressHash, isInContract }: Ad
                   </span>
 
                   <IODetailList>
-                    {t.outputs && (
+                    {tx.outputs && (
                       <TransactionIOList
-                        outputs={t.outputs}
+                        outputs={tx.outputs}
                         IOItemWrapper={IODetailsContainer}
                         addressMaxWidth="180px"
                         flex
