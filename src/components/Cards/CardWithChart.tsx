@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import NakedChart, { NakedChartProps } from '../Charts/NakedChart'
@@ -27,17 +28,20 @@ interface CardWithChartProps extends CardProps {
   isLoading: boolean
 }
 
-const CardWithChart = ({ chartSeries, chartColors, children, ...props }: CardWithChartProps) => (
-  <StyledClickableCard {...props}>
-    <Content>{children}</Content>
-    <CardChartContainer>
-      <NakedChart series={chartSeries} colors={chartColors} />
-    </CardChartContainer>
-    <SeeMoreLink>
-      See more <StyledArrowRight>→</StyledArrowRight>
-    </SeeMoreLink>
-  </StyledClickableCard>
-)
+const CardWithChart = ({ chartSeries, chartColors, children, ...props }: CardWithChartProps) => {
+  const { t } = useTranslation()
+  return (
+    <StyledClickableCard {...props}>
+      <Content>{children}</Content>
+      <CardChartContainer>
+        <NakedChart series={chartSeries} colors={chartColors} />
+      </CardChartContainer>
+      <SeeMoreLink>
+        {t('See more')} <StyledArrowRight>→</StyledArrowRight>
+      </SeeMoreLink>
+    </StyledClickableCard>
+  )
+}
 
 export default CardWithChart
 

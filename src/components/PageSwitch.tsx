@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { ChangeEvent, KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -36,6 +37,7 @@ interface PageSwitchProps {
 }
 
 const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLoaded }: PageSwitchProps) => {
+  const { t } = useTranslation()
   const currentPage = usePageNumber()
   const navigate = useNavigate()
   const location = useLocation()
@@ -101,7 +103,7 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
     <SwitchContainer>
       <TextButton disabled={currentPage === 1} onClick={() => handlePageSwitch('previous')}>
         <RiArrowLeftSLine />
-        <span>Previous</span>
+        <span>{t('Previous')}</span>
       </TextButton>
       {isSettingPageManually ? (
         <PageManualInput
@@ -127,7 +129,7 @@ const PageSwitch = ({ totalNumberOfElements, elementsPerPage, numberOfElementsLo
         }
         onClick={() => handlePageSwitch('next')}
       >
-        <span>Next</span>
+        <span>{t('Next')}</span>
         <RiArrowRightSLine />
       </TextButton>
     </SwitchContainer>

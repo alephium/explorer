@@ -1,0 +1,23 @@
+{
+  "Search": "Search",
+  "Blocks": "Blocks",
+  "Avg. block time": "Avg. block time",
+  "Transactions": "Transactions",
+  "Hashrate": "Hashrate",
+  "Our numbers": "Our numbers",
+  "Supply": "Supply",
+  "Daily": "Daily",
+  "Hourly": "Hourly",
+  "Latest Blocks": "Latest Blocks",
+  "Timestamp": "Timestamp",
+  "Txn": "Txn",
+  "Chain index": "Chain index",
+  "Total": "Totale",
+  "is circulating": "is circulating",
+  "of all shards": "of all shards",
+  "Height": "Height",
+  "See more": "See more",
+  "Previous": "Previous",
+  "Next": "Next",
+  "Search for an address or a tx...": "Search for an address or a tx..."
+}

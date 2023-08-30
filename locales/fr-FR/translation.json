@@ -1,0 +1,23 @@
+{
+  "Search": "Rechercher",
+  "Blocks": "Blocs",
+  "Avg. block time": "Temps moyen des blocs",
+  "Transactions": "Transactions",
+  "Hashrate": "Taux de hachage",
+  "Our numbers": "Nos chiffres",
+  "Supply": "Emission",
+  "Daily": "Par jour",
+  "Hourly": "Par heure",
+  "Latest Blocks": "Derniers blocs",
+  "Timestamp": "Date",
+  "Txn": "Txn",
+  "Chain index": "Indice de chaîne",
+  "is circulating": "en circulation",
+  "of all shards": "de tous les shards",
+  "Height": "Hauteur",
+  "See more": "Voir plus",
+  "Previous": "Précédent",
+  "Next": "Suivant",
+  "Search for an address or a tx...": "Rechercher une adresse ou une transaction..."
+}
+
