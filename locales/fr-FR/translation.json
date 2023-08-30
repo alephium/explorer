@@ -24,6 +24,7 @@
   "Gas Price": "Prix du gaz",
   "Hash": "Hash",
   "Hashrate": "Taux de hachage",
+  "Hashrate per": "Hashrate par",
   "Height": "Hauteur",
   "Hourly": "Par heure",
   "Incoming transfer": "Transfert entrant",
@@ -62,6 +63,7 @@
   "Transaction Fee": "Frais de transaction",
   "Transaction": "Transaction",
   "Transactions": "Transactions",
+  "Transactions per": "Transactions par",
   "Txn": "Txn",
   "Unknown": "Inconnu",
   "dApp operation": "Opération dApp",
@@ -71,7 +73,6 @@
   "inside": "dans",
   "is circulating": "en circulation",
   "of all shards": "de tous les shards",
-  "per": "par",
   "to": "à",
   "with": "avec"
 }
