@@ -21,7 +21,6 @@ import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import Menu from '@/components/Menu'
-import { SelectListItem } from '@/components/Select'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 
 interface LanguageSwitchProps {
@@ -30,13 +29,18 @@ interface LanguageSwitchProps {
 
 type Language = 'en-US' | 'fr-FR'
 
-const languageOptions: SelectListItem<Language>[] = [
+interface LangItem {
+  label: string
+  value: Language
+}
+
+const languageOptions: LangItem[] = [
   { label: 'English', value: 'en-US' },
   { label: 'Français', value: 'fr-FR' }
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
-  const [langValue, setLangValue] = useStateWithLocalStorage<string>('lang', 'en-US')
+  const [langValue, setLangValue] = useStateWithLocalStorage<Language>('lang', 'en-US')
 
   useEffect(() => {
     i18next.changeLanguage(langValue)
