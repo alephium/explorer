@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { TransactionInfoType } from '@alephium/sdk'
 import { colord } from 'colord'
-import { useTranslation } from 'react-i18next'
 import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRepeat2Line } from 'react-icons/ri'
 import { DefaultTheme } from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
+import i18next from '@/i18n'
 
 interface TransactionUIProps {
   infoType: TransactionInfoType
@@ -34,21 +34,20 @@ interface TransactionUIProps {
 // TODO: Better (better way to define infoType by looking at presence of script)
 // Use script field in tx once available https://github.com/alephium/explorer-backend/issues/485
 
-export const GetTransactionUI = ({
+export const getTransactionUI = ({
   infoType,
   isFailedScriptTx,
   isInContract,
   theme
 }: TransactionUIProps & { theme: DefaultTheme }) => {
-  const { t } = useTranslation()
   if (!isFailedScriptTx && !isInContract) {
     return {
       label: {
-        in: t('Incoming transfer'),
-        out: t('Outgoing transfer'),
-        move: t('Self transfer'),
-        pending: t('Pending'),
-        swap: t('dApp operation')
+        in: i18next.t('Incoming transfer'),
+        out: i18next.t('Outgoing transfer'),
+        move: i18next.t('Self transfer'),
+        pending: i18next.t('Pending'),
+        swap: i18next.t('dApp operation')
       }[infoType],
       Icon: {
         in: RiArrowDownLine,
@@ -72,28 +71,28 @@ export const GetTransactionUI = ({
         swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
       }[infoType],
       directionText: {
-        move: t('inside'),
-        out: t('to'),
-        swap: t('with'),
+        move: i18next.t('inside'),
+        out: i18next.t('to'),
+        swap: i18next.t('with'),
         pending: '...',
-        in: t('from')
+        in: i18next.t('from')
       }[infoType]
     }
   } else if (isInContract) {
     return {
-      label: t('Contract operation'),
+      label: i18next.t('Contract operation'),
       Icon: undefined,
       badgeColor: theme.font.secondary,
       badgeBgColor: theme.border.secondary,
-      directionText: t('with')
+      directionText: i18next.t('with')
     }
   } else if (isFailedScriptTx) {
     return {
-      label: t('dApp operation'),
+      label: i18next.t('dApp operation'),
       Icon: RiRepeat2Line,
       badgeColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
       badgeBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString(),
-      directionText: t('with')
+      directionText: i18next.t('with')
     }
   } else {
     return {

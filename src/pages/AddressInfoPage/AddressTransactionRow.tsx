@@ -35,7 +35,7 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { GetTransactionUI } from '@/hooks/useTransactionUI'
+import { getTransactionUI } from '@/hooks/useTransactionUI'
 import { useTransactionInfo } from '@/utils/transactions'
 
 interface AddressTransactionRowProps {
@@ -57,7 +57,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   const isPending = isMempoolTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
 
-  const { label, Icon, badgeColor, badgeBgColor, directionText } = GetTransactionUI({
+  const { label, Icon, badgeColor, badgeBgColor, directionText } = getTransactionUI({
     infoType,
     isFailedScriptTx: isFailedScriptExecution,
     isInContract,
