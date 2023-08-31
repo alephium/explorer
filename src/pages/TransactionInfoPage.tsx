@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { APIError } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import {
@@ -35,6 +34,7 @@ import styled from 'styled-components'
 
 import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
+import { numberOfAPIRetries } from '@/App'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -49,6 +49,7 @@ import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
+import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
 import { IOAmountsDelta } from '@/utils/transactions'
 
@@ -59,8 +60,12 @@ type ParamTypes = {
 const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
+  const { displaySnackbar } = useSnackbar()
 
   const previousTransactionData = useRef<Transaction | undefined>()
+  const txInfoError = useRef<string | undefined>()
+
+  let txInfoErrorStatus
 
   const {
     data: transactionData,
@@ -70,17 +75,22 @@ const TransactionInfoPage = () => {
     ...queries.transactions.transaction.one(id || ''),
     enabled: !!id,
     refetchInterval:
-      isAppVisible && (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current))
+      isAppVisible &&
+      (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
+      !txInfoError.current
         ? 10000
-        : undefined
+        : undefined,
+    retry: (num, e) => {
+      const error = (e as Error).message
+      displaySnackbar({ text: error, type: 'alert' })
+      return error.includes('not found') && num < numberOfAPIRetries
+    }
   })
 
-  let txInfoError, txInfoErrorStatus
-
   if (transactionInfoError) {
-    const e = transactionInfoError as APIError
-    txInfoError = e.error
-    txInfoErrorStatus = e.status
+    const e = transactionInfoError as Error
+    txInfoError.current = e.message
+    txInfoErrorStatus = txInfoError.current.includes('not found') ? 404 : 400
   }
 
   const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
@@ -158,7 +168,7 @@ const TransactionInfoPage = () => {
   return (
     <Section>
       <SectionTitle title="Transaction" />
-      {!txInfoError ? (
+      {!txInfoError.current ? (
         <>
           <Table bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
@@ -327,7 +337,7 @@ const TransactionInfoPage = () => {
           </TotalAmountsTable>
         </>
       ) : (
-        <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
+        <InlineErrorMessage message={txInfoError.current} code={txInfoErrorStatus} />
       )}
     </Section>
   )
