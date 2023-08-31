@@ -63,6 +63,9 @@ const TransactionInfoPage = () => {
   const { displaySnackbar } = useSnackbar()
 
   const previousTransactionData = useRef<Transaction | undefined>()
+  const txInfoError = useRef<string | undefined>()
+
+  let txInfoErrorStatus
 
   const {
     data: transactionData,
@@ -71,24 +74,23 @@ const TransactionInfoPage = () => {
   } = useQuery({
     ...queries.transactions.transaction.one(id || ''),
     enabled: !!id,
+    refetchInterval:
+      isAppVisible &&
+      (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
+      !txInfoError.current
+        ? 10000
+        : undefined,
     retry: (num, e) => {
       const error = (e as Error).message
       displaySnackbar({ text: error, type: 'alert' })
-      return (
-        isAppVisible &&
-        (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
-        error.includes('not found') &&
-        num < numberOfAPIRetries
-      )
+      return error.includes('not found') && num < numberOfAPIRetries
     }
   })
 
-  let txInfoError, txInfoErrorStatus
-
   if (transactionInfoError) {
     const e = transactionInfoError as Error
-    txInfoError = e.message
-    txInfoErrorStatus = txInfoError.includes('not found') ? 404 : 400
+    txInfoError.current = e.message
+    txInfoErrorStatus = txInfoError.current.includes('not found') ? 404 : 400
   }
 
   const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
@@ -166,7 +168,7 @@ const TransactionInfoPage = () => {
   return (
     <Section>
       <SectionTitle title="Transaction" />
-      {!txInfoError ? (
+      {!txInfoError.current ? (
         <>
           <Table bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
@@ -335,7 +337,7 @@ const TransactionInfoPage = () => {
           </TotalAmountsTable>
         </>
       ) : (
-        <InlineErrorMessage message={txInfoError.toString()} code={txInfoErrorStatus} />
+        <InlineErrorMessage message={txInfoError.current} code={txInfoErrorStatus} />
       )}
     </Section>
   )
