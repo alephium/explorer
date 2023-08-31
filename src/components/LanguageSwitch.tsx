@@ -21,7 +21,6 @@ import 'dayjs/locale/fr'
 import dayjs from 'dayjs'
 import i18next from 'i18next'
 import { useEffect } from 'react'
-import styled from 'styled-components'
 
 import Menu from '@/components/Menu'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
@@ -58,4 +57,4 @@ const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
   return <Menu aria-label="Lang" label={langValue} items={items} direction="up" className={className} />
 }
 
-export default styled(LanguageSwitch)``
+export default LanguageSwitch
