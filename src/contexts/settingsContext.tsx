@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createContext, ReactNode, useContext, useEffect } from 'react'
+import { createContext, ReactNode, useCallback, useContext, useEffect } from 'react'
 
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 import { ThemeType } from '@/styles/themes'
@@ -50,13 +50,12 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     'off'
   )
 
-  const themeHandler = () => setThemeName(currentSystemTheme())
+  const themeHandler = useCallback(() => setThemeName(currentSystemTheme()), [setThemeName])
 
   useEffect(() => {
     systemThemeQuery.addEventListener('change', themeHandler)
     return () => systemThemeQuery.removeEventListener('change', themeHandler)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [themeHandler])
 
   return (
     <SettingsContext.Provider
