@@ -34,6 +34,7 @@ import styled from 'styled-components'
 
 import { queries } from '@/api'
 import { useAssetsMetadata } from '@/api/assets/assetsHooks'
+import { numberOfAPIRetries } from '@/App'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
@@ -60,7 +61,6 @@ const TransactionInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
   const { displaySnackbar } = useSnackbar()
-  const retryNum = 10 //as defined in App.tsx
 
   const previousTransactionData = useRef<Transaction | undefined>()
 
@@ -78,7 +78,7 @@ const TransactionInfoPage = () => {
         isAppVisible &&
         (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
         error.includes('not found') &&
-        num < retryNum
+        num < numberOfAPIRetries
       )
     }
   })
