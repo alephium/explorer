@@ -156,7 +156,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
         <TableDetailsRow openCondition={detailOpen}>
           <AnimatedCell colSpan={7}>
             <Table>
-              <TableHeader headerTitles={[t('Inputs'), '', t('Outputs')]} columnWidths={['', '50px', '']} compact />
+              <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
               <TableBody>
                 <TableRow>
                   <IODetailList>

@@ -258,14 +258,14 @@ const AddressInfoPage = () => {
             <TableHeader
               headerTitles={[
                 <span key="hash-time">
-                  Hash & Time
+                  {t('Hash & Time')}
                   <TimestampExpandButton />
                 </span>,
-                t('Type'),
-                t('Assets'),
+                'Type',
+                'Assets',
                 '',
-                t('Addresses'),
-                t('Amounts'),
+                'Addresses',
+                'Amounts',
                 ''
               ]}
               columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}

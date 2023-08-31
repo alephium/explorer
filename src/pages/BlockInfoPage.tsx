@@ -170,7 +170,7 @@ const BlockInfoPage = () => {
               {txList && txList && (
                 <>
                   <TableHeader
-                    headerTitles={['', t('Hash'), t('Inputs'), '', t('Outputs'), t('Total Amount'), '']}
+                    headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
                     columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                     textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                   />

@@ -196,7 +196,7 @@ const HomePage = () => {
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader
-                headerTitles={[t('Height'), t('Timestamp'), t('Txn'), t('Chain index')]}
+                headerTitles={['Height', 'Timestamp', 'Txn', 'Chain index']}
                 columnWidths={['20%', '30%', '20%', '25%']}
               />
               <TableBody tdStyles={TableBodyCustomStyles}>
