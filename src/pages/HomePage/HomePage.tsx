@@ -22,6 +22,7 @@ import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { usePageVisibility } from 'react-page-visibility'
 import styled, { css } from 'styled-components'
 
@@ -54,6 +55,7 @@ dayjs.extend(duration)
 type VectorStatisticsKey = keyof ReturnType<typeof useStatisticsData>['data']['vector']
 
 const HomePage = () => {
+  const { t } = useTranslation()
   const { width } = useWindowSize()
   const isAppVisible = usePageVisibility()
   const currentPageNumber = usePageNumber()
@@ -97,40 +99,40 @@ const HomePage = () => {
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `Transactions per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`,
-    hashrateVector: `Hashrate per ${timeInterval === explorer.IntervalType.Daily ? 'day' : 'hour'}`
+    txVector: `${t('Transactions per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`,
+    hashrateVector: `${t('Hashrate per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`
   }
 
   return (
     <StyledSection>
       {width && width > deviceSizes.mobile && (
         <Search>
-          <h2>Search</h2>
+          <h2>{t('Search')}</h2>
           <SearchBar />
         </Search>
       )}
       <MainContent>
         <StatisticsSection>
           <StatisticsHeader>
-            <h2>Our numbers</h2>
+            <h2>{t('Our numbers')}</h2>
             <TimeIntervalSwitch>
               <TimeIntervalButton
                 isSelected={timeInterval === explorer.IntervalType.Daily}
                 onClick={() => setTimeInterval(explorer.IntervalType.Daily)}
               >
-                Daily
+                {t('Daily')}
               </TimeIntervalButton>
               <TimeIntervalButton
                 isSelected={timeInterval === explorer.IntervalType.Hourly}
                 onClick={() => setTimeInterval(explorer.IntervalType.Hourly)}
               >
-                Hourly
+                {t('Hourly')}
               </TimeIntervalButton>
             </TimeIntervalSwitch>
           </StatisticsHeader>
           <StatisticsContainer>
             <CardWithChart
-              label="Transactions"
+              label={t('Transactions')}
               chartSeries={vectorData.txVector.value.series}
               chartColors={['#16cbf4', '#8a46ff']}
               isLoading={totalTransactions.isLoading}
@@ -139,13 +141,13 @@ const HomePage = () => {
             >
               <StatisticTextual
                 primary={totalTransactions.value ? <Counter to={totalTransactions.value} /> : '-'}
-                secondary="Total"
+                secondary={t('Total')}
               />
             </CardWithChart>
             <CardWithChart
               chartSeries={vectorData.hashrateVector.value.series}
               chartColors={['#b116f4', '#ff904c']}
-              label="Hashrate"
+              label={t('Hashrate')}
               isLoading={hashrate.isLoading}
               onClick={() => setDetailsCardOpen('hashrateVector')}
               layoutId={`expandableCard-${'hashrateVector' as VectorStatisticsKey}`}
@@ -155,7 +157,7 @@ const HomePage = () => {
                 secondary={`${hashrateSuffix}H/s`}
               />
             </CardWithChart>
-            <Card label="Supply" isLoading={circulatingSupply.isLoading || totalSupply.isLoading}>
+            <Card label={t('Supply')} isLoading={circulatingSupply.isLoading || totalSupply.isLoading}>
               <StatisticTextual
                 primary={
                   <>
@@ -169,28 +171,28 @@ const HomePage = () => {
                 secondary={
                   currentSupplyPercentage ? (
                     <>
-                      <TextPrimary>{currentSupplyPercentage}%</TextPrimary> is circulating
+                      <TextPrimary>{currentSupplyPercentage}%</TextPrimary> {t('is circulating')}
                     </>
                   ) : null
                 }
               />
             </Card>
-            <Card label="Blocks" isLoading={totalBlocks.isLoading}>
+            <Card label={t('Blocks')} isLoading={totalBlocks.isLoading}>
               <StatisticTextual
                 primary={totalBlocks.value ? <Counter to={totalBlocks.value} /> : '-'}
-                secondary="Total"
+                secondary={t('Total')}
               />
             </Card>
-            <Card label="Avg. block time" isLoading={avgBlockTime.isLoading}>
+            <Card label={t('Avg. block time')} isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
                 primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
-                secondary="of all shards"
+                secondary={t('of all shards')}
               />
             </Card>
           </StatisticsContainer>
         </StatisticsSection>
         <LatestsBlocks>
-          <h2>Latest Blocks</h2>
+          <h2>{t('Latest Blocks')}</h2>
           <Content>
             <BlockListTable main isLoading={blockPageLoading} minHeight={498}>
               <TableHeader

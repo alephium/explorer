@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components'
 
 import ExternalLink from '@/components/ExternalLink'
+import LanguageSwitch from '@/components/LanguageSwitch'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { ReactComponent as DiscordIcon } from '@/images/brand-icon-discord.svg'
@@ -37,10 +38,11 @@ const AppFooter = ({ className }: AppFooterProps) => (
   <footer className={className}>
     <LeftGroup>
       <StyledNetworkSwitch direction="up" />
+      <LanguageSwitch />
       <ThemeSwitcher />
-      <Version>v{version}</Version>
     </LeftGroup>
     <RightGroup>
+      <Version>v{version}</Version>
       <span>
         <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
       </span>

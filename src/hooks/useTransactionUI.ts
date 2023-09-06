@@ -22,6 +22,7 @@ import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRepeat2Line } f
 import { DefaultTheme } from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
+import i18next from '@/i18n'
 
 interface TransactionUIProps {
   infoType: TransactionInfoType
@@ -42,11 +43,11 @@ export const getTransactionUI = ({
   if (!isFailedScriptTx && !isInContract) {
     return {
       label: {
-        in: 'Incoming transfer',
-        out: 'Outgoing transfer',
-        move: 'Self transfer',
-        pending: 'Pending',
-        swap: 'dApp operation'
+        in: i18next.t('Incoming transfer'),
+        out: i18next.t('Outgoing transfer'),
+        move: i18next.t('Self transfer'),
+        pending: i18next.t('Pending'),
+        swap: i18next.t('dApp operation')
       }[infoType],
       Icon: {
         in: RiArrowDownLine,
@@ -70,28 +71,28 @@ export const getTransactionUI = ({
         swap: colord(theme.global.complementary).alpha(0.12).toRgbString()
       }[infoType],
       directionText: {
-        move: 'inside',
-        out: 'to',
-        swap: 'with',
+        move: i18next.t('inside'),
+        out: i18next.t('to'),
+        swap: i18next.t('with'),
         pending: '...',
-        in: 'from'
+        in: i18next.t('from')
       }[infoType]
     }
   } else if (isInContract) {
     return {
-      label: 'Contract operation',
+      label: i18next.t('Contract operation'),
       Icon: undefined,
       badgeColor: theme.font.secondary,
       badgeBgColor: theme.border.secondary,
-      directionText: 'with'
+      directionText: i18next.t('with')
     }
   } else if (isFailedScriptTx) {
     return {
-      label: 'dApp operation',
+      label: i18next.t('dApp operation'),
       Icon: RiRepeat2Line,
       badgeColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
       badgeBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString(),
-      directionText: 'with'
+      directionText: i18next.t('with')
     }
   } else {
     return {

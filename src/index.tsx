@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import './fonts/index.css'
+import '@/i18n'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

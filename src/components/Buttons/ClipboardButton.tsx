@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { MouseEvent, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiCheckLine, RiFileCopyLine } from 'react-icons/ri'
 import styled, { css } from 'styled-components'
 
@@ -30,6 +31,7 @@ interface ClipboardButtonProps {
 }
 
 const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProps) => {
+  const { t } = useTranslation()
   const [hasBeenCopied, setHasBeenCopied] = useState(false)
   const { displaySnackbar } = useSnackbar()
 
@@ -52,7 +54,7 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
     let interval: ReturnType<typeof setInterval>
 
     if (hasBeenCopied) {
-      displaySnackbar({ text: 'Copied to clipboard.', type: 'info' })
+      displaySnackbar({ text: t('Copied to clipboard.'), type: 'info' })
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
@@ -63,14 +65,14 @@ const ClipboardButton = ({ textToCopy, tooltip, className }: ClipboardButtonProp
         clearInterval(interval)
       }
     }
-  }, [displaySnackbar, hasBeenCopied])
+  }, [displaySnackbar, hasBeenCopied, t])
 
   return (
     <div className={className}>
       {!hasBeenCopied ? (
         <StyledClipboardIcon
           data-tooltip-id="default"
-          data-tooltip-content={tooltip || 'Copy to clipboard'}
+          data-tooltip-content={tooltip || t('Copy to clipboard')}
           onClick={handleClick}
         />
       ) : (

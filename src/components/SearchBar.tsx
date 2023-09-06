@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import React, { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiSearchLine } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -30,6 +31,7 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ className }: SearchBarProps) => {
+  const { t } = useTranslation()
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
   const { displaySnackbar } = useSnackbar()
@@ -103,7 +105,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
         value={search}
         onClick={handleInputClick}
         onKeyDown={handleSearchKeyDown}
-        placeholder="Search for an address or a tx..."
+        placeholder={t('Search for an address or a tx...')}
       />
       {active && <Backdrop animate={{ opacity: 1 }} transition={{ duration: 0.15 }} />}
       <SearchIcon onClick={handleSearchClick} />

@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH, TokenInfo } from '@alephium/token-list'
 import { addressFromTokenId, Optional } from '@alephium/web3'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { RiErrorWarningFill } from 'react-icons/ri'
 import { useNavigate } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -39,6 +40,7 @@ interface TokenListProps {
 }
 
 const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
+  const { t } = useTranslation()
   const theme = useTheme()
   const navigate = useNavigate()
 
@@ -64,7 +66,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
             <NameColumn>
               <TokenNameAndTag>
                 <TokenName onClick={() => !isAlph && handleTokenNameClick(token.id)} isAlph={isAlph}>
-                  {token.name || <HashEllipsed hash={token.id} copyTooltipText="Copy token ID" />}
+                  {token.name || <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />}
                 </TokenName>
                 {!isAlph && !token.logoURI && token.name && (
                   <UnverifiedIcon data-tooltip-id="default" data-tooltip-content="Unverified token" />
@@ -72,7 +74,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               </TokenNameAndTag>
               {token.name && !isAlph && (
                 <TokenHash>
-                  <HashEllipsed hash={token.id} copyTooltipText="Copy token ID" />
+                  <HashEllipsed hash={token.id} copyTooltipText={t('Copy token ID')} />
                 </TokenHash>
               )}
             </NameColumn>
@@ -83,7 +85,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
               {token.lockedBalance > 0 ? (
                 <TokenAmountSublabel>
-                  {'Available '}
+                  {`${t('Available')} `}
                   <Amount
                     assetId={token.id}
                     value={token.balance - token.lockedBalance}

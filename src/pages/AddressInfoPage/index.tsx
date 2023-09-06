@@ -23,6 +23,7 @@ import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiFileDownloadLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -59,6 +60,7 @@ type ParamTypes = {
 const numberOfTxsPerPage = 10
 
 const AddressInfoPage = () => {
+  const { t } = useTranslation()
   const theme = useTheme()
   const { id } = useParams<ParamTypes>()
   const isAppVisible = usePageVisibility()
@@ -184,13 +186,13 @@ const AddressInfoPage = () => {
   return (
     <Section>
       <SectionTitle
-        title={isContract ? 'Contract' : 'Address'}
+        title={isContract ? t('Contract') : t('Address')}
         subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
       />
       <InfoGridAndQR>
         <InfoGrid>
           <InfoGrid.Cell
-            label="ALPH balance"
+            label={t('ALPH balance')}
             value={totalBalance && <Amount assetId={ALPH.id} value={BigInt(totalBalance)} />}
             sublabel={
               lockedBalance &&
@@ -198,7 +200,7 @@ const AddressInfoPage = () => {
                 <Badge
                   content={
                     <span>
-                      Locked: <Amount assetId={ALPH.id} value={BigInt(lockedBalance)} />
+                      {t('Locked')}: <Amount assetId={ALPH.id} value={BigInt(lockedBalance)} />
                     </span>
                   }
                   type="neutral"
@@ -207,24 +209,24 @@ const AddressInfoPage = () => {
             }
           />
           <InfoGrid.Cell
-            label="Fiat price"
+            label={t('Fiat price')}
             value={
               client.networkType === 'mainnet' ? addressWorth && <Amount value={addressWorth} isFiat suffix="$" /> : '-'
             }
           />
           <InfoGrid.Cell
-            label="Nb. of transactions"
+            label={t('Nb. of transactions')}
             value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
           />
-          <InfoGrid.Cell label="Nb. of assets" value={totalNbOfAssets} />
-          <InfoGrid.Cell label="Address group" value={addressGroup?.toString()} />
+          <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
+          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
           <InfoGrid.Cell
-            label="Latest activity"
+            label={t('Latest activity')}
             value={
               addressLatestActivity ? (
                 <Timestamp timeInMs={addressLatestActivity} forceFormat="low" />
               ) : !txListLoading ? (
-                'No activity yet'
+                t('No activity yet')
               ) : undefined
             }
           />
@@ -235,17 +237,17 @@ const AddressInfoPage = () => {
       </InfoGridAndQR>
 
       <SectionHeader>
-        <h2>Assets</h2>
+        <h2>{t('Assets')}</h2>
       </SectionHeader>
 
       <AssetList addressBalance={addressBalance} addressHash={addressHash} />
 
       <SectionHeader>
-        <h2>Transactions</h2>
+        <h2>{t('Transactions')}</h2>
         {txNumber && txNumber > 0 ? (
           <Button onClick={handleExportModalOpen}>
             <RiFileDownloadLine size={16} />
-            Download CSV
+            {t('Download CSV')}
           </Button>
         ) : null}
       </SectionHeader>
@@ -256,7 +258,7 @@ const AddressInfoPage = () => {
             <TableHeader
               headerTitles={[
                 <span key="hash-time">
-                  Hash & Time
+                  {t('Hash & Time')}
                   <TimestampExpandButton />
                 </span>,
                 'Type',
@@ -290,7 +292,7 @@ const AddressInfoPage = () => {
         ) : (
           <TableBody>
             <NoTxsMessage>
-              <td>No transactions yet</td>
+              <td>{t('No transactions yet')}</td>
             </NoTxsMessage>
           </TableBody>
         )}

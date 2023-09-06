@@ -20,6 +20,7 @@ import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, sortBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
 
@@ -39,6 +40,7 @@ interface AssetListProps {
 }
 
 const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListProps) => {
+  const { t } = useTranslation()
   const theme = useTheme()
 
   const { data: assets, isLoading: assetsLoading } = useQuery(queries.assets.balances.addressTokens(addressHash))
@@ -91,14 +93,14 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     {
       value: 'tokens',
       icon: <RiCopperDiamondLine />,
-      label: 'Tokens',
+      label: t('Tokens'),
       length: fungibleTokens.length,
       loading: isLoading,
       highlightColor: '#0cbaff'
     },
     {
       value: 'nfts',
-      label: 'NFTs',
+      label: t('NFTs'),
       icon: <RiNftLine />,
       length: nftsMetadata.length,
       loading: isLoading,
@@ -109,7 +111,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
   if (!isLoading && unknownAssetsIds.length > 0)
     tabs.push({
       value: 'unknown',
-      label: 'Unknown',
+      label: t('Unknown'),
       icon: <RiQuestionLine size={14} />,
       length: unknownAssetsIds.length,
       loading: isLoading,
@@ -133,7 +135,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
           unknown: unknownAssets && <TokenList limit={limit} tokens={unknownAssets} isLoading={isLoading} />
         }[currentTab.value]
       ) : (
-        <EmptyListContainer>No assets yet</EmptyListContainer>
+        <EmptyListContainer>{t('No assets yet')}</EmptyListContainer>
       )}
     </div>
   )
