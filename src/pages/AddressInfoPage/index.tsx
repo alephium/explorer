@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/sdk'
+import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/sdk'
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
@@ -51,7 +51,6 @@ import AddressTransactionRow from '@/pages/AddressInfoPage/AddressTransactionRow
 import AssetList from '@/pages/AddressInfoPage/AssetList'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
 import { deviceBreakPoints } from '@/styles/globalStyles'
-import { formatNumberForDisplay } from '@/utils/strings'
 
 type ParamTypes = {
   id: string
@@ -216,7 +215,7 @@ const AddressInfoPage = () => {
           />
           <InfoGrid.Cell
             label={t('Nb. of transactions')}
-            value={txNumber ? formatNumberForDisplay(txNumber, '', 'quantity', 0) : !txNumberLoading ? 0 : undefined}
+            value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
           />
           <InfoGrid.Cell label={t('Nb. of assets')} value={totalNbOfAssets} />
           <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
