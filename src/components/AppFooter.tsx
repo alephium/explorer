@@ -38,11 +38,11 @@ const AppFooter = ({ className }: AppFooterProps) => (
   <footer className={className}>
     <LeftGroup>
       <StyledNetworkSwitch direction="up" />
-      <ThemeSwitcher />
       <LanguageSwitch />
-      <Version>v{version}</Version>
+      <ThemeSwitcher />
     </LeftGroup>
     <RightGroup>
+      <Version>v{version}</Version>
       <span>
         <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
       </span>

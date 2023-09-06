@@ -24,6 +24,7 @@ import { useEffect } from 'react'
 
 import Menu from '@/components/Menu'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
+import styled from 'styled-components'
 
 interface LanguageSwitchProps {
   className?: string
@@ -42,7 +43,7 @@ const languageOptions: LangItem[] = [
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
-  const [langValue, setLangValue] = useStateWithLocalStorage<Language>('lang', 'en-US')
+  const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en-US')
 
   useEffect(() => {
     i18next.changeLanguage(langValue)
@@ -54,7 +55,19 @@ const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
     onClick: () => setLangValue(lang.value)
   }))
 
-  return <Menu aria-label="Lang" label={langValue} items={items} direction="up" className={className} />
+  return (
+    <Menu
+      aria-label="Language"
+      label={languageOptions.find((o) => o.value === langValue)?.label || ''}
+      items={items}
+      direction="up"
+      className={className}
+    />
+  )
 }
 
-export default LanguageSwitch
+export default styled(LanguageSwitch)`
+  border-radius: 9px;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+`
