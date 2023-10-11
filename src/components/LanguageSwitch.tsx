@@ -21,10 +21,10 @@ import 'dayjs/locale/fr'
 import dayjs from 'dayjs'
 import i18next from 'i18next'
 import { useEffect } from 'react'
+import styled from 'styled-components'
 
 import Menu from '@/components/Menu'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
-import styled from 'styled-components'
 
 interface LanguageSwitchProps {
   className?: string
