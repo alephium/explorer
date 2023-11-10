@@ -109,11 +109,10 @@ const TokenInfoPage = () => {
                   {t('Hash & Time')}
                   <TimestampExpandButton />
                 </span>,
-                'Type',
                 'Assets',
-                '',
-                'Addresses',
-                'Amounts',
+                'Inputs',
+                'Outputs',
+                'Total Amounts',
                 ''
               ]}
               columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}
@@ -126,6 +125,7 @@ const TokenInfoPage = () => {
                   .map((t, i) => (
                     <TokenTransactionRow
                       transaction={t}
+                      tokenHash={tokenHash}
                       key={i}
                     />
                   ))}
