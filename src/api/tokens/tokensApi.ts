@@ -16,18 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addressQueries } from '@/api/addresses/addressApi'
-import { assetsQueries } from '@/api/assets/assetsApi'
-import { blocksQueries } from '@/api/blocks/blocksApi'
-import { infosQueries } from '@/api/infos/infosApi'
-import { transactionsQueries } from '@/api/transactions/transactionsApi'
-import { tokensQueries } from '@/api/tokens/tokensApi'
+import client from '@/api/client'
+import { createQueriesCollection } from '@/utils/api'
 
-export const queries = {
-  assets: assetsQueries,
-  address: addressQueries,
-  tokens: tokensQueries,
-  transactions: transactionsQueries,
-  blocks: blocksQueries,
-  infos: infosQueries
-}
+export const tokensQueries = createQueriesCollection({
+  transactions: {
+    confirmed: (tokenId: string, pageNumber: number, limit = 10) => ({
+      queryKey: ['tokenTransactions', tokenId, pageNumber, limit],
+      queryFn: () =>
+        client.explorer.tokens.getTokensTokenIdTransactions(tokenId, {
+          page: pageNumber,
+          limit
+        })
+    })
+  }
+})
+
