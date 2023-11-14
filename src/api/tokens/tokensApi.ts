@@ -31,8 +31,7 @@ export const tokensQueries = createQueriesCollection({
     }),
     total: (tokenId: string) => ({
       queryKey: ['tokenTotalTransactions', tokenId],
-      queryFn: () =>
-        client.explorer.tokens.getTokensTokenIdTotalTransactions(tokenId)
+      queryFn: () => client.explorer.tokens.getTokensTokenIdTotalTransactions(tokenId)
     })
   }
 })

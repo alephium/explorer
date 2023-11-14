@@ -61,6 +61,7 @@ const TokenInfoPage = () => {
 
   const assetType = assetMetadata.type
 
+  let name: string | undefined = ''
   let decimals: number | undefined
   let usedSuffix = ''
   let sectionTitle: string
@@ -68,10 +69,12 @@ const TokenInfoPage = () => {
   let cutDesc: string | undefined
 
   if (assetType === 'fungible') {
+    name = assetMetadata.name
     decimals = assetMetadata.decimals
     usedSuffix = assetMetadata.symbol
     sectionTitle = 'Token'
   } else if (assetType === 'non-fungible') {
+    name = assetMetadata.file?.name
     desc = assetMetadata.file?.description
     cutDesc = desc && desc?.length > 200 ? assetMetadata.file?.description?.substring(0, 200) + '...' : desc
     sectionTitle = 'NFT'
@@ -80,7 +83,6 @@ const TokenInfoPage = () => {
   } else {
     sectionTitle = 'Unknown'
   }
-
 
   let addressGroup
 
@@ -95,8 +97,6 @@ const TokenInfoPage = () => {
     })
   }
 
-
-  console.log('******* assetMetadata: ' + JSON.stringify(assetMetadata))
   const { data: txList, isLoading: txListLoading } = useQuery({
     ...queries.tokens.transactions.confirmed(tokenHash, pageNumber, numberOfTxsPerPage),
     enabled: !!tokenHash,
@@ -105,7 +105,7 @@ const TokenInfoPage = () => {
 
   const { data: txNumber, isLoading: txNumberLoading } = useQuery({
     ...queries.tokens.transactions.total(tokenHash),
-    enabled: !!tokenHash,
+    enabled: !!tokenHash
   })
 
   const { data: latestTransaction } = useQuery({
@@ -113,73 +113,55 @@ const TokenInfoPage = () => {
     enabled: !!tokenHash
   })
 
-
   const tokenLatestActivity =
     latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
 
+  let image
+  if (assetType === 'non-fungible') {
+    image = <Image style={{ backgroundImage: `url(${assetMetadata.file?.image})` }} />
+  } else if (assetType === 'non-fungible') {
+    image = <Image style={{ backgroundImage: `url(${assetMetadata.logo})` }} />
+  }
 
   return (
     <Section>
       <SectionTitle title={t(sectionTitle)} subtitle={<HighlightedHash text={tokenHash} textToCopy={tokenHash} />} />
 
-      {assetType === 'fungible' ? (
-        <InfoGrid>
-          <InfoGrid.Cell label={t('Name')} value={assetMetadata.name} />
-          <InfoGrid.Cell label={t('Symbol')} value={assetMetadata.name} />
-          <InfoGrid.Cell label={t('Address')} value={
-              <AddressLink
-                address={tokenAddress}
-                flex={true}
-              />
-          } />
-          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
-          <InfoGrid.Cell
-            label={t('Latest activity')}
-            value={
-              tokenLatestActivity ? (
-                <Timestamp timeInMs={tokenLatestActivity} forceFormat="low" />
-              ) : !txListLoading ? (
-                t('No activity yet')
-              ) : undefined
-            }
-          />
-        </InfoGrid>
-      ) : assetType === 'non-fungible' ? (
-        <span>
-          <Image style={{ backgroundImage: `url(${assetMetadata.file?.image})` }} />
-          <InfoGrid>
-            <InfoGrid.Cell label="Name" value={assetMetadata.file?.name} />
-            <InfoGrid.Cell
-              label="Description"
-              value={assetMetadata.file?.description ? assetMetadata.file?.description : '-'}
-           />
-          <InfoGrid.Cell label={t('Address')} value={
-              <AddressLink
-                address={tokenAddress}
-                flex={true}
-              />
-          } />
+      {image}
 
+      <InfoGrid>
+        <InfoGrid.Cell label={t('Name')} value={name} />
+
+        {assetType === 'fungible' ? (
+          <>
+            <InfoGrid.Cell label={t('Symbol')} value={assetMetadata.symbol} />
+            <InfoGrid.Cell label={t('Decimals')} value={assetMetadata.decimals} />
+          </>
+        ) : assetType === 'non-fungible' ? (
           <InfoGrid.Cell
-            label={t('Nb. of transactions')}
-            value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
+            label="Description"
+            value={assetMetadata.file?.description ? assetMetadata.file?.description : '-'}
           />
-          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
-          <InfoGrid.Cell
-            label={t('Latest activity')}
-            value={
-              tokenLatestActivity ? (
-                <Timestamp timeInMs={tokenLatestActivity} forceFormat="low" />
-              ) : !txListLoading ? (
-                t('No activity yet')
-              ) : undefined
-            }
-          />
-          </InfoGrid>
-        </span>
-      ) : (
-        '-'
-      )}
+        ) : (
+          <></>
+        )}
+        <InfoGrid.Cell label={t('Address')} value={<AddressLink address={tokenAddress} flex={true} />} />
+        <InfoGrid.Cell
+          label={t('Nb. of transactions')}
+          value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
+        />
+        <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+        <InfoGrid.Cell
+          label={t('Latest activity')}
+          value={
+            tokenLatestActivity ? (
+              <Timestamp timeInMs={tokenLatestActivity} forceFormat="low" />
+            ) : !txListLoading ? (
+              t('No activity yet')
+            ) : undefined
+          }
+        />
+      </InfoGrid>
       <SectionHeader>
         <h2>{t('Transactions')}</h2>
       </SectionHeader>
@@ -219,7 +201,6 @@ const TokenInfoPage = () => {
       </Table>
 
       {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
-
     </Section>
   )
 }
