@@ -10,7 +10,7 @@
   "dependencies": {
     "@alephium/sdk": "0.7.6",
     "@alephium/token-list": "^0.0.11",
-    "@alephium/web3": "0.16.1",
+    "@alephium/web3": "file:../alephium-web3/packages/web3/alephium-web3-0.22.0.tgz",
     "@tanstack/query-sync-storage-persister": "4.32.0",
     "@tanstack/react-query": "4.32.0",
     "@tanstack/react-query-persist-client": "^4.32.0",

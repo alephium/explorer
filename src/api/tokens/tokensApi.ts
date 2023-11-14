@@ -28,7 +28,11 @@ export const tokensQueries = createQueriesCollection({
           page: pageNumber,
           limit
         })
+    }),
+    total: (tokenId: string) => ({
+      queryKey: ['tokenTotalTransactions', tokenId],
+      queryFn: () =>
+        client.explorer.tokens.getTokensTokenIdTotalTransactions(tokenId)
     })
   }
 })
-

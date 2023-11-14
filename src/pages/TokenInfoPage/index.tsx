@@ -16,25 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/sdk'
-import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
-import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
-import QRCode from 'qrcode.react'
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RiFileDownloadLine } from 'react-icons/ri'
-import { usePageVisibility } from 'react-page-visibility'
-import { useNavigate, useParams } from 'react-router-dom'
-import styled, { css, useTheme } from 'styled-components'
+import { useParams } from 'react-router-dom'
+import styled, { css } from 'styled-components'
+import { useSnackbar } from '@/hooks/useSnackbar'
+import { AddressLink } from '@/components/Links'
 
+import { addApostrophes, getHumanReadableError } from '@alephium/sdk'
 import { queries } from '@/api'
-import client from '@/api/client'
-import { fetchAssetPrice } from '@/api/priceApi'
-import Amount from '@/components/Amount'
-import Badge from '@/components/Badge'
-import Button from '@/components/Buttons/Button'
+import { useAssetMetadata } from '@/api/assets/assetsHooks'
+import { groupOfAddress } from '@alephium/web3'
+import { addressFromTokenId } from '@alephium/web3'
 import TimestampExpandButton from '@/components/Buttons/TimestampExpandButton'
 import HighlightedHash from '@/components/HighlightedHash'
 import PageSwitch from '@/components/PageSwitch'
@@ -45,12 +38,8 @@ import TableBody from '@/components/Table/TableBody'
 import TableHeader from '@/components/Table/TableHeader'
 import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
-import { useSnackbar } from '@/hooks/useSnackbar'
-import ExportAddressTXsModal from '@/modals/ExportAddressTXsModal'
-import TokenTransactionRow from '@/pages/TokenInfoPage/TokenTransactionRow'
-import AssetList from '@/pages/AddressInfoPage/AssetList'
 import AddressInfoGrid from '@/pages/AddressInfoPage/InfoGrid'
-import { deviceBreakPoints } from '@/styles/globalStyles'
+import TokenTransactionRow from '@/pages/TokenInfoPage/TokenTransactionRow'
 
 type ParamTypes = {
   id: string
@@ -59,49 +48,144 @@ type ParamTypes = {
 const numberOfTxsPerPage = 10
 
 const TokenInfoPage = () => {
-  const { t } = useTranslation()
-  const theme = useTheme()
-  const { id } = useParams<ParamTypes>()
-  const isAppVisible = usePageVisibility()
-  const pageNumber = usePageNumber()
   const { displaySnackbar } = useSnackbar()
-  const navigate = useNavigate()
-
-  const [addressWorth, setTokenWorth] = useState<number | undefined>(undefined)
-  const [exportModalShown, setExportModalShown] = useState(false)
-
-  const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
+  const { t } = useTranslation()
+  const { id } = useParams<ParamTypes>()
+  const pageNumber = usePageNumber()
 
   const tokenHash = id ? id : ''
 
-  const { data: addressBalance } = useQuery({
-    ...queries.address.balance.details(tokenHash),
-    enabled: !!tokenHash
-  })
+  const tokenAddress = addressFromTokenId(tokenHash)
 
-  const {
-    data: txList,
-    isLoading: txListLoading
-  } = useQuery({
+  const assetMetadata = useAssetMetadata(tokenHash || '')
+
+  const assetType = assetMetadata.type
+
+  let decimals: number | undefined
+  let usedSuffix = ''
+  let sectionTitle: string
+  let desc: string | undefined
+  let cutDesc: string | undefined
+
+  if (assetType === 'fungible') {
+    decimals = assetMetadata.decimals
+    usedSuffix = assetMetadata.symbol
+    sectionTitle = 'Token'
+  } else if (assetType === 'non-fungible') {
+    desc = assetMetadata.file?.description
+    cutDesc = desc && desc?.length > 200 ? assetMetadata.file?.description?.substring(0, 200) + '...' : desc
+    sectionTitle = 'NFT'
+  } else if (assetType === undefined) {
+    sectionTitle = 'Unknown'
+  } else {
+    sectionTitle = 'Unknown'
+  }
+
+
+  let addressGroup
+
+  try {
+    addressGroup = groupOfAddress(tokenAddress)
+  } catch (e) {
+    console.log(e)
+
+    displaySnackbar({
+      text: getHumanReadableError(e, 'Impossible to get the group of this token'),
+      type: 'alert'
+    })
+  }
+
+
+  console.log('******* assetMetadata: ' + JSON.stringify(assetMetadata))
+  const { data: txList, isLoading: txListLoading } = useQuery({
     ...queries.tokens.transactions.confirmed(tokenHash, pageNumber, numberOfTxsPerPage),
     enabled: !!tokenHash,
     keepPreviousData: true
   })
 
+  const { data: txNumber, isLoading: txNumberLoading } = useQuery({
+    ...queries.tokens.transactions.total(tokenHash),
+    enabled: !!tokenHash,
+  })
+
+  const { data: latestTransaction } = useQuery({
+    ...queries.tokens.transactions.confirmed(tokenHash, 1, 1),
+    enabled: !!tokenHash
+  })
+
+
+  const tokenLatestActivity =
+    latestTransaction && latestTransaction.length > 0 ? latestTransaction[0].timestamp : undefined
+
 
   return (
     <Section>
-      <SectionTitle
-        title={'Token'}
-        subtitle={<HighlightedHash text={tokenHash} textToCopy={tokenHash} />}
-      />
+      <SectionTitle title={t(sectionTitle)} subtitle={<HighlightedHash text={tokenHash} textToCopy={tokenHash} />} />
 
+      {assetType === 'fungible' ? (
+        <InfoGrid>
+          <InfoGrid.Cell label={t('Name')} value={assetMetadata.name} />
+          <InfoGrid.Cell label={t('Symbol')} value={assetMetadata.name} />
+          <InfoGrid.Cell label={t('Address')} value={
+              <AddressLink
+                address={tokenAddress}
+                flex={true}
+              />
+          } />
+          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+          <InfoGrid.Cell
+            label={t('Latest activity')}
+            value={
+              tokenLatestActivity ? (
+                <Timestamp timeInMs={tokenLatestActivity} forceFormat="low" />
+              ) : !txListLoading ? (
+                t('No activity yet')
+              ) : undefined
+            }
+          />
+        </InfoGrid>
+      ) : assetType === 'non-fungible' ? (
+        <span>
+          <Image style={{ backgroundImage: `url(${assetMetadata.file?.image})` }} />
+          <InfoGrid>
+            <InfoGrid.Cell label="Name" value={assetMetadata.file?.name} />
+            <InfoGrid.Cell
+              label="Description"
+              value={assetMetadata.file?.description ? assetMetadata.file?.description : '-'}
+           />
+          <InfoGrid.Cell label={t('Address')} value={
+              <AddressLink
+                address={tokenAddress}
+                flex={true}
+              />
+          } />
+
+          <InfoGrid.Cell
+            label={t('Nb. of transactions')}
+            value={txNumber ? addApostrophes(txNumber.toFixed(0)) : !txNumberLoading ? 0 : undefined}
+          />
+          <InfoGrid.Cell label={t('Address group')} value={addressGroup?.toString()} />
+          <InfoGrid.Cell
+            label={t('Latest activity')}
+            value={
+              tokenLatestActivity ? (
+                <Timestamp timeInMs={tokenLatestActivity} forceFormat="low" />
+              ) : !txListLoading ? (
+                t('No activity yet')
+              ) : undefined
+            }
+          />
+          </InfoGrid>
+        </span>
+      ) : (
+        '-'
+      )}
       <SectionHeader>
         <h2>{t('Transactions')}</h2>
       </SectionHeader>
 
       <Table hasDetails main scrollable isLoading={txListLoading}>
-        {(!txListLoading && txList?.length) ? (
+        {!txListLoading && txList?.length ? (
           <>
             <TableHeader
               headerTitles={[
@@ -118,17 +202,11 @@ const TokenInfoPage = () => {
               columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}
               textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
             />
-            <TableBody tdStyles={TxListCustomStyles}>
+            <TableBody tdStyles={TXTableBodyCustomStyles}>
               {txList &&
                 txList
                   .sort((t1, t2) => (t2.timestamp && t1.timestamp ? t2.timestamp - t1.timestamp : 1))
-                  .map((t, i) => (
-                    <TokenTransactionRow
-                      transaction={t}
-                      tokenHash={tokenHash}
-                      key={i}
-                    />
-                  ))}
+                  .map((t, i) => <TokenTransactionRow transaction={t} tokenHash={tokenHash} key={i} />)}
             </TableBody>
           </>
         ) : (
@@ -139,32 +217,14 @@ const TokenInfoPage = () => {
           </TableBody>
         )}
       </Table>
+
+      {txNumber ? <PageSwitch totalNumberOfElements={txNumber} elementsPerPage={numberOfTxsPerPage} /> : null}
+
     </Section>
   )
 }
 
 export default TokenInfoPage
-
-const TxListCustomStyles: TDStyle[] = [
-  {
-    tdPos: 3,
-    style: css`
-      min-width: 100px;
-    `
-  },
-  {
-    tdPos: 6,
-    style: css`
-      text-align: right;
-    `
-  },
-  {
-    tdPos: 7,
-    style: css`
-      padding: 0;
-    `
-  }
-]
 
 const SectionHeader = styled.div`
   display: flex;
@@ -175,32 +235,8 @@ const SectionHeader = styled.div`
   margin-bottom: 10px;
 `
 
-const InfoGridAndQR = styled.div`
-  display: flex;
-  flex-direction: row;
-  background-color: ${({ theme }) => theme.bg.primary};
-  width: 100%;
-  border-radius: 9px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  overflow: hidden;
-
-  @media ${deviceBreakPoints.tablet} {
-    flex-direction: column;
-    height: auto;
-  }
-`
-
 const InfoGrid = styled(AddressInfoGrid)`
   flex: 1;
-`
-
-const QRCodeCell = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
-  padding: 40px;
-  box-shadow: -1px 0 ${({ theme }) => theme.border.primary};
 `
 
 const NoTxsMessage = styled.tr`
@@ -209,3 +245,38 @@ const NoTxsMessage = styled.tr`
   padding: 15px 20px;
 `
 
+const TXTableBodyCustomStyles: TDStyle[] = [
+  {
+    tdPos: 1,
+    style: css`
+      text-align: center;
+      text-align: -webkit-center;
+    `
+  },
+  {
+    tdPos: 3,
+    style: css`
+      color: ${({ theme }) => theme.global.highlight};
+    `
+  },
+  {
+    tdPos: 4,
+    style: css`
+      text-align: center;
+      color: ${({ theme }) => theme.font.secondary};
+    `
+  },
+  {
+    tdPos: 5,
+    style: css`
+      color: ${({ theme }) => theme.global.highlight};
+    `
+  }
+]
+
+const Image = styled.div`
+  background-size: cover;
+  background-position: center;
+  height: 50%;
+  width: 50%;
+`

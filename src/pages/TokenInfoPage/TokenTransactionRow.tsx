@@ -17,17 +17,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { isMempoolTx } from '@alephium/sdk'
-import { addressFromTokenId, Optional } from '@alephium/web3'
+import { addressFromTokenId } from '@alephium/web3'
+import { explorer } from '@alephium/web3'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import _ from 'lodash'
+import _, { sortBy } from 'lodash'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
 
-import Amount from '@/components/Amount'
+import { useAssetsMetadata } from '@/api/assets/assetsHooks'
 import AssetLogo from '@/components/AssetLogo'
 import Badge from '@/components/Badge'
-import { AddressLink, TightLink } from '@/components/Links'
+import { TightLink } from '@/components/Links'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/TableDetailsRow'
@@ -36,34 +38,88 @@ import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
-import { getTransactionUI } from '@/hooks/useTransactionUI'
+import { AssetType } from '@/types/assets'
 import { useTransactionAssetInfo } from '@/utils/transactions'
+import { IOAmountsDelta } from '@/utils/transactions'
 
 interface TokenTransactionRowProps {
   transaction: Transaction | MempoolTransaction
   tokenHash: string
-  isInContract: boolean
 }
 
 const directionIconSize = 14
 
-const TokenTransactionRow = ({ transaction: tx, tokenHash, isInContract }: TokenTransactionRowProps) => {
+const TokenTransactionRow = ({ transaction: tx, tokenHash }: TokenTransactionRowProps) => {
   const { t } = useTranslation()
   const { detailOpen, toggleDetail } = useTableDetailsState(false)
   const theme = useTheme()
-  const tokenAddress = addressFromTokenId(tokenHash)
 
   const isPending = isMempoolTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
-
 
   const assetIds = _(tx?.inputs?.flatMap((i) => i.tokens?.map((t) => t.id)))
     .uniq()
     .compact()
     .value()
 
-    const assets = useTransactionAssetInfo(tx)
-    console.log('******* assets: '+ assets)
+  const assets = useTransactionAssetInfo(tx)
+  console.log('******* assets: ' + assets)
+
+  const tokenMetadataInvolved = useAssetsMetadata(assetIds)
+
+  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = IOAmountsDelta(tx?.inputs, tx?.outputs)
+
+  const getSortedTokens = useCallback(
+    (tokenIds: string[]) => {
+      const unsorted = tokenIds.map((tokenId) => {
+        const fungibleTokenMetadata = tokenMetadataInvolved.fungibleTokens.find((t) => t.id === tokenId)
+
+        if (fungibleTokenMetadata) {
+          const type: AssetType = 'fungible'
+          return { tokenId, type, verified: fungibleTokenMetadata.verified, title: fungibleTokenMetadata.symbol }
+        }
+
+        const nftMetadata = tokenMetadataInvolved.nfts.find((nft) => nft.id === tokenId)
+
+        if (nftMetadata) {
+          const type: AssetType = 'non-fungible'
+          return { tokenId, type, verified: nftMetadata.verified, title: nftMetadata.file.name }
+        }
+
+        return { tokenId }
+      })
+
+      return sortBy(unsorted, [
+        (v) => !v.type,
+        (v) => !v.verified,
+        (v) => v.type === 'non-fungible',
+        (v) => v.type === 'fungible',
+        (v) => v.title
+      ])
+    },
+    [tokenMetadataInvolved.fungibleTokens, tokenMetadataInvolved.nfts]
+  )
+
+  const getSortedTokenAmounts = useCallback(
+    (addressHash: string): { tokenId: string; type?: AssetType; amount: string; title?: string }[] => {
+      const tokenIds = Object.keys(tokenDeltaAmounts[addressHash] || [])
+
+      const sortedTokens = getSortedTokens(tokenIds)
+
+      return sortedTokens.map((t) => ({ tokenId: t.tokenId, amount: tokenDeltaAmounts[addressHash][t.tokenId] }))
+    },
+    [getSortedTokens, tokenDeltaAmounts]
+  )
+
+  const outputs = tx.outputs as explorer.AssetOutput[]
+  const totalAmount = outputs
+    .map((output) => {
+      const total = output.tokens
+        ?.filter((token) => token.id == tokenHash)
+        .reduce<bigint>((acc, o) => acc + BigInt(o.amount), BigInt(0))
+      return total == undefined ? BigInt(0) : total
+    })
+    .reduce<bigint>((acc, a) => acc + BigInt(a), BigInt(0))
 
   return (
     <>
@@ -78,19 +134,14 @@ const TokenTransactionRow = ({ transaction: tx, tokenHash, isInContract }: Token
           ))}
         </Assets>
 
-
-        {!isPending && (
-          <AmountCell>
-            {assets.assets.map(({ id, amount, symbol, decimals }) => (
-              <Amount
-                key={id}
-                assetId={id}
-                suffix={symbol}
-                decimals={decimals}
-              />
-            ))}
-          </AmountCell>
-        )}
+        <span>
+          {tx.inputs ? tx.inputs.length : 0} {tx.inputs && tx.inputs.length === 1 ? 'address' : 'addresses'}
+        </span>
+        <RiArrowRightLine size={15} />
+        <span>
+          {outputs ? outputs.length : 0} {outputs?.length === 1 ? 'address' : 'addresses'}
+        </span>
+        <Badge type="neutralHighlight" assetId={tokenHash} amount={totalAmount} floatRight />
         {!isPending && <DetailToggle isOpen={detailOpen} />}
       </TableRowStyled>
       {!isPending && (

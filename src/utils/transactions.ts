@@ -104,24 +104,13 @@ export const useTransactionAssetInfo = (tx: Transaction | MempoolTransaction) =>
 
   const assetsMetadata = useAssetsMetadata(map(assetIds, 'id'))
 
-  const tokenAssets = [
-    ...assetIds.map((id) => ({
-      id,
-      ...assetsMetadata.fungibleTokens.find((i) => i.id === id),
-      ...assetsMetadata.nfts.find((i) => i.id === id)
-    }))
-  ]
-
-  const assets = sortBy(tokenAssets, [
-    (v) => !v.type,
-    (v) => !v.verified,
-    (v) => v.type === 'non-fungible',
-    (v) => v.type === 'fungible',
-    (v) => (v.type === 'fungible' ? v.symbol : v.file?.name)
-  ])
+  const tokenAssets = assetIds.map((id) => ({
+    ...assetsMetadata.fungibleTokens.find((i) => i.id === id),
+    ...assetsMetadata.nfts.find((i) => i.id === id)
+  }))
 
   return {
-    assets
+    tokenAssets
   }
 }
 
