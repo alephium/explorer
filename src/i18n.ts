@@ -22,12 +22,14 @@ import { initReactI18next } from 'react-i18next'
 import en from '../locales/en-US/translation.json'
 import fr from '../locales/fr-FR/translation.json'
 import id from '../locales/id-ID/translation.json'
+import ru from '../locales/ru-RU/translation.json'
 
 i18next.use(initReactI18next).init({
   resources: {
     'en-US': { translation: en },
     'fr-FR': { translation: fr },
-    'id-ID': { translation: id }
+    'id-ID': { translation: id },
+    'ru-RU': { translation: ru }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',
